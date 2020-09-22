@@ -17,8 +17,8 @@
 console.txt
 **/*.xcodeproj/*
 **/bin/*
-**/bin-int/*
-**/Products/*
+**/bin-int/**
+**/Products/**
 x64/*
 Debug/*
 Release/*
