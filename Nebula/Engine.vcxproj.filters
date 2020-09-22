@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ext">
+      <UniqueIdentifier>{7670880B-E279-887C-6BF5-9E7CD7FD937C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ext\freetype-gl">
+      <UniqueIdentifier>{6904AADC-D58F-17A1-DEA0-9A954AAB73A1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ext\stb_image">
+      <UniqueIdentifier>{90AC4A9A-FC6C-C6D0-C5A7-0F4E31270BAD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nebula">
+      <UniqueIdentifier>{13A78B22-FF5E-CD6F-6866-A6CB543D6860}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ext\freetype-gl\platform.c">
+      <Filter>ext\freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="ext\freetype-gl\texture-atlas.c">
+      <Filter>ext\freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="ext\freetype-gl\texture-font.c">
+      <Filter>ext\freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="ext\freetype-gl\vector.c">
+      <Filter>ext\freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="ext\stb_image\stb_image.cpp">
+      <Filter>ext\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nebula\main.cpp">
+      <Filter>src\Nebula</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
