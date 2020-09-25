@@ -31,7 +31,7 @@ IF %1==c (
 
 :ErroneousInput
 ECHO -----------------------
-ECHO Usage: make.bat [action] [run]
+ECHO Usage: make.bat [action] <flags>
 ECHO.
 ECHO Parameter - [action]
 ECHO    c - Cleans project generated Files
@@ -41,8 +41,8 @@ ECHO    b - Build the project
 ECHO    cg - FULL Clean and Generate
 ECHO    cgb - FULL Clean, Generate, and Build 
 ECHO    r - Runs the project if it is made
-ECHO Parameter - [run]
-ECHO    -r - Run a build (Only works right after a build happened)
+ECHO Flags
+ECHO    -r - Run a build (Only works if a build has been done)
 ECHO.
 EXIT /B 0
 

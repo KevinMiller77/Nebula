@@ -24,7 +24,7 @@ workspace "Nebula"
 project "Engine"
     kind "ConsoleApp"
     language "C++"
-    cppdialect "C++14"
+    cppdialect "C++17"
     staticruntime "on"
     
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -48,6 +48,7 @@ project "Engine"
     sysincludedirs
     {
         "src",
+        "src/Nebula",
         "include",
 		"ext/glfw/include",
         "ext/glad/include",
@@ -100,11 +101,11 @@ project "Engine"
         }
 
     filter "configurations:Debug"
-        defines "KEV_DEBUG"
+        defines "NEB_DEBUG"
         runtime "Debug"
         symbols "on"
 
     filter "configurations:Release"
-        defines "KEV_RELEASE"
+        defines "NEB_RELEASE"
         runtime "Release"
         optimize "on"

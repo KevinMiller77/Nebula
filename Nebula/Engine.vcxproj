@@ -46,7 +46,7 @@
     <IntDir>bin-int\Debug\windows\Engine\</IntDir>
     <TargetName>Engine</TargetName>
     <TargetExt>.exe</TargetExt>
-    <IncludePath>src;include;ext\glfw\include;ext\glad\include;ext\imgui;ext\freetype\include;$(IncludePath)</IncludePath>
+    <IncludePath>src;src\Nebula;include;ext\glfw\include;ext\glad\include;ext\imgui;ext\freetype\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -54,19 +54,19 @@
     <IntDir>bin-int\Release\windows\Engine\</IntDir>
     <TargetName>Engine</TargetName>
     <TargetExt>.exe</TargetExt>
-    <IncludePath>src;include;ext\glfw\include;ext\glad\include;ext\imgui;ext\freetype\include;$(IncludePath)</IncludePath>
+    <IncludePath>src;src\Nebula;include;ext\glfw\include;ext\glad\include;ext\imgui;ext\freetype\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;KEV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;NEB_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,7 +78,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;KEV_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;NEB_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -86,7 +86,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -96,12 +96,69 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Nebula\Core\Application.h" />
+    <ClInclude Include="src\Nebula\Core\EntryPoint.h" />
+    <ClInclude Include="src\Nebula\Core\Input.h" />
+    <ClInclude Include="src\Nebula\Core\Layer.h" />
+    <ClInclude Include="src\Nebula\Core\LayerStack.h" />
+    <ClInclude Include="src\Nebula\Core\PlatformInfo.h" />
+    <ClInclude Include="src\Nebula\Core\Window.h" />
+    <ClInclude Include="src\Nebula\Events\Event.h" />
+    <ClInclude Include="src\Nebula\Events\InputCodes.h" />
+    <ClInclude Include="src\Nebula\Events\KeyEvent.h" />
+    <ClInclude Include="src\Nebula\Events\MouseEvent.h" />
+    <ClInclude Include="src\Nebula\Events\WindowEvent.h" />
+    <ClInclude Include="src\Nebula\Graphics\GraphicsContext.h" />
+    <ClInclude Include="src\Nebula\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Nebula\Math\mat2.h" />
+    <ClInclude Include="src\Nebula\Math\mat2f.h" />
+    <ClInclude Include="src\Nebula\Math\mat4.h" />
+    <ClInclude Include="src\Nebula\Math\mat4f.h" />
+    <ClInclude Include="src\Nebula\Math\math.h" />
+    <ClInclude Include="src\Nebula\Math\vec2.h" />
+    <ClInclude Include="src\Nebula\Math\vec2f.h" />
+    <ClInclude Include="src\Nebula\Math\vec2u.h" />
+    <ClInclude Include="src\Nebula\Math\vec3.h" />
+    <ClInclude Include="src\Nebula\Math\vec3f.h" />
+    <ClInclude Include="src\Nebula\Math\vec4.h" />
+    <ClInclude Include="src\Nebula\Math\vec4f.h" />
+    <ClInclude Include="src\Nebula\Utils\FileIO.h" />
+    <ClInclude Include="src\Nebula\Utils\Logging.h" />
+    <ClInclude Include="src\Nebula\Utils\MemoryTracker.h" />
+    <ClInclude Include="src\Nebula\Utils\Timer.h" />
+    <ClInclude Include="src\Platform\Graphics\GL\GLContext.h" />
+    <ClInclude Include="src\Platform\Graphics\GL\ImGui\GLImGuiLayer.h" />
+    <ClInclude Include="src\Platform\OS\Windows\WindowsWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="ext\freetype-gl\platform.c" />
     <ClCompile Include="ext\freetype-gl\texture-atlas.c" />
     <ClCompile Include="ext\freetype-gl\texture-font.c" />
     <ClCompile Include="ext\freetype-gl\vector.c" />
     <ClCompile Include="ext\stb_image\stb_image.cpp" />
-    <ClCompile Include="src\Nebula\main.cpp" />
+    <ClCompile Include="src\Nebula\Core\Application.cpp" />
+    <ClCompile Include="src\Nebula\Core\Input.cpp" />
+    <ClCompile Include="src\Nebula\Core\LayerStack.cpp" />
+    <ClCompile Include="src\Nebula\Core\Window.cpp" />
+    <ClCompile Include="src\Nebula\Graphics\GraphicsContext.cpp" />
+    <ClCompile Include="src\Nebula\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Nebula\Math\mat2.cpp" />
+    <ClCompile Include="src\Nebula\Math\mat2f.cpp" />
+    <ClCompile Include="src\Nebula\Math\mat4.cpp" />
+    <ClCompile Include="src\Nebula\Math\mat4f.cpp" />
+    <ClCompile Include="src\Nebula\Math\vec2.cpp" />
+    <ClCompile Include="src\Nebula\Math\vec2f.cpp" />
+    <ClCompile Include="src\Nebula\Math\vec2u.cpp" />
+    <ClCompile Include="src\Nebula\Math\vec3.cpp" />
+    <ClCompile Include="src\Nebula\Math\vec3f.cpp" />
+    <ClCompile Include="src\Nebula\Math\vec4.cpp" />
+    <ClCompile Include="src\Nebula\Math\vec4f.cpp" />
+    <ClCompile Include="src\Nebula\Utils\FileIO.cpp" />
+    <ClCompile Include="src\Nebula\Utils\MemoryTracker.cpp" />
+    <ClCompile Include="src\Platform\Graphics\GL\GLContext.cpp" />
+    <ClCompile Include="src\Platform\Graphics\GL\ImGui\GLImGuiBuild.cpp" />
+    <ClCompile Include="src\Platform\Graphics\GL\ImGui\GLImGuiLayer.cpp" />
+    <ClCompile Include="src\Platform\OS\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="ext\glad\glad.vcxproj">
