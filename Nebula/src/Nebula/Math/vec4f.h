@@ -9,6 +9,7 @@ struct Vec4f {
     };
     
     Vec4f();
+    Vec4f(float i);
     Vec4f(float x, float y, float z, float w);
     ~Vec4f();
     

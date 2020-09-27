@@ -105,7 +105,16 @@
     <ClInclude Include="Nebula\src\Nebula\Graphics\GraphicsContext.h">
       <Filter>src\Nebula\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\OrthographicCamera.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\OrthographicCameraController.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Nebula\src\Nebula\Graphics\Renderer.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\Renderer2D.h">
       <Filter>src\Nebula\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Nebula\src\Nebula\Graphics\RendererAPI.h">
@@ -115,6 +124,9 @@
       <Filter>src\Nebula\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Nebula\src\Nebula\Graphics\Shader.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\Texture.h">
       <Filter>src\Nebula\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Nebula\src\Nebula\Graphics\VertexArray.h">
@@ -192,6 +204,9 @@
     <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLShader.h">
       <Filter>src\Platform\Graphics\GL</Filter>
     </ClInclude>
+    <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLTexture2D.h">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClInclude>
     <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLVertexArray.h">
       <Filter>src\Platform\Graphics\GL</Filter>
     </ClInclude>
@@ -239,7 +254,16 @@
     <ClCompile Include="Nebula\src\Nebula\Graphics\GraphicsContext.cpp">
       <Filter>src\Nebula\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\OrthographicCamera.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\OrthographicCameraController.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Nebula\src\Nebula\Graphics\Renderer.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\Renderer2D.cpp">
       <Filter>src\Nebula\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Nebula\src\Nebula\Graphics\RendererAPI.cpp">
@@ -249,6 +273,9 @@
       <Filter>src\Nebula\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Nebula\src\Nebula\Graphics\Shader.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\Texture.cpp">
       <Filter>src\Nebula\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Nebula\src\Nebula\Graphics\VertexArray.cpp">
@@ -318,6 +345,9 @@
       <Filter>src\Platform\Graphics\GL</Filter>
     </ClCompile>
     <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLShader.cpp">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLTexture2D.cpp">
       <Filter>src\Platform\Graphics\GL</Filter>
     </ClCompile>
     <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLVertexArray.cpp">

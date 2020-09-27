@@ -219,7 +219,57 @@ Mat4f Mat4f::perspective(float fov, float aspectRatio, float near, float far)
 	return result;
 }
 
-Mat4f Mat4f::translation(const Vec3f &translation)
+Mat4f& Mat4f::translation(const Vec3f &translation)
+{
+	Mat4f result(1.0f);
+
+	result.rows[3].x = translation.x;
+	result.rows[3].y = translation.y;
+	result.rows[3].z = translation.z;
+
+	return result;
+}
+
+Mat4f& Mat4f::rotation(float angle, const Vec3f &axis)
+{
+	Mat4f result(1.0f);
+
+	float r = angle;
+	float c = (float)(cos(r));
+	float s = (float)(sin(r));
+	float omc = 1.0f - c;
+
+	float x = axis.x;
+	float y = axis.y;
+	float z = axis.z;
+
+	result.elements[0 + 0 * 4] = x * omc + c;
+	result.elements[1 + 0 * 4] = y * x * omc + z * s;
+	result.elements[2 + 0 * 4] = x * z * omc - y * s;
+
+	result.elements[0 + 1 * 4] = x * y * omc - z * s;
+	result.elements[1 + 1 * 4] = y * omc + c;
+	result.elements[2 + 1 * 4] = y * z * omc + x * s;
+
+	result.elements[0 + 2 * 4] = x * z * omc + y * s;
+	result.elements[1 + 2 * 4] = y * z * omc - x * s;
+	result.elements[2 + 2 * 4] = z * omc + c;
+
+	return result;
+}
+
+Mat4f& Mat4f::scale(const Vec3f &scale)
+{
+	Mat4f result(1.0f);
+
+	result.elements[0 + 0 * 4] = scale.x;
+	result.elements[1 + 1 * 4] = scale.y;
+	result.elements[2 + 2 * 4] = scale.z;
+
+	return result;
+}
+
+void Mat4f::translate (Mat4f& base, const Vec3f &translation)
 {
 	Mat4f result(1.0f);
 
@@ -227,10 +277,9 @@ Mat4f Mat4f::translation(const Vec3f &translation)
 	result.elements[1 + 3 * 4] = translation.y;
 	result.elements[2 + 3 * 4] = translation.z;
 
-	return result;
+	base = result;
 }
-
-Mat4f Mat4f::rotation(float angle, const Vec3f &axis)
+void Mat4f::rotate (Mat4f& base, float angle, const Vec3f &axis)
 {
 	Mat4f result(1.0f);
 
@@ -255,10 +304,9 @@ Mat4f Mat4f::rotation(float angle, const Vec3f &axis)
 	result.elements[1 + 2 * 4] = y * z * omc - x * s;
 	result.elements[2 + 2 * 4] = z * omc + c;
 
-	return result;
+	base = result;
 }
-
-Mat4f Mat4f::scale(const Vec3f &scale)
+void Mat4f::scale (Mat4f& base, const Vec3f &scale)
 {
 	Mat4f result(1.0f);
 
@@ -266,7 +314,7 @@ Mat4f Mat4f::scale(const Vec3f &scale)
 	result.elements[1 + 1 * 4] = scale.y;
 	result.elements[2 + 2 * 4] = scale.z;
 
-	return result;
+	base = result;
 }
 
 Mat4f Mat4f::invertMatrix()

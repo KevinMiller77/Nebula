@@ -1,8 +1,7 @@
-#ifndef __KevEngine_MATH__
-#define __KevEngine_MATH__
-
+#pragma once
 #include <cstring>
 #define PI 3.14159265359f
+#define PI2R_FACTOR PI / 180
 
 //A compare for map in order to use a c string
 struct StrCompare {
@@ -17,5 +16,3 @@ public:
 #include "mat2f.h"
 #include "mat3f.h"
 #include "mat4f.h"
-
-#endif

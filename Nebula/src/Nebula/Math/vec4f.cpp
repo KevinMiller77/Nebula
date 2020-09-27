@@ -9,6 +9,14 @@ Vec4f::Vec4f() {
 
 Vec4f::~Vec4f() {}
 
+Vec4f::Vec4f(float i)
+{
+    elements[0] = i;
+    elements[1] = i;
+    elements[2] = i;
+    elements[3] = i;
+}
+
 Vec4f::Vec4f(float x, float y, float z, float w) {
     elements[0] = x;
     elements[1] = y;

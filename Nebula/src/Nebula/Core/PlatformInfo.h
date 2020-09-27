@@ -68,3 +68,6 @@ constexpr Ref<T> CreateRef(Args&& ... args)
 {
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }
+
+#define PI 3.14159265359f
+#define PI2R_FACTOR PI / 180

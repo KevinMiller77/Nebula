@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Core/PlatformInfo.h>
 #include <Core/Layer.h>
 #include <Core/Application.h>
 #include <Core/Window.h>
@@ -17,11 +18,15 @@
 #include <Math/math.h>
 
 #include <Graphics/Buffer.h>
-#include <Graphics/RendererConfig.h>
 #include <Graphics/VertexArray.h> // TODO: Remove
 #include <Graphics/Shader.h>
+#include <Graphics/Texture.h>
+#include <Graphics/RendererConfig.h>
 #include <Graphics/Renderer.h>
+#include <Graphics/Renderer2D.h>
 #include <Graphics/Camera.h>
+#include <Graphics/OrthographicCamera.h>
+#include <Graphics/OrthographicCameraController.h>
 #include <Graphics/Framebuffer.h>
 
 #include <imgui.h>

@@ -9,13 +9,13 @@ namespace Nebula
     public:
         Camera() = default;
         Camera(const Mat4f projection)
-            : Projection(projection) {}
+            : ViewProjectionMatrix(projection) {}
 
         virtual ~Camera() = default;
 
-        const Mat4f GetProjection() const { return Projection; }
+        const Mat4f GetViewProjection() const { return ViewProjectionMatrix; }
 
-    private:
-        Mat4f Projection;
+    protected:
+        Mat4f ViewProjectionMatrix;
     };
 }

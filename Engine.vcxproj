@@ -112,10 +112,14 @@
     <ClInclude Include="Nebula\src\Nebula\Graphics\Camera.h" />
     <ClInclude Include="Nebula\src\Nebula\Graphics\Framebuffer.h" />
     <ClInclude Include="Nebula\src\Nebula\Graphics\GraphicsContext.h" />
+    <ClInclude Include="Nebula\src\Nebula\Graphics\OrthographicCamera.h" />
+    <ClInclude Include="Nebula\src\Nebula\Graphics\OrthographicCameraController.h" />
     <ClInclude Include="Nebula\src\Nebula\Graphics\Renderer.h" />
+    <ClInclude Include="Nebula\src\Nebula\Graphics\Renderer2D.h" />
     <ClInclude Include="Nebula\src\Nebula\Graphics\RendererAPI.h" />
     <ClInclude Include="Nebula\src\Nebula\Graphics\RendererConfig.h" />
     <ClInclude Include="Nebula\src\Nebula\Graphics\Shader.h" />
+    <ClInclude Include="Nebula\src\Nebula\Graphics\Texture.h" />
     <ClInclude Include="Nebula\src\Nebula\Graphics\VertexArray.h" />
     <ClInclude Include="Nebula\src\Nebula\ImGui\ImGuiLayer.h" />
     <ClInclude Include="Nebula\src\Nebula\Math\mat2.h" />
@@ -141,6 +145,7 @@
     <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLFramebuffer.h" />
     <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLRendererAPI.h" />
     <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLShader.h" />
+    <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLTexture2D.h" />
     <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLVertexArray.h" />
     <ClInclude Include="Nebula\src\Platform\Graphics\GL\ImGui\GLImGuiLayer.h" />
     <ClInclude Include="Nebula\src\Platform\OS\Windows\WindowsWindow.h" />
@@ -158,10 +163,14 @@
     <ClCompile Include="Nebula\src\Nebula\Graphics\Buffer.cpp" />
     <ClCompile Include="Nebula\src\Nebula\Graphics\Framebuffer.cpp" />
     <ClCompile Include="Nebula\src\Nebula\Graphics\GraphicsContext.cpp" />
+    <ClCompile Include="Nebula\src\Nebula\Graphics\OrthographicCamera.cpp" />
+    <ClCompile Include="Nebula\src\Nebula\Graphics\OrthographicCameraController.cpp" />
     <ClCompile Include="Nebula\src\Nebula\Graphics\Renderer.cpp" />
+    <ClCompile Include="Nebula\src\Nebula\Graphics\Renderer2D.cpp" />
     <ClCompile Include="Nebula\src\Nebula\Graphics\RendererAPI.cpp" />
     <ClCompile Include="Nebula\src\Nebula\Graphics\RendererConfig.cpp" />
     <ClCompile Include="Nebula\src\Nebula\Graphics\Shader.cpp" />
+    <ClCompile Include="Nebula\src\Nebula\Graphics\Texture.cpp" />
     <ClCompile Include="Nebula\src\Nebula\Graphics\VertexArray.cpp" />
     <ClCompile Include="Nebula\src\Nebula\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="Nebula\src\Nebula\Math\mat2.cpp" />
@@ -185,6 +194,7 @@
     <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLFramebuffer.cpp" />
     <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLRendererAPI.cpp" />
     <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLShader.cpp" />
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLTexture2D.cpp" />
     <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLVertexArray.cpp" />
     <ClCompile Include="Nebula\src\Platform\Graphics\GL\ImGui\GLImGuiBuild.cpp" />
     <ClCompile Include="Nebula\src\Platform\Graphics\GL\ImGui\GLImGuiLayer.cpp" />

@@ -13,7 +13,7 @@ namespace Nebula
         WindowResizeEvent(Vec2u newSize)
             : screenSize(newSize)   {}
 
-        inline Vec2u getScreenSize() const { return screenSize; } 
+        inline Vec2u GetScreenSize() const { return screenSize; } 
 
         EVENT_CLASS_TYPE(EventType::WindowResize)
         EVENT_CLASS_CATEGORY(EventCategoryWindow)

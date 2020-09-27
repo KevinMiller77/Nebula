@@ -22,11 +22,16 @@ struct Mat4f
     static Mat4f orthographic(float left, float right, float top, float bottom, float near, float far);
     static Mat4f perspective(float fov, float aspectRatio, float near, float far);
 
-    static Mat4f translation(const Vec3f &translation);
-    static Mat4f rotation(float angle, const Vec3f &axis);
-    static Mat4f scale(const Vec3f &scale);
+    static void translate   (Mat4f& base, const Vec3f &translation);
+    static void rotate      (Mat4f& base, float angle, const Vec3f &axis);
+    static void scale       (Mat4f& base, const Vec3f &scale);
+
+    static Mat4f& translation(const Vec3f &translation);
+    static Mat4f& rotation(float angle, const Vec3f &axis);
+    static Mat4f& scale(const Vec3f &scale);
 
     Mat4f invertMatrix();
+    static Mat4f& invertMatrix(Mat4f toInv) { return toInv.invertMatrix(); }
 
     const Vec4f &operator[](int index) const;
     Vec4f &operator[](int index);

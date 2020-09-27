@@ -7,11 +7,11 @@ namespace Nebula
     void Renderer::Init()
 	{
         RendererConfig::Init();
-    //Init 2D and 3D renderers
+		Renderer2D::Init();
     }
     void Renderer::Shutdown()
 	{
-        //Shut down 2D and 3D renderer
+        Renderer2D::Shutdown();
 	}
 
     void Renderer::OnWindowResize(unsigned int w, unsigned int h)
@@ -21,12 +21,12 @@ namespace Nebula
 
     void Renderer::BeginScene(Camera camera)
 	{
-        SceneData->ViewProjMatrix = camera.GetProjection();
+        SceneData->ViewProjMatrix = camera.GetViewProjection();
 	}
 
     void Renderer::EndScene()
 	{
-
+		
 	}
 
     void Renderer::Submit(Shader* shader, VertexArray* vertexArray, const Mat4f transform)

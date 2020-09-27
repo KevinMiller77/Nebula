@@ -28,8 +28,8 @@ namespace Nebula
         MouseScrolledEvent(float X, float Y)
             :   XOffset(X), YOffset(Y)  {}
 
-        inline const float getXOffset() const { return XOffset; }
-        inline const float getYOffset() const { return YOffset;}
+        inline const float GetXOffset() const { return XOffset; }
+        inline const float GetYOffset() const { return YOffset;}
 
         EVENT_CLASS_TYPE(EventType::MouseScrolled)
         EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)

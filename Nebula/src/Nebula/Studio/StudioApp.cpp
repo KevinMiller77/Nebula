@@ -14,7 +14,7 @@ public:
     
     void OnGameUpdate() override
     {
-        Nebula::RendererConfig::SetClearColor(clearColor);
+        Nebula::RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);
     }
 };
 

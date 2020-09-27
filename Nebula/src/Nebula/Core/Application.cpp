@@ -20,7 +20,7 @@ namespace Nebula
         window = Window::Create(WindowInfo());
         window->SetEventCallback(NEB_BIND_EVENT_FN(Application::OnEvent));
 
-        Nebula::RendererConfig::Init();
+        Nebula::Renderer::Init();
 
         imGuiLayer = ImGuiLayer::Create();
         PushOverlay(imGuiLayer);
@@ -64,13 +64,13 @@ namespace Nebula
 
     bool Application::OnWindowResize(WindowResizeEvent& e)
     {
-        if (e.getScreenSize().x == 0 || e.getScreenSize().y == 0)
+        if (e.GetScreenSize().x == 0 || e.GetScreenSize().y == 0)
         {
             minimized = true;
             return false;
         }
 
-        Renderer::OnWindowResize(e.getScreenSize().x, e.getScreenSize().y);
+        Renderer::OnWindowResize(e.GetScreenSize().x, e.GetScreenSize().y);
         return false;
     }
 

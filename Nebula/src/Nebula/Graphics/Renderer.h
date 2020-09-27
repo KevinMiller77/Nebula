@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "RendererConfig.h"
+#include "Renderer2D.h"
 
 namespace Nebula
 {
