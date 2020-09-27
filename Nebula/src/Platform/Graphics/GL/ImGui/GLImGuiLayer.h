@@ -23,6 +23,6 @@ namespace Nebula
         
         //Dock props
         ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-        bool DockspaceEnabled = true;
+        bool DockspaceEnabled = false;
     };
 }

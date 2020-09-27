@@ -27,7 +27,12 @@ namespace Nebula
         virtual void End() = 0;
         
         virtual void OnUpdate() = 0;
+
+        void BlockEvents(bool block) { m_BlockEvents = block; }
         
         static ImGuiLayer* Create();
+
+        private:
+            bool m_BlockEvents = true;
     };
 }

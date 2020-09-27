@@ -70,7 +70,7 @@ namespace Nebula
             return false;
         }
 
-        // window->SetView(e.getScreenSize().x, e.getScreenSize().y);
+        Renderer::OnWindowResize(e.getScreenSize().x, e.getScreenSize().y);
         return false;
     }
 
@@ -149,9 +149,6 @@ namespace Nebula
 
             if (!minimized)
             {
-                //TODO: Find a way to move to Window
-                Nebula::RendererConfig::Clear();
-
                 OnUpdate(ts);
                 OnImGuiRender();
             }

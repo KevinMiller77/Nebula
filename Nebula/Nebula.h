@@ -20,6 +20,9 @@
 #include <Graphics/RendererConfig.h>
 #include <Graphics/VertexArray.h> // TODO: Remove
 #include <Graphics/Shader.h>
+#include <Graphics/Renderer.h>
+#include <Graphics/Camera.h>
+#include <Graphics/Framebuffer.h>
 
 #include <imgui.h>
 

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ext">
+      <UniqueIdentifier>{7670880B-E279-887C-6BF5-9E7CD7FD937C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ext\freetype-gl">
+      <UniqueIdentifier>{6904AADC-D58F-17A1-DEA0-9A954AAB73A1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ext\stb_image">
+      <UniqueIdentifier>{90AC4A9A-FC6C-C6D0-C5A7-0F4E31270BAD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nebula">
+      <UniqueIdentifier>{13A78B22-FF5E-CD6F-6866-A6CB543D6860}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nebula\Core">
+      <UniqueIdentifier>{4B2FB72E-B7BA-24F3-C0CB-A7E72CD680F3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nebula\Events">
+      <UniqueIdentifier>{973F62BE-0356-6054-4CCD-EB75B82231DC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nebula\Graphics">
+      <UniqueIdentifier>{B314547B-1F76-3189-A8E3-773B14446848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nebula\ImGui">
+      <UniqueIdentifier>{7DDE0706-69D7-2658-9209-0CDD7E610664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nebula\Math">
+      <UniqueIdentifier>{CC6FBC2E-38FB-29F3-410C-ADE7AD1686F3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nebula\Studio">
+      <UniqueIdentifier>{7AE1EEDE-E6F7-EC74-2F6F-78969BC4BDFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Nebula\Utils">
+      <UniqueIdentifier>{B36AE506-9F63-0459-C895-E9DDB4EDE364}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform">
+      <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\Graphics">
+      <UniqueIdentifier>{8187169E-EDF3-D198-B6E7-69F62213F400}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\Graphics\GL">
+      <UniqueIdentifier>{43B5A438-2FDA-F3B8-5825-D94844A9F2D6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\Graphics\GL\ImGui">
+      <UniqueIdentifier>{ADD01EA9-99F6-E80F-823C-6EDB6E010EDC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\OS">
+      <UniqueIdentifier>{F274994C-5E00-0711-6711-8A05D31B6311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\OS\Windows">
+      <UniqueIdentifier>{2CF17DDC-9828-C673-A132-2A970DE9EC6C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Nebula\src\Nebula\Core\Application.h">
+      <Filter>src\Nebula\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Core\EntryPoint.h">
+      <Filter>src\Nebula\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Core\Input.h">
+      <Filter>src\Nebula\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Core\Layer.h">
+      <Filter>src\Nebula\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Core\LayerStack.h">
+      <Filter>src\Nebula\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Core\PlatformInfo.h">
+      <Filter>src\Nebula\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Core\Window.h">
+      <Filter>src\Nebula\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Events\Event.h">
+      <Filter>src\Nebula\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Events\InputCodes.h">
+      <Filter>src\Nebula\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Events\KeyEvent.h">
+      <Filter>src\Nebula\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Events\MouseEvent.h">
+      <Filter>src\Nebula\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Events\WindowEvent.h">
+      <Filter>src\Nebula\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\Buffer.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\Camera.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\Framebuffer.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\GraphicsContext.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\Renderer.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\RendererAPI.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\RendererConfig.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\Shader.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Graphics\VertexArray.h">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\ImGui\ImGuiLayer.h">
+      <Filter>src\Nebula\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\mat2.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\mat2f.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\mat3f.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\mat4.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\mat4f.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\math.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\vec2.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\vec2f.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\vec2u.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\vec3.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\vec3f.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\vec4.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Math\vec4f.h">
+      <Filter>src\Nebula\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Studio\NebulaStudioLayer.h">
+      <Filter>src\Nebula\Studio</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Utils\FileIO.h">
+      <Filter>src\Nebula\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Utils\Logging.h">
+      <Filter>src\Nebula\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Utils\MemoryTracker.h">
+      <Filter>src\Nebula\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Utils\Timer.h">
+      <Filter>src\Nebula\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLBuffers.h">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLContext.h">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLFramebuffer.h">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLRendererAPI.h">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLShader.h">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Platform\Graphics\GL\GLVertexArray.h">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Platform\Graphics\GL\ImGui\GLImGuiLayer.h">
+      <Filter>src\Platform\Graphics\GL\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Nebula\src\Platform\OS\Windows\WindowsWindow.h">
+      <Filter>src\Platform\OS\Windows</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Nebula\ext\freetype-gl\platform.c">
+      <Filter>ext\freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\ext\freetype-gl\texture-atlas.c">
+      <Filter>ext\freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\ext\freetype-gl\texture-font.c">
+      <Filter>ext\freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\ext\freetype-gl\vector.c">
+      <Filter>ext\freetype-gl</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\ext\stb_image\stb_image.cpp">
+      <Filter>ext\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Core\Application.cpp">
+      <Filter>src\Nebula\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Core\Input.cpp">
+      <Filter>src\Nebula\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Core\LayerStack.cpp">
+      <Filter>src\Nebula\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Core\Window.cpp">
+      <Filter>src\Nebula\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\Buffer.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\Framebuffer.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\GraphicsContext.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\Renderer.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\RendererAPI.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\RendererConfig.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\Shader.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Graphics\VertexArray.cpp">
+      <Filter>src\Nebula\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\ImGui\ImGuiLayer.cpp">
+      <Filter>src\Nebula\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\mat2.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\mat2f.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\mat3f.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\mat4.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\mat4f.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\vec2.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\vec2f.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\vec2u.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\vec3.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\vec3f.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\vec4.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Math\vec4f.cpp">
+      <Filter>src\Nebula\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Studio\NebulaStudioLayer.cpp">
+      <Filter>src\Nebula\Studio</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Studio\StudioApp.cpp">
+      <Filter>src\Nebula\Studio</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Utils\FileIO.cpp">
+      <Filter>src\Nebula\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Nebula\Utils\MemoryTracker.cpp">
+      <Filter>src\Nebula\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLBuffers.cpp">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLContext.cpp">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLFramebuffer.cpp">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLRendererAPI.cpp">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLShader.cpp">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\GLVertexArray.cpp">
+      <Filter>src\Platform\Graphics\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\ImGui\GLImGuiBuild.cpp">
+      <Filter>src\Platform\Graphics\GL\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\Graphics\GL\ImGui\GLImGuiLayer.cpp">
+      <Filter>src\Platform\Graphics\GL\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Nebula\src\Platform\OS\Windows\WindowsWindow.cpp">
+      <Filter>src\Platform\OS\Windows</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
