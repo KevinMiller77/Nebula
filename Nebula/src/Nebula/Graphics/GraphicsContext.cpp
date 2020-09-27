@@ -14,14 +14,7 @@ namespace Nebula
     GraphicsContext* GraphicsContext::Create(void* window)
     {
         #ifdef NEB_GAPI_OPENGL
-            return new GLContext((GLFWwindow*)window)
-            
-            
-            
-            
-            
-            
-            ;
+            return new GLContext((GLFWwindow*)window);
         #else
             LOG_ERR("No rendering API chosen!!!\n");
         #endif

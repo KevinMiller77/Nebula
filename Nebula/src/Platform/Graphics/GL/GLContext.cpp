@@ -14,7 +14,7 @@ namespace Nebula
     void GLContext::Init()
     {
         glfwMakeContextCurrent(window);
-        if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress));
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress));
         {
             LOG_ERR("Could not init glad!!\n");
         }

@@ -48,6 +48,8 @@ struct Mat4f
     Vec3f multiply(const Vec3f &other);
 
     void printMatrix();
+
+    const float* GetPtr() const { return &(elements[0]); }
     
 private:
     void add(const Mat4f &other);

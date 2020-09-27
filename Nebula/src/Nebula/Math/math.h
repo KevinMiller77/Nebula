@@ -15,6 +15,7 @@ public:
 #include "vec3f.h"
 #include "vec4f.h"
 #include "mat2f.h"
+#include "mat3f.h"
 #include "mat4f.h"
 
 #endif

@@ -50,12 +50,12 @@ REM ----------------------------------------------------------------------------
 :NebGenerate
 REM Gen
 PUSHD %~DP0
-PUSHD ..\Nebula
+PUSHD ..\
 
 ECHO - Making VS 2019 Project
 ECHO.
 ECHO ---- Premake Output ----
-..\scripts\premake5.exe vs2019
+scripts\premake5.exe vs2019
 ECHO ---- End Premake Output ----
 ECHO.
 
@@ -67,7 +67,7 @@ REM ----------------------------------------------------------------------------
 :NebClean
 REM Clean
 PUSHD %~DP0
-PUSHD ..\Nebula
+PUSHD ..\
 
 ECHO - Cleaning up 
 RMDIR /S /Q  bin bin-int .vs >nul 2>&1
@@ -82,7 +82,7 @@ REM ----------------------------------------------------------------------------
 :NebFClean
 REM Clean
 PUSHD %~DP0
-PUSHD ..\Nebula
+PUSHD ..\
 
 ECHO - Cleaning up 
 RMDIR /S /Q bin bin-int .vs >nul 2>&1
@@ -97,7 +97,7 @@ EXIT /B 0
 REM -----------------------------------------------------------------------------
 :NebRun
 PUSHD %~DP0
-PUSHD ..\Nebula
+PUSHD ..\
 IF NOT EXIST bin\Debug\windows\Engine\Engine.exe (
     ECHO !! You have not compiled the application yet or complilation was unsuccessful !!
     ECHO.
@@ -110,7 +110,7 @@ REM ----------------------------------------------------------------------------
 :NebCG
 REM Clean and Generate
 PUSHD %~DP0
-PUSHD ..\Nebula
+PUSHD ..\
 
 ECHO - Cleaning up 
 RMDIR /S /Q project_data bin bin-int .vs >nul 2>&1
@@ -119,7 +119,7 @@ ECHO - Done Cleaning
 ECHO - Making VS 2019 Project
 ECHO.
 ECHO ---- Premake Output ----
-..\scripts\premake5.exe vs2019
+scripts\premake5.exe vs2019
 ECHO ---- End Premake Output ----
 ECHO.
 
@@ -132,7 +132,7 @@ REM ----------------------------------------------------------------------------
 :NebCGB
 REM Clean, Generate, and Build
 PUSHD %~DP0
-PUSHD ..\Nebula
+PUSHD ..\
 
 ECHO - Cleaning up 
 RMDIR /S /Q project_data bin bin-int .vs >nul 2>&1
@@ -141,7 +141,8 @@ ECHO - Done Cleaning
 ECHO - Making VS 2019 Project
 ECHO.
 ECHO ---- Premake Output ----
-..\scripts\premake5.exe vs2019
+ECHO BITCHES
+.\scripts\premake5.exe vs2019
 ECHO ---- End Premake Output ----
 ECHO.
 
@@ -154,7 +155,7 @@ REM ----------------------------------------------------------------------------
 REM Build
 
 PUSHD %~DP0
-PUSHD ..\Nebula
+PUSHD ..\
 
 REM If the vs proj dne, try to build it
 IF NOT EXIST "Nebula.sln" (

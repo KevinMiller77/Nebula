@@ -1,15 +1,10 @@
 #include "Application.h"
 #include "EntryPoint.h"
 
-Nebula::Application* CreateApplication()
-{
-    return new Nebula::Sandbox();
-}
+#include <Nebula.h>
 
 namespace Nebula
 {
-
-
     Application* Application::curEngine = nullptr;
 
 
@@ -25,9 +20,12 @@ namespace Nebula
         window = Window::Create(WindowInfo());
         window->SetEventCallback(NEB_BIND_EVENT_FN(Application::OnEvent));
 
+        Nebula::RendererConfig::Init();
+
         imGuiLayer = ImGuiLayer::Create();
         PushOverlay(imGuiLayer);
         
+        //Frame and update counters
         fps.Start();
         ups.Start();
         lastFrameTime = 0.0f;
@@ -152,7 +150,7 @@ namespace Nebula
             if (!minimized)
             {
                 //TODO: Find a way to move to Window
-                GetWindow()->GetContext()->StartRender();
+                Nebula::RendererConfig::Clear();
 
                 OnUpdate(ts);
                 OnImGuiRender();

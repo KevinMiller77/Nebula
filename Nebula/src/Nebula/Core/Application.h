@@ -63,47 +63,4 @@ namespace Nebula
         static void EngineSwap();
         friend int ::main(int argv, char** argc);
     };
-
-    static Vec4f clearColor = {0.1f, 0.1f, 0.1f, 1.0f};
-    class TempLayer : public Layer
-    {
-    public:
-    
-        TempLayer() = default;
-
-        void OnUpdate(float ts) override
-        {
-        }
-
-        void OnImGuiRender() override
-        {
-            ImGui::Begin("THIS IS IMGUI");
-            ImGui::Text("This is imgui mf");
-            ImGui::ColorPicker4("Background", clearColor.elements);
-            ImGui::End();
-        }
-    };
-
-
-
-    // TODO: Make a seperate project containing this
-    class Sandbox : public Application
-    {
-    public:
-        Sandbox() : Application(this)
-        {
-            window->SetVSync(1);
-            PushLayer(new TempLayer());
-
-            // GetWindow()->GetContext()->ClearColor(clearColor);
-        }
-        ~Sandbox() = default;
-        
-        void OnGameUpdate() override
-        {
-            GetWindow()->GetContext()->ClearColor(clearColor);
-        }
-    };
-
-
 }
