@@ -14,7 +14,7 @@ namespace Nebula
         Renderer2D::Shutdown();
 	}
 
-    void Renderer::OnWindowResize(unsigned int w, unsigned int h)
+    void Renderer::OnWindowResize(uint32 w, uint32 h)
 	{
         RendererConfig::SetViewport(0, 0, w, h);
 	}

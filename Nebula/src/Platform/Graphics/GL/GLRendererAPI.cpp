@@ -44,7 +44,7 @@ namespace Nebula
         glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     }
 
-    void GLRendererAPI::SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+    void GLRendererAPI::SetViewport(uint32 x, uint32 y, uint32 width, uint32 height)
     {
         glViewport(x, y, width, height);
     }
@@ -59,9 +59,9 @@ namespace Nebula
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void GLRendererAPI::DrawIndexed(const VertexArray* vertexArray, unsigned int indexCount)
+    void GLRendererAPI::DrawIndexed(const VertexArray* vertexArray, uint32 indexCount)
     {
-        unsigned int count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+        uint32 count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
         glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
     }

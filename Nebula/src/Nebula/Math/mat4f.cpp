@@ -190,7 +190,7 @@ Vec3f operator*(Mat4f left, const Vec3f &right)
 	return out;
 }
 
-Mat4f operator*(Mat4f left, const double &right)
+Mat4f operator*(Mat4f left, const float &right)
 {
 	Mat4f out;
 	for (int i = 0; i < 16; i++)
@@ -219,7 +219,7 @@ Mat4f Mat4f::perspective(float fov, float aspectRatio, float near, float far)
 	return result;
 }
 
-Mat4f& Mat4f::translation(const Vec3f &translation)
+Mat4f Mat4f::translation(const Vec3f &translation)
 {
 	Mat4f result(1.0f);
 
@@ -230,7 +230,7 @@ Mat4f& Mat4f::translation(const Vec3f &translation)
 	return result;
 }
 
-Mat4f& Mat4f::rotation(float angle, const Vec3f &axis)
+Mat4f Mat4f::rotation(float angle, const Vec3f &axis)
 {
 	Mat4f result(1.0f);
 
@@ -258,7 +258,7 @@ Mat4f& Mat4f::rotation(float angle, const Vec3f &axis)
 	return result;
 }
 
-Mat4f& Mat4f::scale(const Vec3f &scale)
+Mat4f Mat4f::scale(const Vec3f &scale)
 {
 	Mat4f result(1.0f);
 
@@ -320,7 +320,7 @@ void Mat4f::scale (Mat4f& base, const Vec3f &scale)
 Mat4f Mat4f::invertMatrix()
 {
 	Mat4f newMat = Mat4f(1.0f);
-	double det = 0;
+	float det = 0;
     int i;
 
     newMat.elements[0] = elements[5]  * elements[10] * elements[15] - 
@@ -439,7 +439,7 @@ Mat4f Mat4f::invertMatrix()
 	if (det == 0)
 		return Mat4f(rows[0], rows[1], rows[2], rows[3]);
 	
-    det = 1.0 / det;
+    det = 1.0f / det;
 	
 	Vec4f newRows[4];
     for (i = 0; i < 16; i+=4)

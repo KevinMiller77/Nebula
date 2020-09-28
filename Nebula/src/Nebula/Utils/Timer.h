@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include <Core/NebulaCommon.h>
 
 using namespace std;
 using namespace chrono;
@@ -10,7 +11,7 @@ namespace Nebula
     class Timer
     {
     private:
-        unsigned int frames;
+        uint32 frames;
         duration<double> timeSpan;
         steady_clock::time_point mainTimerStart;
         steady_clock::time_point mainTimer;
@@ -39,12 +40,12 @@ namespace Nebula
             return timeSpan.count();
         }
 
-        unsigned int FrameKeep()
+        uint32 FrameKeep()
         {
             frames++;
             if (GetTimePassed() >= 1.0f)
             {
-                unsigned int thisgoround = frames;
+                uint32 thisgoround = frames;
                 Reset();
                 frames = 0;
                 return thisgoround;

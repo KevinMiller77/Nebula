@@ -12,7 +12,7 @@ namespace Nebula
 
     void GLFWErrorCallback(int error, const char* decsription)
     {
-        LOG_ERR("GLFW ERR [%X]: %s\n", decsription);
+        LOG_ERR("GLFW ERR [%X]: %s\n", error, decsription);
     }
 
     WindowsWindow::~WindowsWindow()
@@ -104,7 +104,7 @@ namespace Nebula
             }
         });
 
-        glfwSetCharCallback(window, [](GLFWwindow* window, unsigned int keycode)
+        glfwSetCharCallback(window, [](GLFWwindow* window, uint32 keycode)
         {
             WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
 
@@ -183,23 +183,23 @@ namespace Nebula
         context->SwapBuffers();
     }
 
-    unsigned int WindowsWindow::GetWidth() const
+    uint32 WindowsWindow::GetWidth() const
     {
         return data.width;
     }
 
 
-    unsigned int WindowsWindow::GetHeight() const
+    uint32 WindowsWindow::GetHeight() const
     {
         
         return data.height;
     }
 
-    unsigned int* WindowsWindow::GetWidthPtr() const 
+    uint32* WindowsWindow::GetWidthPtr() const 
     {
         return &(data.width);
     }
-    unsigned int* WindowsWindow::GetHeightPtr() const
+    uint32* WindowsWindow::GetHeightPtr() const
     {
         return &(data.height);
     }

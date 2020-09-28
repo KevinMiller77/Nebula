@@ -5,7 +5,7 @@
 
 namespace Nebula
 {
-    static const unsigned int C_MaxFrameBufferSize = 8192;
+    static const uint32 C_MaxFrameBufferSize = 8192;
 
     GLFramebuffer::GLFramebuffer(const FramebufferSpecification& spec)
         :   Spec(spec)
@@ -59,7 +59,7 @@ namespace Nebula
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-    void GLFramebuffer::Resize(unsigned int width, unsigned int height)
+    void GLFramebuffer::Resize(uint32 width, uint32 height)
 	{
         if (width == 0 || height == 0 || width > C_MaxFrameBufferSize || height > C_MaxFrameBufferSize)
 		{

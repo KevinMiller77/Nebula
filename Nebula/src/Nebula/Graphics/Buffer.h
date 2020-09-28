@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <Utils/Logging.h>
+#include <Core/NebulaCommon.h>
 
 namespace Nebula
 {
@@ -11,7 +12,7 @@ namespace Nebula
         None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool
     };
 
-    static unsigned int ShaderDataTypeSize(ShaderDataType type)
+    static uint32 ShaderDataTypeSize(ShaderDataType type)
 	{
 		switch (type)
 		{

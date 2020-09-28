@@ -73,7 +73,7 @@ float Vec2f::dot(const Vec2f& vec, const Vec2f& other)
 
 Vec2f Vec2f::normal(const Vec2f& vec)
 {
-    float mag = sqrt(vec.x * vec.x + vec.y * vec.y);
+    float mag = (float)sqrt(vec.x * vec.x + vec.y * vec.y);
     return Vec2f(vec.x / mag, vec.y / mag);
 }
 

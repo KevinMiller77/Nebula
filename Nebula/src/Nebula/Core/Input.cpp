@@ -24,6 +24,6 @@ namespace Nebula
         auto win = (GLFWwindow*)(Application::Get()->GetWindow()->GetNativeWindow());
         double x, y;
         glfwGetCursorPos(win, &x, &y);
-        return Vec2f(x, y);
+        return Vec2f((float)x, (float)y);
     }
 }

@@ -26,9 +26,9 @@ struct Mat4f
     static void rotate      (Mat4f& base, float angle, const Vec3f &axis);
     static void scale       (Mat4f& base, const Vec3f &scale);
 
-    static Mat4f& translation(const Vec3f &translation);
-    static Mat4f& rotation(float angle, const Vec3f &axis);
-    static Mat4f& scale(const Vec3f &scale);
+    static Mat4f translation(const Vec3f &translation);
+    static Mat4f rotation(float angle, const Vec3f &axis);
+    static Mat4f scale(const Vec3f &scale);
 
     Mat4f invertMatrix();
     static Mat4f& invertMatrix(Mat4f toInv) { return toInv.invertMatrix(); }
@@ -45,7 +45,7 @@ struct Mat4f
     friend Mat4f operator*(Mat4f left, const Mat4f &right);
     friend Vec4f operator*(Mat4f left, const Vec4f &right);
     friend Vec3f operator*(Mat4f left, const Vec3f &right);
-    friend Mat4f operator*(Mat4f left, const double &right);
+    friend Mat4f operator*(Mat4f left, const float &right);
 
     void multiply(const Mat4f &other);
     void multiplyLeft(const Mat4f &other);

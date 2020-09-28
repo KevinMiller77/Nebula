@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Graphics/Texture.h>
+#include <Core/NebulaCommon.h>
 
-typedef unsigned int GLenum;
+typedef uint32 GLenum;
 
 namespace Nebula
 {

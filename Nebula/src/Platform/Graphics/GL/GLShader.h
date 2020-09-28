@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Graphics/Shader.h>
+// #include <Core/NebulaCommon.h>
 
-typedef unsigned int GLenum;
+typedef uint32_t GLenum;
 
 namespace Nebula
 {
@@ -43,7 +44,7 @@ namespace Nebula
         std::unordered_map<GLenum, std::string> PreProcess(const std::string& src);
         void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
 
-        unsigned int ID;
+        uint32_t ID;
         std::string name;
 
     };

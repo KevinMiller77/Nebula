@@ -16,12 +16,10 @@ struct Animation
 
     void LinearCurve(float ts)
     {
-        LOG_INF("Linear curve\n");
         if (reverse)
         {
             pos.x = end.x - velocity.x * timeSinceStart;
             pos.y = end.y - velocity.y * timeSinceStart;
-
         }
         else
         {
@@ -49,7 +47,6 @@ struct Animation
     {
         if (!running && Nebula::Input::IsKeyPressed(Nebula::KEY_SPACE))
         {
-            LOG_INF("Ran\n");
             running = true;
         }
         if (!running) return;
@@ -78,7 +75,7 @@ void NebulaStudioLayer::OnAttach()
     fbSpec.Height = 720;
     FrameBuffer = Nebula::Framebuffer::Create(fbSpec);
 
-    Camera = new Nebula::OrthographicCameraController(fbSpec.Width / fbSpec.Height, true);
+    Camera = new Nebula::OrthographicCameraController((float)fbSpec.Width / (float)fbSpec.Height, true);
     texture = Nebula::Texture2D::Create("Nebula/assets/textures/Missing.png");
 }
 float tsls = 0.0f;
@@ -88,8 +85,8 @@ void NebulaStudioLayer::OnUpdate(float ts)
         ViewportSize.x > 0.0f && ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
         (spec.Width != ViewportSize.x || spec.Height != ViewportSize.y))
     {
-        FrameBuffer->Resize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
-        Camera->OnResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
+        FrameBuffer->Resize((uint32)ViewportSize.x, (uint32)ViewportSize.y);
+        Camera->OnResize(ViewportSize.x, ViewportSize.y);
     }
 
     if (m_ViewportFocused)
@@ -108,7 +105,7 @@ void NebulaStudioLayer::OnUpdate(float ts)
 
     Nebula::Renderer2D::BeginScene(Camera->GetCamera());
 
-    Nebula::Renderer2D::DrawRotatedQuad(Vec3f(BoxAni.pos.x, BoxAni.pos.y, 1.0f), Vec2f(0.5f, 0.5f), rotation * (PI/ 180.0f), Vec4f(0.2, 0.4, 0.9, BoxAni.pos.z));
+    Nebula::Renderer2D::DrawRotatedQuad(Vec3f(BoxAni.pos.x, BoxAni.pos.y, 1.0f), Vec2f(0.5f, 0.5f), rotation * (PI/ 180.0f), Vec4f(0.2f, 0.4f, 0.9f, BoxAni.pos.z));
     // Nebula::Renderer2D::DrawRotatedQuad(Vec3f(0.5, -0.5, 1.0f), Vec2f(0.4, 0.6), 45.0f * (PI/ 180.0f), Vec4f(0.2, 0.4, 0.9, 1.0));
 
     Nebula::Renderer2D::EndScene();

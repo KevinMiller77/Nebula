@@ -96,7 +96,7 @@ namespace Nebula {
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		m_ZoomLevel -= e.GetYOffset() * 0.05f;
-		m_ZoomLevel = m_ZoomLevel <= 0.15 ? 0.15 : m_ZoomLevel;
+		m_ZoomLevel = m_ZoomLevel <= 0.15f ? 0.15f : m_ZoomLevel;
 		m_Camera->SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}

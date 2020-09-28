@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Graphics/VertexArray.h>
+#include <Core/NebulaCommon.h>
 
 namespace Nebula
 {
@@ -19,8 +20,8 @@ namespace Nebula
         virtual const std::vector<VertexBuffer*> GetVertexBuffers() const override { return vertexBuffers; }
         virtual const IndexBuffer* GetIndexBuffer() const override { return indexBuffer; }
     private:
-        unsigned int ID;
-        unsigned int indexPosition = 0;
+        uint32 ID;
+        uint32 indexPosition = 0;
         std::vector<VertexBuffer*> vertexBuffers;
         IndexBuffer* indexBuffer;
 

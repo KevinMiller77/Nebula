@@ -60,7 +60,7 @@ namespace Nebula
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
-			size_t size = in.tellg();
+			size_t size = (size_t)in.tellg();
 			if (size != -1)
 			{
 				result.resize(size);
@@ -218,7 +218,7 @@ namespace Nebula
         GLint location = glGetUniformLocation(ID, name.c_str());
 		glUniform1i(location, value);
 	}
-    void GLShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count)
+    void GLShader::UploadUniformIntArray(const std::string& name, int* values, unsigned int count)
 	{
         GLint location = glGetUniformLocation(ID, name.c_str());
 		glUniform1iv(location, count, values);

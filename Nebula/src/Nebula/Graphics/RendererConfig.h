@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RendererAPI.h"
+#include <Core/NebulaCommon.h>
 
 namespace Nebula
 {
@@ -14,7 +15,7 @@ namespace Nebula
             m_API->Init();
         }
         
-        static void SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+        static void SetViewport(uint32 x, uint32 y, uint32 width, uint32 height)
         {
             m_API->SetViewport(x, y, width, height);
         }
@@ -29,7 +30,7 @@ namespace Nebula
             m_API->Clear();
         }
 
-        static void DrawIndexed(const VertexArray* vertexArray, unsigned int indexCount = 0)
+        static void DrawIndexed(const VertexArray* vertexArray, uint32 indexCount = 0)
         {
             m_API->DrawIndexed(vertexArray, indexCount);
         }

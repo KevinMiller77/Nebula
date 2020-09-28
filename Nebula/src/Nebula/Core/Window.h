@@ -8,6 +8,8 @@
 #include <Events/WindowEvent.h>
 #include <Graphics/GraphicsContext.h>
 
+#include <Core/NebulaCommon.h>
+
 namespace Nebula
 {
 	//Information a generic window will need for construction
@@ -16,10 +18,10 @@ namespace Nebula
 		bool windowed;
 
 		const char* Title;
-		unsigned int Width;
-		unsigned int Height;
+		uint32 Width;
+		uint32 Height;
 
-		WindowInfo(const char* title = "Nebula Editor", unsigned int width = 1920, unsigned int height = 1080)
+		WindowInfo(const char* title = "Nebula Editor", uint32 width = 1920, uint32 height = 1080)
 			: Title(title), Width(width), Height(height) {}
 	};
 
@@ -37,11 +39,11 @@ namespace Nebula
 
 		virtual void OnUpdate() = 0;
 
-		virtual unsigned int GetWidth() const = 0;
-		virtual unsigned int GetHeight() const = 0;
+		virtual uint32 GetWidth() const = 0;
+		virtual uint32 GetHeight() const = 0;
 		
-		virtual unsigned int* GetWidthPtr() const = 0;
-		virtual unsigned int* GetHeightPtr() const = 0;
+		virtual uint32* GetWidthPtr() const = 0;
+		virtual uint32* GetHeightPtr() const = 0;
 
 		// Window attributes
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;

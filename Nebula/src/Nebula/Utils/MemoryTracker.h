@@ -1,13 +1,14 @@
 #pragma once
 
 #include <memory>
+#include <Core/NebulaCommon.h>
 namespace Nebula
 {
     class MemoryMetrics
     {
     private:
         //Total memory tracked with the tracker
-        unsigned int currentMemoryUsed;
+        uint32 currentMemoryUsed;
         //Memory tracked with the current tracker
         long int trackingMemoryUsed;
 
@@ -28,6 +29,6 @@ namespace Nebula
         void track();
         long int doneTracking();
         
-        unsigned int get();
+        uint32 get();
     };
 }

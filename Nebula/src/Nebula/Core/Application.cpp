@@ -33,7 +33,7 @@ namespace Nebula
 
     Application::~Application()
     {
-        for (int i = 0; i < EngLayerStack.GetSize(); i++)
+        for (uint32 i = 0; i < EngLayerStack.GetSize(); i++)
         {
             if (EngLayerStack[i] == imGuiLayer)
             {
@@ -42,7 +42,7 @@ namespace Nebula
             delete EngLayerStack[i];
         }
         
-    //    delete childInstance;
+       delete childInstance;
     }
 
     void Application::EngineSwap()
@@ -87,7 +87,7 @@ namespace Nebula
 
     void Application::OnUpdate(float ts)
     {
-        unsigned int newUpdate = ups.FrameKeep();
+        uint32 newUpdate = ups.FrameKeep();
         
         for (Layer* layer : EngLayerStack)
         {

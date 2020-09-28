@@ -4,9 +4,11 @@
 #include <Core/PlatformInfo.h>
 #include <Core/LayerStack.h>
 #include <Core/Window.h>
+#include <Core/NebulaCommon.h>
 #include <Utils/Timer.h>
 #include <Utils/Logging.h>
 #include <ImGui/ImGuiLayer.h>
+
 
 #include <stdio.h>
 #include <string>

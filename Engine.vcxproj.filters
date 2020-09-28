@@ -72,6 +72,9 @@
     <ClInclude Include="Nebula\src\Nebula\Core\LayerStack.h">
       <Filter>src\Nebula\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Nebula\src\Nebula\Core\NebulaCommon.h">
+      <Filter>src\Nebula\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Nebula\src\Nebula\Core\PlatformInfo.h">
       <Filter>src\Nebula\Core</Filter>
     </ClInclude>

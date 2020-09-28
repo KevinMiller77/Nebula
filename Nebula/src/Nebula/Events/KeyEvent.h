@@ -28,7 +28,7 @@ namespace Nebula
 
 		const char* ToString() const override
 		{
-			char* ss;
+			char* ss = {};
 			sprintf(ss, "KeyPressedEvent: %d ( %d repeats)\n", keyCode, repeatCount);
 			return ss;
 		}
@@ -44,7 +44,7 @@ namespace Nebula
 
 		const char* ToString() const override
 		{
-			char* ss;
+			char* ss = {};
 			sprintf(ss, "KeyReleasedEvent: %d\n", keyCode);
 			return ss;
 		}

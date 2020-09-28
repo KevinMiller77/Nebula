@@ -101,6 +101,7 @@
     <ClInclude Include="Nebula\src\Nebula\Core\Input.h" />
     <ClInclude Include="Nebula\src\Nebula\Core\Layer.h" />
     <ClInclude Include="Nebula\src\Nebula\Core\LayerStack.h" />
+    <ClInclude Include="Nebula\src\Nebula\Core\NebulaCommon.h" />
     <ClInclude Include="Nebula\src\Nebula\Core\PlatformInfo.h" />
     <ClInclude Include="Nebula\src\Nebula\Core\Window.h" />
     <ClInclude Include="Nebula\src\Nebula\Events\Event.h" />

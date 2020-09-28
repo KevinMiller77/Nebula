@@ -7,6 +7,7 @@
 
 #include <Core/Window.h>
 #include <Graphics/GraphicsContext.h>
+#include <Core/NebulaCommon.h>
 
 
 struct GLFWwindow;
@@ -17,7 +18,7 @@ namespace Nebula
     struct WindowsData
     {
         using EventCallbackFn = std::function<void(Event&)>;
-        unsigned int width, height;
+        uint32 width, height;
         int w_width, w_height;
         int windowed_x, windowed_y;
         bool windowed;
@@ -38,12 +39,12 @@ namespace Nebula
         
         void OnUpdate() override;
 
-        unsigned int GetWidth() const override;
-        unsigned int GetHeight() const override;
+        uint32 GetWidth() const override;
+        uint32 GetHeight() const override;
 
         
-        unsigned int* GetWidthPtr() const override;
-        unsigned int* GetHeightPtr() const override;
+        uint32* GetWidthPtr() const override;
+        uint32* GetHeightPtr() const override;
 
         // Window attributes
         inline void SetEventCallback(const EventCallbackFn& callback) override { data.EventCallback = callback; data.callbackSet = true; }
@@ -62,7 +63,7 @@ namespace Nebula
     private:
         GLFWwindow* window;
         GraphicsContext* context;
-        unsigned int GLFWWinCount;
+        uint32 GLFWWinCount;
         WindowInfo info;
 
     };

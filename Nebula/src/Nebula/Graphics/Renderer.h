@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Core/NebulaCommon.h>
 #include <Math/math.h>
 
 #include "Camera.h"
@@ -16,7 +17,7 @@ namespace Nebula
         static void Init();
         static void Shutdown();
 
-        static void OnWindowResize(unsigned int w, unsigned int h);
+        static void OnWindowResize(uint32 w, uint32 h);
 
         static void BeginScene(Camera camera);
         static void EndScene();
