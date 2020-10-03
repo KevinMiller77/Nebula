@@ -1,17 +1,17 @@
-**/.txt
-**/.sln
-**/.vcxproj
-**/.exe
-**/.ilk
-**/.pdb
-**/.obj
-**/.o
-**/Makefile
-**/*.xcworkspace
-**/*.xcodeproj
-**/*.plist
-**/*.DS_Store
-**/.DS_Store
+*.txt
+*.sln
+*.vcxproj
+*.exe
+*.ilk
+*.pdb
+*.obj
+*.o
+*.Makefile
+*.xcworkspace
+*.xcodeproj
+*.plist
+*.DS_Store
+*.DS_Store
 
 
 console.txt
