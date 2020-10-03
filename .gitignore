@@ -1,6 +1,7 @@
 *.txt
 *.sln
 *.vcxproj
+*.vcxproj.*
 *.exe
 *.ilk
 *.pdb
