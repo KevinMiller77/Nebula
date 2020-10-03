@@ -16,8 +16,10 @@ namespace Nebula
 		static const uint32_t MaxQuads = 20000;
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
-		static const uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
 
+		// TODO: Check actual number on machine
+		static const uint32_t MaxTextureSlots = 32; 
+		
 		VertexArray* QuadVertexArray;
 		VertexBuffer* QuadVertexBuffer;
 		Shader* TextureShader;
@@ -81,7 +83,8 @@ namespace Nebula
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.TextureShader = Shader::Create("Nebula/assets/shaders/Texture.glsl");
+		//TODO: Material system that handles shaders
+		s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
@@ -163,7 +166,7 @@ namespace Nebula
 	{
 		Mat4f translation = Mat4f::translation(position);
 		Mat4f scale = Mat4f::scale(Vec3f(size.x, size.y, 1.0f));
-		Mat4f transform = translation * scale;
+		Mat4f transform = scale * translation;
 
 		
 		DrawQuad(transform, color);
@@ -178,7 +181,7 @@ namespace Nebula
 	{
 		Mat4f translation = Mat4f::translation(position);
 		Mat4f scale = Mat4f::scale(Vec3f(size.x, size.y, 1.0f));
-		Mat4f transform = translation * scale;
+		Mat4f transform = scale * translation;
 
 		DrawQuad(transform, texture, tilingFactor, tintColor);
 	}
@@ -264,7 +267,7 @@ namespace Nebula
 		Mat4f translation = Mat4f::translation(position);
 		Mat4f scale = Mat4f::scale(Vec3f(size.x, size.y, 1.0f));
 		Mat4f rot = Mat4f::rotation(rotation, Vec3f(0,0,1));
-		Mat4f transform = translation * rot * scale;
+		Mat4f transform = rot * scale * translation;
 
 		DrawQuad(transform, color);
 	}
@@ -279,7 +282,7 @@ namespace Nebula
 		Mat4f translation = Mat4f::translation(position);
 		Mat4f scale = Mat4f::scale(Vec3f(size.x, size.y, 1.0f));
 		Mat4f rot = Mat4f::rotation(rotation, Vec3f(0,0,1));
-		Mat4f transform = translation * rot * scale;
+		Mat4f transform = rot * scale * translation;
 
 		DrawQuad(transform, texture, tilingFactor, tintColor);
 	}

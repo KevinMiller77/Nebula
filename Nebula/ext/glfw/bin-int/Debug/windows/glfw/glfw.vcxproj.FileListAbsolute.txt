@@ -1,2 +1,0 @@
-C:\Users\kevin\Dev\Nebula\Nebula\ext\glfw\bin\Debug\windows\glfw\glfw.pdb
-C:\Users\kevin\Dev\Nebula\Nebula\ext\glfw\bin-int\Debug\windows\glfw\glfw.pdb

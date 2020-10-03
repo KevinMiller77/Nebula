@@ -15,7 +15,7 @@ namespace Nebula
 	//Information a generic window will need for construction
 	struct WindowInfo
 	{
-		bool windowed;
+		bool windowed = true;
 
 		const char* Title;
 		uint32 Width;

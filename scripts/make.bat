@@ -84,9 +84,9 @@ REM Clean
 PUSHD %~DP0
 PUSHD ..\
 
-ECHO - Cleaning up 
+ECHO - (Full) Cleaning up 
 RMDIR /S /Q bin bin-int .vs >nul 2>&1
-DEL /Q *.exe *.ilk *.pdb *.sln *.vcxproj* >nul 2>&1
+DEL /Q *.exe *.ilk *.pdb *.sln *.vc* >nul 2>&1
 ECHO - Done Cleaning 
 ECHO.
 
@@ -98,12 +98,12 @@ REM ----------------------------------------------------------------------------
 :NebRun
 PUSHD %~DP0
 PUSHD ..\
-IF NOT EXIST bin\Debug\windows\Engine\Engine.exe (
+IF NOT EXIST bin\Debug\windows\NebulaStudio\NebulaStudio.exe (
     ECHO !! You have not compiled the application yet or complilation was unsuccessful !!
     ECHO.
     EXIT /B 0
 )
-START /WAIT bin\Debug\windows\Engine\Engine.exe
+START /WAIT bin\Debug\windows\NebulaStudio\NebulaStudio.exe
 EXIT /B 0
 
 REM -----------------------------------------------------------------------------

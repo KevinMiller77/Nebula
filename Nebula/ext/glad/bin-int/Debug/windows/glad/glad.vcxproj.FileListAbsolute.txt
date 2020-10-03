@@ -1,2 +1,0 @@
-C:\Users\kevin\Dev\Nebula\Nebula\ext\glad\bin\Debug\windows\glad\glad.pdb
-C:\Users\kevin\Dev\Nebula\Nebula\ext\glad\bin-int\Debug\windows\glad\glad.pdb

@@ -1,2 +1,0 @@
-C:\Users\kevin\Dev\Nebula\Nebula\ext\freetype\bin\Debug\windows\freetype\freetype.pdb
-C:\Users\kevin\Dev\Nebula\Nebula\ext\freetype\bin-int\Debug\windows\freetype\freetype.pdb

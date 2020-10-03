@@ -15,15 +15,12 @@
 
 
 console.txt
-**/*.xcodeproj/*
-**/bin/*
-**/bin-int/**
-**/Products/**
+*.xcodeproj/
+bin/
+bin-int/
+Products/
 x64/*
 Debug/*
 Release/*
 ext/freetype/bin
-Nebula/ext/**/bin/**
-Nebula/ext/**/bin-int/**
-bin/*
 .vs/*

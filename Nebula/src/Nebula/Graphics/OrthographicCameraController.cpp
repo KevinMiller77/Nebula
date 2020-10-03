@@ -64,9 +64,7 @@ namespace Nebula {
 
 	Mat4f OrthographicCameraController::GetTransform()
 	{
-		Mat4f transform = Mat4f(1.0f);
-		Mat4f::translate(transform, m_CameraPosition);
-		Mat4f::rotate(transform, m_CameraRotation, Vec3f(0,0,1));
+		Mat4f transform = Mat4f(1.0f) * Mat4f::rotation(PI2R_FACTOR * m_CameraRotation, Vec3f(0,0,1)) * Mat4f::translation(m_CameraPosition);
 		return transform;
 	}
 
