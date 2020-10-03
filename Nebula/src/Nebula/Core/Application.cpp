@@ -39,7 +39,7 @@ namespace Nebula
             {
                 continue;
             }
-            delete EngLayerStack[i];
+            EngLayerStack.erase(i);
         }
         
        delete childInstance;

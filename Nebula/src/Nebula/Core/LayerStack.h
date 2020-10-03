@@ -24,6 +24,8 @@ namespace Nebula
         std::vector<Layer*>::const_reverse_iterator rbegin() const { return layers.rbegin(); }
         std::vector<Layer*>::const_reverse_iterator rend() const { return layers.rend(); }
 
+        void erase(int index) { layers.erase(layers.begin() + index); }
+
         Layer* operator[](int index) {return layers[index];}
 
         unsigned int GetSize() { return layers.size(); }

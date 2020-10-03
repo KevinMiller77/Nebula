@@ -29,6 +29,7 @@ public:
     Nebula::Texture2D* texture = nullptr;
 
     NebulaStudioLayer() {};
+    ~NebulaStudioLayer() = default;
 
     virtual void OnAttach() override;
     virtual void OnUpdate(float ts) override;
