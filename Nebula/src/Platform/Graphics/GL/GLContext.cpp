@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
+#include <Nebula_pch.h>
 
 namespace Nebula
 {
@@ -13,6 +13,7 @@ namespace Nebula
 
     void GLContext::Init()
     {
+		NEB_PROFILE_FUNCTION();
         glfwMakeContextCurrent(window);
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         {
@@ -32,6 +33,7 @@ namespace Nebula
 
     void GLContext::SwapBuffers()
     {
+		NEB_PROFILE_FUNCTION();
         glfwSwapBuffers(window);
     }
 

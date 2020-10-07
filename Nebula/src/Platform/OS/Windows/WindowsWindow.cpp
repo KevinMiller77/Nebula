@@ -3,6 +3,8 @@
 #include <Core/PlatformInfo.h>
 #include <GLFW/glfw3.h>
 
+#include <Nebula_pch.h>
+
 
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 
@@ -32,6 +34,7 @@ namespace Nebula
     WindowsWindow::WindowsWindow(WindowInfo inf)
         : context(nullptr), GLFWWinCount(0)
     {
+        NEB_PROFILE_FUNCTION();
         info = inf;
         data.height = info.Height; data.width = info.Width;
 
@@ -174,6 +177,7 @@ namespace Nebula
 
     void WindowsWindow::OnUpdate()
     {
+        NEB_PROFILE_FUNCTION();
         if (data.windowed)
         {
             data.w_width = data.width;
@@ -206,6 +210,7 @@ namespace Nebula
 
     void WindowsWindow::ShutDown()
     {
+        NEB_PROFILE_FUNCTION();
         glfwDestroyWindow(window);
         glfwTerminate();
     }

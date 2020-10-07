@@ -11,13 +11,52 @@ void NebulaStudioLayer::OnAttach()
     fbSpec.Height = 720;
     FrameBuffer = Nebula::Framebuffer::Create(fbSpec);
 
-    Camera = new Nebula::OrthographicCameraController((float)fbSpec.Width / (float)fbSpec.Height);
     texture = Nebula::Texture2D::Create("assets/textures/Missing.png");
     
-    quads.push_back(new QuadInfo("Textured", texture));
-    quads.push_back(new QuadInfo("No Texture"));
-    quads[1]->Pos = Vec3f(-1.0f, 1.0f, 0.0f);
-    quads[1]->Color = Vec4f(0.2f, 0.5f, 0.5f, 1.0f);
+    // quads.push_back(new QuadInfo("Textured", texture));
+    // quads.push_back(new QuadInfo("No Texture"));
+    // quads[1]->Pos = Vec3f(-1.0f, 1.0f, 0.0f);
+    // quads[1]->Color = Vec4f(0.2f, 0.5f, 0.5f, 1.0f);
+
+    CameraEntity = Scene.CreateEntity("Camera Entity");
+    CameraEntity.AddComponent<Nebula::CameraComponent>();
+
+    class CameraController : public Nebula::ScriptableEntity
+    {
+    public:
+        virtual void OnCreate() override
+        {
+            auto& transform = GetComponent<Nebula::TransformComponent>().Transform;
+            transform[3][0] = rand() % 10 - 5.0f;
+        }
+
+        virtual void OnDestroy() override
+        {
+        }
+
+        virtual void OnUpdate(float ts) override
+        {
+            auto& transform = GetComponent<Nebula::TransformComponent>().Transform;
+
+            float speed = 5.0f;
+
+            if (Nebula::Input::IsKeyPressed(Nebula::KeyCode::A))
+                transform[3][0] -= speed * ts;
+            if (Nebula::Input::IsKeyPressed(Nebula::KeyCode::D))
+                transform[3][0] += speed * ts;
+            if (Nebula::Input::IsKeyPressed(Nebula::KeyCode::W))
+                transform[3][1] += speed * ts;
+            if (Nebula::Input::IsKeyPressed(Nebula::KeyCode::S))
+                transform[3][1] -= speed * ts;
+        }
+    };
+
+    CameraEntity.AddComponent<Nebula::NativeScriptComponent>().Bind<CameraController>();
+
+    auto quad1 = Scene.CreateEntity("First square");
+    quad1.AddComponent<Nebula::SpriteRendererComponent>(texture, Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+
+    SceneHierarchyPanel.SetContext(&Scene);
 }
 float tsls = 0.0f;
 void NebulaStudioLayer::OnUpdate(float ts)
@@ -26,65 +65,30 @@ void NebulaStudioLayer::OnUpdate(float ts)
         ViewportSize.x > 0.0f && ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
         (spec.Width != ViewportSize.x || spec.Height != ViewportSize.y))
     {
-        FrameBuffer->Resize((uint32)ViewportSize.x, (uint32)ViewportSize.y);
-        Camera->OnResize(ViewportSize.x, ViewportSize.y);
+        FrameBuffer->Resize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
+        Scene.OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
     }
 
-    if (m_ViewportFocused)
-    {
-        Camera->OnUpdate(ts);
-    }
 
     Nebula::RendererConfig::Clear();
     FrameBuffer->Bind();
     Nebula::RendererConfig::Clear();
 
-    Nebula::Renderer2D::BeginScene(Camera->GetCamera());
-
-    for (QuadInfo* quad : quads)
-    {
-        if (quad->Texture != nullptr)
-        {
-            quad->Rotation != 0 ? Nebula::Renderer2D::DrawRotatedQuad(quad->Pos, quad->Size, quad->Rotation, quad->Texture, 2.0f, quad->Color) : Nebula::Renderer2D::DrawQuad(quad->Pos, quad->Size, quad->Texture, 1.0f, quad->Color);
-        }
-        else
-        {
-            quad->Rotation != 0 ? Nebula::Renderer2D::DrawRotatedQuad(quad->Pos, quad->Size, quad->Rotation, quad->Color) : Nebula::Renderer2D::DrawQuad(quad->Pos, quad->Size, quad->Color);
-        }
-        
-    }
-    Nebula::Renderer2D::EndScene();
+    Scene.OnUpdate(ts);
 
     FrameBuffer->Unbind();   
 }
 
 void NebulaStudioLayer::OnImGuiRender()
 {
-    ImGui::Begin("Props");
-    ImGui::Text("These are your quads");
-    for (int i = 0; i < 2; i++)
-    {
-        QuadInfo* quad = quads[i];
-
-        ImGui::PushID(std::string(quad->Name).c_str());
-
-        ImGui::Separator();
-        ImGui::Text("Quad: %s", quad->Name);
-        ImGui::SliderFloat3("Pos", quad->Pos.elements, -2.0f, 2.0f);
-        ImGui::SliderFloat2("Size", quad->Size.elements, 0.1f, 2.0f);
-        ImGui::SliderAngle("Rotation", &(quad->Rotation));
-        ImGui::ColorEdit4("Color", quad->Color.elements);        
-
-        ImGui::PopID();
-    }
-    ImGui::End();
+    SceneHierarchyPanel.OnImGuiRender();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
     ImGui::Begin("Viewport");
 
-    m_ViewportFocused = ImGui::IsWindowFocused();
-    m_ViewportHovered = ImGui::IsWindowHovered();
-    Nebula::Application::Get()->GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+    ViewportFocused = ImGui::IsWindowFocused();
+    ViewportHovered = ImGui::IsWindowHovered();
+    Nebula::Application::Get()->GetImGuiLayer()->BlockEvents(!ViewportFocused || !ViewportHovered);
 
     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
     ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -100,5 +104,4 @@ void NebulaStudioLayer::OnImGuiRender()
 
 void NebulaStudioLayer::OnEvent(Nebula::Event& e)
 {
-    Camera->OnEvent(e);
 }

@@ -1,6 +1,7 @@
 #include "GLVertexArray.h"
 
 #include <glad/glad.h>
+#include <Nebula_pch.h>
 
 namespace Nebula
 {
@@ -47,6 +48,7 @@ namespace Nebula
 
     void GLVertexArray::AddVertexBuffer(VertexBuffer* vertexBuffer) 
 	{
+		NEB_PROFILE_FUNCTION();
 		if(!vertexBuffer->GetLayout().GetElements().size())
         {
             LOG_ERR("Vertex Buffer has no layout!\n");

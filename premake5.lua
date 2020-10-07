@@ -17,7 +17,7 @@ workspace "Nebula"
         include "Nebula/ext/glfw"
         include "Nebula/ext/glad"
         include "Nebula/ext/imgui"
-        include "Nebula/ext/freetype"
+        -- include "Nebula/ext/freetype"
         group ""
         
 project "NebulaEngine"
@@ -28,19 +28,20 @@ project "NebulaEngine"
         
         targetdir ("bin/" .. outputdir .. "/%{prj.name}")
         objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-        
+
+        -- pchheader("Nebula/Nebula_pch.h")
+        -- pchsource("Nebula/src/Nebula_pch.h")
+
     files
     {
         "Nebula/src/**.h",
         "Nebula/src/**.cpp",
-        "Nebula/ext/stb_image/**.cpp",
-        "Nebula/ext/freetype-gl/**.c"
+        "Nebula/ext/stb_image/**.cpp"
     }
 
     defines
     {
-        "_CRT_SECURE_NO_WARNINGS",
-        "FT2_BUILD_LIBRARY"
+        "_CRT_SECURE_NO_WARNINGS"
     }
 
     sysincludedirs
@@ -51,26 +52,22 @@ project "NebulaEngine"
         "Nebula/include",
         "Nebula/ext/imgui",
 		"Nebula/ext/glfw/include",
-        "Nebula/ext/glad/include",
-        "Nebula/ext/freetype/include"
+        "Nebula/ext/glad/include"
     }
 
     links
     {
         "glad",
         "glfw",
-        "imgui",
-        "freetype"
+        "imgui"
+        -- "freetype"
     }
 
     filter "system:windows"
         systemversion "latest"
         links
         {
-            "user32", 
-            "gdi32", 
-            "opengl32", 
-            "shell32"
+            "opengl32"
         }
 
     filter "system:macosx"
@@ -142,6 +139,7 @@ project "NebulaStudio"
         "NebulaStudio/src/Nebula",
         "NebulaStudio/include",
         "Nebula",
+        "Nebula/ext/imgui",
         "Nebula/include",
         "Nebula/src/Nebula"
     }
@@ -157,8 +155,7 @@ project "NebulaStudio"
         {
             "user32", 
             "gdi32", 
-            "opengl32",
-            "user32"
+            "shell32"
         }
 
     filter "system:macosx"

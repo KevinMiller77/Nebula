@@ -2,7 +2,7 @@
 
 #include <Utils/Logging.h>
 #include <glad/glad.h>
-
+#include <Nebula_pch.h>
 namespace Nebula
 {
     static const uint32 C_MaxFrameBufferSize = 8192;
@@ -10,10 +10,12 @@ namespace Nebula
     GLFramebuffer::GLFramebuffer(const FramebufferSpecification& spec)
         :   Spec(spec)
     {
+		NEB_PROFILE_FUNCTION();
         Invalidate();
 	}
     GLFramebuffer::~GLFramebuffer()
 	{
+		NEB_PROFILE_FUNCTION();
         glDeleteFramebuffers(1, &ID);
         glDeleteTextures(1, &ColorAttachment);
         glDeleteTextures(1, &DepthAttachment);
@@ -61,6 +63,7 @@ namespace Nebula
 
     void GLFramebuffer::Resize(uint32 width, uint32 height)
 	{
+		NEB_PROFILE_FUNCTION();
         if (width == 0 || height == 0 || width > C_MaxFrameBufferSize || height > C_MaxFrameBufferSize)
 		{
 			LOG_WRN("Attempted to rezize framebuffer to %d, %d\n", width, height);

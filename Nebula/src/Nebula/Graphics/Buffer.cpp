@@ -3,6 +3,8 @@
 #include "RendererConfig.h"
 #include <Platform/Graphics/GL/GLBuffers.h>
 
+#include <Nebula_pch.h>
+
 namespace Nebula
 {
     VertexBuffer* VertexBuffer::Create(uint32_t size)

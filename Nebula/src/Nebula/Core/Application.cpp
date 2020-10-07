@@ -1,4 +1,3 @@
-#include "Application.h"
 #include "EntryPoint.h"
 
 #include <Nebula.h>
@@ -11,6 +10,7 @@ namespace Nebula
     Application::Application(Application* child)
         : childInstance(child)
     {
+		NEB_PROFILE_FUNCTION();
         LOG_INF("Making engine instance\n");
         if (curEngine != nullptr)
         {
@@ -33,6 +33,7 @@ namespace Nebula
 
     Application::~Application()
     {
+		NEB_PROFILE_FUNCTION();
         for (uint32 i = 0; i < EngLayerStack.GetSize(); i++)
         {
             if (EngLayerStack[i] == imGuiLayer)
@@ -41,12 +42,11 @@ namespace Nebula
             }
             EngLayerStack.erase(i);
         }
-        
-       delete childInstance;
     }
 
     void Application::EngineSwap()
     {
+		NEB_PROFILE_FUNCTION();
         if (curEngine == nullptr)
         {
             return;
@@ -77,6 +77,7 @@ namespace Nebula
 
     void Application::OnImGuiRender()
     {
+		NEB_PROFILE_FUNCTION();
         imGuiLayer->Begin();
         for (Layer* layer : EngLayerStack)
         {
@@ -87,6 +88,8 @@ namespace Nebula
 
     void Application::OnUpdate(float ts)
     {
+        NEB_PROFILE_FUNCTION();
+
         uint32 newUpdate = ups.FrameKeep();
         
         for (Layer* layer : EngLayerStack)
@@ -141,19 +144,32 @@ namespace Nebula
 
     void Application::Run()
     {
+        NEB_PROFILE_FUNCTION();
         while (running)
         {
-            float time = (float)glfwGetTime();
-            float ts = time - lastFrameTime;
-            lastFrameTime = time;
-
-            if (!minimized)
             {
-                OnUpdate(ts);
-                OnImGuiRender();
-            }
+                NEB_PROFILE_SCOPE("RunLoop");
+                float time = (float)glfwGetTime();
+                float ts = time - lastFrameTime;
+                lastFrameTime = time;
 
-            window->OnUpdate();
+                if (!minimized)
+                {
+                    {
+                        NEB_PROFILE_SCOPE("Update");
+                        OnUpdate(ts);
+                    }
+                    {
+                        NEB_PROFILE_SCOPE("ImGui Render");
+                        OnImGuiRender();
+                    }
+                }
+
+                {
+                    NEB_PROFILE_SCOPE("Window update");
+                    window->OnUpdate();
+                }
+            }
         }
     }
 }

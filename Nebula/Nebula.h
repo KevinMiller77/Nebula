@@ -29,6 +29,10 @@
 #include <Graphics/OrthographicCameraController.h>
 #include <Graphics/Framebuffer.h>
 
+#include <Scene/Scene.h>
+#include <Scene/Scriptable.h>
+#include <Scene/Components.h>
+
 #include <ext/imgui/imgui.h>
 
 

@@ -1,0 +1,1 @@
+{"otherData": {},"traceEvents":[{},{"cat":"function","dur":5,"name":"__thiscall Nebula::Application::~Application(void)","ph":"X","pid":0,"tid":12340,"ts":4128953246.000},{"cat":"function","dur":3757,"name":"void __thiscall Nebula::GLImGuiLayer::OnDetach(void)","ph":"X","pid":0,"tid":12340,"ts":4128953341.800}]}

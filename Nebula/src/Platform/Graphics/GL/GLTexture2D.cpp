@@ -3,12 +3,13 @@
 #include <stb_image/stb_image.h>
 #include <glad/glad.h>
 #include <Utils/Logging.h>
-
+#include <Nebula_pch.h>
 namespace Nebula
 {
     GLTexture2D::GLTexture2D(uint32_t width, uint32_t height)
 		: width(width), height(height)
 	{
+		NEB_PROFILE_FUNCTION();
 		IntFormat = GL_RGBA8;
 		DataFormat = GL_RGBA;
 
@@ -25,7 +26,8 @@ namespace Nebula
 	GLTexture2D::GLTexture2D(const std::string& path)
 		: path(path)
 	{
-
+		
+		NEB_PROFILE_FUNCTION();
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 		stbi_uc* data = nullptr;
@@ -74,6 +76,7 @@ namespace Nebula
 
 	void GLTexture2D::SetData(void* data, uint32_t size)
 	{
+		NEB_PROFILE_FUNCTION();
 		uint32_t bpp = DataFormat == GL_RGBA ? 4 : 3;
 		if(!(size == this->width * this->height * bpp)) LOG_ERR("Data must be entire texture!\n");
 		glTextureSubImage2D(ID, 0, 0, 0, this->width, this->height, DataFormat, GL_UNSIGNED_BYTE, data);

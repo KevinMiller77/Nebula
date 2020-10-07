@@ -1,8 +1,5 @@
 #pragma once
 
-#define local static
-#define global static
-
 //Common type defs
 typedef char                int8;
 typedef short               int16;

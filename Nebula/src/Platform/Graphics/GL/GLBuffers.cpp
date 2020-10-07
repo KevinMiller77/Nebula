@@ -1,6 +1,7 @@
 #include "GLBuffers.h"
 
 #include <glad/glad.h>
+#include <Nebula_pch.h>
 
 namespace Nebula
 {
@@ -11,7 +12,7 @@ namespace Nebula
 
 	GLVertexBuffer::GLVertexBuffer(uint32_t size)
 	{
-
+		NEB_PROFILE_FUNCTION();
 		glCreateBuffers(1, &ID);
 		glBindBuffer(GL_ARRAY_BUFFER, ID);
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
@@ -19,6 +20,8 @@ namespace Nebula
 
 	GLVertexBuffer::GLVertexBuffer(float* vertices, uint32_t size)
 	{
+		
+		NEB_PROFILE_FUNCTION();
 		glCreateBuffers(1, &ID);
 		glBindBuffer(GL_ARRAY_BUFFER, ID);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
@@ -41,6 +44,7 @@ namespace Nebula
 
 	void GLVertexBuffer::SetData(const void* data, uint32_t size)
 	{
+		NEB_PROFILE_FUNCTION();
 		glBindBuffer(GL_ARRAY_BUFFER, ID);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}
@@ -52,6 +56,7 @@ namespace Nebula
 	GLIndexBuffer::GLIndexBuffer(uint32_t* indices, uint32_t count)
 		: count(count)
 	{
+		NEB_PROFILE_FUNCTION();
 		glCreateBuffers(1, &ID);
 		
 		// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
@@ -62,6 +67,7 @@ namespace Nebula
 
 	GLIndexBuffer::~GLIndexBuffer()
 	{
+		NEB_PROFILE_FUNCTION();
 		glDeleteBuffers(1, &ID);
 	}
 
