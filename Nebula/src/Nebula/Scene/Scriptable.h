@@ -12,14 +12,14 @@ namespace Nebula {
 		template<typename T>
 		T& GetComponent()
 		{
-			return Entity.GetComponent<T>();
+			return EntityAttachedTo.GetComponent<T>();
 		}
 	protected:
 		virtual void OnCreate() {}
 		virtual void OnDestroy() {}
 		virtual void OnUpdate(float ts) {}
 	private:
-		Entity Entity;
+		Entity EntityAttachedTo;
 		friend class Scene;
 	};
 

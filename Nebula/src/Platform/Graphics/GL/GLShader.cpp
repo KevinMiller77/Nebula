@@ -130,7 +130,7 @@ namespace Nebula
 				GLint maxLength = 0;
 				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 
-				std::vector<GLchar> infoLog(maxLength);
+				std::vector<GLchar> infoLog = std::vector<GLchar>(maxLength);
 				glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
 
 				glDeleteShader(shader);

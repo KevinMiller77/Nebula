@@ -13,7 +13,7 @@ namespace Nebula
 		return new WindowsWindow(inf);
 	#endif
 	#ifdef NEB_PLATFORM_LINUX
-		return new LinuxWindow(inf);
+		return new WindowsWindow(inf);
 	#endif
 	#ifdef NEB_PLATFORM_MACOS
 		return new WindowsWindow(inf);

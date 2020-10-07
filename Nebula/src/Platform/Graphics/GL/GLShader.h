@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Graphics/Shader.h>
+#include <vector>
 // #include <Core/NebulaCommon.h>
 
 typedef uint32_t GLenum;

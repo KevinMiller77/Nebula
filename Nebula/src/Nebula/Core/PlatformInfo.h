@@ -45,9 +45,9 @@
 	#error "Unknown platform!"
 #endif // End of platform detection
 
-#ifdef NEB_PLATFORM_WINDOWS
-	#define NEB_GAPI_OPENGL
-#endif
+// #ifdef NEB_PLATFORM_WINDOWS
+#define NEB_GAPI_OPENGL
+// #endif
 
 #define BIT(x) (1 << x)
 

@@ -1,7 +1,7 @@
 #pragma once
 
+#include <Nebula_pch.h>
 #include "Scene.h"
-
 #include <entt/entt.hpp>
 
 namespace Nebula
@@ -18,9 +18,11 @@ namespace Nebula
 		{
 			if(HasComponent<T>())
             {
-             LOG_ERR("Entity already has component!");
+				#ifdef NEB_PLATFORM_WINDOWS
+             	LOG_ERR("Entity already has component!");
+				#endif
             }
-			return Scene->Registry.emplace<T>(EntityHandle, std::forward<Args>(args)...);
+			return CurScene->Registry.emplace<T>(EntityHandle, std::forward<Args>(args)...);
 		}
 
 		template<typename T>
@@ -28,15 +30,17 @@ namespace Nebula
 		{
 			if(!HasComponent<T>())
             {
-             LOG_ERR("Entity does not have component for grabbing!");
+				#ifdef NEB_PLATFORM_WINDOWS
+				LOG_ERR("Entity does not have component for grabbing!");
+				#endif
             }
-			return Scene->Registry.get<T>(EntityHandle);
+			return CurScene->Registry.get<T>(EntityHandle);
 		}
 
 		template<typename T>
 		bool HasComponent()
 		{
-			return Scene->Registry.has<T>(EntityHandle);
+			return CurScene->Registry.has<T>(EntityHandle);
 		}
 
 		template<typename T>
@@ -44,9 +48,11 @@ namespace Nebula
 		{
 			if(!HasComponent<T>())
             {
-             LOG_ERR("Entity does not have component for removal!");
+				#ifdef NEB_PLATFORM_WINDOWS
+				LOG_ERR("Entity does not have component for removal!");
+				#endif
             }
-			Scene->Registry.remove<T>(EntityHandle);
+			CurScene->Registry.remove<T>(EntityHandle);
 		}
 
 		operator bool() const { return EntityHandle != entt::null; }
@@ -54,7 +60,7 @@ namespace Nebula
 
 		bool operator==(const Entity& other) const
 		{
-			return EntityHandle == other.EntityHandle && Scene == other.Scene;
+			return EntityHandle == other.EntityHandle && CurScene == other.CurScene;
 		}
 
 		bool operator!=(const Entity& other) const
@@ -63,6 +69,6 @@ namespace Nebula
 		}
 	private:
 		entt::entity EntityHandle{ entt::null };
-		Scene* Scene = nullptr;
+		Scene* CurScene = nullptr;
 	};
 }

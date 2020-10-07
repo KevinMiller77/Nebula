@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Nebula/Core/PlatformInfo.h"
+#include <Core/PlatformInfo.h>
 
 #ifdef NEB_PLATFORM_WINDOWS
 	#ifndef NOMINMAX

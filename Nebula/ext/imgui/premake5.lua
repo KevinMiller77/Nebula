@@ -12,7 +12,8 @@ project "imgui"
         "imgui_demo.cpp",
         "imgui_draw.cpp",
         "imgui_widgets.cpp",
-        "examples/imgui_impl_glfw.cpp"
+        "examples/imgui_impl_glfw.cpp",
+        "examples/imgui_impl_opengl3.cpp"
     }
     sysincludedirs
     {
@@ -20,28 +21,27 @@ project "imgui"
         "../../include"
     }
     
-    filter "system:windows"
-        systemversion "latest"
-        files
-        {
-            "examples/imgui_impl_opengl3.cpp"
-        }
-    filter "system:linux"
-        systemversion "latest"
-        files
-        {
-            "examples/imgui_impl_opengl3.cpp"
-        }
-    filter "system:macosx"
-        systemversion "latest"
-        files
-        {
-            "examples/imgui_impl_metal.mm"
-        }
-        buildoptions
-        {
-            "-x objective-c++"
-        }
+    -- filter "system:windows"
+    --     systemversion "latest"
+    --     files
+    --     {
+    --     }
+    -- filter "system:linux"
+    --     systemversion "latest"
+    --     files
+    --     {
+    --         "examples/imgui_impl_opengl3.cpp"
+    --     }
+    -- filter "system:macosx"
+    --     systemversion "latest"
+    --     files
+    --     {
+    --         "examples/imgui_impl_metal.mm"
+    --     }
+    --     buildoptions
+    --     {
+    --         "-x objective-c++"
+    --     }
 
     filter "configurations:Debug"
         runtime "Debug"

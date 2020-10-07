@@ -1,5 +1,5 @@
 workspace "Nebula"
-    startproject "NebulaStudio"
+    startproject "NebulaEngine"
     configurations 
     { 
         "Debug",
@@ -21,7 +21,7 @@ workspace "Nebula"
         group ""
         
 project "NebulaEngine"
-        kind "StaticLib"
+        kind "ConsoleApp"
         language "C++"
         cppdialect "C++17"
         staticruntime "on"
@@ -36,12 +36,16 @@ project "NebulaEngine"
     {
         "Nebula/src/**.h",
         "Nebula/src/**.cpp",
-        "Nebula/ext/stb_image/**.cpp"
+        "Nebula/ext/stb_image/**.cpp",
+        "NebulaStudio/src/**.h",
+        "NebulaStudio/src/**.cpp"
     }
 
     defines
     {
-        "_CRT_SECURE_NO_WARNINGS"
+        "_CRT_SECURE_NO_WARNINGS",
+        "GLFW_SUPPLIED",
+        "_LIBS_SUPPLIED"
     }
 
     sysincludedirs
@@ -52,13 +56,21 @@ project "NebulaEngine"
         "Nebula/include",
         "Nebula/ext/imgui",
 		"Nebula/ext/glfw/include",
-        "Nebula/ext/glad/include"
+        "Nebula/ext/glad/include",
+        "NebulaStudio/src",
+        "NebulaStudio/src/Nebula",
+        "NebulaStudio/include"
     }
 
     links
     {
-        "glad",
+        "X11",
         "glfw",
+        "GLU",
+        "GL",
+        "dl",
+        "pthread",
+        "glad",
         "imgui"
         -- "freetype"
     }
@@ -107,89 +119,86 @@ project "NebulaEngine"
         optimize "on"
 
 
-project "NebulaStudio"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++17"
-    staticruntime "on"  
+-- project "NebulaStudio"
+--     kind "ConsoleApp"
+--     language "C++"
+--     cppdialect "C++17"
+--     staticruntime "on"  
     
     
-    targetname("NebulaStudio")
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+--     targetname("NebulaStudio")
+--     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+--     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    debugdir("./NebulaStudio")
+--     debugdir("./NebulaStudio")
     
 
-    files
-    {
-        "NebulaStudio/src/**.h",
-        "NebulaStudio/src/**.cpp"
-    }
+--     files
+--     {
+--         "NebulaStudio/src/**.h",
+--         "NebulaStudio/src/**.cpp"
+--     }
 
-    defines
-    {
-        "_CRT_SECURE_NO_WARNINGS",
-        "FT2_BUILD_LIBRARY"
-    }
+--     defines
+--     {
+--         "_CRT_SECURE_NO_WARNINGS",
+--         "FT2_BUILD_LIBRARY"
+--     }
 
-    sysincludedirs
-    {
-        "NebulaStudio/src",
-        "NebulaStudio/src/Nebula",
-        "NebulaStudio/include",
-        "Nebula",
-        "Nebula/ext/imgui",
-        "Nebula/include",
-        "Nebula/src/Nebula"
-    }
+--     sysincludedirs
+--     {
+--         "NebulaStudio/src",
+--         "NebulaStudio/src/Nebula",
+--         "NebulaStudio/include",
+--         "Nebula",
+--         "Nebula/ext/imgui",
+--         "Nebula/include",
+--         "Nebula/src/Nebula"
+--     }
 
-    links
-    {
-        "NebulaEngine"
-    }
+--     links
+--     {
+        
+--         "glfw",
+--         "glad",
+--         "imgui",
+--         "NebulaEngine"
+--     }
 
-    filter "system:windows"
-        systemversion "latest"
-        links
-        {
-            "user32", 
-            "gdi32", 
-            "shell32"
-        }
+--     filter "system:windows"
+--         systemversion "latest"
+--         links
+--         {
+--             "user32", 
+--             "gdi32", 
+--             "shell32"
+--         }
 
-    filter "system:macosx"
-        systemversion "latest"
-        links
-        {
-            "IOKit.framework", 
-            "OpenGL.framework",
-            "Cocoa.framework",
-            "CoreVideo.framework"
-        }
+--     filter "system:macosx"
+--         systemversion "latest"
+--         links
+--         {
+--             "IOKit.framework", 
+--             "OpenGL.framework",
+--             "Cocoa.framework",
+--             "CoreVideo.framework"
+--         }
 
 
-    filter "system:linux"
-        systemversion "latest"
-        defines
-        {
-            "GLFW_SUPPLIED",
-            "_LIBS_SUPPLIED"
-        }
-        links
-        {
-            "X11",
-            "GL",
-            "GLU",
-            "dl"
-        }
+--     filter "system:linux"
+--         systemversion "latest"
+        -- defines
+        -- {
+        --     "GLFW_SUPPLIED",
+        --     "_LIBS_SUPPLIED"
+        -- }
 
-    filter "configurations:Debug"
-        defines "NEB_DEBUG"
-        runtime "Debug"
-        symbols "on"
+--     filter "configurations:Debug"
+--         defines "NEB_DEBUG"
+--         runtime "Debug"
+--         symbols "on"
 
-    filter "configurations:Release"
-        defines "NEB_RELEASE"
-        runtime "Release"
-        optimize "on"
+--     filter "configurations:Release"
+--         defines "NEB_RELEASE"
+--         runtime "Release"
+--         optimize "on"

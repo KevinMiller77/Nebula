@@ -1,7 +1,7 @@
 #include "SceneHierarchyPanel.h"
 
+#include <Nebula_pch.h>
 #include <imgui.h>
-
 #include <Scene/Components.h>
 
 namespace Nebula {
@@ -68,7 +68,12 @@ namespace Nebula {
 
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
+
+			#ifdef NEB_PLATFORM_WINDOWS
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
+			#else
+			strcpy(buffer, tag.c_str());
+			#endif
 			if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
