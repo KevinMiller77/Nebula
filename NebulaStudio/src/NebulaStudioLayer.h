@@ -1,41 +1,35 @@
 #pragma once
 #include <Nebula.h>
-#include "SceneHierarchyPanel.h"
+#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/LogPanel.h"
 
-struct QuadInfo
+namespace Nebula
 {
-    QuadInfo(std::string_view name, Nebula::Texture2D* tex = nullptr) : Name(name), Texture(tex) {}
+    class NebulaStudioLayer : public Layer
+    {
+    public:
+        Scene Scene;
+        Entity CameraEntity;
 
-    std::string_view Name;
-    Vec3f Pos = {0.0f, 0.0f, 0.0f};
-    Vec2f Size = {1.0f, 1.0f};
-    float Rotation = 0;
-    Vec4f Color = {1.0f, 1.0f, 1.0f, 1.0f}; 
-    Nebula::Texture2D* Texture;
-};
+        static Vec4f clearColor;
+        
+        Framebuffer* FrameBuffer;
+        bool ViewportFocused = false, ViewportHovered = false;
+        Vec2f ViewportSize = {0.0f, 0.0f};
 
-class NebulaStudioLayer : public Nebula::Layer
-{
-public:
-    Nebula::Scene Scene;
-    Nebula::Entity CameraEntity;
+        Shader* shader = nullptr;
+        Texture2D* texture = nullptr;
 
-    static Vec4f clearColor;
-    
-    Nebula::Framebuffer* FrameBuffer;
-    bool ViewportFocused = false, ViewportHovered = false;
-    Vec2f ViewportSize = {0.0f, 0.0f};
+        NebulaStudioLayer() {};
+        ~NebulaStudioLayer() = default;
 
-    Nebula::Shader* shader = nullptr;
-    Nebula::Texture2D* texture = nullptr;
+        virtual void OnAttach() override;
+        virtual void OnUpdate(float ts) override;
+        virtual void OnImGuiRender() override;
+        virtual void OnEvent(Event& e) override;
 
-    NebulaStudioLayer() {};
-    ~NebulaStudioLayer() = default;
+        SceneHierarchyPanel SceneHierarchyPanel;
+        LogPanel Log;
+    };
 
-    virtual void OnAttach() override;
-    virtual void OnUpdate(float ts) override;
-    virtual void OnImGuiRender() override;
-    virtual void OnEvent(Nebula::Event& e) override;
-
-    Nebula::SceneHierarchyPanel SceneHierarchyPanel;
-};
+}

@@ -1,24 +1,27 @@
 
 #include "NebulaStudioLayer.h"
 
-// TODO: Make a seperate project containing this
-class Studio : public Nebula::Application
+namespace Nebula
 {
-public:
-    Studio() : Application(this)
+    class Studio : public Application
     {
-        window->SetVSync(true);
-        PushLayer(new NebulaStudioLayer());
-    }
-    ~Studio() = default;
-    
-    void OnGameUpdate() override
-    {
-        Nebula::RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);
-    }
-};
+    public:
+        Studio() : Application(this)
+        {
+            window->SetVSync(true);
+            window->SetIcon("assets/icon.png");
+            PushLayer(new NebulaStudioLayer());
+        }
+        ~Studio() = default;
+        
+        void OnGameUpdate() override
+        {
+            RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);
+        }
+    };
+}
 
 Nebula::Application* CreateApplication()
 {
-    return new Studio();
+    return new Nebula::Studio();
 }

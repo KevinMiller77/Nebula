@@ -38,28 +38,23 @@ namespace Nebula
 			});
 		}
 
-		// Render 2D
-		Camera* mainCamera = nullptr;
-		Mat4f* cameraTransform = nullptr;
+		auto view = Registry.view<TransformComponent, CameraComponent>();
+		for (auto entity : view)
 		{
-			auto view = Registry.view<TransformComponent, CameraComponent>();
-			for (auto entity : view)
+			auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+			
+			if (SceneMainCamera == nullptr || SceneMainCamera == &camera.Camera)
 			{
-				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-				
-				if (SceneMainCamera == nullptr || SceneMainCamera == &camera.Camera)
-				{
-                    SceneMainCamera = &camera.Camera;
-					mainCamera = &camera.Camera;
-					cameraTransform = &transform.Transform;
-					break;
-				}
-			}
+				SceneMainCamera = &camera.Camera;
+				SceneCameraTransform = transform.GetTransformation();
+				break;
+			}				
 		}
 
-		if (mainCamera)
+		// Render 2D
+		if (SceneMainCamera)
 		{
-			Renderer2D::BeginScene(mainCamera, *cameraTransform);
+			Renderer2D::BeginScene(SceneMainCamera, SceneCameraTransform);
 
 			auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
@@ -67,11 +62,11 @@ namespace Nebula
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
                 if (sprite.Texture == nullptr)
                 {
-                    Renderer2D::DrawQuad(transform, sprite.Color);
+                    Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Color);
                 }
                 else
                 {
-                    Renderer2D::DrawQuad(transform.Transform, (const Texture2D*&)sprite.Texture, sprite.TilingFactor, sprite.Color);
+                    Renderer2D::DrawQuad(transform.GetTransformation(), (const Texture2D*&)sprite.Texture, sprite.TilingFactor, sprite.Color);
                 }
                 
 			}
@@ -94,4 +89,17 @@ namespace Nebula
 				cameraComponent.Camera.SetViewportSize(width, height);
 		}
     }
+
+	bool Scene::IsPrimaryCamera(Entity cameraEntity)
+	{
+		if (!cameraEntity.HasComponent<CameraComponent>()) 
+		{
+			return false;
+		}
+		
+		auto camera = cameraEntity.GetComponent<CameraComponent>();
+
+		return SceneMainCamera == &camera.Camera;
+	}
+
 }

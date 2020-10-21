@@ -38,6 +38,49 @@ namespace Nebula {
 		ImGui::End();
 	}
 
+	void SceneHierarchyPanel::DrawVec3Control(std::string label, Vec3f& data)
+	{
+		ImGui::PushID(&data);
+		std::string labelOut = label + ":"; 
+		std::string placeholderStr = std::string(labelOut.size(), ' ');
+		
+		ImGui::Text("%s", labelOut.c_str()); 		ImGui::SameLine();
+		{
+
+			ImGui::PushID(&data.x);		
+			ImGui::PushItemWidth(50);
+
+			ImGui::Button("X");						ImGui::SameLine();
+			ImGui::DragFloat("", &data.x, 0.2f);	ImGui::SameLine();
+			
+			ImGui::PopItemWidth();
+			ImGui::PopID();
+		}
+		{
+			ImGui::PushID(&data.y);
+			ImGui::PushItemWidth(50);
+
+			ImGui::Button("Y");						ImGui::SameLine();
+			ImGui::DragFloat("", &data.y, 0.2f);	ImGui::SameLine();
+
+			ImGui::PopItemWidth();
+			ImGui::PopID();
+		}
+		{
+			ImGui::PushID(&data.z);
+			ImGui::PushItemWidth(50);
+
+			ImGui::Button("Z");						ImGui::SameLine();
+			ImGui::DragFloat("", &data.z, 0.2f);
+
+			ImGui::PopItemWidth();
+			ImGui::PopID();
+		}
+
+		ImGui::PopID();
+	}
+
+
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
@@ -69,18 +112,33 @@ namespace Nebula {
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
-			if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
+			
+			ImGui::PushID(&tag);
+			ImGui::Text(" Tag	:");
+			ImGui::SameLine();
+			if (ImGui::InputText("", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
 			}
+			
+			ImGui::PopID();
 		}
 
 		if (entity.HasComponent<TransformComponent>())
 		{
+			ImGui::Separator();
 			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
 			{
-				auto& transform = entity.GetComponent<TransformComponent>().Transform;
-				ImGui::DragFloat3("Position", transform.elements, 0.1f);
+				auto& transform = entity.GetComponent<TransformComponent>();
+
+				DrawVec3Control("Position", transform.Translation);
+				
+				Vec3f rot;
+				rot = transform.Rotation / Vec3f(PI2R_FACTOR, PI2R_FACTOR, PI2R_FACTOR);
+				DrawVec3Control("Rotation", rot);
+				transform.Rotation = rot * Vec3f(PI2R_FACTOR, PI2R_FACTOR, PI2R_FACTOR);
+
+				DrawVec3Control("Scale   ", transform.Scale);
 
 				ImGui::TreePop();
 			}
@@ -88,12 +146,11 @@ namespace Nebula {
 
 		if (entity.HasComponent<CameraComponent>())
 		{
+			ImGui::Separator();
 			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
 			{
 				auto& cameraComponent = entity.GetComponent<CameraComponent>();
 				auto& camera = cameraComponent.Camera;
-
-				ImGui::Checkbox("Primary", &cameraComponent.Primary);
 
 				const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
 				const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
@@ -117,17 +174,22 @@ namespace Nebula {
 
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 				{
-					float verticalFov = camera.GetPerspectiveVerticalFOV() / PI2R_FACTOR;
+					float verticalFov = camera.GetPerspectiveVerticalFOV();
 					if (ImGui::DragFloat("Vertical FOV", &verticalFov))
-						camera.SetPerspectiveVerticalFOV(verticalFov * PI2R_FACTOR);
+					{
+						camera.SetPerspectiveVerticalFOV(verticalFov);
+					}
+					float perspNear = camera.GetPerspectiveNearClip();
+					if (ImGui::DragFloat("Near", &perspNear))
+					{
+						camera.SetPerspectiveNearClip(perspNear);
+					}
 
-					float orthoNear = camera.GetPerspectiveNearClip();
-					if (ImGui::DragFloat("Near", &orthoNear))
-						camera.SetPerspectiveNearClip(orthoNear);
-
-					float orthoFar = camera.GetPerspectiveFarClip();
-					if (ImGui::DragFloat("Far", &orthoFar))
-						camera.SetPerspectiveFarClip(orthoFar);
+					float perspFar = camera.GetPerspectiveFarClip();
+					if(ImGui::DragFloat("Far", &perspFar))
+					{					
+						camera.SetPerspectiveFarClip(perspFar);
+					}
 				}
 
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)

@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -45,6 +46,8 @@ namespace Nebula
         
         uint32* GetWidthPtr() const override;
         uint32* GetHeightPtr() const override;
+
+		virtual void SetIcon(std::string filepath) override;
 
         // Window attributes
         inline void SetEventCallback(const EventCallbackFn& callback) override { data.EventCallback = callback; data.callbackSet = true; }

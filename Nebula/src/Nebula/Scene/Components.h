@@ -18,15 +18,20 @@ namespace Nebula
 
 	struct TransformComponent
 	{
-		Mat4f Transform { 1.0f };
+		Vec3f Translation 	= {	0.0f, 0.0f, 0.0f };
+		Vec3f Rotation		= { 0.0f, 0.0f, 0.0f };
+		Vec3f Scale			= { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const Mat4f & transform)
-			: Transform(transform) {}
+		TransformComponent(const Vec3f & translation)
+			: Translation(translation) {}
 
-		operator Mat4f& () { return Transform; }
-		operator const Mat4f& () const { return Transform; }
+		const Mat4f GetTransformation() const
+		{
+			Mat4f rot = Mat4f(1.0f) * Mat4f::rotation(Rotation.x, { 1.0f, 0.0f, 0.0f }) * Mat4f::rotation(Rotation.y, { 0.0f, 1.0f, 0.0f }) * Mat4f::rotation(Rotation.z, { 0.0f, 0.0f, 1.0f });
+			return Mat4f(1.0f) * Mat4f::scale(Scale) * rot * Mat4f::translation(Translation);
+		}
 	};
 
 	struct SpriteRendererComponent
@@ -46,7 +51,6 @@ namespace Nebula
 	struct CameraComponent
 	{
 		SceneCamera Camera;
-		bool Primary = true; // TODO: think about moving to Scene
 		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;

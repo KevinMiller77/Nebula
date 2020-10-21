@@ -1,5 +1,7 @@
 #include "WindowsWindow.h"
 
+#include <stb_image/stb_image.h>
+
 #include <Core/PlatformInfo.h>
 #include <GLFW/glfw3.h>
 
@@ -37,6 +39,13 @@ namespace Nebula
         NEB_PROFILE_FUNCTION();
         info = inf;
         data.height = info.Height; data.width = info.Width;
+
+        //Redirect cout and cin as well as cerr
+        freopen("debug/stdout.txt", "w", stdout);
+        freopen("debug/stdin.txt", "r+", stdin);
+        freopen("debug/stderr.txt", "w", stderr);
+        ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+
 
         LOG_INF("Creating window\n");
 
@@ -177,6 +186,9 @@ namespace Nebula
 
     void WindowsWindow::OnUpdate()
     {
+        fflush(stdout);
+        fflush(stderr);
+
         NEB_PROFILE_FUNCTION();
         if (data.windowed)
         {
@@ -232,5 +244,30 @@ namespace Nebula
     bool WindowsWindow::IsVSync() const
     {
         return data.VSync;
+    }
+
+    void WindowsWindow::SetIcon(std::string filepath)
+    {
+        int width, height, channels;
+		stbi_set_flip_vertically_on_load(1);
+		stbi_uc* data = nullptr;
+		{
+			data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+		}
+        if(!data) 
+        {
+            LOG_ERR("Failed to load image!n");
+        }
+        else
+        {
+            LOG_INF("Loaded image for icon\n");
+        }
+
+        GLFWimage image;
+        image.width = width;
+        image.height = height;
+        image.pixels = data;
+
+        glfwSetWindowIcon(window, 1, &image);
     }
 }

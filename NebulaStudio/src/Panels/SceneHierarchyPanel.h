@@ -17,6 +17,7 @@ namespace Nebula {
 
 		void OnImGuiRender();
 	private:
+		void DrawVec3Control(std::string label, Vec3f& data);
 		void DrawEntityNode(Entity entity);
 		void DrawComponents(Entity entity);
 	private:

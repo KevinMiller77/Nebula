@@ -50,6 +50,8 @@ namespace Nebula
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
+		virtual void SetIcon(std::string filepath) = 0;
+
 		virtual void* GetNativeWindow() = 0;
 		virtual GraphicsContext* GetContext() = 0;
 

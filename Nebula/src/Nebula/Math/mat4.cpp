@@ -109,70 +109,70 @@ Mat4 operator*(Mat4 left, const Mat4& right) {
 }
 
 Mat4 Mat4::perspective(float fov, float aspectRatio, float near, float far)
-	{
-		Mat4 result(1.0f);
+{
+	Mat4 result(1.0f);
 
-		float q = (float) (1.0f / tan(0.5f * fov * (3.14123f / 180.0f)));
-		float a = (float) (q / aspectRatio);
+	float q = (float) (1.0f / tan(0.5f * fov * (3.14123f / 180.0f)));
+	float a = (float) (q / aspectRatio);
 
-		float b = (near + far) / (near - far);
-		float c = (2.0f * near * far) / (near - far);
+	float b = (near + far) / (near - far);
+	float c = (2.0f * near * far) / (near - far);
 
-		result.elements[0 + 0 * 4] = a;
-		result.elements[1 + 1 * 4] = q;
-		result.elements[2 + 2 * 4] = b;
-		result.elements[3 + 2 * 4] = -1.0f;
-		result.elements[2 + 3 * 4] = c;
+	result.elements[0 + 0 * 4] = a;
+	result.elements[1 + 1 * 4] = q;
+	result.elements[2 + 2 * 4] = b;
+	result.elements[3 + 2 * 4] = -1.0f;
+	result.elements[2 + 3 * 4] = c;
 
-		return result;
-	}
+	return result;
+}
 
-	Mat4 Mat4::translation(const Vec3& translation)
-	{
-		Mat4 result(1.0f);
+Mat4 Mat4::translation(const Vec3& translation)
+{
+	Mat4 result(1.0f);
 
-		result.elements[0 + 3 * 4] = translation.x;
-		result.elements[1 + 3 * 4] = translation.y;
-		result.elements[2 + 3 * 4] = translation.z;
+	result.elements[0 + 3 * 4] = translation.x;
+	result.elements[1 + 3 * 4] = translation.y;
+	result.elements[2 + 3 * 4] = translation.z;
 
-		return result;
-	}
+	return result;
+}
 
-	Mat4 Mat4::rotation(float angle, const Vec3& axis)
-	{
-		Mat4 result(1.0f);
+Mat4 Mat4::rotation(float angle, const Vec3& axis)
+{
+	Mat4 result(1.0f);
 
-		float r = angle * (3.14123f / 180.0f);
-		float c = (float) (cos(r));
-		float s = (float) (sin(r));
-		float omc = 1.0f - c;
-		
-		float x = axis.x;
-		float y = axis.y;
-		float z = axis.z;
+	float r = angle * (3.14123f / 180.0f);
+	float c = (float) (cos(r));
+	float s = (float) (sin(r));
+	float omc = 1.0f - c;
+	
+	float x = axis.x;
+	float y = axis.y;
+	float z = axis.z;
 
-		result.elements[0 + 0 * 4] = x * omc + c;
-		result.elements[1 + 0 * 4] = y * x * omc + z * s;
-		result.elements[2 + 0 * 4] = x * z * omc - y * s;
+	result.elements[0 + 0 * 4] = x * omc + c;
+	result.elements[1 + 0 * 4] = y * x * omc + z * s;
+	result.elements[2 + 0 * 4] = x * z * omc - y * s;
 
-		result.elements[0 + 1 * 4] = x * y * omc - z * s;
-		result.elements[1 + 1 * 4] = y * omc + c;
-		result.elements[2 + 1 * 4] = y * z * omc + x * s;
+	result.elements[0 + 1 * 4] = x * y * omc - z * s;
+	result.elements[1 + 1 * 4] = y * omc + c;
+	result.elements[2 + 1 * 4] = y * z * omc + x * s;
 
-		result.elements[0 + 2 * 4] = x * z * omc + y * s;
-		result.elements[1 + 2 * 4] = y * z * omc - x * s;
-		result.elements[2 + 2 * 4] = z * omc + c;
-		
-		return result;
-	}
+	result.elements[0 + 2 * 4] = x * z * omc + y * s;
+	result.elements[1 + 2 * 4] = y * z * omc - x * s;
+	result.elements[2 + 2 * 4] = z * omc + c;
+	
+	return result;
+}
 
-	Mat4 Mat4::scale(const Vec3& scale)
-	{
-		Mat4 result(1.0f);
+Mat4 Mat4::scale(const Vec3& scale)
+{
+	Mat4 result(1.0f);
 
-		result.elements[0 + 0 * 4] = scale.x;
-		result.elements[1 + 1 * 4] = scale.y;
-		result.elements[2 + 2 * 4] = scale.z;
+	result.elements[0 + 0 * 4] = scale.x;
+	result.elements[1 + 1 * 4] = scale.y;
+	result.elements[2 + 2 * 4] = scale.z;
 
-		return result;
-	}
+	return result;
+}

@@ -26,6 +26,11 @@ struct Vec3f {
     friend Vec3f operator-(Vec3f left, Vec3f right);
     friend Vec3f operator*(Vec3f left, Vec3f right);
     friend Vec3f operator/(Vec3f left, Vec3f right);
+
+    friend Vec3f operator+(Vec3f left, float right);
+    friend Vec3f operator-(Vec3f left, float right);
+    friend Vec3f operator*(Vec3f left, float right);
+    friend Vec3f operator/(Vec3f left, float right);
     
     private:
     void add(const Vec3f& other);

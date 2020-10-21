@@ -46,6 +46,8 @@ namespace Nebula
         inline ImGuiLayer* GetImGuiLayer() { return Get()->imGuiLayer; }
         inline Window* GetWindow() { return window; }
 
+        
+
         //60 times a second
         void OnUpdate(float ts);
         void OnEvent(Event& e);

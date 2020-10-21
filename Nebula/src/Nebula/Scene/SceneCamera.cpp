@@ -28,7 +28,7 @@ namespace Nebula {
 		RecalculateProjection();
 	}
 
-	void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)
+	void SceneCamera::SetViewportSize(unsigned int width, unsigned int height)
 	{
 		AspectRatio = (float)width / (float)height;
 		RecalculateProjection();

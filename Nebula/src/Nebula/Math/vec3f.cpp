@@ -73,7 +73,6 @@ bool Vec3f::operator==(const Vec3f& other)
     return (x == other.x && (y == other.y && z == other.z));
 }
 
-
 Vec3f operator+(Vec3f left, Vec3f right) {
     Vec3f result(left);
     result.add(right);
@@ -95,5 +94,41 @@ Vec3f operator*(Vec3f left, Vec3f right) {
 Vec3f operator/(Vec3f left, Vec3f right) {
     Vec3f result(left);
     result.divide(right);
+    return result;
+}
+
+Vec3f operator+(Vec3f left, float right)
+{
+    Vec3f result = Vec3f();
+    result.x = left.x + right;
+    result.y = left.y + right;
+    result.z = left.z + right;
+    return result;
+}
+
+Vec3f operator-(Vec3f left, float right)
+{
+     Vec3f result = Vec3f();
+    result.x = left.x - right;
+    result.y = left.y - right;
+    result.z = left.z - right;
+    return result;
+}
+
+Vec3f operator*(Vec3f left, float right)
+{
+    Vec3f result = Vec3f();
+    result.x = left.x * right;
+    result.y = left.y * right;
+    result.z = left.z * right;
+    return result;
+}
+
+Vec3f operator/(Vec3f left, float right)
+{
+    Vec3f result = Vec3f();
+    result.x = left.x / right;
+    result.y = left.y / right;
+    result.z = left.z / right;
     return result;
 }

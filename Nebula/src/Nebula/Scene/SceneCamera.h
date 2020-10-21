@@ -1,8 +1,7 @@
 #pragma once
 
+#include <stdio.h>
 #include <Graphics/Camera.h>
-
-typedef unsigned int uint32_t;
 
 namespace Nebula {
 
@@ -17,7 +16,7 @@ namespace Nebula {
 		void SetOrthographic(float size, float nearClip, float farClip);
 		void SetPerspective(float verticalFOV, float nearClip, float farClip);
 
-		void SetViewportSize(uint32_t width, uint32_t height);
+		void SetViewportSize(unsigned int width, unsigned int height);
 
 		float GetPerspectiveVerticalFOV() const { return PerspectiveFOV; }
 		void SetPerspectiveVerticalFOV(float verticalFov) { PerspectiveFOV = verticalFov; RecalculateProjection(); }
@@ -40,7 +39,8 @@ namespace Nebula {
 	private:
 		ProjectionType CamProjectionType = ProjectionType::Orthographic;
 
-		float PerspectiveFOV = 45.0f * PI2R_FACTOR;
+		//Degrees
+		float PerspectiveFOV = 75.0f;
 		float PerspectiveNear = 0.01f, PerspectiveFar = 1000.0f;
 
 		float OrthographicSize = 10.0f;

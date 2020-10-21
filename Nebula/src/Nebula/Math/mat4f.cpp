@@ -258,6 +258,7 @@ Mat4f Mat4f::rotation(float angle, const Vec3f &axis)
 	return result;
 }
 
+
 Mat4f Mat4f::scale(const Vec3f &scale)
 {
 	Mat4f result(1.0f);
