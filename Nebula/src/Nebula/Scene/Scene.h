@@ -13,6 +13,7 @@ namespace Nebula
         ~Scene();
 
         Entity CreateEntity( const std::string& name = std::string());
+        void RemoveEntity(const entt::entity entity);
         bool IsPrimaryCamera(Entity cameraEntity);
 
         void OnUpdate(float ts);

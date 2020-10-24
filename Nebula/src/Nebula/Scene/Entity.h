@@ -1,17 +1,31 @@
 #pragma once
 
-#include "Scene.h"
-
+#include <Utils/UUID.h>
 #include <entt/entt.hpp>
+// #include <Scene/Scene.h>
+#include <string>
 
 namespace Nebula
 {
+	class Scene;
+
     class Entity
 	{
 	public:
 		Entity() = default;
 		Entity(entt::entity handle, Scene* scene);
 		Entity(const Entity& other) = default;
+		~Entity();
+
+		uint32_t GetID()
+		{
+			return (uint32_t)EntityHandle;
+		}
+
+		std::string GetStrID()
+		{
+			return std::to_string((uint32_t)EntityHandle);
+		}
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
@@ -51,6 +65,7 @@ namespace Nebula
 
 		operator bool() const { return EntityHandle != entt::null; }
 		operator uint32_t() const { return (uint32_t)EntityHandle; }
+		operator entt::entity() const { return EntityHandle; }
 
 		bool operator==(const Entity& other) const
 		{

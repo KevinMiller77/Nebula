@@ -21,6 +21,7 @@
 #include <Graphics/VertexArray.h> // TODO: Remove
 #include <Graphics/Shader.h>
 #include <Graphics/Texture.h>
+#include <Graphics/TextureLibrary.h>
 #include <Graphics/RendererConfig.h>
 #include <Graphics/Renderer.h>
 #include <Graphics/Renderer2D.h>

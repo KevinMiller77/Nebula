@@ -13,7 +13,7 @@ namespace Nebula
         fbSpec.Height = 720;
         FrameBuffer = Framebuffer::Create(fbSpec);
 
-        texture = Texture2D::Create("assets/textures/Missing.png");
+        textures.AddTexture("Missing", "assets/textures/Missing.png");
 
         CameraEntity = Scene.CreateEntity("Camera Entity");
         CameraEntity.AddComponent<CameraComponent>();
@@ -25,8 +25,6 @@ namespace Nebula
             {
                 auto& transform = GetComponent<TransformComponent>();
                 transform.Translation.x = 0.0f;
-
-                LOG_INF("This is some text\n");
             }
 
             virtual void OnDestroy() override
@@ -53,10 +51,10 @@ namespace Nebula
         CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
         auto quad1 = Scene.CreateEntity("First square");
-        quad1.AddComponent<SpriteRendererComponent>(texture, Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+        quad1.AddComponent<SpriteRendererComponent>(textures.GetTexture("Missing"), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
 
         SceneHierarchyPanel.SetContext(&Scene);
-        Log = LogPanel();
+        SceneHierarchyPanel.SetTextureLib(&textures);
     }
     float tsls = 0.0f;
     void NebulaStudioLayer::OnUpdate(float ts)

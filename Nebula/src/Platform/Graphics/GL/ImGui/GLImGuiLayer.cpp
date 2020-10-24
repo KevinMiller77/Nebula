@@ -1,6 +1,7 @@
 #include "GLImGuiLayer.h"
 
 #include <imgui.h>
+#include <ImGui/Styles/ImGuiStyles.h>
 
 #include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
@@ -29,8 +30,11 @@ namespace Nebula
         //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
         // Setup Dear ImGui style
-        ImGui::StyleColorsDark();
+        // ImGui::StyleColorsDark();
+        
         //ImGui::StyleColorsClassic();
+
+        NebImGui::AttemptAtStyle_Init();
 
         // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
         ImGuiStyle& style = ImGui::GetStyle();
@@ -63,6 +67,7 @@ namespace Nebula
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        // ImGui::ShowDemoWindow();
         ShowDockSpace();
     }
 

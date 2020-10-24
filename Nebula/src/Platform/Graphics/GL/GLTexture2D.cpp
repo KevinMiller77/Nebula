@@ -26,7 +26,7 @@ namespace Nebula
 	GLTexture2D::GLTexture2D(const std::string& path)
 		: path(path)
 	{
-		
+		valid = true;
 		NEB_PROFILE_FUNCTION();
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
@@ -34,7 +34,11 @@ namespace Nebula
 		{
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		}
-        if(!data) LOG_ERR("Failed to load image!n");
+        if(!data)
+		{	
+			valid = false;
+			LOG_ERR("Failed to load image for texture!\n----> Path was: %s\n", path.c_str());
+		}
 		this->width = width;
 		this->height = height;
 
@@ -53,7 +57,11 @@ namespace Nebula
 		IntFormat = internalFormat;
 		DataFormat = dataFormat;
 
-		if(!(internalFormat & dataFormat)) LOG_ERR("Format not supported!\n");
+		if(!(internalFormat & dataFormat)) 
+		{
+			valid = false;
+			LOG_ERR("Texture image format not supported!\n");
+		}
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &ID);
 		glTextureStorage2D(ID, 1, internalFormat, this->width, this->height);

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <Core/PlatformInfo.h>
-#include <Utils/Logging.h>
-#include <Scene/Scene.h>
-#include <Scene/Entity.h>
+#include <Nebula.h>
 
 namespace Nebula {
 
@@ -14,15 +11,22 @@ namespace Nebula {
 		SceneHierarchyPanel(Scene* scene);
 
 		void SetContext(Scene* scene);
+		void SetTextureLib(TextureLibrary* lib) { TextureLib = lib; }
 
 		void OnImGuiRender();
 	private:
 		void DrawVec3Control(std::string label, Vec3f& data);
-		void DrawEntityNode(Entity entity);
+
+		//Returns true if should delete entity
+		bool DrawEntityNode(Entity entity);
+		
 		void DrawComponents(Entity entity);
 	private:
-		Scene* Context;
+		Scene* Context = nullptr;;
 		Entity SelectionContext;
+		std::string newTextureName; 
+		std::string newTexturePath;
+		TextureLibrary* TextureLib = nullptr;
 	};
 
 }

@@ -25,5 +25,9 @@ namespace Nebula
 	public:
 		static Texture2D* Create(uint32_t width, uint32_t height);
 		static Texture2D* Create(const std::string& path);
+
+		inline bool IsValid() { return valid; } 
+	protected:
+		bool valid;
 	};
 }

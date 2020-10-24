@@ -29,6 +29,8 @@ namespace Nebula
         virtual void OnUpdate() = 0;
 
         void BlockEvents(bool block) { m_BlockEvents = block; }
+
+        static void SetStyle(ImGuiStyle* stylePtr);
         
         static ImGuiLayer* Create();
 

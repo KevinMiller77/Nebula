@@ -20,6 +20,12 @@ namespace Nebula
 		return entity;
     }
 
+	
+	void Scene::RemoveEntity(entt::entity entity)
+	{
+		Registry.destroy(entity);
+	}
+
     void Scene::OnUpdate(float ts)
     {
         // Update scripts
@@ -43,8 +49,9 @@ namespace Nebula
 		{
 			auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 			
-			if (SceneMainCamera == nullptr || SceneMainCamera == &camera.Camera)
+			if (camera.Camera.WantsMainCamera())
 			{
+				camera.Camera.WantsMainCamera(false);
 				SceneMainCamera = &camera.Camera;
 				SceneCameraTransform = transform.GetTransformation();
 				break;

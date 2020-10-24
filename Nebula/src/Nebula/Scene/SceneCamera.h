@@ -34,6 +34,11 @@ namespace Nebula {
 
 		ProjectionType GetProjectionType() const { return CamProjectionType; }
 		void SetProjectionType(ProjectionType type) { CamProjectionType = type; RecalculateProjection(); }
+		
+
+		bool WantsMainCamera() { return mainCamera; }
+		void WantsMainCamera(bool mainCam) { mainCamera = mainCam; }
+
 	private:
 		void RecalculateProjection();
 	private:
@@ -47,6 +52,8 @@ namespace Nebula {
 		float OrthographicNear = -1.0f, OrthographicFar = 1.0f;
 
 		float AspectRatio = 0.0f;
+
+		bool mainCamera = false;
 	};
 
 }

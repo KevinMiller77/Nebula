@@ -18,7 +18,7 @@ namespace Nebula
         Vec2f ViewportSize = {0.0f, 0.0f};
 
         Shader* shader = nullptr;
-        Texture2D* texture = nullptr;
+        TextureLibrary textures;
 
         NebulaStudioLayer() {};
         ~NebulaStudioLayer() = default;
