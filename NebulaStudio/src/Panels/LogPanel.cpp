@@ -6,6 +6,7 @@ namespace Nebula
     {
         logFile = fopen("debug/stdout.txt", "r");
         filePlace = 0;
+        fileSize = 0;
         Buf.clear();
         AutoScroll = true;
         Clear();
@@ -44,8 +45,8 @@ namespace Nebula
         UpdateBuffer();
         
         
-        ImGui::Begin("Game Log", &LogOpen);
-        Draw("Game Log", &LogOpen);
+        ImGui::Begin("Log", &LogOpen);
+        Draw("Log", &LogOpen);
         ImGui::End();
     }
 
@@ -58,29 +59,33 @@ namespace Nebula
         Nebula::Timer timeout;
         timeout.Reset();
         
+        fseek(logFile, 0L, SEEK_END);
+        fileSize = ftell(logFile);
+
         if (!logFile)
         {
             LOG_ERR("ImGUI Cannot attach to stdout!!!\n");
             return;
         }
         fseek(logFile, filePlace, SEEK_SET);
-        while(!feof(logFile))
+        while(filePlace != fileSize)
         {
             int oldSize = Buf.size();
-            
+
             //Grab line
             char curLine[256];
             if (fgets(curLine, 256, logFile) == nullptr)
             {
                 return;
             }
+
             Buf.append(curLine);
             
             //Increase base read index
             int new_size = Buf.size();
-            filePlace += new_size - oldSize;
+            filePlace += new_size - oldSize + 1;
             
-            for (new_size; oldSize < new_size; oldSize++)
+            for (new_size; oldSize < new_size - 1; oldSize++)
             {
                 if (Buf[oldSize] == '\n')
                 {

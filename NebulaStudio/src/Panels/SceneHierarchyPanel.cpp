@@ -27,7 +27,7 @@ namespace Nebula {
 			if(DrawEntityNode(entity))
 			{
 				Context->RemoveEntity(SelectionContext);
-				SelectionContext = Entity();
+				SelectionContext = {};
 			}
 			ImGui::PopID();
 		});

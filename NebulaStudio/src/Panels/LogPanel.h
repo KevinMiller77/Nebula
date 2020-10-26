@@ -4,6 +4,7 @@
 #include <Utils/Timer.h>
 #include <Utils/Logging.h>
 
+#include <string>
 #include <fstream>
 #include <iostream>
 
@@ -13,6 +14,7 @@ namespace Nebula
     {
         //Log props
         int filePlace;
+        uint32_t fileSize;
         FILE* logFile = nullptr;
         
         ImGuiTextBuffer     Buf;
