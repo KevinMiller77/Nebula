@@ -52,6 +52,7 @@ namespace Nebula
         if (GLFWWinCount == 0)
         {
             if (!glfwInit())
+
             {
                 LOG_ERR("Could not init GLFW!!\n");
             }
@@ -256,7 +257,7 @@ namespace Nebula
 		}
         if(!data) 
         {
-            LOG_ERR("Failed to load image!n");
+            LOG_ERR("Failed to load image for icon!\n");
         }
         else
         {

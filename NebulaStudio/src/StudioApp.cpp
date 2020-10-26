@@ -9,7 +9,7 @@ namespace Nebula
         Studio() : Application(this)
         {
             window->SetVSync(true);
-            window->SetIcon("assets/icon.png");
+            window->SetIcon("assets/internal/icon.png");
             PushLayer(new NebulaStudioLayer());
         }
         ~Studio() = default;

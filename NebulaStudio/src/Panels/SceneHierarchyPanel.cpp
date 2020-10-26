@@ -23,10 +23,13 @@ namespace Nebula {
 		Context->Registry.each([&](auto entityID)
 		{
 			Entity entity{ entityID , Context };
+			ImGui::PushID((int)entityID);
 			if(DrawEntityNode(entity))
 			{
-				Context->RemoveEntity(entity);
+				Context->RemoveEntity(SelectionContext);
+				SelectionContext = Entity();
 			}
+			ImGui::PopID();
 		});
 
 		if (ImGui::BeginPopupContextWindow("##entity_context_add", 1, false))
@@ -44,11 +47,13 @@ namespace Nebula {
 
 		ImGui::End();
 
-		ImGui::Begin("Properties");
 		if (SelectionContext)
+		{
+			ImGui::Begin("Properties");
 			DrawComponents(SelectionContext);
 
-		ImGui::End();
+			ImGui::End();
+		}
 	}
 
 	void SceneHierarchyPanel::DrawVec3Control(std::string label, Vec3f& data)
@@ -116,7 +121,11 @@ namespace Nebula {
 		{
 			SelectionContext = entity;
 		}
-		if (ImGui::BeginPopupContextWindow(entity.GetStrID().c_str(), 1, true))
+		if (ImGui::IsItemClicked(1))
+		{
+			SelectionContext = entity;
+		}
+		if (ImGui::BeginPopupContextWindow(tag.c_str(), 1, true))
 		{
 			if (ImGui::MenuItem("Remove Entity"))
 			{
@@ -413,7 +422,7 @@ namespace Nebula {
 			{	
 				if(!entity.HasComponent<CameraComponent>())
 				{
-					entity.AddComponent<CameraComponent>();
+					entity.AddComponent<CameraComponent>(Context->GetViewportSize());
 				}
 			}
 

@@ -18,13 +18,14 @@ namespace Nebula
 
         void OnUpdate(float ts);
         void OnViewportResize(uint32_t width, uint32_t height);
+        Vec2f GetViewportSize() { return Vec2f(ViewportWidth, ViewportHeight); }
     private:
         entt::registry Registry;
         
         uint32_t ViewportWidth = 0;
         uint32_t ViewportHeight = 0;
 
-        Camera* SceneMainCamera = nullptr;
+        entt::entity SceneMainCameraEntity = entt::null;
         Mat4f SceneCameraTransform = Mat4f(1.0f);
     
         friend class Entity;

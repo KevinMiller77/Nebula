@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Utils/UUID.h>
-#include <entt/entt.hpp>
+// #include <Utils/GUID.h>
 // #include <Scene/Scene.h>
+#include <entt/entt.hpp>
 #include <string>
 
 namespace Nebula
@@ -15,7 +15,6 @@ namespace Nebula
 		Entity() = default;
 		Entity(entt::entity handle, Scene* scene);
 		Entity(const Entity& other) = default;
-		~Entity();
 
 		uint32_t GetID()
 		{
@@ -50,6 +49,10 @@ namespace Nebula
 		template<typename T>
 		bool HasComponent()
 		{
+			if (!Scene->Registry.valid(EntityHandle))
+			{
+				return false;
+			}
 			return Scene->Registry.has<T>(EntityHandle);
 		}
 

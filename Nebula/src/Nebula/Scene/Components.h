@@ -50,10 +50,12 @@ namespace Nebula
 
 	struct CameraComponent
 	{
+
 		SceneCamera Camera;
 		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
+		CameraComponent(Vec2f ViewportSize) { Camera.SetViewportSize(ViewportSize.x, ViewportSize.y); } 
 		CameraComponent(const CameraComponent&) = default;
 	};
 

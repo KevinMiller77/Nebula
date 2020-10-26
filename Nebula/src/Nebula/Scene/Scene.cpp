@@ -45,23 +45,37 @@ namespace Nebula
 		}
 
 		auto view = Registry.view<TransformComponent, CameraComponent>();
+		bool hasCamera = false;
 		for (auto entity : view)
 		{
+			hasCamera = true;
+
 			auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 			
 			if (camera.Camera.WantsMainCamera())
 			{
+				LOG_INF("Entity %d wanted camera\n", (uint32_t)entity);
 				camera.Camera.WantsMainCamera(false);
-				SceneMainCamera = &camera.Camera;
+				SceneMainCameraEntity = entity;
+			}
+
+			if (SceneMainCameraEntity == entity)
+			{
 				SceneCameraTransform = transform.GetTransformation();
-				break;
-			}				
+			}	
+		}
+
+		if (!hasCamera)
+		{
+			SceneMainCameraEntity = entt::null;
+			SceneCameraTransform = Mat4f(1.0f);
 		}
 
 		// Render 2D
-		if (SceneMainCamera)
+		if (Registry.valid(SceneMainCameraEntity))
 		{
-			Renderer2D::BeginScene(SceneMainCamera, SceneCameraTransform);
+			auto cam = Registry.get<CameraComponent>(SceneMainCameraEntity);
+			Renderer2D::BeginScene(&cam.Camera, SceneCameraTransform);
 
 			auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
@@ -106,7 +120,7 @@ namespace Nebula
 		
 		auto camera = cameraEntity.GetComponent<CameraComponent>();
 
-		return SceneMainCamera == &camera.Camera;
+		return SceneMainCameraEntity == cameraEntity;
 	}
 
 }

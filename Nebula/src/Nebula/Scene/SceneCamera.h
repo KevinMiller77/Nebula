@@ -11,6 +11,7 @@ namespace Nebula {
 		enum class ProjectionType { Perspective = 0, Orthographic = 1 };
 	public:
 		SceneCamera();
+		SceneCamera(float aspectRatio) { AspectRatio = aspectRatio; }
 		virtual ~SceneCamera() = default;
 
 		void SetOrthographic(float size, float nearClip, float farClip);
