@@ -20,6 +20,31 @@ namespace Nebula
 		return entity;
     }
 
+	void Scene::OnPlay()
+	{
+		Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+		{
+			if (!nsc.Instance)
+			{
+				nsc.Instance = nsc.InstantiateScript();
+				nsc.Instance->Entity = Entity{ entity, this };
+				nsc.Instance->OnCreate();
+			}
+		});
+	}
+
+	
+	void Scene::OnStop()
+	{
+		Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+		{
+			if (nsc.Instance)
+			{
+				nsc.Instance->OnCreate();
+				nsc.Instance = nullptr;
+			}
+		});
+	}
 	
 	void Scene::RemoveEntity(Entity entity)
 	{
@@ -35,14 +60,6 @@ namespace Nebula
 		{
 			Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 			{
-				// TODO: Move to Scene::OnScenePlay
-				if (!nsc.Instance)
-				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->Entity = Entity{ entity, this };
-					nsc.Instance->OnCreate();
-				}
-
 				nsc.Instance->OnUpdate(ts);
 			});
 		}
@@ -99,6 +116,78 @@ namespace Nebula
 		}
     }
 
+	void Scene::OnEditingUpdate(Camera* camera)
+    {
+		// Render 2D
+		if (camera)
+		{
+			Renderer2D::BeginScene(camera, SceneCameraTransform);
+
+			auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+                if (sprite.Texture == nullptr)
+                {
+                    Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Color);
+                }
+                else
+                {
+                    Renderer2D::DrawQuad(transform.GetTransformation(), (const Texture2D*&)sprite.Texture, sprite.TilingFactor, sprite.Color);
+                }
+                
+			}
+
+			Renderer2D::EndScene();
+		}
+    }
+
+	void Scene::OnPausedUpdate()
+	{
+		auto view = Registry.view<TransformComponent, CameraComponent>();
+		bool hasCamera = false;
+		for (auto entity : view)
+		{
+			hasCamera = true;
+			auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+
+			if (SceneMainCameraEntity == entity)
+			{
+				SceneCameraTransform = transform.GetTransformation();
+			}	
+		}
+
+		if (!hasCamera)
+		{
+			SceneMainCameraEntity = entt::null;
+			SceneCameraTransform = Mat4f(1.0f);
+		}
+
+		// Render 2D
+		if (Registry.valid(SceneMainCameraEntity))
+		{
+			auto cam = Registry.get<CameraComponent>(SceneMainCameraEntity);
+			Renderer2D::BeginScene(&cam.Camera, SceneCameraTransform);
+
+			auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+                if (sprite.Texture == nullptr)
+                {
+                    Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Color);
+                }
+                else
+                {
+                    Renderer2D::DrawQuad(transform.GetTransformation(), (const Texture2D*&)sprite.Texture, sprite.TilingFactor, sprite.Color);
+                }
+                
+			}
+
+			Renderer2D::EndScene();
+		}
+	}
+
     void Scene::OnViewportResize(uint32_t width, uint32_t height)
     {
         ViewportWidth = width;
@@ -110,7 +199,9 @@ namespace Nebula
 		{
 			auto& cameraComponent = view.get<CameraComponent>(entity);
 			if (!cameraComponent.FixedAspectRatio)
+			{
 				cameraComponent.Camera.SetViewportSize(width, height);
+			}
 		}
     }
 

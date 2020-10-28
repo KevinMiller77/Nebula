@@ -6,7 +6,7 @@
 
 namespace Nebula {
 
-	class OrthographicCamera
+	class OrthographicCamera : public Camera
 	{
 	public:
 		OrthographicCamera(float left, float right, float bottom, float top);
@@ -21,13 +21,11 @@ namespace Nebula {
 
 		const Mat4f& GetProjectionMatrix() const { return ProjectionMatrix; }
 		const Mat4f& GetViewMatrix() const { return ViewMatrix; }
-		const Mat4f& GetViewProjectionMatrix() const { return ViewProjectionMatrix; }
 	private:
 		void RecalculateViewMatrix();
 	private:
 		Mat4f ProjectionMatrix;
 		Mat4f ViewMatrix;
-		Mat4f ViewProjectionMatrix;
 
 		Vec3f Pos = { 0.0f, 0.0f, 0.0f };
 		float Rot = 0.0f;

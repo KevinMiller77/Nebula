@@ -7,6 +7,14 @@
 
 namespace Nebula
 {
+    enum class SceneStatus
+    {
+        NONE = 0,
+        NOT_STARTED,
+        PLAYING,
+        PAUSED,
+    };
+
     class NebulaStudioLayer : public Layer
     {
     public:
@@ -14,16 +22,22 @@ namespace Nebula
         Entity CameraEntity;
 
         static Vec4f clearColor;
-        
         Framebuffer* FrameBuffer;
         bool ViewportFocused = false, ViewportHovered = false;
-        Vec2f ViewportSize = {0.0f, 0.0f};
+        Vec2f ViewportSize = {1280.0f, 720.0f};
 
         Shader* shader = nullptr;
         TextureLibrary textures;
+        OrthographicCameraController EditorCamera;
 
-        NebulaStudioLayer() {};
+        NebulaStudioLayer()
+            : EditorCamera(OrthographicCameraController(ViewportSize.x / ViewportSize.y))
+        {
+
+        }
         ~NebulaStudioLayer() = default;
+
+        SceneStatus PlayStatus = SceneStatus::NOT_STARTED;
 
         virtual void OnAttach() override;
         virtual void OnUpdate(float ts) override;

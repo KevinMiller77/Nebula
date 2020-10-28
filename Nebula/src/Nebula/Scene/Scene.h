@@ -16,7 +16,11 @@ namespace Nebula
         void RemoveEntity(const Entity entity);
         bool IsPrimaryCamera(Entity cameraEntity);
 
+        void OnPlay();
         void OnUpdate(float ts);
+        void OnEditingUpdate(Camera* camera);
+        void OnPausedUpdate();
+        void OnStop();
         void OnViewportResize(uint32_t width, uint32_t height);
         Vec2f GetViewportSize() { return Vec2f((float)ViewportWidth, (float)ViewportHeight); }
 

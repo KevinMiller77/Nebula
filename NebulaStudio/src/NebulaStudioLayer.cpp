@@ -15,45 +15,41 @@ namespace Nebula
         fbSpec.Height = 720;
         FrameBuffer = Framebuffer::Create(fbSpec);
 
+        PlayStatus = SceneStatus::NOT_STARTED;
+        EditorCamera = OrthographicCameraController(ViewportSize.x / ViewportSize.x);
+
         textures.AddTexture("Missing", "assets/textures/Missing.png");
 
         CameraEntity = ActiveScene->CreateEntity("Camera Entity");
         CameraEntity.AddComponent<CameraComponent>();
 
-        // class CameraController : public ScriptableEntity
-        // {
-        // public:
-        //     virtual void OnCreate() override
-        //     {
-        //         auto& transform = GetComponent<TransformComponent>();
-        //         transform.Translation.x = 0.0f;
-        //     }
+        class GravityOnCube : public ScriptableEntity
+        {
+            float gravity = 9.81;
+            float velocityY;
 
-        //     virtual void OnDestroy() override
-        //     {
-        //     }
+            void OnCreate() override
+            {
+                auto& transform = GetComponent<TransformComponent>();
+                transform.Translation = Vec3f(0.0f, 0.0f, 0.0f);
+                transform.Rotation = Vec3f(0.0f, 0.0f, 0.0f);
+                transform.Scale = Vec3f(1.0f, 1.0f, 1.0f);
+                 
+                velocityY = 0.0f;
+            }
 
-        //     virtual void OnUpdate(float ts) override
-        //     {
-        //         auto& transform = GetComponent<TransformComponent>();
+            void OnUpdate(float ts) override
+            {
+                velocityY += gravity * ts;
 
-        //         float speed = 5.0f;
-
-        //         if (Input::IsKeyPressed(KeyCode::A))
-        //             transform.Translation.x -= speed * ts;
-        //         if (Input::IsKeyPressed(KeyCode::D))
-        //             transform.Translation.x += speed * ts;
-        //         if (Input::IsKeyPressed(KeyCode::W))
-        //             transform.Translation.y += speed * ts;
-        //         if (Input::IsKeyPressed(KeyCode::S))
-        //             transform.Translation.y -= speed * ts;
-        //     }
-        // };
-
-        // CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+                auto& transform = GetComponent<TransformComponent>();
+                transform.Translation.y += velocityY * ts;
+            }
+        };
 
         auto quad1 = ActiveScene->CreateEntity("First square");
         quad1.AddComponent<SpriteRendererComponent>(textures.GetTexture("Missing"), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+        quad1.AddComponent<NativeScriptComponent>().Bind<GravityOnCube>();
 
         SceneHierarchyPanel.SetContext(ActiveScene);
         SceneHierarchyPanel.SetTextureLib(&textures);
@@ -71,14 +67,36 @@ namespace Nebula
         {
             FrameBuffer->Resize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
+            EditorCamera.OnResize(ViewportSize.x, ViewportSize.y);
         }
-
 
         RendererConfig::Clear();
         FrameBuffer->Bind();
         RendererConfig::Clear();
 
-        ActiveScene->OnUpdate(ts);
+
+        switch(PlayStatus)
+        {
+            case(SceneStatus::PLAYING):
+            {
+                ActiveScene->OnUpdate(ts);
+                break;
+            }
+            case(SceneStatus::NOT_STARTED):
+            {
+                ActiveScene->OnEditingUpdate(EditorCamera.GetCamera());
+                EditorCamera.OnUpdate(ts);
+                break;
+            }
+            case(SceneStatus::PAUSED):
+            {
+                ActiveScene->OnPausedUpdate();
+                break;
+            }
+
+            default:
+                break;
+        }
 
         FrameBuffer->Unbind();   
     }
@@ -87,6 +105,31 @@ namespace Nebula
 
     void NebulaStudioLayer::OnImGuiRender()
     {
+        ImGui::Begin("Controls");
+        if(ImGui::Button("Play", ImVec2(25, 25)))
+        {
+            if (PlayStatus == SceneStatus::NOT_STARTED)
+            {
+                ActiveScene->OnPlay();
+            }
+            PlayStatus = SceneStatus::PLAYING;
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Pause", ImVec2(25, 25)))
+        {
+            if (PlayStatus == SceneStatus::PLAYING)
+            {
+                PlayStatus = SceneStatus::PAUSED;
+            }
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Stop", ImVec2(25, 25)))
+        {
+            PlayStatus = SceneStatus::NOT_STARTED;
+            ActiveScene->OnStop();
+        }
+        ImGui::End();
+
         OnImGuiMenuBar();
         SceneHierarchyPanel.OnImGuiRender();
 
@@ -124,6 +167,10 @@ namespace Nebula
 
     void NebulaStudioLayer::OnEvent(Event& e)
     {
+        if (PlayStatus == SceneStatus::NOT_STARTED)
+        {
+            EditorCamera.OnEvent(e);
+        }
     }
 
     void NebulaStudioLayer::OnImGuiMenuBar()
@@ -197,36 +244,6 @@ namespace Nebula
 
                 ImGui::EndMenu();
             }
-
-
-            // float ButWidth = 45.0f;
-            // ImGui::SameLine();
-
-            // ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ButWidth * 3.0f);
-            // if(ImGui::Button("_", ImVec2(ButWidth, ImGui::GetFrameHeight())))
-            // {
-            //     Application::Get()->GetWindow()->MinimizeWindow();
-            // }
-            // ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ButWidth * 2.0f);
-            // if (Application::Get()->GetWindow()->IsMaximized())
-            // {
-            //     if(ImGui::Button("v", ImVec2(ButWidth, ImGui::GetFrameHeight())))
-            //     {  
-            //         Application::Get()->GetWindow()->RestoreWindow();
-            //     }
-            // }
-            // else
-            // {
-            //     if(ImGui::Button("^", ImVec2(ButWidth, ImGui::GetFrameHeight())))
-            //     {  
-            //         Application::Get()->GetWindow()->MaximizeWindow();
-            //     }
-            // }
-            // ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ButWidth);
-            // if(ImGui::Button("X", ImVec2(ButWidth, ImGui::GetFrameHeight())))
-            // {
-            //     Application::Get()->Close();
-            // }
 
             ImGui::EndMenuBar();
         }

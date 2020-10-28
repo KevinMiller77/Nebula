@@ -54,7 +54,7 @@ namespace Nebula {
 
 		float AspectRatio = 0.0f;
 
-		bool mainCamera = false;
+		bool mainCamera = true;
 	};
 
 }
