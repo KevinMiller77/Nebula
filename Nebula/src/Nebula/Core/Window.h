@@ -58,6 +58,11 @@ namespace Nebula
 		// virtual void SetView(int W, int H) = 0;
 		virtual inline bool IsWindowed() = 0;
 
+		virtual bool IsMaximized() = 0;
+		virtual void MaximizeWindow() = 0;
+        virtual void RestoreWindow() = 0;
+		virtual void MinimizeWindow() = 0;
+
 		virtual void ToggleFullscreen() = 0;
 		virtual void CallWindowHints() = 0;
 

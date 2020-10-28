@@ -1,5 +1,7 @@
 #pragma once
 #include <Nebula.h>
+
+#include "Panels/FileBrowserPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/LogPanel.h"
 
@@ -8,7 +10,7 @@ namespace Nebula
     class NebulaStudioLayer : public Layer
     {
     public:
-        Scene Scene;
+        Ref<Scene> ActiveScene;
         Entity CameraEntity;
 
         static Vec4f clearColor;
@@ -25,11 +27,13 @@ namespace Nebula
 
         virtual void OnAttach() override;
         virtual void OnUpdate(float ts) override;
+        void OnImGuiMenuBar();
         virtual void OnImGuiRender() override;
         virtual void OnEvent(Event& e) override;
 
         SceneHierarchyPanel SceneHierarchyPanel;
         LogPanel Log;
+        ImGui::FileBrowser FileBrowser;
     };
 
 }

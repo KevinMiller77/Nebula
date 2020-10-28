@@ -8,9 +8,9 @@ namespace Nebula {
 	{
 	public:
 		SceneHierarchyPanel() = default;
-		SceneHierarchyPanel(Scene* scene);
+		SceneHierarchyPanel(Ref<Scene> scene);
 
-		void SetContext(Scene* scene);
+		void SetContext(Ref<Scene> scene);
 		void SetTextureLib(TextureLibrary* lib) { TextureLib = lib; }
 
 		void OnImGuiRender();
@@ -22,7 +22,7 @@ namespace Nebula {
 		
 		void DrawComponents(Entity entity);
 	private:
-		Scene* Context = nullptr;;
+		Ref<Scene> Context = nullptr;;
 		Entity SelectionContext;
 		std::string newTextureName; 
 		std::string newTexturePath;

@@ -1,8 +1,8 @@
 #include "GLContext.h"
 
+#include <Nebula_pch.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <Nebula_pch.h>
 
 namespace Nebula
 {

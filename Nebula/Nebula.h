@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/PlatformInfo.h>
+#include <Core/PlatformUtils.h>
 #include <Core/Layer.h>
 #include <Core/Application.h>
 #include <Core/Window.h>
@@ -14,6 +15,7 @@
 #include <Utils/Timer.h>
 #include <Utils/Logging.h>
 #include <Utils/Timer.h>
+#include <Utils/StringOps.h>
 
 #include <Math/math.h>
 
@@ -31,6 +33,7 @@
 #include <Graphics/Framebuffer.h>
 
 #include <Scene/Scene.h>
+#include <Scene/SceneSerializer.h>
 #include <Scene/Scriptable.h>
 #include <Scene/Components.h>
 

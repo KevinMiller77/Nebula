@@ -55,7 +55,7 @@ namespace Nebula
 		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
-		CameraComponent(Vec2f ViewportSize) { Camera.SetViewportSize(ViewportSize.x, ViewportSize.y); } 
+		CameraComponent(Vec2f ViewportSize) { Camera.SetViewportSize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y); } 
 		CameraComponent(const CameraComponent&) = default;
 	};
 

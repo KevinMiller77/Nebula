@@ -17,6 +17,7 @@ workspace "Nebula"
         include "Nebula/ext/glfw"
         include "Nebula/ext/glad"
         include "Nebula/ext/imgui"
+        include "Nebula/ext/yaml-cpp"
         -- include "Nebula/ext/freetype"
         group ""
         
@@ -52,14 +53,16 @@ project "NebulaEngine"
         "Nebula/include",
         "Nebula/ext/imgui",
 		"Nebula/ext/glfw/include",
-        "Nebula/ext/glad/include"
+        "Nebula/ext/glad/include",
+        "Nebula/ext/yaml-cpp/include"
     }
 
     links
     {
         "glad",
         "glfw",
-        "imgui"
+        "imgui",
+        "yaml-cpp"
         -- "freetype"
     }
 

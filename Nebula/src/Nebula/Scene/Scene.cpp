@@ -13,7 +13,7 @@ namespace Nebula
 
     Entity Scene::CreateEntity(const std::string& name)
     {
-        Entity entity = { Registry.create(), this };
+        Entity entity = Entity(Registry.create(), this);
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
@@ -21,9 +21,12 @@ namespace Nebula
     }
 
 	
-	void Scene::RemoveEntity(entt::entity entity)
+	void Scene::RemoveEntity(Entity entity)
 	{
-		Registry.destroy(entity);
+		if (entity.IsValid())
+		{
+			Registry.destroy(entity);
+		}
 	}
 
     void Scene::OnUpdate(float ts)

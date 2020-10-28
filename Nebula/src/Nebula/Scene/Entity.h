@@ -1,7 +1,6 @@
 #pragma once
 
-// #include <Utils/GUID.h>
-// #include <Scene/Scene.h>
+#include <Core/PlatformInfo.h>
 #include <entt/entt.hpp>
 #include <string>
 
@@ -25,6 +24,8 @@ namespace Nebula
 		{
 			return std::to_string((uint32_t)EntityHandle);
 		}
+
+		bool IsValid();
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
@@ -65,6 +66,7 @@ namespace Nebula
             }
 			Scene->Registry.remove<T>(EntityHandle);
 		}
+		
 
 		operator bool() const { return EntityHandle != entt::null; }
 		operator uint32_t() const { return (uint32_t)EntityHandle; }

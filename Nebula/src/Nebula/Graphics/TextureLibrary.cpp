@@ -8,6 +8,7 @@ namespace Nebula
         {
             delete kvp.second;
         }
+        Library.clear();
     }
 
     void TextureLibrary::AddTexture(const std::string name, uint32_t width, uint32_t height)
@@ -64,10 +65,13 @@ namespace Nebula
 
     Texture2D* TextureLibrary::GetTexture(std::string name)
     {
-        
+        if (name == "")
+        {
+            return nullptr;
+        }
         if (Library.find(name) == Library.end())
         {
-            LOG_ERR("Texture did not exist! could not remove\n");
+            LOG_ERR("Texture did not exist! Could not grab!!\n");
             return nullptr;
         }
         return Library[name];

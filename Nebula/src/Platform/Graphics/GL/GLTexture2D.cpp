@@ -1,9 +1,10 @@
 #include "GLTexture2D.h"
 
 #include <stb_image/stb_image.h>
+
+#include <Nebula_pch.h>
 #include <glad/glad.h>
 #include <Utils/Logging.h>
-#include <Nebula_pch.h>
 namespace Nebula
 {
     GLTexture2D::GLTexture2D(uint32_t width, uint32_t height)

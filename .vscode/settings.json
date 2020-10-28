@@ -64,6 +64,10 @@
         "thread": "cpp",
         "xlocmon": "cpp",
         "xloctime": "cpp",
-        "climits": "cpp"
+        "climits": "cpp",
+        "filesystem": "cpp",
+        "locale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocmes": "cpp"
     }
 }

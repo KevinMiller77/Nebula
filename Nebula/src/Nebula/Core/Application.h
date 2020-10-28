@@ -42,11 +42,11 @@ namespace Nebula
         Application(Application* child);
         virtual ~Application();
 
+        void Close();
+
         inline static Application* Get() { return curEngine; }
         inline ImGuiLayer* GetImGuiLayer() { return Get()->imGuiLayer; }
         inline Window* GetWindow() { return window; }
-
-        
 
         //60 times a second
         void OnUpdate(float ts);

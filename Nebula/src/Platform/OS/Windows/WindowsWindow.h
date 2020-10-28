@@ -49,6 +49,11 @@ namespace Nebula
 
 		virtual void SetIcon(std::string filepath) override;
 
+        virtual bool IsMaximized();
+		virtual void MaximizeWindow();
+        virtual void RestoreWindow();
+		virtual void MinimizeWindow();
+
         // Window attributes
         inline void SetEventCallback(const EventCallbackFn& callback) override { data.EventCallback = callback; data.callbackSet = true; }
         void SetVSync(bool enabled) override;
@@ -68,6 +73,6 @@ namespace Nebula
         GraphicsContext* context;
         uint32 GLFWWinCount;
         WindowInfo info;
-
+        bool maximized = false;
     };
 }

@@ -22,7 +22,7 @@ namespace Nebula
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
         io.ConfigDockingWithShift = true;
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
@@ -73,6 +73,7 @@ namespace Nebula
 
     void GLImGuiLayer::End()
     {
+        ImGui::End();
 		NEB_PROFILE_FUNCTION();
         ImGuiIO& io = ImGui::GetIO();
         Application* app = Application::Get();
@@ -99,7 +100,7 @@ namespace Nebula
 
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         // because it would be confusing to have two docking targets within each others.
-        ImGuiWindowFlags window_flags  = ImGuiWindowFlags_NoDocking;
+        ImGuiWindowFlags window_flags  =  ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
         if (opt_fullscreen)
         {
             ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -140,7 +141,5 @@ namespace Nebula
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
-
-        ImGui::End();
     }
 }

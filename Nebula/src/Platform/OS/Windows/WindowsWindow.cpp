@@ -31,6 +31,7 @@ namespace Nebula
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_DECORATED, true);
     }
 
     WindowsWindow::WindowsWindow(WindowInfo inf)
@@ -270,5 +271,25 @@ namespace Nebula
         image.pixels = data;
 
         glfwSetWindowIcon(window, 1, &image);
+    }
+
+    bool WindowsWindow::IsMaximized()
+    {
+        return maximized;
+    }
+
+    void WindowsWindow::MaximizeWindow()
+    {
+        glfwMaximizeWindow(window);
+        maximized = true;
+    }
+    void WindowsWindow::RestoreWindow()
+    {
+        glfwRestoreWindow(window);
+        maximized = false;
+    }
+
+    void WindowsWindow::MinimizeWindow()
+    {
     }
 }

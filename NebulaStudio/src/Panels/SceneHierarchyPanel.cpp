@@ -6,12 +6,12 @@
 
 namespace Nebula {
 
-	SceneHierarchyPanel::SceneHierarchyPanel(Scene* context)
+	SceneHierarchyPanel::SceneHierarchyPanel(Ref<Scene> context)
 	{
 		SetContext(context);
 	}
 
-	void SceneHierarchyPanel::SetContext(Scene* context)
+	void SceneHierarchyPanel::SetContext(Ref<Scene> context)
 	{
 		Context = context;
 	}
@@ -22,7 +22,7 @@ namespace Nebula {
 
 		Context->Registry.each([&](auto entityID)
 		{
-			Entity entity{ entityID , Context };
+			Entity entity{ entityID , Context.get() };
 			ImGui::PushID((int)entityID);
 			if(DrawEntityNode(entity))
 			{
@@ -59,7 +59,7 @@ namespace Nebula {
 	void SceneHierarchyPanel::DrawVec3Control(std::string label, Vec3f& data)
 	{
 		float width = ImGui::GetWindowContentRegionWidth();
-		float eachSliderWidth = (width / 2.5) / 3 + 0.01 * width;
+		float eachSliderWidth = (width / 2.5f) / 3.0f + 0.01f * width;
 
 		ImGui::PushID(&data);
 		std::string labelOut = label + ":"; 

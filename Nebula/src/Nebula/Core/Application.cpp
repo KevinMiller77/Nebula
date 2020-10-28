@@ -44,6 +44,11 @@ namespace Nebula
         }
     }
 
+    void Application::Close()
+    {
+        running = false;
+    }
+
     void Application::EngineSwap()
     {
 		NEB_PROFILE_FUNCTION();

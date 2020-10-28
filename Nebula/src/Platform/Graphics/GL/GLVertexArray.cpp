@@ -1,7 +1,7 @@
 #include "GLVertexArray.h"
 
-#include <glad/glad.h>
 #include <Nebula_pch.h>
+#include <glad/glad.h>
 
 namespace Nebula
 {
