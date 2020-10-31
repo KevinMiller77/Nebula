@@ -5,6 +5,7 @@
 #include <Core/Layer.h>
 #include <Core/Application.h>
 #include <Core/Window.h>
+#include <Core/VFS.h>
 
 #include <Events/Event.h>
 #include <Events/InputCodes.h>

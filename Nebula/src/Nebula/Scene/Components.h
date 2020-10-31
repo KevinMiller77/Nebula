@@ -73,4 +73,12 @@ namespace Nebula
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
+
+	struct ParentEntityComponent
+	{
+		std::vector<Entity> children;
+
+		ParentEntityComponent() = default;
+		ParentEntityComponent(const ParentEntityComponent&) = default;
+	};
 }

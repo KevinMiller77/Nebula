@@ -58,6 +58,8 @@ namespace Nebula
 
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
+        void PopLayer(Layer* layer);
+        void PopOverlay(Layer* layer);
 
         //TODO: Reset engine
         virtual void ResetEngine() { EngineSwap(); };

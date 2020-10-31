@@ -2,66 +2,59 @@
 
 #include <string>
 #include <fstream>
+#include <filesystem>
+#include <Utils/Logging.h>
+#include "NFile.h"
 
 namespace Nebula
 {
-    static enum class VFSerr
+    enum class VFSerr
     {
         NONE = 0,
-        INVALID_PATH = 1,
-        ALREADY_MOUNTED = 2,
-        UNKNOWN_ERROR = 3
-    };
+        FILESYSTEM_NOT_MOUNTED = 1,
+        INVALID_PATH = 2,
+        ALREADY_MOUNTED = 3,
+        UNKNOWN_ERROR = 4
 
-
-    class NFile
-    {
-    public:
-        static enum NFileAccess
-        {
-            R, W, RW,
-        };
-
-        static enum NFileDataType
-        {
-            BIN, TXT 
-        };
-
-        NFile() = default;
-        NFile(const std::string path, NFileAccess access, NFileDataType type = TXT);
-
-        bool IsValid();
-        bool IsOpen();
-        bool EndOfFile();
-
-        bool IsWritable();
-        bool WriteBytes(uint8_t* bytes, size_t numBytes);
-        bool WriteText(std::string text);
-
-        bool IsReadable();
-        uint8_t* ReadBytes(size_t numBytes);
-        std::string ReadText(size_t numChars);
-        std::string GetLine(); 
-
-        inline void Seek(uint32_t newCursor) { Cursor = newCursor; } 
-        inline uint32_t Pos() { return Cursor; }
-
-    private:
-        std::string Path;
-        std::fstream File;
-        uint32_t Cursor = 0;
     };
 
     class VFS
     {
     public:
-    
-    static NFile CreateFile(std::string path, std::string name = "");
-    static bool CD(std::string addition);
-    static bool Mount(const std::string Root);
-    static bool Unmount();
+        static void Init();
+
+        static NFile CreateFile(std::string path, std::string name = "");
+        static NFile OpenFile();
+        static NFile AppendFile();
+
+        static bool CD(std::string newDir);
+        static bool Mount(const std::string root);
+        static void Unmount();
+
+        static bool IsMounted();
+        static std::string GetRoot();
+
+        static bool Exists(std::string path, bool absolutePath = false);
+        static bool IsDir(std::string path, bool absolutePath = false);
+        static bool IsFile(std::string path, bool absolutePath = false);
+
+        friend class VFSExplorer;
+    private:
+        static bool Mounted;
+        static std::string AbsoluteRoot;
+    };
+
+    class VFSExplorer
+    {
+    public:
+        // dir is from the root of the currently mounted VFS
+        VFSExplorer(std::string dir);
+
+        std::string GetCurPath();
+        std::string GetSelectedObject();
 
     private:
-        std::string Root;
+        std::string Selection;
+        std::string CurDirectory;
     };
 }

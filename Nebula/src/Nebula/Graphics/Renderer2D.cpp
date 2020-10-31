@@ -104,6 +104,8 @@ namespace Nebula
 
 	void Renderer2D::BeginScene(OrthographicCamera* camera)
 	{
+		ResetStats();
+
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera->GetViewProjection());
 
@@ -115,6 +117,8 @@ namespace Nebula
 
 	void Renderer2D::BeginScene(Camera* camera, Mat4f transform)
 	{
+		ResetStats();
+
 		Mat4f viewProj = camera->GetViewProjection() * transform.invertMatrix();
         
 		s_Data.TextureShader->Bind();
@@ -289,7 +293,7 @@ namespace Nebula
 
 	void Renderer2D::ResetStats()
 	{
-		memset(&s_Data.Stats, 0, sizeof(Statistics));
+		s_Data.Stats = Statistics();
 	}
 
 	Renderer2D::Statistics Renderer2D::GetStats()

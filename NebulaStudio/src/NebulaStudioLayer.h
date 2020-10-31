@@ -7,13 +7,6 @@
 
 namespace Nebula
 {
-    enum class SceneStatus
-    {
-        NONE = 0,
-        NOT_STARTED,
-        PLAYING,
-        PAUSED,
-    };
 
     class NebulaStudioLayer : public Layer
     {
@@ -43,7 +36,14 @@ namespace Nebula
         virtual void OnUpdate(float ts) override;
         void OnImGuiMenuBar();
         virtual void OnImGuiRender() override;
+        
         virtual void OnEvent(Event& e) override;
+        bool OnKeyPressed(KeyPressedEvent& e);
+
+        void NewScene();
+        void SaveScene();
+        void SaveSceneAs();
+        void OpenScene();
 
         SceneHierarchyPanel SceneHierarchyPanel;
         LogPanel Log;

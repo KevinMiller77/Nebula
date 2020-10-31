@@ -17,6 +17,7 @@ namespace Nebula
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
+		entity.AddComponent<ParentEntityComponent>();
 		return entity;
     }
 
@@ -50,143 +51,118 @@ namespace Nebula
 	{
 		if (entity.IsValid())
 		{
+			if (entity.HasComponent<ParentEntityComponent>())
+			{
+				auto& pec = entity.GetComponent<ParentEntityComponent>();
+				for (Entity ent : pec.children)
+				{
+					RemoveEntity(ent);
+				}
+			}
 			Registry.destroy(entity);
 		}
 	}
 
-    void Scene::OnUpdate(float ts)
-    {
-        // Update scripts
-		{
-			Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
-			{
-				nsc.Instance->OnUpdate(ts);
-			});
-		}
-
-		auto view = Registry.view<TransformComponent, CameraComponent>();
-		bool hasCamera = false;
-		for (auto entity : view)
-		{
-			hasCamera = true;
-
-			auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-			
-			if (camera.Camera.WantsMainCamera())
-			{
-				LOG_INF("Entity %d wanted camera\n", (uint32_t)entity);
-				camera.Camera.WantsMainCamera(false);
-				SceneMainCameraEntity = entity;
-			}
-
-			if (SceneMainCameraEntity == entity)
-			{
-				SceneCameraTransform = transform.GetTransformation();
-			}	
-		}
-
-		if (!hasCamera)
-		{
-			SceneMainCameraEntity = entt::null;
-			SceneCameraTransform = Mat4f(1.0f);
-		}
-
-		// Render 2D
-		if (Registry.valid(SceneMainCameraEntity))
-		{
-			auto cam = Registry.get<CameraComponent>(SceneMainCameraEntity);
-			Renderer2D::BeginScene(&cam.Camera, SceneCameraTransform);
-
-			auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-                if (sprite.Texture == nullptr)
-                {
-                    Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Color);
-                }
-                else
-                {
-                    Renderer2D::DrawQuad(transform.GetTransformation(), (const Texture2D*&)sprite.Texture, sprite.TilingFactor, sprite.Color);
-                }
-                
-			}
-
-			Renderer2D::EndScene();
-		}
-    }
-
-	void Scene::OnEditingUpdate(Camera* camera)
-    {
-		// Render 2D
-		if (camera)
-		{
-			Renderer2D::BeginScene(camera, SceneCameraTransform);
-
-			auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-                if (sprite.Texture == nullptr)
-                {
-                    Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Color);
-                }
-                else
-                {
-                    Renderer2D::DrawQuad(transform.GetTransformation(), (const Texture2D*&)sprite.Texture, sprite.TilingFactor, sprite.Color);
-                }
-                
-			}
-
-			Renderer2D::EndScene();
-		}
-    }
-
-	void Scene::OnPausedUpdate()
+	void Scene::Render(entt::entity mainCamera)
 	{
-		auto view = Registry.view<TransformComponent, CameraComponent>();
-		bool hasCamera = false;
-		for (auto entity : view)
+		entt::entity camToUse;
+		Mat4f transform;
+
+		if (mainCamera == entt::null)
 		{
-			hasCamera = true;
-			auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-
-			if (SceneMainCameraEntity == entity)
-			{
-				SceneCameraTransform = transform.GetTransformation();
-			}	
+			camToUse = Entity { SceneMainCameraEntity, this };
+			transform = SceneCameraTransform;
 		}
-
-		if (!hasCamera)
+		else
 		{
-			SceneMainCameraEntity = entt::null;
-			SceneCameraTransform = Mat4f(1.0f);
-		}
+			camToUse = mainCamera;
 
+			auto transfComp = Registry.get<TransformComponent>(camToUse);
+			transform = transfComp.GetTransformation();
+		}
+		
 		// Render 2D
-		if (Registry.valid(SceneMainCameraEntity))
+		if (Registry.valid(camToUse))
 		{
-			auto cam = Registry.get<CameraComponent>(SceneMainCameraEntity);
-			Renderer2D::BeginScene(&cam.Camera, SceneCameraTransform);
-
-			auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-                if (sprite.Texture == nullptr)
-                {
-                    Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Color);
-                }
-                else
-                {
-                    Renderer2D::DrawQuad(transform.GetTransformation(), (const Texture2D*&)sprite.Texture, sprite.TilingFactor, sprite.Color);
-                }
-                
-			}
-
-			Renderer2D::EndScene();
+			auto& cam = Registry.get<CameraComponent>(camToUse);
+			Render(&cam.Camera, transform);
 		}
 	}
+
+	void Scene::Render(Camera* camera, Mat4f transform)
+	{
+		Renderer2D::BeginScene(camera, transform);
+
+		auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : group)
+		{
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			if (sprite.Texture == nullptr)
+			{
+				Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Color);
+			}
+			else
+			{
+				Renderer2D::DrawQuad(transform.GetTransformation(), (const Texture2D*&)sprite.Texture, sprite.TilingFactor, sprite.Color);
+			}
+			
+		}
+
+		Renderer2D::EndScene();
+	}
+
+    
+	void Scene::OnUpdate(float ts, SceneStatus status)
+    {
+		if (status == SceneStatus::PLAYING)
+		{
+			// Update scripts
+			{
+				Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+				{
+					nsc.Instance->OnUpdate(ts);
+				});
+			}
+		}
+
+		if (status != SceneStatus::NOT_STARTED)
+		{
+			auto view = Registry.view<TransformComponent, CameraComponent>();
+			bool hasCamera = false;
+			for (auto entity : view)
+			{
+				hasCamera = true;
+
+				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+				
+				if (camera.Camera.WantsMainCamera())
+				{
+					LOG_INF("Entity %d wanted camera\n", (uint32_t)entity);
+					camera.Camera.WantsMainCamera(false);
+					SceneMainCameraEntity = entity;
+				}
+
+				if (SceneMainCameraEntity == entity)
+				{
+					SceneCameraTransform = transform.GetTransformation();
+				}	
+			}
+
+			if (!hasCamera)
+			{
+				SceneMainCameraEntity = entt::null;
+				SceneCameraTransform = Mat4f(1.0f);
+			}
+		}
+
+		Render();
+    }
+
+	//TODO: Remove, the scene should only really use camera inside of it, not given an external one
+	void Scene::OnEditingUpdate(Camera* camera)
+    {
+		Render(camera, SceneCameraTransform);
+    }
 
     void Scene::OnViewportResize(uint32_t width, uint32_t height)
     {

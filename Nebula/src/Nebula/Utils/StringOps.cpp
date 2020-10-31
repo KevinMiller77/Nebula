@@ -7,7 +7,7 @@ namespace Nebula
         size_t sizeStr1 = str1.size();
         size_t sizeStr2 = str2.size();
         
-        if (sizeStr2 == sizeStr2)
+        if (sizeStr1 == sizeStr2)
         {
             return str1 == str2;
         }
@@ -16,12 +16,12 @@ namespace Nebula
             return false;
         }
 
-        std::string cutoff = str1.substr(sizeStr1 - sizeStr2 - 1);
+        std::string cutoff = str1.substr(sizeStr1 - sizeStr2);
 
         if (cutoff == str2)
         {
             return true;
-        }        
+        }
         return false;
     }
 }

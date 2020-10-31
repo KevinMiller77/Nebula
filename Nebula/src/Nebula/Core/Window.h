@@ -41,6 +41,8 @@ namespace Nebula
 
 		virtual uint32 GetWidth() const = 0;
 		virtual uint32 GetHeight() const = 0;
+
+		virtual void SetWindowSize(uint32 width, uint32 height) = 0;
 		
 		virtual uint32* GetWidthPtr() const = 0;
 		virtual uint32* GetHeightPtr() const = 0;

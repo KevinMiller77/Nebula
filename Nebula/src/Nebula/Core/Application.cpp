@@ -20,6 +20,8 @@ namespace Nebula
         window = Window::Create(WindowInfo());
         window->SetEventCallback(NEB_BIND_EVENT_FN(Application::OnEvent));
 
+        VFS::Init();
+
         Nebula::Renderer::Init();
 
         imGuiLayer = ImGuiLayer::Create();
@@ -145,6 +147,16 @@ namespace Nebula
     {
         EngLayerStack.PushOverlay(layer);
         layer->OnAttach();
+    }
+
+    void Application::PopLayer(Layer* layer)
+    {
+        EngLayerStack.PopLayer(layer);
+    }
+
+    void Application::PopOverlay(Layer* layer)
+    {
+        EngLayerStack.PopOverlay(layer);
     }
 
     void Application::Run()

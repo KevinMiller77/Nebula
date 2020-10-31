@@ -14,6 +14,8 @@ namespace Nebula {
 		void SetTextureLib(TextureLibrary* lib) { TextureLib = lib; }
 
 		void OnImGuiRender();
+
+		void ClearSelection() { SelectionContext = {}; }
 	private:
 		void DrawVec3Control(std::string label, Vec3f& data);
 

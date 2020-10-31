@@ -6,26 +6,36 @@ namespace Nebula
 {
     class Entity;
 
+
+    enum class SceneStatus
+    {
+        NOT_STARTED = 0,
+        PLAYING = 1,
+        PAUSED = 2,
+    };
     class Scene
     {
     public:
         Scene();
-        ~Scene();
+        virtual ~Scene();
 
-        Entity CreateEntity( const std::string& name = std::string());
-        void RemoveEntity(const Entity entity);
-        bool IsPrimaryCamera(Entity cameraEntity);
+        virtual Entity CreateEntity( const std::string& name = std::string());
+        virtual void RemoveEntity(const Entity entity);
+        virtual bool IsPrimaryCamera(Entity cameraEntity);
 
-        void OnPlay();
-        void OnUpdate(float ts);
-        void OnEditingUpdate(Camera* camera);
-        void OnPausedUpdate();
-        void OnStop();
-        void OnViewportResize(uint32_t width, uint32_t height);
-        Vec2f GetViewportSize() { return Vec2f((float)ViewportWidth, (float)ViewportHeight); }
+        virtual void OnPlay();
+        virtual void OnUpdate(float ts, SceneStatus status);
+        virtual void OnEditingUpdate(Camera* camera);
 
-        std::string GetFilePath() { return AssociatedFilePath; }
-        void SetFilePath(std::string path) { AssociatedFilePath = path; }
+        virtual void Render(entt::entity mainCamera = entt::null);
+        virtual void Render(Camera* camera, Mat4f transform);
+
+        virtual void OnStop();
+        virtual void OnViewportResize(uint32_t width, uint32_t height);
+        virtual Vec2f GetViewportSize() { return Vec2f((float)ViewportWidth, (float)ViewportHeight); }
+
+        virtual std::string GetFilePath() { return AssociatedFilePath; }
+        virtual void SetFilePath(std::string path) { AssociatedFilePath = path; }
     private:
         entt::registry Registry;
         std::string AssociatedFilePath = std::string();

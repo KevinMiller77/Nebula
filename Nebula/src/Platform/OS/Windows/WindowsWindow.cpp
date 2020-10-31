@@ -222,6 +222,18 @@ namespace Nebula
         return &(data.height);
     }
 
+    
+    void WindowsWindow::SetWindowSize(uint32 width, uint32 height)
+    {
+        if (window)
+        {
+            glfwSetWindowSize(window, width, height);
+            data.width = width;
+            data.height = height;
+        }
+
+    }
+
     void WindowsWindow::ShutDown()
     {
         NEB_PROFILE_FUNCTION();

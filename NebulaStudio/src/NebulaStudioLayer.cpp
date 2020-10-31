@@ -25,7 +25,7 @@ namespace Nebula
 
         class GravityOnCube : public ScriptableEntity
         {
-            float gravity = 9.81;
+            float gravity = 9.81f;
             float velocityY;
 
             void OnCreate() override
@@ -43,7 +43,7 @@ namespace Nebula
                 velocityY += gravity * ts;
 
                 auto& transform = GetComponent<TransformComponent>();
-                transform.Translation.y += velocityY * ts;
+                transform.Translation.z -= velocityY * ts;
             }
         };
 
@@ -55,6 +55,11 @@ namespace Nebula
         SceneHierarchyPanel.SetTextureLib(&textures);
 
         FileBrowser.SetTitle("Project Browser");
+
+        
+        ImGuiIO& io = ImGui::GetIO();
+        ImFont* pFont = io.Fonts->AddFontFromFileTTF("assets/fonts/open-sans/OpenSans-Regular.ttf", 18.0f);
+        
     }
 
 
@@ -75,33 +80,19 @@ namespace Nebula
         RendererConfig::Clear();
 
 
-        switch(PlayStatus)
+        if(PlayStatus == SceneStatus::NOT_STARTED)
         {
-            case(SceneStatus::PLAYING):
-            {
-                ActiveScene->OnUpdate(ts);
-                break;
-            }
-            case(SceneStatus::NOT_STARTED):
-            {
-                ActiveScene->OnEditingUpdate(EditorCamera.GetCamera());
+            ActiveScene->OnEditingUpdate(EditorCamera.GetCamera());
+            if(ViewportFocused)
                 EditorCamera.OnUpdate(ts);
-                break;
-            }
-            case(SceneStatus::PAUSED):
-            {
-                ActiveScene->OnPausedUpdate();
-                break;
-            }
-
-            default:
-                break;
+        }
+        else
+        {
+            ActiveScene->OnUpdate(ts, PlayStatus);
         }
 
         FrameBuffer->Unbind();   
     }
-
-    
 
     void NebulaStudioLayer::OnImGuiRender()
     {
@@ -167,10 +158,46 @@ namespace Nebula
 
     void NebulaStudioLayer::OnEvent(Event& e)
     {
-        if (PlayStatus == SceneStatus::NOT_STARTED)
+        if (PlayStatus == SceneStatus::NOT_STARTED && ViewportFocused)
         {
             EditorCamera.OnEvent(e);
         }
+
+        EventDispatcher Dispatch(e);
+        Dispatch.Dispatch<KeyPressedEvent>(NEB_BIND_EVENT_FN(NebulaStudioLayer::OnKeyPressed));
+    }
+
+    bool NebulaStudioLayer::OnKeyPressed(KeyPressedEvent& e)
+    {
+        bool ctrl = Input::IsKeyPressed(KeyCode::LeftControl) || Input::IsKeyPressed(KeyCode::RightControl);
+        bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
+
+        if (ctrl)
+        {
+            switch ((KeyCode)e.GetKeyCode())
+            {
+                case(KeyCode::S):
+                {
+                    SaveScene();
+                    break;
+                }
+
+                case(KeyCode::N):
+                {
+                    NewScene();
+                    break;
+                }
+                case(KeyCode::O):
+                {
+                    OpenScene();
+                    break;
+                }
+
+                default:
+                    break;
+            }
+        }
+        return false;
     }
 
     void NebulaStudioLayer::OnImGuiMenuBar()
@@ -182,24 +209,12 @@ namespace Nebula
             {
                 if(ImGui::MenuItem("New Scene", "Ctrl+N"))
                 {
-                    ActiveScene = CreateRef<Nebula::Scene>();
-                    ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
-                    SceneHierarchyPanel.SetContext(ActiveScene);
+                    NewScene();
                 }
 
                 if (ImGui::MenuItem("Open...", "Ctrl+O"))
                 {
-                    std::string filePath = Nebula::FileDialogs::OpenFile("Nebula Scene (*.NebScene)\0*.NebScene\0");
-                    if (!filePath.empty())
-                    {
-                        ActiveScene = CreateRef<Nebula::Scene>();
-                        ActiveScene->SetFilePath(filePath);
-                        ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
-                        SceneHierarchyPanel.SetContext(ActiveScene);
-
-                        Nebula::SceneSerializer serializer(ActiveScene);
-                        serializer.DeserializeTxt(filePath);
-                    }
+                    OpenScene();
                 }
 
                 ImGui::Separator();
@@ -208,24 +223,12 @@ namespace Nebula
                 {
                     if(ImGui::MenuItem("Save", "Ctrl+S"))
                     {
-                        std::string filePath = ActiveScene->GetFilePath();
-                        Nebula::SceneSerializer serializer(ActiveScene);
-                        serializer.SerializeTxt(filePath);
-                        //TODO: Serialize ya shit
+                        SaveScene();
                     }
                 }
                 if(ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) 
                 {
-                    
-                    std::string filePath = Nebula::FileDialogs::SaveFile("Nebula Scene (*.NebScene)\0*.NebScene\0");
-                    if (!filePath.empty())
-                    {
-                        if (!EndsWith(filePath, {".NebScene"})) filePath += ".NebScene";
-
-                        ActiveScene->SetFilePath(filePath);
-                        Nebula::SceneSerializer serializer(ActiveScene);
-                        serializer.SerializeTxt(filePath);
-                    }
+                    SaveSceneAs();
                 }
 
                 if (ImGui::MenuItem("Exit")) 
@@ -239,7 +242,7 @@ namespace Nebula
                 ImGui::Text("Nebula Studio");
                 ImGui::Text("Ver 0.0.5");
                 ImGui::Text("");
-                ImGui::Text("Developed by;");
+                ImGui::Text("Developed by:");
                 ImGui::Text("Kevin Miller");
 
                 ImGui::EndMenu();
@@ -247,6 +250,70 @@ namespace Nebula
 
             ImGui::EndMenuBar();
         }
+
+    }
+
+    void NebulaStudioLayer::NewScene()
+    {
+        ActiveScene = CreateRef<Nebula::Scene>();
+        ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
+        SceneHierarchyPanel.SetContext(ActiveScene);
+
+        LOG_INF("New scene created.\n");
+        SceneHierarchyPanel.ClearSelection();
+    }
+    
+    void NebulaStudioLayer::SaveScene()
+    {
+        std::string filePath = ActiveScene->GetFilePath();
+
+        if (filePath.empty())
+        {
+            SaveSceneAs();
+            return;
+        }
+
+        Nebula::SceneSerializer serializer(ActiveScene);
+        serializer.SerializeTxt(filePath);
+
+        LOG_INF("Saved scene!\n");
+    }
+    
+    void NebulaStudioLayer::SaveSceneAs()
+    {
+        std::string filePath = Nebula::FileDialogs::SaveFile("Nebula Scene (*.nst)\0*.nst\0");
+        if (!filePath.empty())
+        {
+            if (!EndsWith(filePath, {".nst"})) filePath += ".nst";
+
+            ActiveScene->SetFilePath(filePath);
+            Nebula::SceneSerializer serializer(ActiveScene);
+            serializer.SerializeTxt(filePath);
+            
+            LOG_INF("Saved scene!\n");
+            return;
+        }
+        LOG_INF("Save scene cancelled!\n");
+    }
+    
+    void NebulaStudioLayer::OpenScene()
+    {
+        std::string filePath = Nebula::FileDialogs::OpenFile("Nebula Scene (*.nst)\0*.nst\0");
+        if (!filePath.empty())
+        {
+            ActiveScene = CreateRef<Nebula::Scene>();
+            ActiveScene->SetFilePath(filePath);
+            ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
+            SceneHierarchyPanel.SetContext(ActiveScene);
+
+            Nebula::SceneSerializer serializer(ActiveScene);
+            serializer.DeserializeTxt(filePath);
+
+            LOG_INF("Opened scene!\n");
+            return;
+        }
+        LOG_INF("Open scene cancelled!\n");
+        SceneHierarchyPanel.ClearSelection();
     }
 
 }
