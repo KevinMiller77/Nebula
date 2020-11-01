@@ -142,7 +142,9 @@ project "NebulaStudio"
         "NebulaStudio/src/Nebula",
         "NebulaStudio/include",
         "Nebula",
+
         "Nebula/ext/imgui",
+        "Nebula/ext/yaml-cpp/include",
         "Nebula/include",
         "Nebula/src/Nebula"
     }

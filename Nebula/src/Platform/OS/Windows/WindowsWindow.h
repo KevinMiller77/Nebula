@@ -62,8 +62,11 @@ namespace Nebula
 
         void* GetNativeWindow() override { return (void*)window; }
         GraphicsContext* GetContext() override { return context; }
-        // void SetView(int W, int H) override { context.SetView(W, H); }
 
+		virtual void SwapIO(std::string in, std::string out, std::string err);
+
+		virtual void EnableConsole();
+		virtual void DisableConsole();
 
         void ShutDown();
         

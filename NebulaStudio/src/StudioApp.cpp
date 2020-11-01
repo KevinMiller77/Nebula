@@ -1,5 +1,7 @@
-#include "NebulaStudioLayer.h"
-#include "BootLayer.h"
+#include "Base/NebulaStudioProject.h"
+
+#include "Layers/NebulaStudioLayer.h"
+#include "Layers/BootLayer.h"
 
 namespace Nebula
 {
@@ -10,42 +12,30 @@ namespace Nebula
         Studio() : Application(this)
         {
             window->SetVSync(true);
-            window->SetIcon("assets/internal/icon.png");
 
-            if (!VFS::IsMounted())
-            {
-                bootLayer = new BootLayer();
-                PushLayer(bootLayer);
-                window->SetWindowSize(550, 275);
-            }
-            else
-            {
-                editorLayer = new NebulaStudioLayer();
-                window->SetWindowSize((uint32_t)editorLayer->ViewportSize.x, (uint32_t)editorLayer->ViewportSize.y);
-                PushLayer(editorLayer);
-            }
-            
+            bootLayer = new BootLayer();
+            PushLayer(bootLayer);
+            window->SetWindowSize(550, 275);
+            window->SetIcon("Icon.png");
         }
         ~Studio() = default;
-        
-        void PushEditorLayers()
-        {
-            //All of the layers that comprise the editor program should be added here
-            PushLayer(new NebulaStudioLayer());
-        }
 
         void OnGameUpdate() override
         {
             // Will only run one time when the startup menu finishes
-            if (bootLayer && bootLayer->Done())
+            if (bootLayer && !bootLayer->Done().empty())
             {
-                editorLayer = new NebulaStudioLayer();
+                //Process info from bootLayer and save project info
+                std::string projFile = bootLayer->Done();
+                editorLayer = new NebulaStudioLayer(projFile);
                 window->SetWindowSize((uint32_t)editorLayer->ViewportSize.x, (uint32_t)editorLayer->ViewportSize.y);
 
+                PushLayer(editorLayer);
+                
                 bootLayer->Done(false);
                 PopLayer(bootLayer);
                 
-                PushLayer(editorLayer);
+                window->SwapIO(VFS::AbsolutePath("debug/stdin.txt"), VFS::AbsolutePath("debug/stdout.txt"), VFS::AbsolutePath("debug/stderr.txt"));
             }
 
             RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);

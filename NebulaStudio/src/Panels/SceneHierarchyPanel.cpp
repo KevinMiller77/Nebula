@@ -183,7 +183,7 @@ namespace Nebula {
 				DrawVec3Control("Rotation", rot);
 				transform.Rotation = rot * Vec3f(PI2R_FACTOR, PI2R_FACTOR, PI2R_FACTOR);
 
-				DrawVec3Control("Scale      ", transform.Scale);
+				DrawVec3Control("Scale   ", transform.Scale);
 				ImGui::PopItemWidth();
 
 				ImGui::TreePop();

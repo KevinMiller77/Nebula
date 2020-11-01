@@ -1,12 +1,16 @@
 #pragma once
 #include <Nebula.h>
 
+#include "../Base/NebulaStudioProject.h" 
+
 #include "Panels/FileBrowserPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/LogPanel.h"
 
 namespace Nebula
 {
+    #define AUTOSAVE_INTERVAL 5.0f
+
 
     class NebulaStudioLayer : public Layer
     {
@@ -17,18 +21,24 @@ namespace Nebula
         static Vec4f clearColor;
         Framebuffer* FrameBuffer;
         bool ViewportFocused = false, ViewportHovered = false;
-        Vec2f ViewportSize = {1280.0f, 720.0f};
+        Vec2f ViewportSize = {1600.0f, 900.0f};
 
         Shader* shader = nullptr;
         TextureLibrary textures;
         OrthographicCameraController EditorCamera;
 
-        NebulaStudioLayer()
-            : EditorCamera(OrthographicCameraController(ViewportSize.x / ViewportSize.y))
+        NebulaStudioLayer(std::string startProjectFile)
+            : EditorCamera(OrthographicCameraController(ViewportSize.x / ViewportSize.y)), StartProjFileInput(startProjectFile)
         {
-
         }
-        ~NebulaStudioLayer() = default;
+
+        ~NebulaStudioLayer()
+        {
+            if (CurrentProject.loaded)
+            {
+                StudioProject::SaveProjectFile(CurrentProject);
+            }
+        }
 
         SceneStatus PlayStatus = SceneStatus::NOT_STARTED;
 
@@ -44,10 +54,14 @@ namespace Nebula
         void SaveScene();
         void SaveSceneAs();
         void OpenScene();
+    private:
+		Timer Autosave = Timer();
+        std::string StartProjFileInput = std::string();
 
         SceneHierarchyPanel SceneHierarchyPanel;
         LogPanel Log;
         ImGui::FileBrowser FileBrowser;
+        StudioProject::Project CurrentProject;
     };
 
 }

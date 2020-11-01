@@ -8,48 +8,91 @@ namespace Nebula
 
     void NebulaStudioLayer::OnAttach()
     {
+        //Mount VFS
+        if (VFS::Exists(StartProjFileInput, true))
+        {
+            CurrentProject = StudioProject::LoadProjectFile(StartProjFileInput);
+            
+        }
+        else
+        {
+            CurrentProject = StudioProject::CreateProjectFile(StartProjFileInput);
+        }
+
+        if (VFS::Exists(CurrentProject.LastFileSystemMount, true))
+        {
+            VFS::Mount(CurrentProject.LastFileSystemMount);
+        }
+        else
+        {
+            std::string dir = std::string(CurrentProject.AbsolutePath);
+
+            #ifdef NEB_PLATFORM_WINDOWS
+                dir = dir.substr(0, dir.find_last_of("\\") + 1);
+            #else
+                dir = dir.substr(0, dir.find_last_of("/") + 1);
+            #endif
+
+            if (VFS::Exists(dir, true))
+            {
+                CurrentProject.LastFileSystemMount = dir;
+                VFS::Mount(CurrentProject.LastFileSystemMount);
+            }
+        }
+
+
         ActiveScene = CreateRef<Nebula::Scene>();
+        if (!CurrentProject.LastSceneOpened.empty())
+        {
+            SceneSerializer ser(ActiveScene);
+            ser.DeserializeTxt(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
+            ActiveScene->SetFilePath(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
+        }
+
+        Renderer2D::SetShader("assets/shaders/Texture.glsl");
+
+        Autosave.Start();
 
         FramebufferSpecification fbSpec;
-        fbSpec.Width = 1280;
-        fbSpec.Height = 720;
+        fbSpec.Width = 1600;
+        fbSpec.Height = 900;
         FrameBuffer = Framebuffer::Create(fbSpec);
 
         PlayStatus = SceneStatus::NOT_STARTED;
         EditorCamera = OrthographicCameraController(ViewportSize.x / ViewportSize.x);
 
-        textures.AddTexture("Missing", "assets/textures/Missing.png");
+        textures.AddTexture("Missing", VFS::AbsolutePath("assets/textures/Missing.png"));
 
-        CameraEntity = ActiveScene->CreateEntity("Camera Entity");
-        CameraEntity.AddComponent<CameraComponent>();
+        // CameraEntity = ActiveScene->CreateEntity("Camera Entity");
+        // CameraEntity.AddComponent<CameraComponent>();
 
-        class GravityOnCube : public ScriptableEntity
-        {
-            float gravity = 9.81f;
-            float velocityY;
+        // class GravityOnCube : public ScriptableEntity
+        // {
+        //     float gravity = 9.81f;
+        //     float velocityY;
 
-            void OnCreate() override
-            {
-                auto& transform = GetComponent<TransformComponent>();
-                transform.Translation = Vec3f(0.0f, 0.0f, 0.0f);
-                transform.Rotation = Vec3f(0.0f, 0.0f, 0.0f);
-                transform.Scale = Vec3f(1.0f, 1.0f, 1.0f);
+        //     void OnCreate() override
+        //     {
+        //         auto& transform = GetComponent<TransformComponent>();
+        //         transform.Translation = Vec3f(0.0f, 0.0f, 0.0f);
+        //         transform.Rotation = Vec3f(0.0f, 0.0f, 0.0f);
+        //         transform.Scale = Vec3f(1.0f, 1.0f, 1.0f);
                  
-                velocityY = 0.0f;
-            }
+        //         velocityY = 0.0f;
+        //     }
 
-            void OnUpdate(float ts) override
-            {
-                velocityY += gravity * ts;
+        //     void OnUpdate(float ts) override
+        //     {
+        //         velocityY += gravity * ts;
 
-                auto& transform = GetComponent<TransformComponent>();
-                transform.Translation.z -= velocityY * ts;
-            }
-        };
+        //         auto& transform = GetComponent<TransformComponent>();
+        //         transform.Translation.z -= velocityY * ts;
+        //     }
+        // };
 
-        auto quad1 = ActiveScene->CreateEntity("First square");
-        quad1.AddComponent<SpriteRendererComponent>(textures.GetTexture("Missing"), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
-        quad1.AddComponent<NativeScriptComponent>().Bind<GravityOnCube>();
+        // auto quad1 = ActiveScene->CreateEntity("First square");
+        // quad1.AddComponent<SpriteRendererComponent>(textures.GetTexture("Missing"), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+        // quad1.AddComponent<NativeScriptComponent>().Bind<GravityOnCube>();
 
         SceneHierarchyPanel.SetContext(ActiveScene);
         SceneHierarchyPanel.SetTextureLib(&textures);
@@ -57,8 +100,8 @@ namespace Nebula
         FileBrowser.SetTitle("Project Browser");
 
         
-        ImGuiIO& io = ImGui::GetIO();
-        ImFont* pFont = io.Fonts->AddFontFromFileTTF("assets/fonts/open-sans/OpenSans-Regular.ttf", 18.0f);
+        // ImGuiIO& io = ImGui::GetIO();
+        // ImFont* pFont = io.Fonts->AddFontFromFileTTF(VFS::Path("assets/fonts/open-sans/OpenSans-Regular.ttf").c_str(), 18.0f);
         
     }
 
@@ -66,6 +109,13 @@ namespace Nebula
     float tsls = 0.0f;
     void NebulaStudioLayer::OnUpdate(float ts)
     {
+        if (Autosave.GetTimePassed() >= AUTOSAVE_INTERVAL)
+        {
+            StudioProject::SaveProjectFile(CurrentProject);
+            Autosave.Start();
+            LOG_INF("Autosaved project\n");
+        }
+
         if (FramebufferSpecification spec = FrameBuffer->GetSpecification();
             // zero sized framebuffer is invalid
             ViewportSize.x > 0.0f && ViewportSize.y > 0.0f && (spec.Width != ViewportSize.x || spec.Height != ViewportSize.y))
@@ -197,6 +247,7 @@ namespace Nebula
                     break;
             }
         }
+
         return false;
     }
 
@@ -221,12 +272,12 @@ namespace Nebula
                 
                 if (!ActiveScene->GetFilePath().empty())
                 {
-                    if(ImGui::MenuItem("Save", "Ctrl+S"))
+                    if(ImGui::MenuItem("Save Scene", "Ctrl+S"))
                     {
                         SaveScene();
                     }
                 }
-                if(ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) 
+                if(ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S")) 
                 {
                     SaveSceneAs();
                 }
@@ -240,7 +291,7 @@ namespace Nebula
             if (ImGui::BeginMenu("About"))
             {
                 ImGui::Text("Nebula Studio");
-                ImGui::Text("Ver 0.0.5");
+                ImGui::Text("Ver 0.5");
                 ImGui::Text("");
                 ImGui::Text("Developed by:");
                 ImGui::Text("Kevin Miller");
@@ -272,9 +323,14 @@ namespace Nebula
             SaveSceneAs();
             return;
         }
+        
+        filePath = ReplaceAll(filePath, "\\", "/");
+        std::string relPath = VFS::Path(filePath);
 
         Nebula::SceneSerializer serializer(ActiveScene);
         serializer.SerializeTxt(filePath);
+
+        CurrentProject.LastSceneOpened = relPath;
 
         LOG_INF("Saved scene!\n");
     }
@@ -284,12 +340,17 @@ namespace Nebula
         std::string filePath = Nebula::FileDialogs::SaveFile("Nebula Scene (*.nst)\0*.nst\0");
         if (!filePath.empty())
         {
+            filePath = ReplaceAll(filePath, "\\", "/");
             if (!EndsWith(filePath, {".nst"})) filePath += ".nst";
+            
+            std::string relPath = VFS::Path(filePath);
+            ActiveScene->SetFilePath(relPath);
 
-            ActiveScene->SetFilePath(filePath);
             Nebula::SceneSerializer serializer(ActiveScene);
             serializer.SerializeTxt(filePath);
             
+            CurrentProject.LastSceneOpened = relPath;
+
             LOG_INF("Saved scene!\n");
             return;
         }
@@ -301,13 +362,19 @@ namespace Nebula
         std::string filePath = Nebula::FileDialogs::OpenFile("Nebula Scene (*.nst)\0*.nst\0");
         if (!filePath.empty())
         {
+            filePath = ReplaceAll(filePath, "\\", "/");
+            
+            std::string relPath = VFS::Path(filePath);
+
             ActiveScene = CreateRef<Nebula::Scene>();
-            ActiveScene->SetFilePath(filePath);
+            ActiveScene->SetFilePath(relPath);
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
             SceneHierarchyPanel.SetContext(ActiveScene);
 
             Nebula::SceneSerializer serializer(ActiveScene);
             serializer.DeserializeTxt(filePath);
+
+            CurrentProject.LastSceneOpened = relPath;
 
             LOG_INF("Opened scene!\n");
             return;

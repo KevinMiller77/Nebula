@@ -1,5 +1,4 @@
 #include "Renderer2D.h"
-
 namespace Nebula
 {
     struct QuadVertex
@@ -38,6 +37,18 @@ namespace Nebula
 	};
 
 	static Renderer2DData s_Data;
+
+	void Renderer2D::SetShader(std::string path)
+	{
+		int32_t samplers[s_Data.MaxTextureSlots];
+		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
+			samplers[i] = i;
+
+		//TODO: Material system that handles shaders
+		s_Data.TextureShader = Shader::Create(VFS::AbsolutePath(path));
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+	}
 
 	void Renderer2D::Init()
 	{
@@ -84,7 +95,7 @@ namespace Nebula
 			samplers[i] = i;
 
 		//TODO: Material system that handles shaders
-		s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
+		s_Data.TextureShader = Shader::Create(VFS::AbsolutePath("assets/shaders/Texture.glsl"));
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 

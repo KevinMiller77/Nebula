@@ -1,10 +1,9 @@
 #pragma once
 
-#include <string>
-#include <fstream>
-#include <filesystem>
-#include <Utils/Logging.h>
 #include "NFile.h"
+#include <filesystem>
+
+#include <Utils/Logging.h>
 
 namespace Nebula
 {
@@ -18,10 +17,12 @@ namespace Nebula
 
     };
 
+    std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
     class VFS
     {
     public:
         static void Init();
+
 
         static NFile CreateFile(std::string path, std::string name = "");
         static NFile OpenFile();
@@ -33,10 +34,15 @@ namespace Nebula
 
         static bool IsMounted();
         static std::string GetRoot();
+        static std::string AbsolutePath(std::string path);
+        static std::string Path(std::string path);
 
         static bool Exists(std::string path, bool absolutePath = false);
         static bool IsDir(std::string path, bool absolutePath = false);
         static bool IsFile(std::string path, bool absolutePath = false);
+
+
+        static void freopen(std::string file, const char* mode, FILE* stream);
 
         friend class VFSExplorer;
     private:

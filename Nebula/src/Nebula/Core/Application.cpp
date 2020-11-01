@@ -18,6 +18,7 @@ namespace Nebula
         }
         curEngine = this;
         window = Window::Create(WindowInfo());
+        window->DisableConsole();
         window->SetEventCallback(NEB_BIND_EVENT_FN(Application::OnEvent));
 
         VFS::Init();

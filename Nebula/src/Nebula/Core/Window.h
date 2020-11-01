@@ -57,6 +57,11 @@ namespace Nebula
 		virtual void* GetNativeWindow() = 0;
 		virtual GraphicsContext* GetContext() = 0;
 
+		virtual void SwapIO(std::string in, std::string out, std::string err) = 0;
+
+		virtual void EnableConsole() = 0;
+		virtual void DisableConsole() = 0;
+
 		// virtual void SetView(int W, int H) = 0;
 		virtual inline bool IsWindowed() = 0;
 

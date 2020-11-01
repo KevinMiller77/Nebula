@@ -27,16 +27,33 @@ namespace Nebula
 
 	// }
 
+    
+    void VFS::freopen(std::string file, const char* mode, FILE* stream)
+    {
+        freopen(AbsoluteRoot + file, mode, stream);
+    }
+
     bool VFS::CD(std::string newDir)
 	{
         return true;
 	}
 
+    std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) 
+    {
+        size_t start_pos = 0;
+        while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+            str.replace(start_pos, from.length(), to);
+            start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+        }
+        return str;
+    }
+
     bool VFS::Mount(const std::string root)
 	{
         if(std::filesystem::exists(root) && std::filesystem::is_directory(root))
         {
-            AbsoluteRoot = root;
+     
+            AbsoluteRoot = ReplaceAll(root, "\\", "/");
             return true;
         }
         return false;
@@ -50,6 +67,26 @@ namespace Nebula
     std::string VFS::GetRoot()
     {
         return AbsoluteRoot;
+    }
+
+    
+    std::string VFS::AbsolutePath(std::string path)
+    {
+        
+        return AbsoluteRoot + path;
+    }
+
+    
+    std::string VFS::Path(std::string path)
+    {
+        if (IsMounted())
+        {
+            if (path.substr(0, VFS::GetRoot().size()) == AbsoluteRoot)
+            {
+                return path.substr(AbsoluteRoot.size());
+            }
+        }
+        return path;
     }
 
     bool VFS::Exists(std::string path, bool absolutePath)

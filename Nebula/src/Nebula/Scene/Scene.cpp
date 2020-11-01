@@ -137,7 +137,7 @@ namespace Nebula
 				
 				if (camera.Camera.WantsMainCamera())
 				{
-					LOG_INF("Entity %d wanted camera\n", (uint32_t)entity);
+					//LOG_INF("Entity %d wanted camera\n", (uint32_t)entity);
 					camera.Camera.WantsMainCamera(false);
 					SceneMainCameraEntity = entity;
 				}

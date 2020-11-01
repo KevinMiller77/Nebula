@@ -4,6 +4,8 @@
 #include <vector>
 #include <array>
 #include <Graphics/OrthographicCamera.h>
+#include <Core/VFS.h>
+
 
 namespace Nebula
 {
@@ -17,6 +19,9 @@ namespace Nebula
 		static void BeginScene(Camera* camera, const Mat4f transform);
 		static void EndScene();
 		static void Flush();
+
+		//TEMP:
+		static void SetShader(std::string path);
 
 		// Primitives
 		static void DrawQuad(const Vec2f& position, const Vec2f& size, const Vec4f& color);

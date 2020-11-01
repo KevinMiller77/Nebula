@@ -26,8 +26,18 @@ namespace Nebula
 
         virtual void OnEvent(Event& e) override;
         
-        inline bool Done() { return State == DONE; }
-        inline void Done(bool done) { State = done ? DONE : State; }
+        inline std::string Done() { return State == DONE ? std::string(projLocation) : std::string(); }
+        inline void Done(bool done) 
+        { 
+            if(State == DONE)
+            {
+                State = done ? DONE : GREET;
+            } 
+            else
+            {
+                State = done ? DONE : State;
+            }
+        }
 
     private:
         BootState State = GREET;

@@ -5,6 +5,7 @@
 #include <Core/PlatformInfo.h>
 #include <GLFW/glfw3.h>
 
+#include <Core/VFS.h>
 #include <Nebula_pch.h>
 
 
@@ -34,19 +35,29 @@ namespace Nebula
         glfwWindowHint(GLFW_DECORATED, true);
     }
 
+    void WindowsWindow::SwapIO(std::string in, std::string out, std::string err)
+    {
+        freopen(in.c_str(), "r+", stdin);
+        freopen(out.c_str(), "w", stdout);
+        freopen(err.c_str(), "w", stderr);
+    }
+
+    void WindowsWindow::EnableConsole()
+    {
+        ::ShowWindow(::GetConsoleWindow(), SW_SHOW);
+    }
+
+    void WindowsWindow::DisableConsole()
+    {
+        ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+    }
+
     WindowsWindow::WindowsWindow(WindowInfo inf)
         : context(nullptr), GLFWWinCount(0)
     {
         NEB_PROFILE_FUNCTION();
         info = inf;
         data.height = info.Height; data.width = info.Width;
-
-        //Redirect cout and cin as well as cerr
-        freopen("debug/stdout.txt", "w", stdout);
-        freopen("debug/stdin.txt", "r+", stdin);
-        freopen("debug/stderr.txt", "w", stderr);
-        ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
-
 
         LOG_INF("Creating window\n");
 

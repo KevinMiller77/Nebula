@@ -11,11 +11,16 @@ namespace Nebula
     void BootLayer::OnUpdate(float ts) 
     {
         std::string dirToMakeFileIn = std::string(projLocation);
+        std::string fileName = std::string(projLocation);
+
         #ifdef NEB_PLATFORM_WINDOWS
-            dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("\\"));
+            dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("\\") + 1);
+            fileName = fileName.substr(fileName.find_last_of("\\") + 1);
         #else
-            dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/"));
+            dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/") + 1);
+            fileName = fileName.substr(fileName.find_last_of("/") + 1);
         #endif
+
         if (!VFS::Exists(dirToMakeFileIn, true) || !EndsWith(projLocation, ".nsp"))
         {
             State = GREET;
@@ -30,7 +35,7 @@ namespace Nebula
             }
             case(PROJ_READY_OPEN):
             {
-
+                
                 break;
             }
             default:
@@ -63,10 +68,22 @@ namespace Nebula
         y_pos = 2.0f * ImGui::GetWindowHeight() / 3.2f;
         ImGui::SetCursorPosY(y_pos);
 
+        if (State != GREET)
+        {
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+        }
+
         ImGui::PushItemWidth(-1);
         ImGui::InputTextWithHint("", "Project directory...", projLocation, 256);
         ImGui::Text("");
         ImGui::PopItemWidth();
+
+        if (State != GREET)
+        {
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, false);
+            ImGui::PopStyleVar();
+        }
 
         ImGui::SetCursorPosX(x_pos);
         if (ImGui::Button("Open Project..."))
@@ -113,12 +130,15 @@ namespace Nebula
 
         x_pos = ImGui::GetWindowWidth() - (itemSpacing * 2 + submitButtonWidth);
         ImGui::SetCursorPosX(x_pos);
-        ImGui::Button("  >  ");
+        if (ImGui::Button("  >  "))
+        {
+            State = DONE;
+        }
         submitButtonWidth =  ImGui::GetItemRectSize().x;
 
         if (State == GREET)
         {
-            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, false);
             ImGui::PopStyleVar();
         }
 

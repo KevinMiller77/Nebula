@@ -4,7 +4,7 @@ namespace Nebula
 {
     LogPanel::LogPanel()
     {
-        logFile = fopen("debug/stdout.txt", "r");
+        logFile = nullptr;
         filePlace = 0;
         fileSize = 0;
         Buf.clear();
@@ -53,8 +53,18 @@ namespace Nebula
     //NOTE: Do not print to stdout from this function!! It will infinite loop
     void LogPanel::UpdateBuffer()
     {
-        freopen("debug/stdout.txt", "r", logFile);
+        if (!VFS::IsMounted() || !VFS::Exists("debug/stdout.txt")) return;
 
+        if (logFile)
+        {
+            freopen(VFS::AbsolutePath("debug/stdout.txt").c_str(), "r", logFile);
+
+        }
+        else
+        {
+            logFile = fopen(VFS::AbsolutePath("debug/stdout.txt").c_str(), "r");
+        }
+        
         const unsigned int TIMEOUT_TIME = 500; //MS
         Nebula::Timer timeout;
         timeout.Reset();
