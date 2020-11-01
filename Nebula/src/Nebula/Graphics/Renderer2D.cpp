@@ -94,10 +94,10 @@ namespace Nebula
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		//TODO: Material system that handles shaders
-		s_Data.TextureShader = Shader::Create(VFS::AbsolutePath("assets/shaders/Texture.glsl"));
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+		// //TODO: Material system that handles shaders
+		// s_Data.TextureShader = Shader::Create(VFS::AbsolutePath("assets/shaders/Texture.glsl"));
+		// s_Data.TextureShader->Bind();
+		// s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
 		// Set first texture slot to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
@@ -117,8 +117,11 @@ namespace Nebula
 	{
 		ResetStats();
 
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", camera->GetViewProjection());
+		if(s_Data.TextureShader)
+		{
+			s_Data.TextureShader->Bind();
+			s_Data.TextureShader->SetMat4("u_ViewProjection", camera->GetViewProjection());
+		}
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
@@ -132,8 +135,11 @@ namespace Nebula
 
 		Mat4f viewProj = camera->GetViewProjection() * transform.invertMatrix();
         
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		if (s_Data.TextureShader)
+		{
+			s_Data.TextureShader->Bind();
+			s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		}
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
