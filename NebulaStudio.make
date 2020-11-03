@@ -38,8 +38,8 @@ OBJDIR = bin-int/Debug/linux/NebulaStudio
 DEFINES += -D_CRT_SECURE_NO_WARNINGS -DFT2_BUILD_LIBRARY -DGLFW_SUPPLIED -D_LIBS_SUPPLIED -DNEB_DEBUG
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -std=c++17
-LIBS += bin/Debug/linux/NebulaEngine/libNebulaEngine.a Nebula/ext/glad/bin/Debug/linux/glad/libglad.a Nebula/ext/glfw/bin/Debug/linux/glfw/libglfw.a Nebula/ext/imgui/bin/Debug/linux/imgui/libimgui.a Nebula/ext/yaml-cpp/bin/Debug/linux/yaml-cpp/libyaml-cpp.a -lX11 -lGL -lGLU -ldl -lpthread
-LDDEPS += bin/Debug/linux/NebulaEngine/libNebulaEngine.a Nebula/ext/glad/bin/Debug/linux/glad/libglad.a Nebula/ext/glfw/bin/Debug/linux/glfw/libglfw.a Nebula/ext/imgui/bin/Debug/linux/imgui/libimgui.a Nebula/ext/yaml-cpp/bin/Debug/linux/yaml-cpp/libyaml-cpp.a
+LIBS += bin/Debug/linux/NebulaEngine/libNebulaEngine.a Nebula/ext/imgui/bin/Debug/linux/imgui/libimgui.a Nebula/ext/glad/bin/Debug/linux/glad/libglad.a Nebula/ext/glfw/bin/Debug/linux/glfw/libglfw.a Nebula/ext/yaml-cpp/bin/Debug/linux/yaml-cpp/libyaml-cpp.a Nebula/ext/nativefiledialog/bin/Debug/linux/nfd/libnfd_d.a -lX11 -lGL -lGLU -ldl -lpthread
+LDDEPS += bin/Debug/linux/NebulaEngine/libNebulaEngine.a Nebula/ext/imgui/bin/Debug/linux/imgui/libimgui.a Nebula/ext/glad/bin/Debug/linux/glad/libglad.a Nebula/ext/glfw/bin/Debug/linux/glfw/libglfw.a Nebula/ext/yaml-cpp/bin/Debug/linux/yaml-cpp/libyaml-cpp.a Nebula/ext/nativefiledialog/bin/Debug/linux/nfd/libnfd_d.a
 ALL_LDFLAGS += $(LDFLAGS)
 
 else ifeq ($(config),release)
@@ -49,8 +49,8 @@ OBJDIR = bin-int/Release/linux/NebulaStudio
 DEFINES += -D_CRT_SECURE_NO_WARNINGS -DFT2_BUILD_LIBRARY -DGLFW_SUPPLIED -D_LIBS_SUPPLIED -DNEB_RELEASE
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -std=c++17
-LIBS += bin/Release/linux/NebulaEngine/libNebulaEngine.a Nebula/ext/glad/bin/Release/linux/glad/libglad.a Nebula/ext/glfw/bin/Release/linux/glfw/libglfw.a Nebula/ext/imgui/bin/Release/linux/imgui/libimgui.a Nebula/ext/yaml-cpp/bin/Release/linux/yaml-cpp/libyaml-cpp.a -lX11 -lGL -lGLU -ldl -lpthread
-LDDEPS += bin/Release/linux/NebulaEngine/libNebulaEngine.a Nebula/ext/glad/bin/Release/linux/glad/libglad.a Nebula/ext/glfw/bin/Release/linux/glfw/libglfw.a Nebula/ext/imgui/bin/Release/linux/imgui/libimgui.a Nebula/ext/yaml-cpp/bin/Release/linux/yaml-cpp/libyaml-cpp.a
+LIBS += bin/Release/linux/NebulaEngine/libNebulaEngine.a Nebula/ext/imgui/bin/Release/linux/imgui/libimgui.a Nebula/ext/glad/bin/Release/linux/glad/libglad.a Nebula/ext/glfw/bin/Release/linux/glfw/libglfw.a Nebula/ext/yaml-cpp/bin/Release/linux/yaml-cpp/libyaml-cpp.a Nebula/ext/nativefiledialog/bin/Release/linux/nfd/libnfd.a -lX11 -lGL -lGLU -ldl -lpthread
+LDDEPS += bin/Release/linux/NebulaEngine/libNebulaEngine.a Nebula/ext/imgui/bin/Release/linux/imgui/libimgui.a Nebula/ext/glad/bin/Release/linux/glad/libglad.a Nebula/ext/glfw/bin/Release/linux/glfw/libglfw.a Nebula/ext/yaml-cpp/bin/Release/linux/yaml-cpp/libyaml-cpp.a Nebula/ext/nativefiledialog/bin/Release/linux/nfd/libnfd.a
 ALL_LDFLAGS += $(LDFLAGS) -s
 
 endif

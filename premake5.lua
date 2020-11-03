@@ -190,7 +190,12 @@ project "NebulaStudio"
             "GL",
             "GLU",
             "dl",
-            "pthread"
+            "pthread",
+            "imgui",
+            "glad",
+            "glfw",
+            "yaml-cpp",
+            "nfd"
         }
 
     filter "configurations:Debug"

@@ -38,8 +38,8 @@ OBJDIR = bin-int/Debug/linux/NebulaEngine
 DEFINES += -D_CRT_SECURE_NO_WARNINGS -DGLFW_SUPPLIED -D_LIBS_SUPPLIED -DNEB_DEBUG
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -std=c++17
-LIBS += Nebula/ext/glad/bin/Debug/linux/glad/libglad.a Nebula/ext/glfw/bin/Debug/linux/glfw/libglfw.a Nebula/ext/imgui/bin/Debug/linux/imgui/libimgui.a Nebula/ext/yaml-cpp/bin/Debug/linux/yaml-cpp/libyaml-cpp.a -lX11 -lGL -lGLU -ldl
-LDDEPS += Nebula/ext/glad/bin/Debug/linux/glad/libglad.a Nebula/ext/glfw/bin/Debug/linux/glfw/libglfw.a Nebula/ext/imgui/bin/Debug/linux/imgui/libimgui.a Nebula/ext/yaml-cpp/bin/Debug/linux/yaml-cpp/libyaml-cpp.a
+LIBS += Nebula/ext/imgui/bin/Debug/linux/imgui/libimgui.a Nebula/ext/glad/bin/Debug/linux/glad/libglad.a Nebula/ext/glfw/bin/Debug/linux/glfw/libglfw.a Nebula/ext/yaml-cpp/bin/Debug/linux/yaml-cpp/libyaml-cpp.a Nebula/ext/nativefiledialog/bin/Debug/linux/nfd/libnfd_d.a -lX11 -lGL -lGLU -ldl
+LDDEPS += Nebula/ext/imgui/bin/Debug/linux/imgui/libimgui.a Nebula/ext/glad/bin/Debug/linux/glad/libglad.a Nebula/ext/glfw/bin/Debug/linux/glfw/libglfw.a Nebula/ext/yaml-cpp/bin/Debug/linux/yaml-cpp/libyaml-cpp.a Nebula/ext/nativefiledialog/bin/Debug/linux/nfd/libnfd_d.a
 ALL_LDFLAGS += $(LDFLAGS)
 
 else ifeq ($(config),release)
@@ -49,8 +49,8 @@ OBJDIR = bin-int/Release/linux/NebulaEngine
 DEFINES += -D_CRT_SECURE_NO_WARNINGS -DGLFW_SUPPLIED -D_LIBS_SUPPLIED -DNEB_RELEASE
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -std=c++17
-LIBS += Nebula/ext/glad/bin/Release/linux/glad/libglad.a Nebula/ext/glfw/bin/Release/linux/glfw/libglfw.a Nebula/ext/imgui/bin/Release/linux/imgui/libimgui.a Nebula/ext/yaml-cpp/bin/Release/linux/yaml-cpp/libyaml-cpp.a -lX11 -lGL -lGLU -ldl
-LDDEPS += Nebula/ext/glad/bin/Release/linux/glad/libglad.a Nebula/ext/glfw/bin/Release/linux/glfw/libglfw.a Nebula/ext/imgui/bin/Release/linux/imgui/libimgui.a Nebula/ext/yaml-cpp/bin/Release/linux/yaml-cpp/libyaml-cpp.a
+LIBS += Nebula/ext/imgui/bin/Release/linux/imgui/libimgui.a Nebula/ext/glad/bin/Release/linux/glad/libglad.a Nebula/ext/glfw/bin/Release/linux/glfw/libglfw.a Nebula/ext/yaml-cpp/bin/Release/linux/yaml-cpp/libyaml-cpp.a Nebula/ext/nativefiledialog/bin/Release/linux/nfd/libnfd.a -lX11 -lGL -lGLU -ldl
+LDDEPS += Nebula/ext/imgui/bin/Release/linux/imgui/libimgui.a Nebula/ext/glad/bin/Release/linux/glad/libglad.a Nebula/ext/glfw/bin/Release/linux/glfw/libglfw.a Nebula/ext/yaml-cpp/bin/Release/linux/yaml-cpp/libyaml-cpp.a Nebula/ext/nativefiledialog/bin/Release/linux/nfd/libnfd.a
 ALL_LDFLAGS += $(LDFLAGS) -s
 
 endif
@@ -68,6 +68,7 @@ OBJECTS :=
 GENERATED += $(OBJDIR)/Application.o
 GENERATED += $(OBJDIR)/Buffer.o
 GENERATED += $(OBJDIR)/Entity.o
+GENERATED += $(OBJDIR)/FileDialog.o
 GENERATED += $(OBJDIR)/FileIO.o
 GENERATED += $(OBJDIR)/Framebuffer.o
 GENERATED += $(OBJDIR)/GLBuffers.o
@@ -84,7 +85,6 @@ GENERATED += $(OBJDIR)/GraphicsContext.o
 GENERATED += $(OBJDIR)/ImGuiLayer.o
 GENERATED += $(OBJDIR)/Input.o
 GENERATED += $(OBJDIR)/LayerStack.o
-GENERATED += $(OBJDIR)/LinuxPlatformUtils.o
 GENERATED += $(OBJDIR)/LinuxWindow.o
 GENERATED += $(OBJDIR)/MemoryTracker.o
 GENERATED += $(OBJDIR)/Nebula_pch.o
@@ -104,7 +104,6 @@ GENERATED += $(OBJDIR)/TextureLibrary.o
 GENERATED += $(OBJDIR)/VFS.o
 GENERATED += $(OBJDIR)/VertexArray.o
 GENERATED += $(OBJDIR)/Window.o
-GENERATED += $(OBJDIR)/WindowsPlatformUtils.o
 GENERATED += $(OBJDIR)/WindowsWindow.o
 GENERATED += $(OBJDIR)/mat2.o
 GENERATED += $(OBJDIR)/mat2f.o
@@ -122,6 +121,7 @@ GENERATED += $(OBJDIR)/vec4f.o
 OBJECTS += $(OBJDIR)/Application.o
 OBJECTS += $(OBJDIR)/Buffer.o
 OBJECTS += $(OBJDIR)/Entity.o
+OBJECTS += $(OBJDIR)/FileDialog.o
 OBJECTS += $(OBJDIR)/FileIO.o
 OBJECTS += $(OBJDIR)/Framebuffer.o
 OBJECTS += $(OBJDIR)/GLBuffers.o
@@ -138,7 +138,6 @@ OBJECTS += $(OBJDIR)/GraphicsContext.o
 OBJECTS += $(OBJDIR)/ImGuiLayer.o
 OBJECTS += $(OBJDIR)/Input.o
 OBJECTS += $(OBJDIR)/LayerStack.o
-OBJECTS += $(OBJDIR)/LinuxPlatformUtils.o
 OBJECTS += $(OBJDIR)/LinuxWindow.o
 OBJECTS += $(OBJDIR)/MemoryTracker.o
 OBJECTS += $(OBJDIR)/Nebula_pch.o
@@ -158,7 +157,6 @@ OBJECTS += $(OBJDIR)/TextureLibrary.o
 OBJECTS += $(OBJDIR)/VFS.o
 OBJECTS += $(OBJDIR)/VertexArray.o
 OBJECTS += $(OBJDIR)/Window.o
-OBJECTS += $(OBJDIR)/WindowsPlatformUtils.o
 OBJECTS += $(OBJDIR)/WindowsWindow.o
 OBJECTS += $(OBJDIR)/mat2.o
 OBJECTS += $(OBJDIR)/mat2f.o
@@ -240,6 +238,9 @@ $(OBJDIR)/stb_image.o: Nebula/ext/stb_image/stb_image.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Application.o: Nebula/src/Nebula/Core/Application.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/FileDialog.o: Nebula/src/Nebula/Core/FileDialog.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Input.o: Nebula/src/Nebula/Core/Input.cpp
@@ -386,13 +387,7 @@ $(OBJDIR)/GLImGuiBuild.o: Nebula/src/Platform/Graphics/GL/ImGui/GLImGuiBuild.cpp
 $(OBJDIR)/GLImGuiLayer.o: Nebula/src/Platform/Graphics/GL/ImGui/GLImGuiLayer.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/LinuxPlatformUtils.o: Nebula/src/Platform/OS/Linux/LinuxPlatformUtils.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/LinuxWindow.o: Nebula/src/Platform/OS/Linux/LinuxWindow.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/WindowsPlatformUtils.o: Nebula/src/Platform/OS/Windows/WindowsPlatformUtils.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/WindowsWindow.o: Nebula/src/Platform/OS/Windows/WindowsWindow.cpp

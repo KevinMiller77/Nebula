@@ -337,7 +337,7 @@ namespace Nebula
     
     void NebulaStudioLayer::SaveSceneAs()
     {
-        std::string filePath = Nebula::FileDialogs::SaveFile("Nebula Scene (*.nst)\0*.nst\0");
+        std::string filePath = Nebula::FileDialogs::SaveFile("nst");
         if (!filePath.empty())
         {
             filePath = ReplaceAll(filePath, "\\", "/");
@@ -359,7 +359,7 @@ namespace Nebula
     
     void NebulaStudioLayer::OpenScene()
     {
-        std::string filePath = Nebula::FileDialogs::OpenFile("Nebula Scene (*.nst)\0*.nst\0");
+        std::string filePath = Nebula::FileDialogs::OpenFile("nst");
         if (!filePath.empty())
         {
             filePath = ReplaceAll(filePath, "\\", "/");
