@@ -53,7 +53,6 @@ namespace Nebula
 	{
         if(std::filesystem::exists(root) && std::filesystem::is_directory(root))
         {
-     
             AbsoluteRoot = ReplaceAll(root, "\\", "/");
             return true;
         }
@@ -98,7 +97,8 @@ namespace Nebula
             return false;
         }
         //TODO: Check that the path string is valid
-        return std::filesystem::exists(absolutePath ? path : AbsoluteRoot + path);
+        bool result = std::filesystem::exists(absolutePath ? path : AbsoluteRoot + path);
+        return result;
     }
 
     bool VFS::IsDir(std::string path, bool absolutePath)

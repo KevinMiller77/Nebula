@@ -25,22 +25,6 @@ namespace Nebula
         {
             State = GREET;
         }
-
-        switch(State)
-        {
-            case(PROJ_READY_NEW):
-            {
-                
-                break;
-            }
-            case(PROJ_READY_OPEN):
-            {
-                
-                break;
-            }
-            default:
-                break;
-        }
     }
 
     void BootLayer::DrawProjSelection()

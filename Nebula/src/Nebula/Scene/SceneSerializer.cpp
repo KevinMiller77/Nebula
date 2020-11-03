@@ -191,7 +191,7 @@ namespace Nebula
 					name = tagComponent["Tag"].as<std::string>();
 				}
 
-				LOG_INF("Deserialized entity with ID = %ld; name = %s", (long)uuid, name.c_str());
+				// LOG_INF("Deserialized entity with ID = %ld; name = %s\n", (long)uuid, name.c_str());
 
 				Entity deserializedEntity = SceneAttached->CreateEntity(name);
 

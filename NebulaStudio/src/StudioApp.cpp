@@ -3,6 +3,8 @@
 #include "Layers/NebulaStudioLayer.h"
 #include "Layers/BootLayer.h"
 
+#include <filesystem>
+
 namespace Nebula
 {
     class Studio : public Application
@@ -16,7 +18,10 @@ namespace Nebula
             bootLayer = new BootLayer();
             PushLayer(bootLayer);
             window->SetWindowSize(550, 275);
-            // window->SetIcon("Icon.png");
+            if(std::filesystem::exists("Icon.png"))
+            {
+                window->SetIcon("Icon.png");
+            }
             LOG_INF("Application created\n");
         }
         ~Studio() = default;

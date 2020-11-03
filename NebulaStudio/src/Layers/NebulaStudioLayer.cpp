@@ -21,6 +21,7 @@ namespace Nebula
 
         if (VFS::Exists(CurrentProject.LastFileSystemMount, true))
         {
+            LOG_INF("%s\n", CurrentProject.LastFileSystemMount);
             VFS::Mount(CurrentProject.LastFileSystemMount);
         }
         else
@@ -33,6 +34,7 @@ namespace Nebula
                 dir = dir.substr(0, dir.find_last_of("/") + 1);
             #endif
 
+            
             if (VFS::Exists(dir, true))
             {
                 CurrentProject.LastFileSystemMount = dir;
