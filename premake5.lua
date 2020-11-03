@@ -61,9 +61,9 @@ project "NebulaEngine"
 
     links
     {
+        "imgui",
         "glad",
         "glfw",
-        "imgui",
         "yaml-cpp",
         "nfd"
         -- "freetype"
@@ -190,12 +190,7 @@ project "NebulaStudio"
             "GL",
             "GLU",
             "dl",
-            "pthread",
-            "glad",
-            "glfw",
-            "imgui",
-            "yaml-cpp",
-            "nfd"
+            "pthread"
         }
 
     filter "configurations:Debug"

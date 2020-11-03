@@ -12,8 +12,7 @@ project "imgui"
         "imgui.cpp",
         "imgui_demo.cpp",
         "imgui_draw.cpp",
-        "imgui_widgets.cpp",
-        "examples/imgui_impl_glfw.cpp"
+        "imgui_widgets.cpp"
     }
     sysincludedirs
     {
@@ -23,22 +22,10 @@ project "imgui"
     
     filter "system:windows"
         systemversion "latest"
-        files
-        {
-            "examples/imgui_impl_opengl3.cpp"
-        }
     filter "system:linux"
         systemversion "latest"
-        files
-        {
-            "examples/imgui_impl_opengl3.cpp"
-        }
     filter "system:macosx"
         systemversion "latest"
-        files
-        {
-            "examples/imgui_impl_metal.mm"
-        }
         buildoptions
         {
             "-x objective-c++"

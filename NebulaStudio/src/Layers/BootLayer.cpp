@@ -88,7 +88,7 @@ namespace Nebula
         ImGui::SetCursorPosX(x_pos);
         if (ImGui::Button("Open Project..."))
         {
-            std::string chosenFile = FileDialogs::OpenFile("Nebula Studio Project (*.nsp)\0*.nsp\0All File (*.*)\0*.*\0");
+            std::string chosenFile = FileDialogs::OpenFile("nsp");
             if (!chosenFile.empty())
             {
                 if(VFS::IsFile(chosenFile, true))
@@ -109,7 +109,7 @@ namespace Nebula
 
         if (ImGui::Button("New  Project..."))
         {
-            std::string chosenFile = FileDialogs::SaveFile("Nebula Studio Project (*.nsp)\0*.nsp\0All File (*.*)\0*.*\0");
+            std::string chosenFile = FileDialogs::SaveFile("nsp");
             if (!chosenFile.empty())
             {
                 if(!EndsWith(chosenFile, ".nsp"))

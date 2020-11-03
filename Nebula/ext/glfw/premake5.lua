@@ -61,10 +61,6 @@ project "glfw"
             "src/osmesa_context.c", 
             "src/xkb_unicode.c", 
             "src/glx_context.c"
-        }    
-        links 
-        {
-            "pthread"
         }
 
     filter "system:macosx"
