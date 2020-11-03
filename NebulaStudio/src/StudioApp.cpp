@@ -15,13 +15,14 @@ namespace Nebula
         {
             window->SetVSync(true);
 
+            window->SetWindowSize(550, 275);
+            if(std::filesystem::exists("icon.png"))
+            {
+                window->SetIcon("icon.png");
+            }
             bootLayer = new BootLayer();
             PushLayer(bootLayer);
-            window->SetWindowSize(550, 275);
-            if(std::filesystem::exists("Icon.png"))
-            {
-                window->SetIcon("Icon.png");
-            }
+
             LOG_INF("Application created\n");
         }
         ~Studio() = default;
