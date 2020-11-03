@@ -1,6 +1,7 @@
 project "glad"
     kind "StaticLib"
-    language "C"
+    language "C++"
+    cppdialect "C++17"
     staticruntime "on"
     
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -20,6 +21,11 @@ project "glad"
     
     filter "system:windows"
         systemversion "latest"
+    filter "system:linux"
+        links 
+        {
+            "pthread"
+        }
 
     filter "configurations:Debug"
         runtime "Debug"

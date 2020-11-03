@@ -9,7 +9,7 @@ namespace Nebula
     class SceneSerializer
     {
     public:
-        SceneSerializer(Ref<Scene> scene) : Scene(scene) {}
+        SceneSerializer(Ref<Scene> scene) : SceneAttached(scene) {}
 
         void SerializeTxt(std::string path);
         void SerializeBin(std::string path);
@@ -17,6 +17,6 @@ namespace Nebula
         bool DeserializeTxt(std::string path);
         bool DeserializeBin(std::string path);
     private:
-        Ref<Scene> Scene;
+        Ref<Scene> SceneAttached;
     };
 }

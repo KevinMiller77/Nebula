@@ -1,9 +1,7 @@
-#include "WindowsWindow.h"
-#ifdef NEB_PLATFORM_WINDOWS
+#include "LinuxWindow.h"
 
+#ifdef NEB_PLATFORM_LINUX
 #include <stb_image/stb_image.h>
-
-#include <Core/PlatformInfo.h>
 #include <GLFW/glfw3.h>
 
 #include <Core/VFS.h>
@@ -14,46 +12,46 @@
 
 namespace Nebula
 {
-    WindowsData WindowsWindow::data = WindowsData();
+    WindowsData LinuxWindow::data = WindowsData();
 
     void GLFWErrorCallback(int error, const char* decsription)
     {
         LOG_ERR("GLFW ERR [%X]: %s\n", error, decsription);
     }
 
-    WindowsWindow::~WindowsWindow()
+    LinuxWindow::~LinuxWindow()
     {
         ShutDown();
     }
 
-    void WindowsWindow::CallWindowHints()
+    void LinuxWindow::CallWindowHints()
     {
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_DECORATED, true);
     }
 
-    void WindowsWindow::SwapIO(std::string in, std::string out, std::string err)
+    void LinuxWindow::SwapIO(std::string in, std::string out, std::string err)
     {
         freopen(in.c_str(), "r+", stdin);
         freopen(out.c_str(), "w", stdout);
         freopen(err.c_str(), "w", stderr);
     }
 
-    void WindowsWindow::EnableConsole()
+    void LinuxWindow::EnableConsole()
     {
-        ::ShowWindow(::GetConsoleWindow(), SW_SHOW);
+        // ::ShowWindow(::GetConsoleWindow(), SW_SHOW);
     }
 
-    void WindowsWindow::DisableConsole()
+    void LinuxWindow::DisableConsole()
     {
-        ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+        // ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
     }
 
-    WindowsWindow::WindowsWindow(WindowInfo inf)
+    LinuxWindow::LinuxWindow(WindowInfo inf)
         : context(nullptr), GLFWWinCount(0)
     {
         NEB_PROFILE_FUNCTION();
@@ -82,8 +80,10 @@ namespace Nebula
         context = GraphicsContext::Create((void*)window);
         context->Init();
 
+
         glfwSetWindowUserPointer(window, &data);
         SetVSync(true);
+        LOG_INF("Context Init\n");
 
         // Set GLFW callbacks
         glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
@@ -177,7 +177,7 @@ namespace Nebula
     }
 
 
-    void WindowsWindow::ToggleFullscreen()
+    void LinuxWindow::ToggleFullscreen()
     {    
         if (glfwGetWindowMonitor(window))
         {
@@ -198,7 +198,7 @@ namespace Nebula
         }
     }
 
-    void WindowsWindow::OnUpdate()
+    void LinuxWindow::OnUpdate()
     {
         fflush(stdout);
         fflush(stderr);
@@ -213,29 +213,29 @@ namespace Nebula
         context->SwapBuffers();
     }
 
-    uint32 WindowsWindow::GetWidth() const
+    uint32 LinuxWindow::GetWidth() const
     {
         return data.width;
     }
 
 
-    uint32 WindowsWindow::GetHeight() const
+    uint32 LinuxWindow::GetHeight() const
     {
         
         return data.height;
     }
 
-    uint32* WindowsWindow::GetWidthPtr() const 
+    uint32* LinuxWindow::GetWidthPtr() const 
     {
         return &(data.width);
     }
-    uint32* WindowsWindow::GetHeightPtr() const
+    uint32* LinuxWindow::GetHeightPtr() const
     {
         return &(data.height);
     }
 
     
-    void WindowsWindow::SetWindowSize(uint32 width, uint32 height)
+    void LinuxWindow::SetWindowSize(uint32 width, uint32 height)
     {
         if (window)
         {
@@ -246,14 +246,14 @@ namespace Nebula
 
     }
 
-    void WindowsWindow::ShutDown()
+    void LinuxWindow::ShutDown()
     {
         NEB_PROFILE_FUNCTION();
         glfwDestroyWindow(window);
         glfwTerminate();
     }
 
-    void WindowsWindow::SetVSync(bool enabled)
+    void LinuxWindow::SetVSync(bool enabled)
     {
         if (enabled)
         {
@@ -267,12 +267,12 @@ namespace Nebula
         data.VSync = enabled;
     }
 
-    bool WindowsWindow::IsVSync() const
+    bool LinuxWindow::IsVSync() const
     {
         return data.VSync;
     }
 
-    void WindowsWindow::SetIcon(std::string filepath)
+    void LinuxWindow::SetIcon(std::string filepath)
     {
         int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
@@ -297,23 +297,23 @@ namespace Nebula
         glfwSetWindowIcon(window, 1, &image);
     }
 
-    bool WindowsWindow::IsMaximized()
+    bool LinuxWindow::IsMaximized()
     {
         return maximized;
     }
 
-    void WindowsWindow::MaximizeWindow()
+    void LinuxWindow::MaximizeWindow()
     {
         glfwMaximizeWindow(window);
         maximized = true;
     }
-    void WindowsWindow::RestoreWindow()
+    void LinuxWindow::RestoreWindow()
     {
         glfwRestoreWindow(window);
         maximized = false;
     }
 
-    void WindowsWindow::MinimizeWindow()
+    void LinuxWindow::MinimizeWindow()
     {
     }
 }

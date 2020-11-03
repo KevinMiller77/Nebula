@@ -3,11 +3,10 @@
 #include <Core/PlatformInfo.h>
 #include <entt/entt.hpp>
 #include <string>
+#include "Scene.h"
 
 namespace Nebula
 {
-	class Scene;
-
     class Entity
 	{
 	public:
@@ -32,9 +31,9 @@ namespace Nebula
 		{
 			if(HasComponent<T>())
             {
-             LOG_ERR("Entity already has component!");
+            	// LOG_ERR("Entity already has component!");
             }
-			return Scene->Registry.emplace<T>(EntityHandle, std::forward<Args>(args)...);
+			return ParentScene->Registry.emplace<T>(EntityHandle, std::forward<Args>(args)...);
 		}
 
 		template<typename T>
@@ -42,19 +41,19 @@ namespace Nebula
 		{
 			if(!HasComponent<T>())
             {
-             LOG_ERR("Entity does not have component for grabbing!");
+            //  LOG_ERR("Entity does not have component for grabbing!");
             }
-			return Scene->Registry.get<T>(EntityHandle);
+			return ParentScene->Registry.get<T>(EntityHandle);
 		}
 
 		template<typename T>
 		bool HasComponent()
 		{
-			if (!Scene->Registry.valid(EntityHandle))
+			if (!ParentScene->Registry.valid(EntityHandle))
 			{
 				return false;
 			}
-			return Scene->Registry.has<T>(EntityHandle);
+			return ParentScene->Registry.has<T>(EntityHandle);
 		}
 
 		template<typename T>
@@ -62,9 +61,9 @@ namespace Nebula
 		{
 			if(!HasComponent<T>())
             {
-             LOG_ERR("Entity does not have component for removal!");
+            //  LOG_ERR("Entity does not have component for removal!");
             }
-			Scene->Registry.remove<T>(EntityHandle);
+			ParentScene->Registry.remove<T>(EntityHandle);
 		}
 		
 
@@ -74,7 +73,7 @@ namespace Nebula
 
 		bool operator==(const Entity& other) const
 		{
-			return EntityHandle == other.EntityHandle && Scene == other.Scene;
+			return EntityHandle == other.EntityHandle && ParentScene == other.ParentScene;
 		}
 
 		bool operator!=(const Entity& other) const
@@ -83,6 +82,6 @@ namespace Nebula
 		}
 	private:
 		entt::entity EntityHandle{ entt::null };
-		Scene* Scene = nullptr;
+		Scene* ParentScene = nullptr;
 	};
 }

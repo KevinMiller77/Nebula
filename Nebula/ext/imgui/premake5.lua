@@ -1,6 +1,7 @@
 project "imgui"
     kind "StaticLib"
-    language "C"
+    language "C++"
+    cppdialect "C++17"
     staticruntime "on"
     
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")

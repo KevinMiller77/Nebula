@@ -28,7 +28,7 @@ namespace Nebula
 			if (!nsc.Instance)
 			{
 				nsc.Instance = nsc.InstantiateScript();
-				nsc.Instance->Entity = Entity{ entity, this };
+				nsc.Instance->AttachedEntity = Entity{ entity, this };
 				nsc.Instance->OnCreate();
 			}
 		});

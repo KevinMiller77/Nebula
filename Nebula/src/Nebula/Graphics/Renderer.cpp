@@ -6,6 +6,7 @@ namespace Nebula
 
     void Renderer::Init()
 	{
+		LOG_INF("Init renderer");
         RendererConfig::Init();
 		Renderer2D::Init();
     }

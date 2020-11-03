@@ -58,7 +58,7 @@ namespace Nebula
 		Timer Autosave = Timer();
         std::string StartProjFileInput = std::string();
 
-        SceneHierarchyPanel SceneHierarchyPanel;
+        SceneHierarchyPanel SceneHierarchy;
         LogPanel Log;
         ImGui::FileBrowser FileBrowser;
         StudioProject::Project CurrentProject;

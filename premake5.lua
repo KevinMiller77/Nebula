@@ -186,7 +186,12 @@ project "NebulaStudio"
             "X11",
             "GL",
             "GLU",
-            "dl"
+            "dl",
+            "pthread",
+            "glad",
+            "glfw",
+            "imgui",
+            "yaml-cpp"
         }
 
     filter "configurations:Debug"

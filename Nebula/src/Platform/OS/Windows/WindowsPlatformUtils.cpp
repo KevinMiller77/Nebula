@@ -1,4 +1,5 @@
 #include "Nebula.h"
+#ifdef NEB_PLATFORM_WINDOWS
 
 #include <commdlg.h>
 #include <GLFW/glfw3.h>
@@ -45,3 +46,4 @@ namespace Nebula
 		return std::string();
 	}
 }
+#endif

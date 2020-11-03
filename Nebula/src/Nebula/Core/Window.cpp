@@ -2,8 +2,15 @@
 
 #include <Core/Input.h>
 
+#ifdef NEB_PLATFORM_WINDOWS
 #include <Platform/OS/Windows/WindowsWindow.h>
-// #include <platform/Linux/LinuxWindow.h>
+#endif
+#ifdef NEB_PLATFORM_LINUX
+#include <Platform/OS/Linux/LinuxWindow.h>
+#endif
+#ifdef NEB_PLATFORM_MACOS
+#include <Platform/OS/MacOS/MacWindow.h>
+#endif
 
 namespace Nebula
 {

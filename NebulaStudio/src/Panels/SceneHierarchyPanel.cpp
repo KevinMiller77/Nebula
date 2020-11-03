@@ -155,8 +155,12 @@ namespace Nebula {
 
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
+			#ifdef NEB_PLATFORM_WINDOWS
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
-			
+			#else
+			strcpy(buffer, tag.c_str());
+			#endif
+
 			ImGui::PushID(&tag);
 			ImGui::Text(" Tag	:");
 			ImGui::SameLine();
@@ -259,8 +263,13 @@ namespace Nebula {
 					memset(nameBuffer, 0, sizeof(nameBuffer));
 					memset(pathBuffer, 0, sizeof(pathBuffer));
 
+					#ifdef NEB_PLATFORM_WINDOWS
 					strcpy_s(nameBuffer, sizeof(nameBuffer), newTextureName.c_str());
 					strcpy_s(pathBuffer, sizeof(pathBuffer), newTexturePath.c_str());
+					#else
+					strcpy(nameBuffer, newTextureName.c_str());
+					strcpy(pathBuffer, newTexturePath.c_str());
+					#endif
 					
 					ImGui::PushID(&newTextureName);
 					if(ImGui::InputTextWithHint("##namein", "Name", nameBuffer, 256))

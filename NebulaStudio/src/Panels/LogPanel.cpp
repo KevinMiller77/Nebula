@@ -27,7 +27,7 @@ namespace Nebula
         LineOffsets.push_back(0);
     }
 
-    void LogPanel::AddLog(const char* fmt, ...) IM_FMTARGS(2)
+    void LogPanel::AddLog(const char* fmt, ...)
     {
         int old_size = Buf.size();
         va_list args;

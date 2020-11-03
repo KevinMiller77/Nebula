@@ -38,10 +38,10 @@ namespace Nebula
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_LINE_SMOOTH);
-        glEnable(GL_POLYGON_SMOOTH);
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+        // glEnable(GL_LINE_SMOOTH);
+        // glEnable(GL_POLYGON_SMOOTH);
+        // glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        // glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     }
 
     void GLRendererAPI::SetViewport(uint32 x, uint32 y, uint32 width, uint32 height)

@@ -24,7 +24,6 @@ namespace Nebula {
 		
 		void DrawComponents(Entity entity);
 	private:
-		Timer Autosave = Timer();
 
 		Ref<Scene> Context = nullptr;;
 		Entity SelectionContext;

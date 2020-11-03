@@ -31,7 +31,7 @@ struct Mat4f
     static Mat4f scale(const Vec3f &scale);
 
     Mat4f invertMatrix();
-    static Mat4f& invertMatrix(Mat4f toInv) { return toInv.invertMatrix(); }
+    static Mat4f invertMatrix(Mat4f toInv) { return toInv.invertMatrix(); }
 
     const Vec4f &operator[](int index) const;
     Vec4f &operator[](int index);

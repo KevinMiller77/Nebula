@@ -1,6 +1,7 @@
 project "glfw"
     kind "StaticLib"
-    language "C"
+    language "C++"
+    cppdialect "C++17"
     staticruntime "on"
     
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -60,6 +61,10 @@ project "glfw"
             "src/osmesa_context.c", 
             "src/xkb_unicode.c", 
             "src/glx_context.c"
+        }    
+        links 
+        {
+            "pthread"
         }
 
     filter "system:macosx"

@@ -23,7 +23,7 @@ namespace Nebula
 
         VFS::Init();
 
-        Nebula::Renderer::Init();
+        Renderer::Init();
 
         imGuiLayer = ImGuiLayer::Create();
         PushOverlay(imGuiLayer);

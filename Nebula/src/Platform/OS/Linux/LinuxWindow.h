@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/PlatformInfo.h>
-#ifdef NEB_PLATFORM_WINDOWS
+#ifdef NEB_PLATFORM_LINUX
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,7 +10,7 @@
 
 #include <Core/Window.h>
 #include <Graphics/GraphicsContext.h>
-#include <Core/NebulaCommon.h>
+// #include <Core/NebulaCommon.h>
 
 
 struct GLFWwindow;
@@ -29,15 +30,15 @@ namespace Nebula
         EventCallbackFn EventCallback;
     };
 
-    class WindowsWindow : public Window
+    class LinuxWindow : public Window
     {
     public:
         inline bool IsWindowed() override { return data.windowed; }
         void ToggleFullscreen() override;
         virtual void CallWindowHints() override;
         
-        WindowsWindow(WindowInfo inf);
-        ~WindowsWindow();
+        LinuxWindow(WindowInfo inf);
+        ~LinuxWindow();
         
         void OnUpdate() override;
 

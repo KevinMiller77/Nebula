@@ -145,9 +145,9 @@ namespace Nebula
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		Scene->Registry.each([&](auto entityID)
+		SceneAttached->Registry.each([&](auto entityID)
 		{
-			Entity entity = { entityID, Scene.get() };
+			Entity entity = { entityID, SceneAttached.get() };
 			if (!entity)
 				return;
 
@@ -193,7 +193,7 @@ namespace Nebula
 
 				LOG_INF("Deserialized entity with ID = %ld; name = %s", (long)uuid, name.c_str());
 
-				Entity deserializedEntity = Scene->CreateEntity(name);
+				Entity deserializedEntity = SceneAttached->CreateEntity(name);
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
@@ -210,7 +210,7 @@ namespace Nebula
 				{
 					auto& cc = deserializedEntity.AddComponent<CameraComponent>();
 
-					auto& cameraProps = cameraComponent["Camera"];
+					auto cameraProps = cameraComponent["Camera"];
 					cc.Camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
 
 					cc.Camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());

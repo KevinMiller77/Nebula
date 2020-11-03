@@ -30,7 +30,8 @@ namespace Nebula
     
     void VFS::freopen(std::string file, const char* mode, FILE* stream)
     {
-        freopen(AbsoluteRoot + file, mode, stream);
+        std::string tmp = AbsoluteRoot + file;
+        ::freopen(tmp.c_str(), mode, stream);
     }
 
     bool VFS::CD(std::string newDir)

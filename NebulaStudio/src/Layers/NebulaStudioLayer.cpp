@@ -94,8 +94,8 @@ namespace Nebula
         // quad1.AddComponent<SpriteRendererComponent>(textures.GetTexture("Missing"), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
         // quad1.AddComponent<NativeScriptComponent>().Bind<GravityOnCube>();
 
-        SceneHierarchyPanel.SetContext(ActiveScene);
-        SceneHierarchyPanel.SetTextureLib(&textures);
+        SceneHierarchy.SetContext(ActiveScene);
+        SceneHierarchy.SetTextureLib(&textures);
 
         FileBrowser.SetTitle("Project Browser");
 
@@ -172,7 +172,7 @@ namespace Nebula
         ImGui::End();
 
         OnImGuiMenuBar();
-        SceneHierarchyPanel.OnImGuiRender();
+        SceneHierarchy.OnImGuiRender();
 
         bool t = true;
         Log.Update(t);
@@ -308,10 +308,10 @@ namespace Nebula
     {
         ActiveScene = CreateRef<Nebula::Scene>();
         ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
-        SceneHierarchyPanel.SetContext(ActiveScene);
+        SceneHierarchy.SetContext(ActiveScene);
 
         LOG_INF("New scene created.\n");
-        SceneHierarchyPanel.ClearSelection();
+        SceneHierarchy.ClearSelection();
     }
     
     void NebulaStudioLayer::SaveScene()
@@ -369,7 +369,7 @@ namespace Nebula
             ActiveScene = CreateRef<Nebula::Scene>();
             ActiveScene->SetFilePath(relPath);
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
-            SceneHierarchyPanel.SetContext(ActiveScene);
+            SceneHierarchy.SetContext(ActiveScene);
 
             Nebula::SceneSerializer serializer(ActiveScene);
             serializer.DeserializeTxt(filePath);
@@ -380,7 +380,7 @@ namespace Nebula
             return;
         }
         LOG_INF("Open scene cancelled!\n");
-        SceneHierarchyPanel.ClearSelection();
+        SceneHierarchy.ClearSelection();
     }
 
 }
