@@ -28,13 +28,17 @@ else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := glfw glad imgui yaml-cpp NebulaEngine NebulaStudio
+PROJECTS := nfd glfw glad imgui yaml-cpp NebulaEngine NebulaStudio
 
-.PHONY: all clean help $(PROJECTS) Dependencies
+.PHONY: all clean help $(PROJECTS) 
 
 all: $(PROJECTS)
 
-Dependencies: glad glfw imgui yaml-cpp
+nfd:
+ifneq (,$(nfd_config))
+	@echo "==== Building nfd ($(nfd_config)) ===="
+	@${MAKE} --no-print-directory -C Nebula/ext/nativefiledialog -f Makefile config=$(nfd_config)
+endif
 
 glfw:
 ifneq (,$(glfw_config))
@@ -60,19 +64,20 @@ ifneq (,$(yaml_cpp_config))
 	@${MAKE} --no-print-directory -C Nebula/ext/yaml-cpp -f Makefile config=$(yaml_cpp_config)
 endif
 
-NebulaEngine: glad glfw imgui yaml-cpp
+NebulaEngine: nfd glad glfw imgui yaml-cpp
 ifneq (,$(NebulaEngine_config))
 	@echo "==== Building NebulaEngine ($(NebulaEngine_config)) ===="
 	@${MAKE} --no-print-directory -C . -f NebulaEngine.make config=$(NebulaEngine_config)
 endif
 
-NebulaStudio: NebulaEngine glad glfw imgui yaml-cpp
+NebulaStudio: NebulaEngine nfd glad glfw imgui yaml-cpp
 ifneq (,$(NebulaStudio_config))
 	@echo "==== Building NebulaStudio ($(NebulaStudio_config)) ===="
 	@${MAKE} --no-print-directory -C . -f NebulaStudio.make config=$(NebulaStudio_config)
 endif
 
 clean:
+	@${MAKE} --no-print-directory -C Nebula/ext/nativefiledialog -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/glfw -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/glad -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/imgui -f Makefile clean
@@ -90,6 +95,7 @@ help:
 	@echo "TARGETS:"
 	@echo "   all (default)"
 	@echo "   clean"
+	@echo "   nfd"
 	@echo "   glfw"
 	@echo "   glad"
 	@echo "   imgui"

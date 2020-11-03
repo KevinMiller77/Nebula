@@ -19,7 +19,7 @@ endif
 # #############################################
 
 RESCOMP = windres
-INCLUDES += -isystem Nebula -isystem Nebula/src -isystem Nebula/src/Nebula -isystem Nebula/include -isystem Nebula/ext/imgui -isystem Nebula/ext/glfw/include -isystem Nebula/ext/glad/include -isystem Nebula/ext/yaml-cpp/include
+INCLUDES += -isystem Nebula -isystem Nebula/src -isystem Nebula/src/Nebula -isystem Nebula/include -isystem Nebula/ext/imgui -isystem Nebula/ext/glfw/include -isystem Nebula/ext/glad/include -isystem Nebula/ext/yaml-cpp/include -isystem Nebula/ext/nativefiledialog/src/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)

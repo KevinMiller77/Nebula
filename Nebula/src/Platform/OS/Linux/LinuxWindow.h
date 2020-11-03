@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #include <time.h>
-#include <math/math.h>
+#include <Math/math.h>
 
 #include <Core/Window.h>
 #include <Graphics/GraphicsContext.h>

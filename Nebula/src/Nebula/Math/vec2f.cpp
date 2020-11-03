@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
-#include <utils/Logging.h>
+#include <Utils/Logging.h>
 
 Vec2f::Vec2f() {
     memset(elements, 0, 2 * sizeof(float));

@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <Core/Input.h>
 #include <Events/Event.h>
 

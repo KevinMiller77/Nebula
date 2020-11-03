@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Imgui/ImGuiLayer.h>
+#include <ImGui/ImGuiLayer.h>
 
 namespace Nebula
 {

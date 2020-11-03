@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include <math/math.h>
+#include <Math/math.h>
 
 #include <Core/PlatformInfo.h>
 #include <Events/InputCodes.h>

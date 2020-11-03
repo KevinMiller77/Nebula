@@ -6,8 +6,8 @@
 //Ex. KEY_D0
 
 #include <Core/PlatformInfo.h>
-#include "../math/math.h"
-#include "../utils/Logging.h"
+#include <Math/math.h>
+#include <Utils/Logging.h>
 #include "InputCodes.h"
 
 #include <functional>

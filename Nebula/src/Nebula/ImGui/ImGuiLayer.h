@@ -1,9 +1,9 @@
 #pragma once
 #include <Core/Layer.h>
 
-#include <events/KeyEvent.h>
-#include <events/MouseEvent.h>
-#include <events/WindowEvent.h>
+#include <Events/KeyEvent.h>
+#include <Events/MouseEvent.h>
+#include <Events/WindowEvent.h>
 
 #include <Core/Window.h>
 

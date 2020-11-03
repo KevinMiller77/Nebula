@@ -16,7 +16,8 @@ namespace Nebula
             bootLayer = new BootLayer();
             PushLayer(bootLayer);
             window->SetWindowSize(550, 275);
-            window->SetIcon("Icon.png");
+            // window->SetIcon("Icon.png");
+            LOG_INF("Application created\n");
         }
         ~Studio() = default;
 

@@ -18,6 +18,7 @@ workspace "Nebula"
         include "Nebula/ext/glad"
         include "Nebula/ext/imgui"
         include "Nebula/ext/yaml-cpp"
+        include "Nebula/ext/nativefiledialog"
         -- include "Nebula/ext/freetype"
         group ""
         
@@ -54,7 +55,8 @@ project "NebulaEngine"
         "Nebula/ext/imgui",
 		"Nebula/ext/glfw/include",
         "Nebula/ext/glad/include",
-        "Nebula/ext/yaml-cpp/include"
+        "Nebula/ext/yaml-cpp/include",
+        "Nebula/ext/nativefiledialog/src/include"
     }
 
     links
@@ -62,7 +64,8 @@ project "NebulaEngine"
         "glad",
         "glfw",
         "imgui",
-        "yaml-cpp"
+        "yaml-cpp",
+        "nfd"
         -- "freetype"
     }
 
@@ -191,7 +194,8 @@ project "NebulaStudio"
             "glad",
             "glfw",
             "imgui",
-            "yaml-cpp"
+            "yaml-cpp",
+            "nfd"
         }
 
     filter "configurations:Debug"
