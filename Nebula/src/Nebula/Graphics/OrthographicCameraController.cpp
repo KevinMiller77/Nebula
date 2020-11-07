@@ -22,24 +22,24 @@ namespace Nebula {
 
 		if (Input::IsKeyPressed(KeyCode::A))
 		{
-			m_CameraPosition.x -= cos((PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.y -= sin((PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.X -= cos((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.Y -= sin((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 		}
 		else if (Input::IsKeyPressed(KeyCode::D))
 		{
-			m_CameraPosition.x += cos((PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.y += sin((PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.X += cos((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.Y += sin((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 		}
 
 		if (Input::IsKeyPressed(KeyCode::W))
 		{
-			m_CameraPosition.x += -sin((PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.y += cos((PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.X += -sin((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.Y += cos((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 		}
 		else if (Input::IsKeyPressed(KeyCode::S))
 		{
-			m_CameraPosition.x -= -sin((PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.y -= cos((PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.X -= -sin((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.Y -= cos((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 		}
 
 		if (m_Rotation)
@@ -64,7 +64,7 @@ namespace Nebula {
 
 	Mat4f OrthographicCameraController::GetTransform()
 	{
-		Mat4f transform = Mat4f(1.0f) * Mat4f::rotation(PI2R_FACTOR * m_CameraRotation, Vec3f(0,0,1)) * Mat4f::translation(m_CameraPosition);
+		Mat4f transform = Mat4f(1.0f) * Mat4f::rotation(RAD_TO_DEG(m_CameraRotation), Vec3f(0,0,1)) * Mat4f::translation(m_CameraPosition);
 		return transform;
 	}
 
@@ -101,7 +101,7 @@ namespace Nebula {
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
-		OnResize((float)e.GetScreenSize().x, (float)e.GetScreenSize().x);
+		OnResize((float)e.GetScreenSize().X, (float)e.GetScreenSize().X);
 		return false;
 	}
 

@@ -28,7 +28,7 @@ namespace Nebula
         OrthographicCameraController EditorCamera;
 
         NebulaStudioLayer(std::string startProjectFile)
-            : EditorCamera(OrthographicCameraController(ViewportSize.x / ViewportSize.y)), StartProjFileInput(startProjectFile)
+            : EditorCamera(OrthographicCameraController(ViewportSize.X / ViewportSize.Y)), StartProjFileInput(startProjectFile)
         {
         }
 

@@ -180,13 +180,13 @@ namespace Nebula
 
 	void Renderer2D::DrawQuad(const Vec2f& position, const Vec2f& size, const Vec4f& color)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, color);
+		DrawQuad({ position.X, position.Y, 0.0f }, size, color);
 	}
 
 	void Renderer2D::DrawQuad(const Vec3f& position, const Vec2f& size, const Vec4f& color)
 	{
 		Mat4f translation = Mat4f::translation(position);
-		Mat4f scale = Mat4f::scale(Vec3f(size.x, size.y, 1.0f));
+		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
 		Mat4f transform = scale * translation;
 
 		
@@ -195,13 +195,13 @@ namespace Nebula
 
 	void Renderer2D::DrawQuad(const Vec2f& position, const Vec2f& size, const Texture2D* texture, float tilingFactor, const Vec4f& tintColor)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor);
+		DrawQuad({ position.X, position.Y, 0.0f }, size, texture, tilingFactor, tintColor);
 	}
 
 	void Renderer2D::DrawQuad(const Vec3f& position, const Vec2f& size, const Texture2D* texture, float tilingFactor, const Vec4f& tintColor)
 	{
 		Mat4f translation = Mat4f::translation(position);
-		Mat4f scale = Mat4f::scale(Vec3f(size.x, size.y, 1.0f));
+		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
 		Mat4f transform = scale * translation;
 
 		DrawQuad(transform, texture, tilingFactor, tintColor);
@@ -221,7 +221,7 @@ namespace Nebula
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
             Vec4f tempPos = Vec4f(transform * s_Data.QuadVertexPositions[i]);
-            s_Data.QuadVertexBufferPtr->Position = { tempPos.x, tempPos.y, tempPos.z };
+            s_Data.QuadVertexBufferPtr->Position = { tempPos.X, tempPos.Y, tempPos.Z };
             s_Data.QuadVertexBufferPtr->Color = color;
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
@@ -265,7 +265,7 @@ namespace Nebula
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
             Vec4f tempPos = Vec4f(transform * s_Data.QuadVertexPositions[i]);
-            s_Data.QuadVertexBufferPtr->Position = { tempPos.x, tempPos.y, tempPos.z };
+            s_Data.QuadVertexBufferPtr->Position = { tempPos.X, tempPos.Y, tempPos.Z };
 			s_Data.QuadVertexBufferPtr->Color = tintColor;
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
@@ -280,13 +280,13 @@ namespace Nebula
 
 	void Renderer2D::DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Vec4f& color)
 	{
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
+		DrawRotatedQuad({ position.X, position.Y, 0.0f }, size, rotation, color);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Vec4f& color)
 	{
 		Mat4f translation = Mat4f::translation(position);
-		Mat4f scale = Mat4f::scale(Vec3f(size.x, size.y, 1.0f));
+		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
 		Mat4f rot = Mat4f::rotation(rotation, Vec3f(0,0,1));
 		Mat4f transform = rot * scale * translation;
 
@@ -295,13 +295,13 @@ namespace Nebula
 
 	void Renderer2D::DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Texture2D* texture, float tilingFactor, const Vec4f& tintColor)
 	{
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tilingFactor, tintColor);
+		DrawRotatedQuad({ position.X, position.Y, 0.0f }, size, rotation, texture, tilingFactor, tintColor);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Texture2D* texture, float tilingFactor, const Vec4f& tintColor)
 	{
 		Mat4f translation = Mat4f::translation(position);
-		Mat4f scale = Mat4f::scale(Vec3f(size.x, size.y, 1.0f));
+		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
 		Mat4f rot = Mat4f::rotation(rotation, Vec3f(0,0,1));
 		Mat4f transform = rot * scale * translation;
 

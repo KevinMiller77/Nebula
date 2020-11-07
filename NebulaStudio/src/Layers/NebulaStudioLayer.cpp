@@ -61,7 +61,7 @@ namespace Nebula
         FrameBuffer = Framebuffer::Create(fbSpec);
 
         PlayStatus = SceneStatus::NOT_STARTED;
-        EditorCamera = OrthographicCameraController(ViewportSize.x / ViewportSize.x);
+        EditorCamera = OrthographicCameraController(ViewportSize.X / ViewportSize.X);
 
         textures.AddTexture("Missing", VFS::AbsolutePath("assets/textures/Missing.png"));
 
@@ -88,7 +88,7 @@ namespace Nebula
         //         velocityY += gravity * ts;
 
         //         auto& transform = GetComponent<TransformComponent>();
-        //         transform.Translation.z -= velocityY * ts;
+        //         transform.Translation.Z -= velocityY * ts;
         //     }
         // };
 
@@ -120,11 +120,11 @@ namespace Nebula
 
         if (FramebufferSpecification spec = FrameBuffer->GetSpecification();
             // zero sized framebuffer is invalid
-            ViewportSize.x > 0.0f && ViewportSize.y > 0.0f && (spec.Width != ViewportSize.x || spec.Height != ViewportSize.y))
+            ViewportSize.X > 0.0f && ViewportSize.Y > 0.0f && (spec.Width != ViewportSize.X || spec.Height != ViewportSize.Y))
         {
-            FrameBuffer->Resize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
-            ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
-            EditorCamera.OnResize(ViewportSize.x, ViewportSize.y);
+            FrameBuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
+            ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
+            EditorCamera.OnResize(ViewportSize.X, ViewportSize.Y);
         }
 
         RendererConfig::Clear();
@@ -201,7 +201,7 @@ namespace Nebula
         ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
         uint64_t textureID = FrameBuffer->GetColorAttachmentRendererID();
-        ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.x, ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+        ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.X, ViewportSize.Y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         
         
         ImGui::End();
@@ -309,7 +309,7 @@ namespace Nebula
     void NebulaStudioLayer::NewScene()
     {
         ActiveScene = CreateRef<Nebula::Scene>();
-        ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
+        ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
         SceneHierarchy.SetContext(ActiveScene);
 
         LOG_INF("New scene created.\n");
@@ -370,7 +370,7 @@ namespace Nebula
 
             ActiveScene = CreateRef<Nebula::Scene>();
             ActiveScene->SetFilePath(relPath);
-            ActiveScene->OnViewportResize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y);
+            ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             SceneHierarchy.SetContext(ActiveScene);
 
             Nebula::SceneSerializer serializer(ActiveScene);

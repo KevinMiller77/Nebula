@@ -68,36 +68,36 @@ namespace Nebula {
 		ImGui::Text("%s", labelOut.c_str()); 		ImGui::SameLine();
 		{
 			
-			ImGui::PushID(&data.x);		
+			ImGui::PushID(&data.X);		
 			ImGui::PushItemWidth(eachSliderWidth);
 
 			ImGui::BeginGroup();
 			ImGui::Button("X");						ImGui::SameLine();
-			ImGui::DragFloat("", &data.x, 0.2f);	
+			ImGui::DragFloat("", &data.X, 0.2f);	
 			ImGui::EndGroup();						ImGui::SameLine();
 
 			ImGui::PopItemWidth();
 			ImGui::PopID();
 		}
 		{
-			ImGui::PushID(&data.y);
+			ImGui::PushID(&data.Y);
 			ImGui::PushItemWidth(eachSliderWidth);
 
 			ImGui::BeginGroup();
 			ImGui::Button("Y");						ImGui::SameLine();
-			ImGui::DragFloat("", &data.y, 0.2f);	
+			ImGui::DragFloat("", &data.Y, 0.2f);	
 			ImGui::EndGroup();						ImGui::SameLine();
 
 			ImGui::PopItemWidth();
 			ImGui::PopID();
 		}
 		{
-			ImGui::PushID(&data.z);
+			ImGui::PushID(&data.Z);
 			ImGui::PushItemWidth(eachSliderWidth);
 
 			ImGui::BeginGroup();
 			ImGui::Button("Z");						ImGui::SameLine();
-			ImGui::DragFloat("", &data.z, 0.2f);
+			ImGui::DragFloat("", &data.Z, 0.2f);
 			ImGui::EndGroup();						
 
 			ImGui::PopItemWidth();

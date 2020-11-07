@@ -6,51 +6,51 @@
 namespace YAML {
 
 	template<>
-	struct convert<Vec3f>
+	struct convert<Nebula::Vec3f>
 	{
-		static Node encode(const Vec3f& rhs)
+		static Node encode(const Nebula::Vec3f& rhs)
 		{
 			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
+			node.push_back(rhs.X);
+			node.push_back(rhs.Y);
+			node.push_back(rhs.Z);
 			return node;
 		}
 
-		static bool decode(const Node& node, Vec3f& rhs)
+		static bool decode(const Node& node, Nebula::Vec3f& rhs)
 		{
 			if (!node.IsSequence() || node.size() != 3)
 				return false;
 
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
+			rhs.X = node[0].as<float>();
+			rhs.Y = node[1].as<float>();
+			rhs.Z = node[2].as<float>();
 			return true;
 		}
 	};
 
 	template<>
-	struct convert<Vec4f>
+	struct convert<Nebula::Vec4f>
 	{
-		static Node encode(const Vec4f& rhs)
+		static Node encode(const Nebula::Vec4f& rhs)
 		{
 			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			node.push_back(rhs.w);
+			node.push_back(rhs.X);
+			node.push_back(rhs.Y);
+			node.push_back(rhs.Z);
+			node.push_back(rhs.W);
 			return node;
 		}
 
-		static bool decode(const Node& node, Vec4f& rhs)
+		static bool decode(const Node& node, Nebula::Vec4f& rhs)
 		{
 			if (!node.IsSequence() || node.size() != 4)
 				return false;
 
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			rhs.w = node[3].as<float>();
+			rhs.X = node[0].as<float>();
+			rhs.Y = node[1].as<float>();
+			rhs.Z = node[2].as<float>();
+			rhs.W = node[3].as<float>();
 			return true;
 		}
 	};
@@ -61,14 +61,14 @@ namespace Nebula
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vec3f& v)
 	{
 		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
+		out << YAML::BeginSeq << v.X << v.Y << v.Z << YAML::EndSeq;
 		return out;
 	}
 
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vec4f& v)
 	{
 		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
+		out << YAML::BeginSeq << v.X << v.Y << v.Z << v.W << YAML::EndSeq;
 		return out;
 	}
 

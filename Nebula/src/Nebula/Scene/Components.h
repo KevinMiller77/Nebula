@@ -29,7 +29,7 @@ namespace Nebula
 
 		const Mat4f GetTransformation() const
 		{
-			Mat4f rot = Mat4f(1.0f) * Mat4f::rotation(Rotation.x, { 1.0f, 0.0f, 0.0f }) * Mat4f::rotation(Rotation.y, { 0.0f, 1.0f, 0.0f }) * Mat4f::rotation(Rotation.z, { 0.0f, 0.0f, 1.0f });
+			Mat4f rot = Mat4f(1.0f) * Mat4f::rotation(Rotation.X, { 1.0f, 0.0f, 0.0f }) * Mat4f::rotation(Rotation.Y, { 0.0f, 1.0f, 0.0f }) * Mat4f::rotation(Rotation.Z, { 0.0f, 0.0f, 1.0f });
 			return Mat4f(1.0f) * Mat4f::scale(Scale) * rot * Mat4f::translation(Translation);
 		}
 	};
@@ -55,7 +55,7 @@ namespace Nebula
 		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
-		CameraComponent(Vec2f ViewportSize) { Camera.SetViewportSize((uint32_t)ViewportSize.x, (uint32_t)ViewportSize.y); } 
+		CameraComponent(Vec2f ViewportSize) { Camera.SetViewportSize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y); } 
 		CameraComponent(const CameraComponent&) = default;
 	};
 

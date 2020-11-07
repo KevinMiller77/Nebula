@@ -1,35 +1,83 @@
-#ifndef __KevEngine_VEC3__
-#define __KevEngine_VEC3__
+#pragma once
+#include "MathCommon.h"
 
-//3 Float vector
-struct Vec3 {
-    union {
-        float elements[3];
-        struct {float x; float y; float z;};
+namespace Nebula
+{
+    template <typename T>
+    struct Vec3
+    {
+        union {
+            T elements[3];
+            struct { T X; T Y; T Z; };
+        };
+        
+        Vec3()                  : X((T)0),  Y((T)0),  Z((T)0) {}
+        Vec3(T x, T y, T z)     : X(x),     Y(y),    Z(z) {}
+        Vec3(T all)              : X(all),     Y(all),     Z(all) {}
+        ~Vec3()                 = default;
+        
+        const T& operator[](int index)  const { return elements[index]; }
+        T& operator[](int index)        { return elements[index]; }
+
+        float Dot(const Vec3<T>& other)                                     { return (float)(X * other.X + Y * other.Y + Z * other.Z); }
+        static float Dot(const Vec3<T>& left, const Vec3<T>& right)         { return (float)(left.X * right.X + left.Y * right.Y + left.Z * right.Z); }
+
+        float Magnitude()                                                   { return (float)sqrt((float)(X * X + Y * Y + Z * Z)); }
+        static float Magnitude(const Vec3& in)                              { return (float)sqrt((float)(in.X * in.X + in.Y * in.Y + in.Z * in.Z)); }
+
+        //  Return vlaue is in radians
+        float AngleBetween(const Vec3<T>& other)
+        { 
+            float dot = Dot(other);
+            float mag = Magnitude() * Magnitude(other);
+            assert(mag != 0.0f);
+            return (float)acos(dot / mag); 
+        }
+        //  Return vlaue is in radians
+        static float AngleBetween(const Vec3& left, const Vec3& right)      { return left.AngleBetween(other); }
+        float AngleBetweenDeg(const Vec3<T>& other)                         { return RAD_TO_DEG(AngleBetween(other)); }
+        static float AngleBetweenDeg(const Vec3& left, const Vec3& right)   { return RAD_TO_DEG(AngleBetween(left, right)); }
+
+        void operator+=(const Vec3& other)  { add(other); }
+        void operator-=(const Vec3& other)  { subtract(other); }
+        void operator*=(const Vec3& other)  { multiply(other); }
+        void operator/=(const Vec3& other)  { divide(other); }
+        
+        friend Vec3<T> operator+(Vec3<T> left, Vec3<T> right)   { return Vec3<T>(left.X + right.X, left.Y + right.Y, left.Z + right.Z); }
+        friend Vec3<T> operator-(Vec3<T> left, Vec3<T> right)   { return Vec3<T>(left.X - right.X, left.Y - right.Y, left.Z - right.Z); }
+        friend Vec3<T> operator*(Vec3<T> left, Vec3<T> right)   { return Vec3<T>(left.X * right.X, left.Y * right.Y, left.Z * right.Z); }
+        friend Vec3<T> operator/(Vec3<T> left, Vec3<T> right)   { assert((right.X != (T)(0) && right.Y != (T)(0)) && right.Z != (T)(0));   // Divide by 0
+                                                                     return Vec3<T>(left.X / right.X, left.Y / right.Y, left.Z / right.Z); }
+
+        private:
+            void add(const Vec3<T>& other)
+            {
+                X += other.X;
+                Y += other.Y;
+                Z += other.Z;
+            }
+            void subtract(const Vec3<T>& other)
+            {
+                X -= other.X;
+                Y -= other.Y;
+                Z -= other.Z;
+            }
+            void multiply(const Vec3<T>& other)
+            {
+                X *= other.X;
+                Y *= other.Y;
+                Z *= other.Z;
+            }
+            void divide(const Vec3<T>& other)
+            {
+                // Divide by 0
+                assert((other.Y != (T)(0) && other.X != (T)(0)) && other.Z != (T)(0));
+                X /= other.X;
+                Y /= other.Y;
+                Z /= other.Z;
+            }
     };
-    
-    Vec3();
-    Vec3(float x, float y, float z);
-    ~Vec3();
-    
-    const float& operator[](int index) const;
-    float& operator[](int index);
-    
-    void operator+=(const Vec3& other);
-    void operator-=(const Vec3& other);
-    void operator*=(const Vec3& other);
-    void operator/=(const Vec3& other);
-    
-    friend Vec3 operator+(Vec3 left, Vec3 right);
-    friend Vec3 operator-(Vec3 left, Vec3 right);
-    friend Vec3 operator*(Vec3 left, Vec3 right);
-    friend Vec3 operator/(Vec3 left, Vec3 right);
-    
-    private:
-    void add(const Vec3& other);
-    void subtract(const Vec3& other);
-    void multiply(const Vec3& other);
-    void divide(const Vec3& other);
-};
-
-#endif
+    typedef Vec3<float> Vec3f;
+    typedef Vec3<int>   Vec3i;
+    typedef Vec3<unsigned int>   Vec3u;
+}

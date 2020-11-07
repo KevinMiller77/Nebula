@@ -18,7 +18,7 @@
 #include <Utils/Timer.h>
 #include <Utils/StringOps.h>
 
-#include <Math/math.h>
+#include <Math/Math.h>
 
 #include <Graphics/Buffer.h>
 #include <Graphics/VertexArray.h> // TODO: Remove

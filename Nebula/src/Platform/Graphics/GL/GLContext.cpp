@@ -39,6 +39,6 @@ namespace Nebula
 
     void GLContext::ClearColor(Vec4f color)
     {
-        glClearColor(color.x, color.y, color.z, color.w);
+        glClearColor(color.X, color.Y, color.Z, color.W);
     }
 }

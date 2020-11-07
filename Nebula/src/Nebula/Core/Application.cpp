@@ -72,13 +72,13 @@ namespace Nebula
 
     bool Application::OnWindowResize(WindowResizeEvent& e)
     {
-        if (e.GetScreenSize().x == 0 || e.GetScreenSize().y == 0)
+        if (e.GetScreenSize().X == 0 || e.GetScreenSize().Y == 0)
         {
             minimized = true;
             return false;
         }
 
-        Renderer::OnWindowResize(e.GetScreenSize().x, e.GetScreenSize().y);
+        Renderer::OnWindowResize(e.GetScreenSize().X, e.GetScreenSize().Y);
         return false;
     }
 

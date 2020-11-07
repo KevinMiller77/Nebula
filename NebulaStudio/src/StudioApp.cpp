@@ -35,7 +35,7 @@ namespace Nebula
                 //Process info from bootLayer and save project info
                 std::string projFile = bootLayer->Done();
                 editorLayer = new NebulaStudioLayer(projFile);
-                window->SetWindowSize((uint32_t)editorLayer->ViewportSize.x, (uint32_t)editorLayer->ViewportSize.y);
+                window->SetWindowSize((uint32_t)editorLayer->ViewportSize.X, (uint32_t)editorLayer->ViewportSize.Y);
 
                 PushLayer(editorLayer);
                 

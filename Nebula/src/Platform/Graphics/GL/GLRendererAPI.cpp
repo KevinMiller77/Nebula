@@ -51,7 +51,7 @@ namespace Nebula
 
     void GLRendererAPI::SetClearColor(const Vec4f& color)
     {
-        glClearColor(color.x, color.y, color.z, color.w);
+        glClearColor(color.X, color.Y, color.Z, color.W);
     }
     
     void GLRendererAPI::Clear()
