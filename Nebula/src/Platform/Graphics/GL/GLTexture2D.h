@@ -14,8 +14,9 @@ namespace Nebula
 		GLTexture2D(const std::string& path);
 		virtual ~GLTexture2D();
 
-		virtual uint32_t GetWidth() const override { return width;  }
-		virtual uint32_t GetHeight() const override { return height; }
+		virtual uint32_t GetWidth() const override { return Width;  }
+		virtual uint32_t GetHeight() const override { return Height; }
+		virtual std::string GetPath() override { return Path; };
 		virtual uint32_t GetRendererID() const override { return ID; }
 		
 		virtual void SetData(void* data, uint32_t size) override;
@@ -27,8 +28,8 @@ namespace Nebula
 			return ID == ((GLTexture2D&)other).ID;
 		}
 	private:
-		std::string path;
-		uint32_t width, height;
+		std::string Path;
+		uint32_t Width, Height;
 		uint32_t ID;
 		GLenum IntFormat, DataFormat;
 	};

@@ -209,7 +209,6 @@ namespace Nebula
 
 	void Renderer2D::DrawQuad(const Mat4f& transform, const Vec4f& color)
 	{
-
 		constexpr size_t quadVertexCount = 4;
 		const float textureIndex = 0.0f; // White Texture
 		Vec2f textureCoords[4] = { Vec2f( 0.0f, 0.0f ), Vec2f( 1.0f, 0.0f ), Vec2f( 1.0f, 1.0f ), Vec2f( 0.0f, 1.0f ) };

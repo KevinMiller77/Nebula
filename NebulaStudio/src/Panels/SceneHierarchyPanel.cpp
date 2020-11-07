@@ -229,76 +229,33 @@ namespace Nebula {
 
 				ImGui::Text("Texture :"); ImGui::SameLine();
 
-				std::string currentItem = TextureLib->GetName(spriteInfo.Texture);
+				std::string currentPath = VFS::Path(spriteInfo.Texture->GetPath());
 				ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth()  * 0.5f);
-				if (ImGui::BeginCombo("##combo", currentItem.c_str()))
-				{
-					for (std::string name : texNames)
-					{
-						bool is_selected = currentItem == name;
-						if (ImGui::Selectable(name.c_str(), is_selected))
-						{
-							currentItem = name;
-						}
-						if (is_selected)
-						{
-							ImGui::SetItemDefaultFocus();
-						}
-					}
-					ImGui::EndCombo();
-				}
+				ImGui::InputText("", currentPath.data(), currentPath.size() + 1);
 
 				ImGui::PopItemWidth();
 				
 				ImGui::SameLine();
-				if (ImGui::Button(" + "))
+				if (ImGui::Button(" Set... "))
 				{
 					ImGui::OpenPopup("texture_opts");
 				}
 				if (ImGui::BeginPopup("texture_opts"))
 				{
-					char nameBuffer[256];
-					char pathBuffer[256];
-
-					memset(nameBuffer, 0, sizeof(nameBuffer));
-					memset(pathBuffer, 0, sizeof(pathBuffer));
-
-					#ifdef NEB_PLATFORM_WINDOWS
-					strcpy_s(nameBuffer, sizeof(nameBuffer), newTextureName.c_str());
-					strcpy_s(pathBuffer, sizeof(pathBuffer), newTexturePath.c_str());
-					#else
-					strcpy(nameBuffer, newTextureName.c_str());
-					strcpy(pathBuffer, newTexturePath.c_str());
-					#endif
-					
-					ImGui::PushID(&newTextureName);
-					if(ImGui::InputTextWithHint("##namein", "Name", nameBuffer, 256))
+					ImGui::PushItemWidth(-1);
+					if (ImGui::Button("From File..."))
 					{
-						newTextureName = std::string(nameBuffer);
+						std::string NewPath = FileDialogs::OpenFile("png");
+						NewPath = ReplaceAll(NewPath, "\\", "/");
+						if (VFS::Exists(NewPath, true))
+						{
+							if (spriteInfo.Texture) delete spriteInfo.Texture;
+							spriteInfo.Texture = Texture2D::Create(NewPath);
+						}
 					}
-					ImGui::PopID();
-
-					ImGui::PushID(&newTexturePath);
-					if(ImGui::InputTextWithHint("##filein", "Enter a filepath", pathBuffer, 256))
-					{
-						newTexturePath = std::string(pathBuffer);
-					}
-					ImGui::PopID();
-
-					
-					if (ImGui::Button("Create"))
-					{
-						TextureLib->AddTexture(newTextureName, newTexturePath);
-						newTextureName = "";
-						newTexturePath = "";
-					}
+					ImGui::PopItemWidth();
 
 					ImGui::EndPopup();
-				}
-
-				if (TextureLib != nullptr)
-				{
-					spriteInfo.Texture = TextureLib->GetTexture(currentItem);
 				}
 
 				ImGui::TreePop();

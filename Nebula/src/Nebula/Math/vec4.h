@@ -38,6 +38,21 @@ namespace Nebula
         float AngleBetweenDeg(const Vec4<T>& other)                         { return RAD_TO_DEG(AngleBetween(other)); }
         static float AngleBetweenDeg(const Vec4& left, const Vec4& right)   { return RAD_TO_DEG(AngleBetween(left, right)); }
 
+        Vec4<T> Normalize()    
+        { 
+            float mag = Magnitude();
+            assert(mag != 0); 
+            X /= mag;
+            Y /= mag;
+            Z /= mag;
+            W /= mag;
+            return Vec4<T>(X, Y ,Z, W);
+        }
+        static Vec4 Normalize(Vec4 in)
+        {
+            return in.Normalize();
+        }
+
         void operator+=(const Vec4& other)  { add(other); }
         void operator-=(const Vec4& other)  { subtract(other); }
         void operator*=(const Vec4& other)  { multiply(other); }

@@ -132,7 +132,20 @@ namespace Nebula
 
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
-	
+			Texture2D* tex = spriteRendererComponent.Texture;
+			if (tex)
+			{
+				out << YAML::Key << "Has Tex" << YAML::Value << true;
+				out << YAML::Key << "Tex Path" << YAML::Value << VFS::Path(tex->GetPath());
+				out << YAML::Key << "Tex Width" << YAML::Value << tex->GetWidth();
+				out << YAML::Key << "Tex Height" << YAML::Value << tex->GetHeight();
+
+			}
+			else
+			{
+				out << YAML::Key << "Has Tex" << YAML::Value << false;
+			}
+			
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
@@ -229,6 +242,14 @@ namespace Nebula
 				{
 					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 					src.Color = spriteRendererComponent["Color"].as<Vec4f>();
+					if (spriteRendererComponent["Has Tex"].as<bool>())
+					{
+						std::string path = spriteRendererComponent["Tex Path"].as<std::string>();
+						src.Texture = path.empty() ? 
+							Texture2D::Create(spriteRendererComponent["Tex Width"].as<uint32_t>(), spriteRendererComponent["Tex Height"].as<uint32_t>()) : 
+							Texture2D::Create(VFS::AbsolutePath(path));
+	
+					}
 				}
 			}
 		}

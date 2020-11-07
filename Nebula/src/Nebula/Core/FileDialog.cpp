@@ -11,6 +11,7 @@ namespace Nebula
 		{
 			std::string out(outPath);
 			free(outPath);
+
 			return out;
 		}
 		else if ( result == NFD_CANCEL ) 

@@ -8,24 +8,25 @@
 namespace Nebula
 {
     GLTexture2D::GLTexture2D(uint32_t width, uint32_t height)
-		: width(width), height(height)
+		: Width(width), Height(height)
 	{
 		NEB_PROFILE_FUNCTION();
+		Path = std::string();
 		IntFormat = GL_RGBA8;
 		DataFormat = GL_RGBA;
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &ID);
-		glTextureStorage2D(ID, 1, IntFormat, this->width, this->height);
+		glTextureStorage2D(ID, 1, IntFormat, Width, Height);
 
 		glTextureParameteri(ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(ID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glTextureParameteri(ID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(ID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
 	GLTexture2D::GLTexture2D(const std::string& path)
-		: path(path)
+		: Path(path)
 	{
 		valid = true;
 		NEB_PROFILE_FUNCTION();
@@ -40,8 +41,8 @@ namespace Nebula
 			valid = false;
 			LOG_ERR("Failed to load image for texture!\n----> Path was: %s\n", path.c_str());
 		}
-		this->width = width;
-		this->height = height;
+		Width = width;
+		Height = height;
 
 		GLenum internalFormat = 0, dataFormat = 0;
 		if (channels == 4)
@@ -65,7 +66,7 @@ namespace Nebula
 		}
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &ID);
-		glTextureStorage2D(ID, 1, internalFormat, this->width, this->height);
+		glTextureStorage2D(ID, 1, internalFormat, Width, Height);
 
 		glTextureParameteri(ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTextureParameteri(ID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -73,7 +74,7 @@ namespace Nebula
 		glTextureParameteri(ID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(ID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glTextureSubImage2D(ID, 0, 0, 0, this->width, this->height, dataFormat, GL_UNSIGNED_BYTE, data);
+		glTextureSubImage2D(ID, 0, 0, 0, Width, Height, dataFormat, GL_UNSIGNED_BYTE, data);
 
 		stbi_image_free(data);
 	}
@@ -87,8 +88,8 @@ namespace Nebula
 	{
 		NEB_PROFILE_FUNCTION();
 		uint32_t bpp = DataFormat == GL_RGBA ? 4 : 3;
-		if(!(size == this->width * this->height * bpp)) LOG_ERR("Data must be entire texture!\n");
-		glTextureSubImage2D(ID, 0, 0, 0, this->width, this->height, DataFormat, GL_UNSIGNED_BYTE, data);
+		if(!(size == Width * Height * bpp)) LOG_ERR("Data must be entire texture!\n");
+		glTextureSubImage2D(ID, 0, 0, 0, Width, Height, DataFormat, GL_UNSIGNED_BYTE, data);
 	}
 
 	void GLTexture2D::Bind(uint32_t slot) const
