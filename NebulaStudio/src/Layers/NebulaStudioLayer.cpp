@@ -21,7 +21,6 @@ namespace Nebula
 
         if (VFS::Exists(CurrentProject.LastFileSystemMount, true))
         {
-            LOG_INF("%s\n", CurrentProject.LastFileSystemMount);
             VFS::Mount(CurrentProject.LastFileSystemMount);
         }
         else

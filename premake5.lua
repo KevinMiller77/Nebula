@@ -159,11 +159,12 @@ project "NebulaStudio"
 
     filter "system:windows"
         systemversion "latest"
-        links
+        ignoredefaultlibraries
         {
             "user32", 
             "gdi32", 
-            "shell32"
+            "shell32",
+            "msvcrtd"
         }
 
     filter "system:macosx"

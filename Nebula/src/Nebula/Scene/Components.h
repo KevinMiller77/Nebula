@@ -1,19 +1,20 @@
 #pragma once
 #include <Math/math.h>
 #include <Graphics/Texture.h>
+#include <Utils/GUID.h>
 #include "Scriptable.h"
 #include "SceneCamera.h"
-
 namespace Nebula
 {
     struct TagComponent
 	{
 		std::string Tag;
+		uint64_t UUID = xorshf96();
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& tag)
-			: Tag(tag) {}
+			: Tag(tag), UUID(xorshf96()) {}
 	};
 
 	struct TransformComponent
@@ -77,8 +78,18 @@ namespace Nebula
 	struct ParentEntityComponent
 	{
 		std::vector<Entity> children;
+		bool deleteSelf = false;
 
 		ParentEntityComponent() = default;
 		ParentEntityComponent(const ParentEntityComponent&) = default;
 	};
+
+	struct RootEntityComponent
+	{
+		std::string placeholder = std::string();
+		
+		RootEntityComponent() = default;
+		RootEntityComponent(const RootEntityComponent&) = default;
+	};
+
 }

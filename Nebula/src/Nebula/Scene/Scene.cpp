@@ -1,5 +1,7 @@
 #include "Scene.h"
-
+#include <numeric>
+#include <string_view>
+#include <vector>
 #include <Nebula.h>
 
 namespace Nebula
@@ -17,7 +19,6 @@ namespace Nebula
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
-		entity.AddComponent<ParentEntityComponent>();
 		return entity;
     }
 
@@ -56,8 +57,12 @@ namespace Nebula
 				auto& pec = entity.GetComponent<ParentEntityComponent>();
 				for (Entity ent : pec.children)
 				{
-					RemoveEntity(ent);
+					if (ent.IsValid())
+					{
+						RemoveEntity(ent);
+					}
 				}
+				pec.children.clear();
 			}
 			Registry.destroy(entity);
 		}
@@ -93,27 +98,58 @@ namespace Nebula
 	{
 		Renderer2D::BeginScene(camera, transform);
 
-		auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
+		auto view = Registry.view<RootEntityComponent>();
+		if (!view.empty())
 		{
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			if (sprite.Texture == nullptr)
+			for (auto entity : view)
 			{
-				Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Color);
+				Entity toSubmit { entity, this };
+				
+				if (toSubmit.HasComponent<SpriteRendererComponent>())
+				{
+					SubmitEntity(toSubmit);
+				}
 			}
-			else
-			{
-				Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Texture, sprite.TilingFactor, sprite.Color);
-			}
-			
 		}
 
 		Renderer2D::EndScene();
 	}
 
+	void Scene::SubmitEntity(Entity entity, const Mat4f& modelMat)
+	{
+			auto transform = entity.GetComponent<TransformComponent>();
+			auto sprite = entity.GetComponent<SpriteRendererComponent>();
+
+			Mat4f transformMat = transform.GetTransformation() * modelMat;
+			if (sprite.Texture)
+			{
+				Renderer2D::DrawQuad(transformMat, sprite.Texture, sprite.TilingFactor, sprite.Color);
+			}
+			else
+			{
+				Renderer2D::DrawQuad(transformMat, sprite.Color);
+			}
+
+		if (entity.HasComponent<ParentEntityComponent>())
+		{
+			Mat4f newModel = entity.GetComponent<TransformComponent>().GetTransformation() * modelMat;
+
+			auto& children = entity.GetComponent<ParentEntityComponent>().children;
+			for (auto child : children)
+			{
+				Entity toSubmit{ child, this };
+
+				if (toSubmit.HasComponent<SpriteRendererComponent>())
+				{
+					SubmitEntity(toSubmit, newModel);
+				}
+			}
+		}
+	}
     
 	void Scene::OnUpdate(float ts, SceneStatus status)
     {
+		OnUpdateCommon(ts);
 		if (status == SceneStatus::PLAYING)
 		{
 			// Update scripts
@@ -158,9 +194,43 @@ namespace Nebula
 		Render();
     }
 
+	void Scene::OnUpdateCommon(float ts)
+	{
+		EvaluateChildren();
+	}
+
+	void Scene::EvaluateChildren()
+	{
+
+		auto& parentsView = Registry.view<ParentEntityComponent>();
+
+		for (auto& parentComp : parentsView)
+		{
+			auto& parent = parentsView.get<ParentEntityComponent>(parentComp);
+			std::vector<int> stale;
+
+			auto& children = parent.children;
+			for (int i = 0; i < children.size(); i++)
+			{
+				auto child = children[i];
+				if (!child.IsValid())
+				{
+					stale.push_back(i);
+				}
+			}
+
+			for (int idx : stale)
+			{
+				children.erase(children.begin() + idx);
+			}
+		}
+
+	}
+
 	//TODO: Remove, the scene should only really use camera inside of it, not given an external one
 	void Scene::OnEditingUpdate(float ts, Camera* camera)
     {
+		OnUpdateCommon(ts);
 		Render(camera, SceneCameraTransform);
     }
 

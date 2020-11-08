@@ -5,7 +5,7 @@ namespace Nebula
 {
     typedef unsigned long GUID_t;
 
-    static unsigned long xorshf96();
+    unsigned long xorshf96();
     
     namespace GUID
     {

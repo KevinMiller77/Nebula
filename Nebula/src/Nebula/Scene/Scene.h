@@ -28,8 +28,13 @@ namespace Nebula
         virtual void OnUpdate(float ts, SceneStatus status);
         virtual void OnEditingUpdate(float ts, Camera* camera);
 
+        void OnPhysicsUpdate(float ts) {}
+        void OnUpdateCommon(float ts);
+        void EvaluateChildren();
+
         virtual void Render(entt::entity mainCamera = entt::null);
         virtual void Render(Camera* camera, Mat4f transform);
+        virtual void SubmitEntity(Entity entity, const Mat4f& modelMat = Mat4f(1.0f));
 
         virtual void OnStop();
         virtual void OnViewportResize(uint32_t width, uint32_t height);

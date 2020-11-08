@@ -23,20 +23,23 @@ namespace Nebula {
 		Context->Registry.each([&](auto entityID)
 		{
 			Entity entity{ entityID , Context.get() };
-			ImGui::PushID(entity);
-			if(DrawEntityNode(entity))
+			if (entity.HasComponent<RootEntityComponent>())
 			{
-				Context->RemoveEntity(SelectionContext);
-				SelectionContext = {};
+				ImGui::PushID(entity.GetComponent<TagComponent>().UUID);
+				if(DrawEntityNode(entity))
+				{
+					Context->RemoveEntity(SelectionContext);
+					SelectionContext = {};
+				}
+				ImGui::PopID();
 			}
-			ImGui::PopID();
 		});
 
 		if (ImGui::BeginPopupContextWindow("##entity_context_add", 1, false))
 		{
 			if (ImGui::MenuItem("Add Entity"))
 			{
-				Context->CreateEntity("Blank Entity");
+				Context->CreateEntity("Blank Entity").AddComponent<RootEntityComponent>();
 			}
 
 			ImGui::EndPopup();
@@ -116,7 +119,7 @@ namespace Nebula {
 
 		bool deleteEntity = false;
 
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+		bool opened = ImGui::TreeNodeEx((void*)entity.GetComponent<TagComponent>().UUID, flags, tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
 			SelectionContext = entity;
@@ -127,6 +130,14 @@ namespace Nebula {
 		}
 		if (ImGui::BeginPopupContextWindow(tag.c_str(), 1, true))
 		{
+			if (ImGui::MenuItem("Add Child"))
+			{
+				if (!SelectionContext.HasComponent<ParentEntityComponent>())
+				{
+					SelectionContext.AddComponent<ParentEntityComponent>();
+				}
+				SelectionContext.GetComponent<ParentEntityComponent>().children.push_back(Context->CreateEntity("Child"));
+			}
 			if (ImGui::MenuItem("Remove Entity"))
 			{
 				deleteEntity = true;
@@ -138,9 +149,24 @@ namespace Nebula {
 		if (opened)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-			// bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-			// if (opened)
-			// 	ImGui::TreePop();
+			if (entity.HasComponent<ParentEntityComponent>())
+			{
+				std::vector<Entity> deleteQueue;
+				auto children = entity.GetComponent<ParentEntityComponent>().children;
+				ImGui::Indent(0.3f);
+				for (auto child : children)
+				{
+					if (!child.IsValid()) continue;
+
+					ImGui::PushID(child.GetComponent<TagComponent>().UUID);
+					if (DrawEntityNode(child))
+					{
+						deleteEntity = true;
+					}
+					ImGui::PopID();
+				}
+				ImGui::Unindent(0.3f);
+			}
 			ImGui::TreePop();
 		}
 

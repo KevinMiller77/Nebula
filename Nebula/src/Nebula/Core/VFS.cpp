@@ -95,7 +95,7 @@ namespace Nebula
     {
         if (!absolutePath && !IsMounted())
         {
-            LOG_ERR("Filesystem not mounted!!");
+            LOG_ERR("Filesystem not mounted!!\n");
             return false;
         }
         //TODO: Check that the path string is valid
@@ -107,7 +107,7 @@ namespace Nebula
     {
         if (!absolutePath && !IsMounted())
         {
-            LOG_ERR("Filesystem not mounted!!");
+            LOG_ERR("Filesystem not mounted!!\n");
             return false;
         }
 
@@ -122,7 +122,7 @@ namespace Nebula
     {
         if (!absolutePath && !IsMounted())
         {
-            LOG_ERR("Filesystem not mounted!!");
+            LOG_ERR("Filesystem not mounted!!\n");
             return false;
         }
         

@@ -1,7 +1,6 @@
 #include "SceneSerializer.h"
 
 #include <Nebula.h>
-#include "yaml-cpp/yaml.h"
 
 namespace YAML {
 
@@ -75,18 +74,14 @@ namespace Nebula
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << "12837192831273"; // TODO: Entity ID goes here
 
-		if (entity.HasComponent<TagComponent>())
-		{
-			out << YAML::Key << "TagComponent";
+		auto& tagComp = entity.GetComponent<TagComponent>();
+		out << YAML::Key << "Entity" << YAML::Value << tagComp.UUID; // TODO: Entity ID goes here
+
+		out << YAML::Key << "TagComponent";
 			out << YAML::BeginMap; // TagComponent
-
-			auto& tag = entity.GetComponent<TagComponent>().Tag;
-			out << YAML::Key << "Tag" << YAML::Value << tag;
-
+			out << YAML::Key << "Tag" << YAML::Value << tagComp.Tag;
 			out << YAML::EndMap; // TagComponent
-		}
 
 		if (entity.HasComponent<TransformComponent>())
 		{
@@ -149,6 +144,33 @@ namespace Nebula
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
+		if (entity.HasComponent<RootEntityComponent>())
+		{
+			out << YAML::Key << "RootEntityComponent";
+			out << YAML::BeginMap; // TagComponent
+			out << YAML::EndMap;
+		
+		}
+		
+		if (entity.HasComponent<ParentEntityComponent>())
+		{
+			if (entity.GetComponent<ParentEntityComponent>().children.size() > 0)
+			{
+				out << YAML::Key << "ParentEntityComponent";
+
+				out << YAML::BeginMap << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
+				for (auto entity : entity.GetComponent<ParentEntityComponent>().children)
+				{
+					if (entity.IsValid())
+					{
+						SerializeEntity(out, entity);
+					}
+				}
+				out << YAML::EndSeq << YAML::EndMap;
+			}
+		}
+
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -164,7 +186,10 @@ namespace Nebula
 			if (!entity)
 				return;
 
-			SerializeEntity(out, entity);
+			if (entity.HasComponent<RootEntityComponent>())
+			{
+				SerializeEntity(out, entity);
+			}
 		});
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
@@ -195,67 +220,94 @@ namespace Nebula
 		{
 			for (auto entity : entities)
 			{
-				uint64_t uuid = entity["Entity"].as<uint64_t>();
-
-				std::string name;
-				auto tagComponent = entity["TagComponent"];
-				if (tagComponent)
-				{
-					name = tagComponent["Tag"].as<std::string>();
-				}
-
-				// LOG_INF("Deserialized entity with ID = %ld; name = %s\n", (long)uuid, name.c_str());
-
-				Entity deserializedEntity = SceneAttached->CreateEntity(name);
-
-				auto transformComponent = entity["TransformComponent"];
-				if (transformComponent)
-				{
-					// Entities always have transforms
-					auto& tc = deserializedEntity.GetComponent<TransformComponent>();
-					tc.Translation = transformComponent["Translation"].as<Vec3f>();
-					tc.Rotation = transformComponent["Rotation"].as<Vec3f>();
-					tc.Scale = transformComponent["Scale"].as<Vec3f>();
-				}
-
-				auto cameraComponent = entity["CameraComponent"];
-				if (cameraComponent)
-				{
-					auto& cc = deserializedEntity.AddComponent<CameraComponent>();
-
-					auto cameraProps = cameraComponent["Camera"];
-					cc.Camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
-
-					cc.Camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());
-					cc.Camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());
-					cc.Camera.SetPerspectiveFarClip(cameraProps["PerspectiveFar"].as<float>());
-
-					cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
-					cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
-					cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
-
-					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
-				}
-
-				auto spriteRendererComponent = entity["SpriteRendererComponent"];
-				if (spriteRendererComponent)
-				{
-					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
-					src.Color = spriteRendererComponent["Color"].as<Vec4f>();
-					if (spriteRendererComponent["Has Tex"].as<bool>())
-					{
-						std::string path = spriteRendererComponent["Tex Path"].as<std::string>();
-						src.Texture = path.empty() ? 
-							Texture2D::Create(spriteRendererComponent["Tex Width"].as<uint32_t>(), spriteRendererComponent["Tex Height"].as<uint32_t>()) : 
-							Texture2D::Create(VFS::AbsolutePath(path));
-	
-					}
-				}
+				DeserializeEntity(entity);
 			}
 		}
 
 		return true;
 	}	
+
+	
+	Entity SceneSerializer::DeserializeEntity(YAML::detail::iterator_value& entity)
+	{
+		uint64_t uuid = entity["Entity"].as<uint64_t>();
+
+		std::string name;
+		auto tagComponent = entity["TagComponent"];
+		if (tagComponent)
+		{
+			name = tagComponent["Tag"].as<std::string>();
+		}
+
+		Entity deserializedEntity = SceneAttached->CreateEntity(name);
+
+
+		auto transformComponent = entity["TransformComponent"];
+		if (transformComponent)
+		{
+			// Entities always have transforms
+			auto& tc = deserializedEntity.GetComponent<TransformComponent>();
+			tc.Translation = transformComponent["Translation"].as<Vec3f>();
+			tc.Rotation = transformComponent["Rotation"].as<Vec3f>();
+			tc.Scale = transformComponent["Scale"].as<Vec3f>();
+		}
+
+		auto cameraComponent = entity["CameraComponent"];
+		if (cameraComponent)
+		{
+			auto& cc = deserializedEntity.AddComponent<CameraComponent>();
+
+			auto cameraProps = cameraComponent["Camera"];
+			cc.Camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
+
+			cc.Camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());
+			cc.Camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());
+			cc.Camera.SetPerspectiveFarClip(cameraProps["PerspectiveFar"].as<float>());
+
+			cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
+			cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
+			cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
+
+			cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+		}
+
+		auto spriteRendererComponent = entity["SpriteRendererComponent"];
+		if (spriteRendererComponent)
+		{
+			auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
+			src.Color = spriteRendererComponent["Color"].as<Vec4f>();
+			{
+				if (spriteRendererComponent["Has Tex"].as<bool>())
+				{
+					std::string path = spriteRendererComponent["Tex Path"].as<std::string>();
+					src.Texture = path.empty() ? 
+						Texture2D::Create(spriteRendererComponent["Tex Width"].as<uint32_t>(), spriteRendererComponent["Tex Height"].as<uint32_t>()) : 
+						Texture2D::Create(VFS::AbsolutePath(path));
+				}
+			}
+		}
+
+		auto rootEntityComponent = entity["RootEntityComponent"];
+		if (rootEntityComponent)
+		{
+			deserializedEntity.AddComponent<RootEntityComponent>();
+		}
+		
+		auto parentEntityComponent = entity["ParentEntityComponent"];
+		if (parentEntityComponent)
+		{
+			deserializedEntity.AddComponent<ParentEntityComponent>();
+
+			auto children = parentEntityComponent["Children"];
+			for (auto child : children)
+			{
+				Entity newChild = DeserializeEntity(child);
+				deserializedEntity.GetComponent<ParentEntityComponent>().children.push_back(newChild);
+			}
+		}
+
+		return deserializedEntity;
+	}
 
     
 	bool SceneSerializer::DeserializeBin(std::string path)
