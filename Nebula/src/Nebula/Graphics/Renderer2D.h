@@ -5,10 +5,53 @@
 #include <array>
 #include <Graphics/OrthographicCamera.h>
 #include <Core/VFS.h>
+#include <Core/Ref.h>
 
 
 namespace Nebula
 {
+	struct QuadVertex
+	{
+		Vec3f Position;
+		Vec4f Color;
+		Vec2f TexCoord;
+		float TexIndex;
+		float TilingFactor;
+	};
+
+	struct Renderer2DStatistics
+	{
+		uint32_t DrawCalls = 0;
+		uint32_t QuadCount = 0;
+
+		uint32_t GetTotalVertexCount() { return QuadCount * 4; }
+		uint32_t GetTotalIndexCount() { return QuadCount * 6; }
+	};
+	struct Renderer2DData
+	{
+		static const uint32_t MaxQuads = 20000;
+		static const uint32_t MaxVertices = MaxQuads * 4;
+		static const uint32_t MaxIndices = MaxQuads * 6;
+
+		// TODO: Check actual number on machine
+		static const uint32_t MaxTextureSlots = 32; 
+		
+		Ref<VertexArray> 	QuadVertexArray;
+		Ref<VertexBuffer> 	QuadVertexBuffer;
+		Ref<Shader> 		TextureShader;
+		Ref<Texture2D> 		WhiteTexture;
+
+		uint32_t QuadIndexCount = 0;
+		QuadVertex* QuadVertexBufferBase = nullptr;
+		QuadVertex* QuadVertexBufferPtr = nullptr;
+
+		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
+		uint32_t TextureSlotIndex = 1; // 0 = white texture
+
+		Vec4f QuadVertexPositions[4];
+
+		Renderer2DStatistics Stats;
+	};
     class Renderer2D
 	{
 	public:
@@ -17,6 +60,7 @@ namespace Nebula
 
 		static void BeginScene(OrthographicCamera* camera);
 		static void BeginScene(Camera* camera, const Mat4f transform);
+		static void BeginScene(Mat4f& viewProj);
 		static void EndScene();
 		static void Flush();
 
@@ -26,28 +70,20 @@ namespace Nebula
 		// Primitives
 		static void DrawQuad(const Vec2f& position, const Vec2f& size, const Vec4f& color);
 		static void DrawQuad(const Vec3f& position, const Vec2f& size, const Vec4f& color);
-		static void DrawQuad(const Vec2f& position, const Vec2f& size, const Texture2D* texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
-		static void DrawQuad(const Vec3f& position, const Vec2f& size, const Texture2D* texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+		static void DrawQuad(const Vec2f& position, const Vec2f& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+		static void DrawQuad(const Vec3f& position, const Vec2f& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 
 		static void DrawQuad(const Mat4f& transform, const Vec4f& color);
-		static void DrawQuad(const Mat4f& transform, const Texture2D*& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+		static void DrawQuad(const Mat4f& transform, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 
 		static void DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Vec4f& color);
 		static void DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Vec4f& color);
-		static void DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Texture2D* texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
-		static void DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Texture2D* texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+		static void DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+		static void DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 
 		// Stats
-		struct Statistics
-		{
-			uint32_t DrawCalls = 0;
-			uint32_t QuadCount = 0;
-
-			uint32_t GetTotalVertexCount() { return QuadCount * 4; }
-			uint32_t GetTotalIndexCount() { return QuadCount * 6; }
-		};
 		static void ResetStats();
-		static Statistics GetStats();
+		static Renderer2DStatistics GetStats();
 	private:
 		static void FlushAndReset();
 	};

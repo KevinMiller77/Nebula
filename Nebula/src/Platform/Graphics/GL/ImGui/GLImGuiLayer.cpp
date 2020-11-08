@@ -44,7 +44,7 @@ namespace Nebula
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-        Application* app = Application::Get();
+        Ref<Application> app = Application::Get();
         GLFWwindow* window = (GLFWwindow*)(app->GetWindow()->GetNativeWindow());
 
         // Setup Platform/Renderer bindings
@@ -76,7 +76,7 @@ namespace Nebula
         ImGui::End();
 		NEB_PROFILE_FUNCTION();
         ImGuiIO& io = ImGui::GetIO();
-        Application* app = Application::Get();
+        Ref<Application> app = Application::Get();
         io.DisplaySize = ImVec2((float)app->GetWindow()->GetWidth(), (float)app->GetWindow()->GetHeight());
 
         // Rendering

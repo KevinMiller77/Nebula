@@ -13,13 +13,9 @@ namespace Nebula
         std::string dirToMakeFileIn = std::string(projLocation);
         std::string fileName = std::string(projLocation);
 
-        #ifdef NEB_PLATFORM_WINDOWS
-            dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("\\") + 1);
-            fileName = fileName.substr(fileName.find_last_of("\\") + 1);
-        #else
-            dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/") + 1);
-            fileName = fileName.substr(fileName.find_last_of("/") + 1);
-        #endif
+        dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/") + 1);
+        fileName = fileName.substr(fileName.find_last_of("/") + 1);
+        
 
         if (!VFS::Exists(dirToMakeFileIn, true) || !EndsWith(projLocation, ".nsp"))
         {

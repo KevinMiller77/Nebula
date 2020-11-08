@@ -29,7 +29,7 @@ namespace Nebula
 		
 	}
 
-    void Renderer::Submit(Shader* shader, VertexArray* vertexArray, const Mat4f transform)
+    void Renderer::Submit(Ref<Shader> shader, Ref<VertexArray> vertexArray, const Mat4f transform)
 	{
         shader->Bind();
 		shader->SetMat4("u_ViewProjection", SceneData->ViewProjMatrix);

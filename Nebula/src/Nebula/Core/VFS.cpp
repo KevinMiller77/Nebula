@@ -53,7 +53,8 @@ namespace Nebula
 	{
         if(std::filesystem::exists(root) && std::filesystem::is_directory(root))
         {
-            AbsoluteRoot = ReplaceAll(root, "\\", "/");
+            AbsoluteRoot = root;
+            Mounted = true;
             return true;
         }
         return false;
@@ -62,6 +63,7 @@ namespace Nebula
     void VFS::Unmount()
 	{
         AbsoluteRoot = std::string();
+        Mounted = false;
 	}
 
     std::string VFS::GetRoot()

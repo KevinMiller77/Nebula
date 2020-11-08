@@ -37,7 +37,7 @@ namespace Nebula
 	struct SpriteRendererComponent
 	{
 		Vec4f Color { 1.0f, 1.0f, 1.0f, 1.0f };
-        Texture2D* Texture = nullptr;
+        Ref<Texture2D> Texture = nullptr;
         float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;

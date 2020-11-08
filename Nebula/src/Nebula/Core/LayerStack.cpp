@@ -5,26 +5,25 @@ namespace Nebula {
     {
     #ifdef NEB_PLATFORM_MACOS
     #else
-        for (Layer* layer : layers)
+        for (Ref<Layer> layer : layers)
         {
             layer->OnDetach();
-            delete layer;
         }
     #endif
     }
 
-    void LayerStack::PushLayer(Layer* layer)
+    void LayerStack::PushLayer(Ref<Layer> layer)
     {
         layers.emplace(layers.begin() + layerInsertIndex, layer);
         layerInsertIndex++;
     }
 
-    void LayerStack::PushOverlay(Layer* overlay)
+    void LayerStack::PushOverlay(Ref<Layer> overlay)
     {
         layers.emplace_back(overlay);
     }
 
-    void LayerStack::PopLayer(Layer* layer)
+    void LayerStack::PopLayer(Ref<Layer> layer)
     {
         auto it = std::find(layers.begin(), layers.begin() + layerInsertIndex, layer);
         if (it != layers.begin() + layerInsertIndex)
@@ -35,7 +34,7 @@ namespace Nebula {
         }
     }
 
-    void LayerStack::PopOverlay(Layer* overlay)
+    void LayerStack::PopOverlay(Ref<Layer> overlay)
     {
         auto it = std::find(layers.begin() + layerInsertIndex, layers.end(), overlay);
         if (it != layers.end())

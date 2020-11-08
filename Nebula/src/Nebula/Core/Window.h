@@ -55,7 +55,7 @@ namespace Nebula
 		virtual void SetIcon(std::string filepath) = 0;
 
 		virtual void* GetNativeWindow() = 0;
-		virtual GraphicsContext* GetContext() = 0;
+		virtual Ref<GraphicsContext> GetContext() = 0;
 
 		virtual void SwapIO(std::string in, std::string out, std::string err) = 0;
 
@@ -73,7 +73,7 @@ namespace Nebula
 		virtual void ToggleFullscreen() = 0;
 		virtual void CallWindowHints() = 0;
 
-		static Window* Create(const WindowInfo& inf = WindowInfo());
+		static Ref<Window> Create(const WindowInfo& inf = WindowInfo());
 	};
 }
 

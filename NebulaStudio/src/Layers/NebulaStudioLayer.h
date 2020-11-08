@@ -19,11 +19,11 @@ namespace Nebula
         Entity CameraEntity;
 
         static Vec4f clearColor;
-        Framebuffer* FrameBuffer;
+        Ref<Framebuffer> FrameBuffer;
         bool ViewportFocused = false, ViewportHovered = false;
         Vec2f ViewportSize = {1600.0f, 900.0f};
 
-        Shader* shader = nullptr;
+        Ref<Shader> shader = nullptr;
         TextureLibrary textures;
         OrthographicCameraController EditorCamera;
 

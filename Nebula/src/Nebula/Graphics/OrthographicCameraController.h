@@ -2,8 +2,15 @@
 
 #include "OrthographicCamera.h"
 
+#include <algorithm>
+
 #include <Events/WindowEvent.h>
 #include <Events/MouseEvent.h>
+
+#include <Core/PlatformInfo.h>
+#include <Core/Input.h>
+#include <Core/Ref.h>
+#include <Events/InputCodes.h>
 
 namespace Nebula {
 

@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <Math/math.h>
 #include <Utils/Logging.h>
+#include <Core/Ref.h>
 
 namespace Nebula
 {
@@ -24,25 +25,25 @@ namespace Nebula
 
         virtual const std::string& GetName() const = 0;
 
-        static Shader* Create(const std::string& filepath);
-        static Shader* Create(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
+        static Ref<Shader> Create(const std::string& filepath);
+        static Ref<Shader> Create(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
 
     };
 
     class ShaderLibrary
     {
     public:
-        void Add(const std::string& name, Shader* shader);
-        void Add(Shader* shader);
+        void Add(const std::string& name, Ref<Shader> shader);
+        void Add(Ref<Shader> shader);
 
-        Shader* Load(const std::string& filepath);
-        Shader* Load(const std::string name, const std::string& filepath);
+        Ref<Shader> Load(const std::string& filepath);
+        Ref<Shader> Load(const std::string name, const std::string& filepath);
 
-        Shader* Get(std::string& name);
+        Ref<Shader> Get(std::string& name);
 
         bool Exists(const std::string name);
     private:
-        std::unordered_map<std::string, Shader*> shaders;
+        std::unordered_map<std::string, Ref<Shader>> shaders;
     
     };
 }

@@ -2,9 +2,10 @@
 
 #include <Core/Application.h>
 #include <Debugging/Instrumentor.h>
+#include <Core/Ref.h>
 // #include <Nebula_pch.h>
 
-extern Nebula::Application* CreateApplication();
+extern Ref<Nebula::Application> CreateApplication();
 
 int main(int argv, char** argc)
 {
@@ -19,7 +20,7 @@ int main(int argv, char** argc)
     NEB_PROFILE_END_SESSION();
 
     NEB_PROFILE_BEGIN_SESSION("Shutdown", "Nebula-Shutdown.json");
-    delete app;
+    app = nullptr;
     NEB_PROFILE_END_SESSION();
 
     return 0;

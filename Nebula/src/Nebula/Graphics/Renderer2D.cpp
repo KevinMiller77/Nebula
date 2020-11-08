@@ -1,41 +1,6 @@
 #include "Renderer2D.h"
 namespace Nebula
 {
-    struct QuadVertex
-	{
-		Vec3f Position;
-		Vec4f Color;
-		Vec2f TexCoord;
-		float TexIndex;
-		float TilingFactor;
-	};
-
-	struct Renderer2DData
-	{
-		static const uint32_t MaxQuads = 20000;
-		static const uint32_t MaxVertices = MaxQuads * 4;
-		static const uint32_t MaxIndices = MaxQuads * 6;
-
-		// TODO: Check actual number on machine
-		static const uint32_t MaxTextureSlots = 32; 
-		
-		VertexArray* QuadVertexArray;
-		VertexBuffer* QuadVertexBuffer;
-		Shader* TextureShader;
-		Texture2D* WhiteTexture;
-
-		uint32_t QuadIndexCount = 0;
-		QuadVertex* QuadVertexBufferBase = nullptr;
-		QuadVertex* QuadVertexBufferPtr = nullptr;
-
-		std::array<Texture2D*, MaxTextureSlots> TextureSlots;
-		uint32_t TextureSlotIndex = 1; // 0 = white texture
-
-		Vec4f QuadVertexPositions[4];
-
-		Renderer2D::Statistics Stats;
-	};
-
 	static Renderer2DData s_Data;
 
 	void Renderer2D::SetShader(std::string path)
@@ -82,7 +47,7 @@ namespace Nebula
 			offset += 4;
 		}
 
-		IndexBuffer* quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
+		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
 		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
 
@@ -134,6 +99,22 @@ namespace Nebula
 		ResetStats();
 
 		Mat4f viewProj = camera->GetViewProjection() * transform.invertMatrix();
+        
+		if (s_Data.TextureShader)
+		{
+			s_Data.TextureShader.get()->Bind();
+			s_Data.TextureShader.get()->SetMat4("u_ViewProjection", viewProj);
+		}
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
+	}
+
+	void Renderer2D::BeginScene(Mat4f& viewProj)
+	{
+		ResetStats();
         
 		if (s_Data.TextureShader)
 		{
@@ -193,12 +174,12 @@ namespace Nebula
 		DrawQuad(transform, color);
 	}
 
-	void Renderer2D::DrawQuad(const Vec2f& position, const Vec2f& size, const Texture2D* texture, float tilingFactor, const Vec4f& tintColor)
+	void Renderer2D::DrawQuad(const Vec2f& position, const Vec2f& size, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
 		DrawQuad({ position.X, position.Y, 0.0f }, size, texture, tilingFactor, tintColor);
 	}
 
-	void Renderer2D::DrawQuad(const Vec3f& position, const Vec2f& size, const Texture2D* texture, float tilingFactor, const Vec4f& tintColor)
+	void Renderer2D::DrawQuad(const Vec3f& position, const Vec2f& size, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
 		Mat4f translation = Mat4f::translation(position);
 		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
@@ -233,7 +214,7 @@ namespace Nebula
 		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const Mat4f& transform, const Texture2D*& texture, float tilingFactor, const Vec4f& tintColor)
+	void Renderer2D::DrawQuad(const Mat4f& transform, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
 		constexpr size_t quadVertexCount = 4;
 		Vec2f textureCoords[4] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
@@ -244,7 +225,7 @@ namespace Nebula
 		float textureIndex = 0.0f;
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 		{
-			if (*s_Data.TextureSlots[i] == *texture)
+			if (*s_Data.TextureSlots[i].get() == *texture.get())
 			{
 				textureIndex = (float)i;
 				break;
@@ -257,7 +238,7 @@ namespace Nebula
 				FlushAndReset();
 
 			textureIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = (Texture2D*)texture;
+			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
 		}
 
@@ -292,12 +273,12 @@ namespace Nebula
 		DrawQuad(transform, color);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Texture2D* texture, float tilingFactor, const Vec4f& tintColor)
+	void Renderer2D::DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
 		DrawRotatedQuad({ position.X, position.Y, 0.0f }, size, rotation, texture, tilingFactor, tintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Texture2D* texture, float tilingFactor, const Vec4f& tintColor)
+	void Renderer2D::DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
 		Mat4f translation = Mat4f::translation(position);
 		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
@@ -309,10 +290,10 @@ namespace Nebula
 
 	void Renderer2D::ResetStats()
 	{
-		s_Data.Stats = Statistics();
+		s_Data.Stats = Renderer2DStatistics();
 	}
 
-	Renderer2D::Statistics Renderer2D::GetStats()
+	Renderer2DStatistics Renderer2D::GetStats()
 	{
 		return s_Data.Stats;
 	}

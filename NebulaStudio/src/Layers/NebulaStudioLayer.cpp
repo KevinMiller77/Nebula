@@ -27,12 +27,7 @@ namespace Nebula
         else
         {
             std::string dir = std::string(CurrentProject.AbsolutePath);
-
-            #ifdef NEB_PLATFORM_WINDOWS
-                dir = dir.substr(0, dir.find_last_of("\\") + 1);
-            #else
-                dir = dir.substr(0, dir.find_last_of("/") + 1);
-            #endif
+            dir = dir.substr(0, dir.find_last_of("/") + 1);
 
             
             if (VFS::Exists(dir, true))
@@ -51,7 +46,7 @@ namespace Nebula
             ActiveScene->SetFilePath(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
         }
 
-        Renderer2D::SetShader("assets/shaders/Texture.glsl");
+        Renderer2D::SetShader("assets/shaders/TexQuad.glsl");
 
         Autosave.Start();
 
@@ -65,45 +60,10 @@ namespace Nebula
 
         textures.AddTexture("Missing", VFS::AbsolutePath("assets/textures/Missing.png"));
 
-        // CameraEntity = ActiveScene->CreateEntity("Camera Entity");
-        // CameraEntity.AddComponent<CameraComponent>();
-
-        // class GravityOnCube : public ScriptableEntity
-        // {
-        //     float gravity = 9.81f;
-        //     float velocityY;
-
-        //     void OnCreate() override
-        //     {
-        //         auto& transform = GetComponent<TransformComponent>();
-        //         transform.Translation = Vec3f(0.0f, 0.0f, 0.0f);
-        //         transform.Rotation = Vec3f(0.0f, 0.0f, 0.0f);
-        //         transform.Scale = Vec3f(1.0f, 1.0f, 1.0f);
-                 
-        //         velocityY = 0.0f;
-        //     }
-
-        //     void OnUpdate(float ts) override
-        //     {
-        //         velocityY += gravity * ts;
-
-        //         auto& transform = GetComponent<TransformComponent>();
-        //         transform.Translation.Z -= velocityY * ts;
-        //     }
-        // };
-
-        // auto quad1 = ActiveScene->CreateEntity("First square");
-        // quad1.AddComponent<SpriteRendererComponent>(textures.GetTexture("Missing"), Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
-        // quad1.AddComponent<NativeScriptComponent>().Bind<GravityOnCube>();
-
         SceneHierarchy.SetContext(ActiveScene);
         SceneHierarchy.SetTextureLib(&textures);
 
         FileBrowser.SetTitle("Project Browser");
-
-        
-        // ImGuiIO& io = ImGui::GetIO();
-        // ImFont* pFont = io.Fonts->AddFontFromFileTTF(VFS::Path("assets/fonts/open-sans/OpenSans-Regular.ttf").c_str(), 18.0f);
         
     }
 
@@ -134,7 +94,7 @@ namespace Nebula
 
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
-            ActiveScene->OnEditingUpdate(EditorCamera.GetCamera());
+            ActiveScene->OnEditingUpdate(ts, EditorCamera.GetCamera());
             if(ViewportFocused)
                 EditorCamera.OnUpdate(ts);
         }
@@ -181,7 +141,7 @@ namespace Nebula
 
         ImGui::Begin("Stats");
         
-        Renderer2D::Statistics stats = Renderer2D::GetStats();
+        Renderer2DStatistics stats = Renderer2D::GetStats();
         
         ImGui::Text("Draw Calls     : %d", stats.DrawCalls);    
         ImGui::Text("Quad Count     : %d", stats.QuadCount);    
@@ -326,7 +286,6 @@ namespace Nebula
             return;
         }
         
-        filePath = ReplaceAll(filePath, "\\", "/");
         std::string relPath = VFS::Path(filePath);
 
         Nebula::SceneSerializer serializer(ActiveScene);
@@ -342,7 +301,6 @@ namespace Nebula
         std::string filePath = Nebula::FileDialogs::SaveFile("nst");
         if (!filePath.empty())
         {
-            filePath = ReplaceAll(filePath, "\\", "/");
             if (!EndsWith(filePath, {".nst"})) filePath += ".nst";
             
             std::string relPath = VFS::Path(filePath);
@@ -364,7 +322,6 @@ namespace Nebula
         std::string filePath = Nebula::FileDialogs::OpenFile("nst");
         if (!filePath.empty())
         {
-            filePath = ReplaceAll(filePath, "\\", "/");
             
             std::string relPath = VFS::Path(filePath);
 

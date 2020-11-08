@@ -14,16 +14,16 @@
 
 namespace Nebula
 {
-	Window* Window::Create(const WindowInfo& inf)
+	Ref<Window> Window::Create(const WindowInfo& inf)
 	{
 	#ifdef NEB_PLATFORM_WINDOWS
-		return new WindowsWindow(inf);
+		return CreateRef<WindowsWindow>(inf);
 	#endif
 	#ifdef NEB_PLATFORM_LINUX
-		return new LinuxWindow(inf);
+		return CreateRef<LinuxWindow>(inf);
 	#endif
 	#ifdef NEB_PLATFORM_MACOS
-		return new WindowsWindow(inf);
+		return CreateRef<WindowsWindow>(inf);
 	#endif
 	}
 

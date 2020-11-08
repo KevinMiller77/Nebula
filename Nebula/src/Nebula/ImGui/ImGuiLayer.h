@@ -6,6 +6,7 @@
 #include <Events/WindowEvent.h>
 
 #include <Core/Window.h>
+#include <Core/Ref.h>
 
 #include <../ext/imgui/imgui.h>
 
@@ -32,7 +33,7 @@ namespace Nebula
 
         static void SetStyle(ImGuiStyle* stylePtr);
         
-        static ImGuiLayer* Create();
+        static Ref<ImGuiLayer> Create();
 
         private:
             bool m_BlockEvents = true;

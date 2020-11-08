@@ -1,10 +1,5 @@
 #include "OrthographicCameraController.h"
 
-#include <algorithm>
-
-#include <Core/PlatformInfo.h>
-#include <Core/Input.h>
-#include <Events/InputCodes.h>
 
 namespace Nebula {
 

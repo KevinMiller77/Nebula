@@ -8,12 +8,7 @@ namespace Nebula
         Project CreateProjectFile(std::string path)
         {
             std::string dirToMakeFileIn = std::string(path);
-
-            #ifdef NEB_PLATFORM_WINDOWS
-                dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("\\") + 1);
-            #else
-                dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/") + 1);
-            #endif
+            dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/") + 1);
 
             Project proj;
             proj.AbsolutePath = path;
@@ -31,6 +26,7 @@ namespace Nebula
 
             std::ofstream fout(proj.AbsolutePath);
             fout << out.c_str();
+            fout.close();
 
             return proj;
         }
@@ -44,6 +40,8 @@ namespace Nebula
             out << YAML::Key << "Project VFS Loc" << YAML::Value << proj.LastFileSystemMount;
             out << YAML::Key << "Last Opened Scene" << YAML::Value << proj.LastSceneOpened;
             out << YAML::EndMap;
+
+            if (proj.AbsolutePath.empty()) return;
 
             std::ofstream fout(proj.AbsolutePath);
             fout << out.c_str();
@@ -69,11 +67,7 @@ namespace Nebula
             {
                 std::string dirToMakeFileIn = std::string(path);
 
-                #ifdef NEB_PLATFORM_WINDOWS
-                    dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("\\") + 1);
-                #else
-                    dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/") + 1);
-                #endif
+                dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/") + 1);
 
                 out.LastFileSystemMount = dirToMakeFileIn;
                 out.AbsolutePath = path;

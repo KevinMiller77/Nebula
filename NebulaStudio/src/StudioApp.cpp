@@ -1,3 +1,5 @@
+#include <Nebula.h>
+
 #include "Base/NebulaStudioProject.h"
 
 #include "Layers/NebulaStudioLayer.h"
@@ -20,7 +22,7 @@ namespace Nebula
             {
                 window->SetIcon("icon.png");
             }
-            bootLayer = new BootLayer();
+            bootLayer = CreateRef<BootLayer>();
             PushLayer(bootLayer);
 
             LOG_INF("Application created\n");
@@ -34,7 +36,7 @@ namespace Nebula
             {
                 //Process info from bootLayer and save project info
                 std::string projFile = bootLayer->Done();
-                editorLayer = new NebulaStudioLayer(projFile);
+                editorLayer = CreateRef<NebulaStudioLayer>(projFile);
                 window->SetWindowSize((uint32_t)editorLayer->ViewportSize.X, (uint32_t)editorLayer->ViewportSize.Y);
 
                 PushLayer(editorLayer);
@@ -42,18 +44,23 @@ namespace Nebula
                 bootLayer->Done(false);
                 PopLayer(bootLayer);
                 
-                window->SwapIO(VFS::AbsolutePath("debug/stdin.txt"), VFS::AbsolutePath("debug/stdout.txt"), VFS::AbsolutePath("debug/stderr.txt"));
+                std::string in = VFS::AbsolutePath("debug/stdin.txt");
+                std::string out = VFS::AbsolutePath("debug/stdout.txt");
+                std::string err = VFS::AbsolutePath("debug/stderr.txt");
+
+
+                window->SwapIO(in, out, err);
             }
 
             RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);
         }
 
-        BootLayer* bootLayer = nullptr;
-        NebulaStudioLayer* editorLayer = nullptr;
+        Ref<BootLayer> bootLayer = nullptr;
+        Ref<NebulaStudioLayer> editorLayer = nullptr;
     };
 }
 
-Nebula::Application* CreateApplication()
+Ref<Nebula::Application> CreateApplication()
 {
-    return new Nebula::Studio();
+    return CreateRef<Nebula::Studio>();
 }

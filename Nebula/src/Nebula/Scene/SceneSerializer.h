@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/PlatformInfo.h>
 #include <Scene/Scene.h>
+#include <Core/Ref.h>
 
 #include <fstream>
 

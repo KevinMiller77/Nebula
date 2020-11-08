@@ -1,6 +1,7 @@
 #pragma once
 #include <entt/entt.hpp>
 #include <Graphics/Camera.h>
+#include <Core/Ref.h>
 
 namespace Nebula
 {
@@ -25,7 +26,7 @@ namespace Nebula
 
         virtual void OnPlay();
         virtual void OnUpdate(float ts, SceneStatus status);
-        virtual void OnEditingUpdate(Camera* camera);
+        virtual void OnEditingUpdate(float ts, Camera* camera);
 
         virtual void Render(entt::entity mainCamera = entt::null);
         virtual void Render(Camera* camera, Mat4f transform);

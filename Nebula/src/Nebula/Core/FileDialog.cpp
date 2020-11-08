@@ -11,7 +11,7 @@ namespace Nebula
 		{
 			std::string out(outPath);
 			free(outPath);
-
+			out = ReplaceAll(out, "\\", "/");
 			return out;
 		}
 		else if ( result == NFD_CANCEL ) 
@@ -34,6 +34,7 @@ namespace Nebula
 		{
 			std::string out(outPath);
 			free(outPath);
+			out = ReplaceAll(out, "\\", "/");
 			return out;
 		}
 		else if ( result == NFD_CANCEL ) 

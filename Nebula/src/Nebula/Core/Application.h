@@ -5,6 +5,7 @@
 #include <Core/LayerStack.h>
 #include <Core/Window.h>
 #include <Core/NebulaCommon.h>
+#include <Core/Ref.h>
 #include <Utils/Timer.h>
 #include <Utils/Logging.h>
 #include <ImGui/ImGuiLayer.h>
@@ -22,8 +23,8 @@ namespace Nebula
     class Application
     {
     protected:
-        Window* window;
-        ImGuiLayer* imGuiLayer;
+        Ref<Window> window;
+        Ref<ImGuiLayer> imGuiLayer;
         bool running = true;
         bool minimized = false;
         
@@ -44,9 +45,9 @@ namespace Nebula
 
         void Close();
 
-        inline static Application* Get() { return curEngine; }
-        inline ImGuiLayer* GetImGuiLayer() { return Get()->imGuiLayer; }
-        inline Window* GetWindow() { return window; }
+        inline static Ref<Application> Get() { return curEngine; }
+        inline Ref<ImGuiLayer> GetImGuiLayer() { return Get()->imGuiLayer; }
+        inline Ref<Window> GetWindow() { return window; }
 
         //60 times a second
         void OnUpdate(float ts);
@@ -56,16 +57,16 @@ namespace Nebula
         virtual void OnGameUpdate() {};
         virtual void OnGameDraw()  {};
 
-        void PushLayer(Layer* layer);
-        void PushOverlay(Layer* layer);
-        void PopLayer(Layer* layer);
-        void PopOverlay(Layer* layer);
+        void PushLayer(Ref<Layer> layer);
+        void PushOverlay(Ref<Layer> layer);
+        void PopLayer(Ref<Layer> layer);
+        void PopOverlay(Ref<Layer> layer);
 
         //TODO: Reset engine
         virtual void ResetEngine() { EngineSwap(); };
 
     private:
-        static Application* curEngine;
+        static Ref<Application> curEngine;
         
         static void EngineSwap();
         friend int ::main(int argv, char** argc);

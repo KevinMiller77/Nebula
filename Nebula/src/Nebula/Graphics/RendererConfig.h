@@ -2,6 +2,7 @@
 
 #include "RendererAPI.h"
 #include <Core/NebulaCommon.h>
+#include <Core/Ref.h>
 
 namespace Nebula
 {
@@ -30,12 +31,12 @@ namespace Nebula
             m_API->Clear();
         }
 
-        static void DrawIndexed(const VertexArray* vertexArray, uint32 indexCount = 0)
+        static void DrawIndexed(const Ref<VertexArray> vertexArray, uint32 indexCount = 0)
         {
             m_API->DrawIndexed(vertexArray, indexCount);
         }
 
     private:
-        static RendererAPI* m_API;
+        static Ref<RendererAPI> m_API;
     };
 }

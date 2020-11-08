@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <Core/Ref.h>
 
 namespace Nebula
 {
@@ -24,8 +25,8 @@ namespace Nebula
 	class Texture2D : public Texture
 	{
 	public:
-		static Texture2D* Create(uint32_t width, uint32_t height);
-		static Texture2D* Create(const std::string& path);
+		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
+		static Ref<Texture2D> Create(const std::string& path);
 
 		inline bool IsValid() { return valid; } 
 	protected:

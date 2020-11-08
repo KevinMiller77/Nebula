@@ -1,19 +1,16 @@
 #include "TextureLibrary.h"
 
+//Probably phasing this out
 namespace Nebula
 {
     TextureLibrary::~TextureLibrary()
     {
-        for (auto kvp : Library)
-        {
-            delete kvp.second;
-        }
         Library.clear();
     }
 
     void TextureLibrary::AddTexture(const std::string name, uint32_t width, uint32_t height)
     {
-        Texture2D* newTex = Texture2D::Create(width, height);
+        Ref<Texture2D> newTex = Texture2D::Create(width, height);
         if (newTex != nullptr && newTex->IsValid())
         {
             Library[name] = newTex;
@@ -25,7 +22,7 @@ namespace Nebula
 
     void TextureLibrary::AddTexture(const std::string name, const std::string path)
     {
-        Texture2D* newTex = Texture2D::Create(path);
+        Ref<Texture2D> newTex = Texture2D::Create(path);
         if (newTex != nullptr && newTex->IsValid())
         {
             Library[name] = newTex;
@@ -35,13 +32,13 @@ namespace Nebula
         LOG_ERR("Lib: Could not make texture <%s> with given paramters!\n", name.c_str());
     }
     
-    void TextureLibrary::AddTexture(const std::string name, Texture2D* texture)
+    void TextureLibrary::AddTexture(const std::string name, Ref<Texture2D> texture)
     {
         Library[name] = texture;
     }
 
     
-    std::string TextureLibrary::GetName(Texture2D* Texture)
+    std::string TextureLibrary::GetName(Ref<Texture2D> Texture)
     {
         for (auto kv : Library)
         {
@@ -63,7 +60,7 @@ namespace Nebula
         Library.erase(name);
     }
 
-    Texture2D* TextureLibrary::GetTexture(std::string name)
+    Ref<Texture2D> TextureLibrary::GetTexture(std::string name)
     {
         if (name == "")
         {

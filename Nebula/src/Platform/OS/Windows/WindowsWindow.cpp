@@ -41,6 +41,14 @@ namespace Nebula
         freopen(in.c_str(), "r+", stdin);
         freopen(out.c_str(), "w", stdout);
         freopen(err.c_str(), "w", stderr);
+
+        std::ifstream t("tmpout.txt");
+        if (t.is_open())
+        {
+            std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+            printf("%s", str.c_str());
+        }
+
     }
 
     void WindowsWindow::EnableConsole()

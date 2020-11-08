@@ -103,7 +103,7 @@ namespace Nebula
 			}
 			else
 			{
-				Renderer2D::DrawQuad(transform.GetTransformation(), (const Texture2D*&)sprite.Texture, sprite.TilingFactor, sprite.Color);
+				Renderer2D::DrawQuad(transform.GetTransformation(), sprite.Texture, sprite.TilingFactor, sprite.Color);
 			}
 			
 		}
@@ -159,7 +159,7 @@ namespace Nebula
     }
 
 	//TODO: Remove, the scene should only really use camera inside of it, not given an external one
-	void Scene::OnEditingUpdate(Camera* camera)
+	void Scene::OnEditingUpdate(float ts, Camera* camera)
     {
 		Render(camera, SceneCameraTransform);
     }

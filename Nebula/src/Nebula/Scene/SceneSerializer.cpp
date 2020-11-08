@@ -132,7 +132,7 @@ namespace Nebula
 
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
-			Texture2D* tex = spriteRendererComponent.Texture;
+			Ref<Texture2D> tex = spriteRendererComponent.Texture;
 			if (tex)
 			{
 				out << YAML::Key << "Has Tex" << YAML::Value << true;

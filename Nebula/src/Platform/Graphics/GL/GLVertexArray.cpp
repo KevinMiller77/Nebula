@@ -46,7 +46,7 @@ namespace Nebula
         glBindVertexArray(0);
 	}
 
-    void GLVertexArray::AddVertexBuffer(VertexBuffer* vertexBuffer) 
+    void GLVertexArray::AddVertexBuffer(Ref<VertexBuffer> vertexBuffer) 
 	{
 		NEB_PROFILE_FUNCTION();
 		if(!vertexBuffer->GetLayout().GetElements().size())
@@ -108,7 +108,7 @@ namespace Nebula
 		vertexBuffers.push_back(vertexBuffer);
 	}
 
-    void GLVertexArray::SetIndexBuffer(IndexBuffer* indexBuffer) 
+    void GLVertexArray::SetIndexBuffer(Ref<IndexBuffer> indexBuffer) 
 	{
 		glBindVertexArray(ID);
 		indexBuffer->Bind();

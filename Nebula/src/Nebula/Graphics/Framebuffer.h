@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/NebulaCommon.h>
+#include <Core/Ref.h>
 
 namespace Nebula
 {
@@ -26,6 +27,6 @@ namespace Nebula
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
 
-		static Framebuffer* Create(const FramebufferSpecification& spec);
+		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
 	};
 }

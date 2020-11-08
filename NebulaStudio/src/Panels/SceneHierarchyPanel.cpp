@@ -138,9 +138,9 @@ namespace Nebula {
 		if (opened)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-			if (opened)
-				ImGui::TreePop();
+			// bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
+			// if (opened)
+			// 	ImGui::TreePop();
 			ImGui::TreePop();
 		}
 
@@ -228,8 +228,9 @@ namespace Nebula {
 				std::vector<std::string> texNames = TextureLib->GetAllNames();
 
 				ImGui::Text("Texture :"); ImGui::SameLine();
-
-				std::string currentPath = VFS::Path(spriteInfo.Texture->GetPath());
+				
+				std::string currentPath = std::string();
+				if (spriteInfo.Texture.get()) currentPath = VFS::Path(spriteInfo.Texture->GetPath());
 				ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth()  * 0.5f);
 				ImGui::InputText("", currentPath.data(), currentPath.size() + 1);
 
@@ -246,10 +247,8 @@ namespace Nebula {
 					if (ImGui::Button("From File..."))
 					{
 						std::string NewPath = FileDialogs::OpenFile("png");
-						NewPath = ReplaceAll(NewPath, "\\", "/");
 						if (VFS::Exists(NewPath, true))
 						{
-							if (spriteInfo.Texture) delete spriteInfo.Texture;
 							spriteInfo.Texture = Texture2D::Create(NewPath);
 						}
 					}

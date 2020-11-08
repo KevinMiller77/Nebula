@@ -6,6 +6,7 @@
 #include <Core/Application.h>
 #include <Core/Window.h>
 #include <Core/VFS.h>
+#include <Core/Ref.h>
 
 #include <Events/Event.h>
 #include <Events/InputCodes.h>

@@ -2,5 +2,5 @@
 
 namespace Nebula
 {
-    RendererAPI* RendererConfig::m_API = RendererAPI::Create(); 
+    Ref<RendererAPI> RendererConfig::m_API = RendererAPI::Create(); 
 }

@@ -1,4 +1,5 @@
 #include <string>
+#include <Core/VFS.h>
 #include <ext/nativefiledialog/src/include/nfd.h>
 
 namespace Nebula

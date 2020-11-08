@@ -7,11 +7,11 @@
 #include <Nebula_pch.h>
 namespace Nebula
 {
-    ImGuiLayer* ImGuiLayer::Create()
+    Ref<ImGuiLayer> ImGuiLayer::Create()
     {
         NEB_PROFILE_FUNCTION();
     #ifdef NEB_GAPI_OPENGL
-        return new GLImGuiLayer();
+        return CreateRef<GLImGuiLayer>();
     #elif defined NEB_GAPI_METAL
         return new MetalImGuiLayer();
     #endif

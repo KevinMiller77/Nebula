@@ -4,6 +4,7 @@
 #include <Utils/Logging.h>
 #include "VertexArray.h"
 #include <Core/NebulaCommon.h>
+#include <Core/Ref.h>
 
 namespace Nebula
 {
@@ -22,10 +23,10 @@ namespace Nebula
         virtual void SetClearColor(const Vec4f& color) = 0;
         virtual void Clear() = 0;
 
-        virtual void DrawIndexed(const VertexArray* vertexArray, uint32 indexCount = 0) = 0;
+        virtual void DrawIndexed(const Ref<VertexArray> vertexArray, uint32 indexCount = 0) = 0;
 
         static API GetAPI() { return NebAPI; }
-        static RendererAPI* Create();
+        static Ref<RendererAPI> Create();
     private:
         static API NebAPI;
 

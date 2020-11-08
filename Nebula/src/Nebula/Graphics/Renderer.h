@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/NebulaCommon.h>
+#include <Core/Ref.h>
 #include <Math/math.h>
 
 #include "Camera.h"
@@ -22,7 +23,7 @@ namespace Nebula
         static void BeginScene(Camera camera);
         static void EndScene();
 
-        static void Submit(Shader* shader, VertexArray* vertexArray, const Mat4f transform = Mat4f(1.0f));
+        static void Submit(Ref<Shader> shader, Ref<VertexArray> vertexArray, const Mat4f transform = Mat4f(1.0f));
     
         static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 

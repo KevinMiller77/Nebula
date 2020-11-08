@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Core/Ref.h>
 #include <Utils/Logging.h>
 #include <Math/math.h>
 
@@ -15,7 +16,7 @@ namespace Nebula
         virtual void StartRender() = 0;
         virtual void ClearColor(Vec4f color) = 0; 
 
-        static GraphicsContext* Create(void* window);
+        static Ref<GraphicsContext> Create(void* window);
     };
 
 }

@@ -4,19 +4,23 @@
 
 namespace Nebula
 {
-    Application* Application::curEngine = nullptr;
+    Ref<Application> Application::curEngine = nullptr;
 
 
     Application::Application(Application* child)
         : childInstance(child)
     {
 		NEB_PROFILE_FUNCTION();
+
+#if 1
+        freopen("tmpout.txt", "w", stdout);
+#endif
         LOG_INF("Making engine instance\n");
         if (curEngine != nullptr)
         {
             LOG_ERR("Engine already exists!!\n");
         }
-        curEngine = this;
+        curEngine = Ref<Application>(this);
         window = Window::Create(WindowInfo());
         window->DisableConsole();
         window->SetEventCallback(NEB_BIND_EVENT_FN(Application::OnEvent));
@@ -37,14 +41,7 @@ namespace Nebula
     Application::~Application()
     {
 		NEB_PROFILE_FUNCTION();
-        for (uint32 i = 0; i < EngLayerStack.GetSize(); i++)
-        {
-            if (EngLayerStack[i] == imGuiLayer)
-            {
-                continue;
-            }
-            EngLayerStack.erase(i);
-        }
+        
     }
 
     void Application::Close()
@@ -59,8 +56,7 @@ namespace Nebula
         {
             return;
         }
-        
-        delete curEngine;
+
         curEngine = CreateApplication();
     }
 
@@ -87,7 +83,7 @@ namespace Nebula
     {
 		NEB_PROFILE_FUNCTION();
         imGuiLayer->Begin();
-        for (Layer* layer : EngLayerStack)
+        for (Ref<Layer> layer : EngLayerStack)
         {
             layer->OnImGuiRender();
         }  
@@ -100,7 +96,7 @@ namespace Nebula
 
         uint32 newUpdate = ups.FrameKeep();
         
-        for (Layer* layer : EngLayerStack)
+        for (Ref<Layer> layer : EngLayerStack)
         {
             layer->OnUpdate(ts);
         }
@@ -138,24 +134,24 @@ namespace Nebula
         }
     }
 
-    void Application::PushLayer(Layer* layer)
+    void Application::PushLayer(Ref<Layer> layer)
     {
         EngLayerStack.PushLayer(layer);
         layer->OnAttach();
     }
 
-    void Application::PushOverlay(Layer* layer)
+    void Application::PushOverlay(Ref<Layer> layer)
     {
         EngLayerStack.PushOverlay(layer);
         layer->OnAttach();
     }
 
-    void Application::PopLayer(Layer* layer)
+    void Application::PopLayer(Ref<Layer> layer)
     {
         EngLayerStack.PopLayer(layer);
     }
 
-    void Application::PopOverlay(Layer* layer)
+    void Application::PopOverlay(Ref<Layer> layer)
     {
         EngLayerStack.PopOverlay(layer);
     }

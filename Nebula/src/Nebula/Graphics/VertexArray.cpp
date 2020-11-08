@@ -5,12 +5,12 @@
 
 namespace Nebula
 {
-    VertexArray* VertexArray::Create()
+    Ref<VertexArray> VertexArray::Create()
 	{
 		switch (RendererAPI::GetAPI())
 		{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
-			case RendererAPI::API::OpenGL:  return new GLVertexArray();
+			case RendererAPI::API::OpenGL:  return CreateRef<GLVertexArray>();
 		}
 
 		LOG_ERR("Unknown RendererAPI!\n");
