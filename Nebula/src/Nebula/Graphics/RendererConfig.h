@@ -6,6 +6,7 @@
 
 namespace Nebula
 {
+
     class RendererConfig
     {
     public:
@@ -31,9 +32,9 @@ namespace Nebula
             m_API->Clear();
         }
 
-        static void DrawIndexed(const Ref<VertexArray> vertexArray, uint32 indexCount = 0)
+        static void DrawIndexed(const Ref<VertexArray> vertexArray, PrimativeType type, uint32 indexCount = 0)
         {
-            m_API->DrawIndexed(vertexArray, indexCount);
+            m_API->DrawIndexed(vertexArray, type, indexCount);
         }
 
     private:

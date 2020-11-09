@@ -12,6 +12,6 @@ namespace Nebula
 		virtual void SetClearColor(const Vec4f& color) override;
 		virtual void Clear() override;
 
-		virtual void DrawIndexed(const Ref<VertexArray> vertexArray, uint32 indexCount = 0) override;
+		virtual void DrawIndexed(const Ref<VertexArray> vertexArray, PrimativeType type, uint32 indexCount = 0) override;
 	};
 }

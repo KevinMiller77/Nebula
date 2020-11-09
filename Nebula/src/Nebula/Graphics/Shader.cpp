@@ -28,7 +28,19 @@ namespace Nebula
 		LOG_ERR("Unknown RendererAPI!\n");
 		return nullptr;
 	}
-    
+
+    Ref<Shader> Shader::Create(const std::string name, const std::string& shaderSrc)
+    {
+        switch (RendererAPI::GetAPI())
+		{
+			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
+			case RendererAPI::API::OpenGL:  return CreateRef<GLShader>(name, shaderSrc);
+		}
+
+		LOG_ERR("Unknown RendererAPI!\n");
+		return nullptr;
+    }   
+
     void ShaderLibrary::Add(const std::string& name, Ref<Shader> shader)
     {
         if (Exists(name)) LOG_WRN("Shader already existed!\n");

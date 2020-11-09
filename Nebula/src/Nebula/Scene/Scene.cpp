@@ -111,7 +111,7 @@ namespace Nebula
 				}
 			}
 		}
-
+		
 		Renderer2D::EndScene();
 	}
 

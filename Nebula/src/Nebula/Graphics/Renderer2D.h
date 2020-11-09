@@ -19,25 +19,40 @@ namespace Nebula
 		float TilingFactor;
 	};
 
+	struct LineVertex
+	{
+		Vec3f Position;
+		Vec4f Color;
+	};
+
 	struct Renderer2DStatistics
 	{
 		uint32_t DrawCalls = 0;
 		uint32_t QuadCount = 0;
+		uint32_t LineCount = 0;
 
-		uint32_t GetTotalVertexCount() { return QuadCount * 4; }
-		uint32_t GetTotalIndexCount() { return QuadCount * 6; }
+		uint32_t GetTotalVertexCount() { return QuadCount * 4 + LineCount * 2; }
+		uint32_t GetTotalIndexCount() { return QuadCount * 6 + LineCount * 2; }
 	};
 	struct Renderer2DData
 	{
 		static const uint32_t MaxQuads = 20000;
-		static const uint32_t MaxVertices = MaxQuads * 4;
-		static const uint32_t MaxIndices = MaxQuads * 6;
+		static const uint32_t MaxQuadVertices = MaxQuads * 4;
+		static const uint32_t MaxQuadIndices = MaxQuads * 6;
+
+		static const uint32_t MaxLines = 10000;
+		static const uint32_t MaxLineVertices = MaxLines * 2;
+		static const uint32_t MaxLineIndices = MaxLines * 6;
 
 		// TODO: Check actual number on machine
 		static const uint32_t MaxTextureSlots = 32; 
+
+		Mat4f viewProj;
 		
 		Ref<VertexArray> 	QuadVertexArray;
 		Ref<VertexBuffer> 	QuadVertexBuffer;
+		Ref<IndexBuffer>	QuadIndexBuffer;
+
 		Ref<Shader> 		TextureShader;
 		Ref<Texture2D> 		WhiteTexture;
 
@@ -49,6 +64,16 @@ namespace Nebula
 		uint32_t TextureSlotIndex = 1; // 0 = white texture
 
 		Vec4f QuadVertexPositions[4];
+
+		Ref<VertexArray> 	LineVertexArray;
+		Ref<VertexBuffer> 	LineVertexBuffer;
+		Ref<IndexBuffer> 	LineIndexBuffer;
+
+		Ref<Shader> LineShader;
+
+		uint32_t LineIndexCount = 0;
+		LineVertex* LineVertexBufferBase = nullptr;
+		LineVertex* LineVertexBufferPtr = nullptr;
 
 		Renderer2DStatistics Stats;
 	};
@@ -81,10 +106,13 @@ namespace Nebula
 		static void DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 		static void DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 
+		static void DrawLine(const Vec3f& p0, const Vec3f& p1, const Vec4f& color = Vec4f(1.0f));
+
 		// Stats
 		static void ResetStats();
 		static Renderer2DStatistics GetStats();
 	private:
 		static void FlushAndReset();
+		static void FlushAndResetLines();
 	};
 }

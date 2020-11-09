@@ -1,4 +1,5 @@
 #include "Renderer2D.h"
+#include "BuiltinShaders.h"
 namespace Nebula
 {
 	static Renderer2DData s_Data;
@@ -19,7 +20,7 @@ namespace Nebula
 	{
 		s_Data.QuadVertexArray = VertexArray::Create();
 
-		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
+		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxQuadVertices * sizeof(QuadVertex));
 		s_Data.QuadVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
 			{ ShaderDataType::Float4, "a_Color" },
@@ -29,12 +30,12 @@ namespace Nebula
 			});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
-		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxQuadVertices];
 
-		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
+		uint32_t* quadIndices = new uint32_t[s_Data.MaxQuadIndices];
 
 		uint32_t offset = 0;
-		for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
+		for (uint32_t i = 0; i < s_Data.MaxQuadIndices; i += 6)
 		{
 			quadIndices[i + 0] = offset + 0;
 			quadIndices[i + 1] = offset + 1;
@@ -47,8 +48,8 @@ namespace Nebula
 			offset += 4;
 		}
 
-		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
-		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
+		s_Data.QuadIndexBuffer = IndexBuffer::Create(quadIndices, s_Data.MaxQuadIndices);
+		s_Data.QuadVertexArray->SetIndexBuffer(s_Data.QuadIndexBuffer);
 		delete[] quadIndices;
 
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
@@ -60,9 +61,9 @@ namespace Nebula
 			samplers[i] = i;
 
 		// //TODO: Material system that handles shaders
-		// s_Data.TextureShader = Shader::Create(VFS::AbsolutePath("assets/shaders/Texture.glsl"));
-		// s_Data.TextureShader->Bind();
-		// s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+		s_Data.TextureShader = Shader::Create("TexQuad", Builtin::TexQuad);
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
 		// Set first texture slot to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
@@ -71,25 +72,51 @@ namespace Nebula
 		s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+
+		s_Data.LineVertexArray = VertexArray::Create();
+
+		s_Data.LineShader = Shader::Create("Line", Builtin::Line);
+		s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxLineVertices * sizeof(LineVertex));
+		s_Data.LineVertexBuffer->SetLayout({
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float4, "a_Color" },
+		});
+		s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+
+		s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxLineVertices];
+
+		uint32_t* lineIndicies = new uint32_t[s_Data.MaxLineIndices];
+		for (uint32_t i = 0; i < s_Data.MaxLineIndices; i++)
+		{
+			lineIndicies[i] = i;
+		}
+		s_Data.LineIndexBuffer = IndexBuffer::Create(lineIndicies, s_Data.MaxLineIndices);
+		delete[] lineIndicies;
 	}
 
 	void Renderer2D::Shutdown()
 	{
 		delete[] s_Data.QuadVertexBufferBase;
+		delete[] s_Data.LineVertexBufferBase;
 	}
 
 	void Renderer2D::BeginScene(OrthographicCamera* camera)
 	{
 		ResetStats();
 
+		s_Data.viewProj = camera->GetViewProjection();
+
 		if(s_Data.TextureShader)
 		{
 			s_Data.TextureShader->Bind();
-			s_Data.TextureShader->SetMat4("u_ViewProjection", camera->GetViewProjection());
+			s_Data.TextureShader->SetMat4("u_ViewProjection", s_Data.viewProj);
 		}
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.LineIndexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 
 		s_Data.TextureSlotIndex = 1;
 	}
@@ -98,16 +125,19 @@ namespace Nebula
 	{
 		ResetStats();
 
-		Mat4f viewProj = camera->GetViewProjection() * transform.invertMatrix();
-        
+		s_Data.viewProj = transform.invertMatrix() * camera->GetViewProjection();
+
 		if (s_Data.TextureShader)
 		{
 			s_Data.TextureShader.get()->Bind();
-			s_Data.TextureShader.get()->SetMat4("u_ViewProjection", viewProj);
+			s_Data.TextureShader.get()->SetMat4("u_ViewProjection", s_Data.viewProj);
 		}
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.LineIndexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 
 		s_Data.TextureSlotIndex = 1;
 	}
@@ -116,38 +146,63 @@ namespace Nebula
 	{
 		ResetStats();
         
+		s_Data.viewProj = viewProj;
+
 		if (s_Data.TextureShader)
 		{
 			s_Data.TextureShader->Bind();
-			s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+			s_Data.TextureShader->SetMat4("u_ViewProjection", s_Data.viewProj);
 		}
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.LineIndexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 
 		s_Data.TextureSlotIndex = 1;
 	}
 
 	void Renderer2D::EndScene()
 	{
-		uint32_t dataSize = (uint32_t)( (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase );
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+		// Quads
+		uint32_t data = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+		if (data)
+		{
+			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, data);
+			
+			s_Data.TextureShader->Bind();
+			s_Data.TextureShader->SetMat4("u_ViewProjection", s_Data.viewProj);
 
-		Flush();
+			// Bind textures
+			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+				s_Data.TextureSlots[i]->Bind(i);
+			
+			s_Data.QuadVertexArray->Bind();
+			s_Data.QuadIndexBuffer->Bind();
+
+			RendererConfig::DrawIndexed(s_Data.QuadVertexArray, PrimativeType::TRIANGLES, s_Data.QuadIndexCount);
+			s_Data.Stats.DrawCalls++;
+		}
+		//Lines
+		data = (uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase;
+		if (data)
+		{
+			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, data);
+
+			s_Data.LineShader->Bind();
+			s_Data.LineShader->SetMat4("u_ViewProjection", s_Data.viewProj);
+
+			s_Data.LineVertexArray->Bind();
+			s_Data.LineIndexBuffer->Bind();
+			
+			RendererConfig::DrawIndexed(s_Data.LineVertexArray, PrimativeType::LINES, s_Data.LineIndexCount);
+			s_Data.Stats.DrawCalls++;
+		}
 	}
 
 	void Renderer2D::Flush()
-	{
-		if (s_Data.QuadIndexCount == 0)
-			return; // Nothing to draw
-		
-		// Bind textures
-		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
-			s_Data.TextureSlots[i]->Bind(i);
-		
-		RendererConfig::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
-		s_Data.Stats.DrawCalls++;
-	}
+	{}
 
 	void Renderer2D::FlushAndReset()
 	{
@@ -156,7 +211,16 @@ namespace Nebula
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 
+		s_Data.LineIndexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+
 		s_Data.TextureSlotIndex = 1;
+	}
+
+	
+	void Renderer2D::FlushAndResetLines()
+	{
+
 	}
 
 	void Renderer2D::DrawQuad(const Vec2f& position, const Vec2f& size, const Vec4f& color)
@@ -195,7 +259,7 @@ namespace Nebula
 		Vec2f textureCoords[4] = { Vec2f( 0.0f, 0.0f ), Vec2f( 1.0f, 0.0f ), Vec2f( 1.0f, 1.0f ), Vec2f( 0.0f, 1.0f ) };
 		const float tilingFactor = 1.0f;
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxQuadIndices)
 			FlushAndReset();
 
 		for (size_t i = 0; i < quadVertexCount; i++)
@@ -219,7 +283,7 @@ namespace Nebula
 		constexpr size_t quadVertexCount = 4;
 		Vec2f textureCoords[4] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxQuadIndices)
 			FlushAndReset();
 
 		float textureIndex = 0.0f;
@@ -286,6 +350,24 @@ namespace Nebula
 		Mat4f transform = rot * scale * translation;
 
 		DrawQuad(transform, texture, tilingFactor, tintColor);
+	}
+
+	void Renderer2D::DrawLine(const Vec3f& p0, const Vec3f& p1, const Vec4f& color)
+	{
+		if (s_Data.LineIndexCount >= Renderer2DData::MaxLineIndices)
+			FlushAndResetLines();
+
+		s_Data.LineVertexBufferPtr->Position = p0;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr++;
+
+		s_Data.LineVertexBufferPtr->Position = p1;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr++;
+
+		s_Data.LineIndexCount += 2;
+
+		s_Data.Stats.LineCount++;
 	}
 
 	void Renderer2D::ResetStats()

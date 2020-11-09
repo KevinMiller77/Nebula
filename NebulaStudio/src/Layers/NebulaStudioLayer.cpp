@@ -45,7 +45,7 @@ namespace Nebula
             ActiveScene->SetFilePath(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
         }
 
-        Renderer2D::SetShader("assets/shaders/TexQuad.glsl");
+        // Renderer2D::SetShader("assets/shaders/TexQuad.glsl");
 
         Autosave.Start();
 
@@ -101,6 +101,7 @@ namespace Nebula
         {
             ActiveScene->OnUpdate(ts, PlayStatus);
         }
+        Renderer2D::DrawLine(Vec3f(-5.0f, 0.0f, -0.4f), Vec3f(5.0f, 0.0f, -0.4f), Vec4f(1.0f, 0.6f, 0.0f, 1.0f));
 
         FrameBuffer->Unbind();   
     }

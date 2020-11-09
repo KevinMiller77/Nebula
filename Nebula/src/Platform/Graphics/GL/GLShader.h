@@ -12,6 +12,7 @@ namespace Nebula
     {
     public:
         GLShader(const std::string filepath);
+        GLShader(const std::string name, const std::string& shaderSrc);
         GLShader(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
         virtual ~GLShader() override;
 

@@ -36,7 +36,7 @@ namespace Nebula
 		shader->SetMat4("u_Transform", transform);
 
 		vertexArray->Bind();
-		RendererConfig::DrawIndexed(vertexArray);
+		RendererConfig::DrawIndexed(vertexArray, PrimativeType::TRIANGLES);
 	}
     
 }

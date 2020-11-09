@@ -30,6 +30,14 @@ namespace Nebula
 		name = filepath.substr(lastSlash, count);
 	}
 
+	
+	GLShader::GLShader(const std::string name, const std::string& shaderSrc)
+	{
+		auto shaderSrcs = PreProcess(shaderSrc);
+        Compile(shaderSrcs);
+		this->name = name;
+	}
+
     GLShader::GLShader(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc)
         :   name(name)
     {
