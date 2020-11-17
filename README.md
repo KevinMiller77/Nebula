@@ -9,7 +9,7 @@ Welcome to the Nebula Game engine! A (currently) small and easy to use game engi
 ![Nebula Studio](https://github.com/KevinMiller77/Nebula/blob/master/screenshots/mainEditor.png?raw=true)
 
 
-**Click me!!!
+**Click me!!!**
 [![Demo](https://github.com/KevinMiller77/Nebula/blob/master/screenshots/Thumbnail.PNG?raw=true) ](https://www.youtube.com/watch?v=cP7HQGcCWcU)
 
 # Summary #
