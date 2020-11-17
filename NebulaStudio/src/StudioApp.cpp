@@ -48,7 +48,6 @@ namespace Nebula
                 std::string out = VFS::AbsolutePath("debug/stdout.txt");
                 std::string err = VFS::AbsolutePath("debug/stderr.txt");
 
-
                 window->SwapIO(in, out, err);
             }
 

@@ -76,6 +76,7 @@ GENERATED += $(OBJDIR)/GLContext.o
 GENERATED += $(OBJDIR)/GLFramebuffer.o
 GENERATED += $(OBJDIR)/GLImGuiBuild.o
 GENERATED += $(OBJDIR)/GLImGuiLayer.o
+GENERATED += $(OBJDIR)/GLPipeline.o
 GENERATED += $(OBJDIR)/GLRendererAPI.o
 GENERATED += $(OBJDIR)/GLShader.o
 GENERATED += $(OBJDIR)/GLTexture2D.o
@@ -86,10 +87,12 @@ GENERATED += $(OBJDIR)/ImGuiLayer.o
 GENERATED += $(OBJDIR)/Input.o
 GENERATED += $(OBJDIR)/LayerStack.o
 GENERATED += $(OBJDIR)/LinuxWindow.o
+GENERATED += $(OBJDIR)/MacWindow.o
 GENERATED += $(OBJDIR)/MemoryTracker.o
 GENERATED += $(OBJDIR)/Nebula_pch.o
 GENERATED += $(OBJDIR)/OrthographicCamera.o
 GENERATED += $(OBJDIR)/OrthographicCameraController.o
+GENERATED += $(OBJDIR)/Pipeline.o
 GENERATED += $(OBJDIR)/Renderer.o
 GENERATED += $(OBJDIR)/Renderer2D.o
 GENERATED += $(OBJDIR)/RendererAPI.o
@@ -105,19 +108,7 @@ GENERATED += $(OBJDIR)/VFS.o
 GENERATED += $(OBJDIR)/VertexArray.o
 GENERATED += $(OBJDIR)/Window.o
 GENERATED += $(OBJDIR)/WindowsWindow.o
-GENERATED += $(OBJDIR)/mat2.o
-GENERATED += $(OBJDIR)/mat2f.o
-GENERATED += $(OBJDIR)/mat3f.o
-GENERATED += $(OBJDIR)/mat4.o
-GENERATED += $(OBJDIR)/mat4f.o
 GENERATED += $(OBJDIR)/stb_image.o
-GENERATED += $(OBJDIR)/vec2.o
-GENERATED += $(OBJDIR)/vec2f.o
-GENERATED += $(OBJDIR)/vec2u.o
-GENERATED += $(OBJDIR)/vec3.o
-GENERATED += $(OBJDIR)/vec3f.o
-GENERATED += $(OBJDIR)/vec4.o
-GENERATED += $(OBJDIR)/vec4f.o
 OBJECTS += $(OBJDIR)/Application.o
 OBJECTS += $(OBJDIR)/Buffer.o
 OBJECTS += $(OBJDIR)/Entity.o
@@ -129,6 +120,7 @@ OBJECTS += $(OBJDIR)/GLContext.o
 OBJECTS += $(OBJDIR)/GLFramebuffer.o
 OBJECTS += $(OBJDIR)/GLImGuiBuild.o
 OBJECTS += $(OBJDIR)/GLImGuiLayer.o
+OBJECTS += $(OBJDIR)/GLPipeline.o
 OBJECTS += $(OBJDIR)/GLRendererAPI.o
 OBJECTS += $(OBJDIR)/GLShader.o
 OBJECTS += $(OBJDIR)/GLTexture2D.o
@@ -139,10 +131,12 @@ OBJECTS += $(OBJDIR)/ImGuiLayer.o
 OBJECTS += $(OBJDIR)/Input.o
 OBJECTS += $(OBJDIR)/LayerStack.o
 OBJECTS += $(OBJDIR)/LinuxWindow.o
+OBJECTS += $(OBJDIR)/MacWindow.o
 OBJECTS += $(OBJDIR)/MemoryTracker.o
 OBJECTS += $(OBJDIR)/Nebula_pch.o
 OBJECTS += $(OBJDIR)/OrthographicCamera.o
 OBJECTS += $(OBJDIR)/OrthographicCameraController.o
+OBJECTS += $(OBJDIR)/Pipeline.o
 OBJECTS += $(OBJDIR)/Renderer.o
 OBJECTS += $(OBJDIR)/Renderer2D.o
 OBJECTS += $(OBJDIR)/RendererAPI.o
@@ -158,19 +152,7 @@ OBJECTS += $(OBJDIR)/VFS.o
 OBJECTS += $(OBJDIR)/VertexArray.o
 OBJECTS += $(OBJDIR)/Window.o
 OBJECTS += $(OBJDIR)/WindowsWindow.o
-OBJECTS += $(OBJDIR)/mat2.o
-OBJECTS += $(OBJDIR)/mat2f.o
-OBJECTS += $(OBJDIR)/mat3f.o
-OBJECTS += $(OBJDIR)/mat4.o
-OBJECTS += $(OBJDIR)/mat4f.o
 OBJECTS += $(OBJDIR)/stb_image.o
-OBJECTS += $(OBJDIR)/vec2.o
-OBJECTS += $(OBJDIR)/vec2f.o
-OBJECTS += $(OBJDIR)/vec2u.o
-OBJECTS += $(OBJDIR)/vec3.o
-OBJECTS += $(OBJDIR)/vec3f.o
-OBJECTS += $(OBJDIR)/vec4.o
-OBJECTS += $(OBJDIR)/vec4f.o
 
 # Rules
 # #############################################
@@ -270,6 +252,9 @@ $(OBJDIR)/OrthographicCamera.o: Nebula/src/Nebula/Graphics/OrthographicCamera.cp
 $(OBJDIR)/OrthographicCameraController.o: Nebula/src/Nebula/Graphics/OrthographicCameraController.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/Pipeline.o: Nebula/src/Nebula/Graphics/Pipeline.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Renderer.o: Nebula/src/Nebula/Graphics/Renderer.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
@@ -295,42 +280,6 @@ $(OBJDIR)/VertexArray.o: Nebula/src/Nebula/Graphics/VertexArray.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/ImGuiLayer.o: Nebula/src/Nebula/ImGui/ImGuiLayer.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/mat2.o: Nebula/src/Nebula/Math/mat2.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/mat2f.o: Nebula/src/Nebula/Math/mat2f.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/mat3f.o: Nebula/src/Nebula/Math/mat3f.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/mat4.o: Nebula/src/Nebula/Math/mat4.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/mat4f.o: Nebula/src/Nebula/Math/mat4f.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/vec2.o: Nebula/src/Nebula/Math/vec2.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/vec2f.o: Nebula/src/Nebula/Math/vec2f.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/vec2u.o: Nebula/src/Nebula/Math/vec2u.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/vec3.o: Nebula/src/Nebula/Math/vec3.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/vec3f.o: Nebula/src/Nebula/Math/vec3f.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/vec4.o: Nebula/src/Nebula/Math/vec4.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/vec4f.o: Nebula/src/Nebula/Math/vec4f.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Nebula_pch.o: Nebula/src/Nebula/Nebula_pch.cpp
@@ -369,6 +318,9 @@ $(OBJDIR)/GLContext.o: Nebula/src/Platform/Graphics/GL/GLContext.cpp
 $(OBJDIR)/GLFramebuffer.o: Nebula/src/Platform/Graphics/GL/GLFramebuffer.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/GLPipeline.o: Nebula/src/Platform/Graphics/GL/GLPipeline.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/GLRendererAPI.o: Nebula/src/Platform/Graphics/GL/GLRendererAPI.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
@@ -388,6 +340,9 @@ $(OBJDIR)/GLImGuiLayer.o: Nebula/src/Platform/Graphics/GL/ImGui/GLImGuiLayer.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/LinuxWindow.o: Nebula/src/Platform/OS/Linux/LinuxWindow.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/MacWindow.o: Nebula/src/Platform/OS/MacOS/MacWindow.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/WindowsWindow.o: Nebula/src/Platform/OS/Windows/WindowsWindow.cpp

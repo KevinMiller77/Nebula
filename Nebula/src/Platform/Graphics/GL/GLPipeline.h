@@ -17,6 +17,6 @@ namespace Nebula
         virtual void Bind() = 0;
 
     private:
-    
+        
     };
 }

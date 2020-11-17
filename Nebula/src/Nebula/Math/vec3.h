@@ -34,7 +34,7 @@ namespace Nebula
             return (float)acos(dot / mag); 
         }
         //  Return vlaue is in radians
-        static float AngleBetween(const Vec3& left, const Vec3& right)      { return left.AngleBetween(other); }
+        static float AngleBetween(const Vec3& left, const Vec3& right)      { return left.AngleBetween(right); }
         float AngleBetweenDeg(const Vec3<T>& other)                         { return RAD_TO_DEG(AngleBetween(other)); }
         static float AngleBetweenDeg(const Vec3& left, const Vec3& right)   { return RAD_TO_DEG(AngleBetween(left, right)); }
 
@@ -46,7 +46,7 @@ namespace Nebula
             result.Z = X * other.Y + Y * other.X;
             return result;
         }
-        static Vec3 Cross(const Vec3& left, const Vec3& right)              { return left.Cross(other); }
+        static Vec3 Cross(const Vec3& left, const Vec3& right)              { return left.Cross(right); }
 
         Vec3<T> Normalize()    
         { 

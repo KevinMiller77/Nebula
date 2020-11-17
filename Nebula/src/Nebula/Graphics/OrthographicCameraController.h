@@ -17,7 +17,7 @@ namespace Nebula {
 	class OrthographicCameraController
 	{
 	public:
-		OrthographicCameraController(float aspectRatio, bool rotation = false);
+		OrthographicCameraController(float aspectRatio, bool rotation = true);
 
 		void OnUpdate(float ts);
 		void OnEvent(Event& e);

@@ -7,9 +7,6 @@
 #include <Core/VFS.h>
 #include <Nebula_pch.h>
 
-
-#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
-
 namespace Nebula
 {
     WindowsData LinuxWindow::data = WindowsData();
@@ -39,6 +36,14 @@ namespace Nebula
         freopen(in.c_str(), "r+", stdin);
         freopen(out.c_str(), "w", stdout);
         freopen(err.c_str(), "w", stderr);
+
+        std::ifstream t("tmpout.txt");
+        if (t.is_open())
+        {
+            std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+            printf("%s", str.c_str());
+        }
+
     }
 
     void LinuxWindow::EnableConsole()
@@ -80,10 +85,8 @@ namespace Nebula
         context = GraphicsContext::Create((void*)window);
         context->Init();
 
-
         glfwSetWindowUserPointer(window, &data);
         SetVSync(true);
-        LOG_INF("Context Init\n");
 
         // Set GLFW callbacks
         glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)

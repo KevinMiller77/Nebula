@@ -45,8 +45,6 @@ namespace Nebula
             ActiveScene->SetFilePath(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
         }
 
-        // Renderer2D::SetShader("assets/shaders/TexQuad.glsl");
-
         Autosave.Start();
 
         FramebufferSpecification fbSpec;
@@ -58,12 +56,40 @@ namespace Nebula
         EditorCamera = OrthographicCameraController(ViewportSize.X / ViewportSize.X);
 
         textures.AddTexture("Missing", VFS::AbsolutePath("assets/textures/Missing.png"));
+        textures.AddTexture("Thumbnail", VFS::AbsolutePath("assets/textures/thumbnail.png"));
 
         SceneHierarchy.SetContext(ActiveScene);
         SceneHierarchy.SetTextureLib(&textures);
 
         FileBrowser.SetTitle("Project Browser");
+
+        Entity e_Floor = ActiveScene->CreateEntity("Floor");
+        e_Floor.AddComponent<RootEntityComponent>();
+        e_Floor.AddComponent<SpriteRendererComponent>();
         
+        TransformComponent& tc = e_Floor.GetComponent<TransformComponent>();
+        tc.Translation.Y = -0.5f;
+        tc.Rotation.X = MATH_PI / 2;
+
+
+        std::vector<Entity>& Floor = e_Floor.AddComponent<ParentEntityComponent>().children;
+        for (float x = -15.0f ; x <= 15.1f ; x += 1.0f)
+        {
+            for (float y = -15.0f ; y <= 15.1f ; y += 1.0f)
+            {
+                Entity toAdd = ActiveScene->CreateEntity("Piece of Floor");
+                
+                SpriteRendererComponent& src = toAdd.AddComponent<SpriteRendererComponent>();
+                src.Texture = textures.GetTexture("Thumbnail");
+                src.Color.X = (float)0x96 / (float)0xFF; src.Color.Y = (float)0x4B / (float)0xFF; src.Color.Z = 0x00 / (float)0xFF;
+                
+                TransformComponent& tc = toAdd.GetComponent<TransformComponent>();
+                tc.Translation.X = x; tc.Translation.Y = y;
+                
+                Floor.push_back(toAdd);
+            }
+        }
+
     }
 
 
@@ -90,7 +116,6 @@ namespace Nebula
         FrameBuffer->Bind();
         RendererConfig::Clear();
 
-
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
             ActiveScene->OnEditingUpdate(ts, EditorCamera.GetCamera());
@@ -101,7 +126,6 @@ namespace Nebula
         {
             ActiveScene->OnUpdate(ts, PlayStatus);
         }
-        Renderer2D::DrawLine(Vec3f(-5.0f, 0.0f, -0.4f), Vec3f(5.0f, 0.0f, -0.4f), Vec4f(1.0f, 0.6f, 0.0f, 1.0f));
 
         FrameBuffer->Unbind();   
     }

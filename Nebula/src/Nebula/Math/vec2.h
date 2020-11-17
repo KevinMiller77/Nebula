@@ -34,7 +34,7 @@ namespace Nebula
             return (float)acos(dot / mag); 
         }
         //  Return vlaue is in radians
-        static float AngleBetween(const Vec2& left, const Vec2& right)      { return left.AngleBetween(other); }
+        static float AngleBetween(const Vec2& left, const Vec2& right)      { return left.AngleBetween(right); }
         float AngleBetweenDeg(const Vec2<T>& other)                         { return RAD_TO_DEG(AngleBetween(other)); }
         static float AngleBetweenDeg(const Vec2& left, const Vec2& right)   { return RAD_TO_DEG(AngleBetween(left, right)); }
 
@@ -56,9 +56,9 @@ namespace Nebula
         void operator*=(const Vec2& other)  { multiply(other); }
         void operator/=(const Vec2& other)  { divide(other); }
         
-        friend Vec2<T> operator+(Vec2<T> left, Vec2<T> right)   { return Vec2(<T>left.X + right.X, left.Y + right.Y); }
-        friend Vec2<T> operator-(Vec2<T> left, Vec2<T> right)   { return Vec2(<T>left.X - right.X, left.Y - right.Y); }
-        friend Vec2<T> operator*(Vec2<T> left, Vec2<T> right)   { return Vec2(<T>left.X * right.X, left.Y * right.Y); }
+        friend Vec2<T> operator+(Vec2<T> left, Vec2<T> right)   { return Vec2<T>(left.X + right.X, left.Y + right.Y); }
+        friend Vec2<T> operator-(Vec2<T> left, Vec2<T> right)   { return Vec2<T>(left.X - right.X, left.Y - right.Y); }
+        friend Vec2<T> operator*(Vec2<T> left, Vec2<T> right)   { return Vec2<T>(left.X * right.X, left.Y * right.Y); }
         friend Vec2<T> operator/(Vec2<T> left, Vec2<T> right)   { assert(right.X != (T)(0) && right.Y != (T)(0));   // Divide by 0
                                                                      return Vec2<T>(left.X / right.X, left.Y / right.Y); }
 

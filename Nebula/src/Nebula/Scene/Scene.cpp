@@ -104,11 +104,7 @@ namespace Nebula
 			for (auto entity : view)
 			{
 				Entity toSubmit { entity, this };
-				
-				if (toSubmit.HasComponent<SpriteRendererComponent>())
-				{
-					SubmitEntity(toSubmit);
-				}
+				SubmitEntity(toSubmit);
 			}
 		}
 		
@@ -117,9 +113,11 @@ namespace Nebula
 
 	void Scene::SubmitEntity(Entity entity, const Mat4f& modelMat)
 	{
-			auto transform = entity.GetComponent<TransformComponent>();
-			auto sprite = entity.GetComponent<SpriteRendererComponent>();
+		auto transform = entity.GetComponent<TransformComponent>();
 
+		if (entity.HasComponent<SpriteRendererComponent>())
+		{
+			auto sprite = entity.GetComponent<SpriteRendererComponent>();
 			Mat4f transformMat = transform.GetTransformation() * modelMat;
 			if (sprite.Texture)
 			{
@@ -129,20 +127,18 @@ namespace Nebula
 			{
 				Renderer2D::DrawQuad(transformMat, sprite.Color);
 			}
+		}
 
 		if (entity.HasComponent<ParentEntityComponent>())
 		{
-			Mat4f newModel = entity.GetComponent<TransformComponent>().GetTransformation() * modelMat;
+			Mat4f newModel = transform.GetTransformation() * modelMat;
 
 			auto& children = entity.GetComponent<ParentEntityComponent>().children;
 			for (auto child : children)
 			{
 				Entity toSubmit{ child, this };
 
-				if (toSubmit.HasComponent<SpriteRendererComponent>())
-				{
-					SubmitEntity(toSubmit, newModel);
-				}
+				SubmitEntity(toSubmit, newModel);
 			}
 		}
 	}
@@ -202,7 +198,7 @@ namespace Nebula
 	void Scene::EvaluateChildren()
 	{
 
-		auto& parentsView = Registry.view<ParentEntityComponent>();
+		auto parentsView = Registry.view<ParentEntityComponent>();
 
 		for (auto& parentComp : parentsView)
 		{

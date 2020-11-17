@@ -34,7 +34,7 @@ namespace Nebula
             return (float)acos(dot / mag); 
         }
         //  Return vlaue is in radians
-        static float AngleBetween(const Vec4& left, const Vec4& right)      { return left.AngleBetween(other); }
+        static float AngleBetween(const Vec4& left, const Vec4& right)      { return left.AngleBetween(right); }
         float AngleBetweenDeg(const Vec4<T>& other)                         { return RAD_TO_DEG(AngleBetween(other)); }
         static float AngleBetweenDeg(const Vec4& left, const Vec4& right)   { return RAD_TO_DEG(AngleBetween(left, right)); }
 
@@ -58,9 +58,9 @@ namespace Nebula
         void operator*=(const Vec4& other)  { multiply(other); }
         void operator/=(const Vec4& other)  { divide(other); }
         
-        friend Vec4<T> operator+(Vec4<T> left, Vec4<T> right)   { return Vec4(<T>left.X + right.X, left.Y + right.Y, left.Z + right.Z, left.W + right.W); }
-        friend Vec4<T> operator-(Vec4<T> left, Vec4<T> right)   { return Vec4(<T>left.X - right.X, left.Y - right.Y, left.Z - right.Z, left.W - right.W); }
-        friend Vec4<T> operator*(Vec4<T> left, Vec4<T> right)   { return Vec4(<T>left.X * right.X, left.Y * right.Y, left.Z * right.Z, left.W * right.W); }
+        friend Vec4<T> operator+(Vec4<T> left, Vec4<T> right)   { return Vec4<T>(left.X + right.X, left.Y + right.Y, left.Z + right.Z, left.W + right.W); }
+        friend Vec4<T> operator-(Vec4<T> left, Vec4<T> right)   { return Vec4<T>(left.X - right.X, left.Y - right.Y, left.Z - right.Z, left.W - right.W); }
+        friend Vec4<T> operator*(Vec4<T> left, Vec4<T> right)   { return Vec4<T>(left.X * right.X, left.Y * right.Y, left.Z * right.Z, left.W * right.W); }
         friend Vec4<T> operator/(Vec4<T> left, Vec4<T> right)   { assert((right.X != (T)(0) && right.Y != (T)(0)) && (right.Z != (T)(0) && right.W != (T)(0)));   // Divide by 0
                                                                      return Vec4<T>(left.X / right.X, left.Y / right.Y, left.Z / right.Z, left.W / right.W); }
 
@@ -89,7 +89,7 @@ namespace Nebula
             void divide(const Vec4<T>& other)
             {
                 // Divide by 0
-                assert((right.X != (T)(0) && right.Y != (T)(0)) && (right.Z != (T)(0) && right.W != (T)(0)));
+                assert((other.X != (T)(0) && other.Y != (T)(0)) && (other.Z != (T)(0) && other.W != (T)(0)));
                 X /= other.X;
                 Y /= other.Y;
                 Z /= other.Z;

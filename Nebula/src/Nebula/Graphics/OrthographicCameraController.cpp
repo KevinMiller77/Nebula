@@ -1,5 +1,10 @@
 #include "OrthographicCameraController.h"
 
+#include <algorithm>
+
+#include <Core/PlatformInfo.h>
+#include <Core/Input.h>
+#include <Events/InputCodes.h>
 
 namespace Nebula {
 
@@ -28,13 +33,13 @@ namespace Nebula {
 
 		if (Input::IsKeyPressed(KeyCode::W))
 		{
-			m_CameraPosition.X += -sin((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.Y += cos((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.X -= -sin((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.Y -= cos((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 		}
 		else if (Input::IsKeyPressed(KeyCode::S))
 		{
-			m_CameraPosition.X -= -sin((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
-			m_CameraPosition.Y -= cos((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.X += -sin((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
+			m_CameraPosition.Y += cos((MATH_PI / 180) * (m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 		}
 
 		if (m_Rotation)

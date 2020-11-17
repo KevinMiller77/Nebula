@@ -63,7 +63,7 @@ namespace Nebula
         bool IsVSync() const override;
 
         void* GetNativeWindow() override { return (void*)window; }
-        GraphicsContext* GetContext() override { return context; }
+        Ref<GraphicsContext> GetContext() override { return context; }
 
 		virtual void SwapIO(std::string in, std::string out, std::string err);
 
@@ -76,7 +76,7 @@ namespace Nebula
 
     private:
         GLFWwindow* window;
-        GraphicsContext* context;
+        Ref<GraphicsContext> context;
         uint32 GLFWWinCount;
         WindowInfo info;
         bool maximized = false;

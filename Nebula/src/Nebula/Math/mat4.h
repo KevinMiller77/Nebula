@@ -152,7 +152,7 @@ namespace Nebula
             return out;
         }
 
-        Vec4<T> Mat4<T>::multiply(const Vec4<T> &other)
+        Vec4<T> multiply(const Vec4<T> &other)
         {
             return Vec4<T>(
                 rows[0].X * other.X + rows[1].X * other.Y + rows[2].X * other.Z + rows[3].X * other.W,
