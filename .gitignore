@@ -12,7 +12,8 @@
 *.xcodeproj
 *.plist
 *.DS_Store
-
+*.gitignore
+*.make
 
 console.txt
 *.xcodeproj/
@@ -24,3 +25,4 @@ Debug/*
 Release/*
 ext/freetype/bin
 .vs/
+*/Makefile
