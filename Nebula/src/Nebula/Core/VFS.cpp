@@ -95,7 +95,7 @@ namespace Nebula
     {
         if (!absolutePath && !IsMounted())
         {
-            LOG_ERR("Filesystem not mounted!!\n");
+            LOG_INF("Filesystem wasnt mounted during exists check!!\n");
             return false;
         }
         //TODO: Check that the path string is valid

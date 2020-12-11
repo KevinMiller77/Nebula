@@ -19,6 +19,7 @@ namespace Nebula
         static void Shutdown();
 
         static void OnWindowResize(uint32 w, uint32 h);
+        static void ReloadShaders();
 
         static void BeginScene(Camera camera);
         static void EndScene();

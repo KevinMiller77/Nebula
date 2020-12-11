@@ -16,20 +16,19 @@ namespace Nebula
 		return 0;
 	}
 
-    GLShader::GLShader(const std::string filepath)
-	{
-        std::string source = ReadFile(filepath);
-        auto shaderSrcs = PreProcess(source);
-        Compile(shaderSrcs);
+    // GLShader::GLShader(const std::string filepath)
+	// {
+    //     std::string source = ReadFile(filepath);
+    //     auto shaderSrcs = PreProcess(source);
+    //     Compile(shaderSrcs);
 
-        // Extract name from filepath
-		auto lastSlash = filepath.find_last_of("/\\");
-		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
-		auto lastDot = filepath.rfind('.');
-		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
-		name = filepath.substr(lastSlash, count);
-	}
-
+    //     // Extract name from filepath
+	// 	auto lastSlash = filepath.find_last_of("/\\");
+	// 	lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+	// 	auto lastDot = filepath.rfind('.');
+	// 	auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+	// 	name = filepath.substr(lastSlash, count);
+	// }
 	
 	GLShader::GLShader(const std::string name, const std::string& shaderSrc)
 	{
@@ -60,6 +59,36 @@ namespace Nebula
 	{
         glUseProgram(0);
 	}
+	
+	
+    void GLShader::Reload(const std::string& input, bool inputIsFilePath)
+	{
+		glUseProgram(0);
+		glDeleteProgram(ID);
+
+		std::unordered_map<GLenum, std::string> srcs;
+		if( inputIsFilePath)
+		{
+			srcs = PreProcess(ReadFile(input));
+		}
+		else
+		{
+			srcs = PreProcess(input);
+		}
+		
+
+        Compile(srcs);
+		this->name = name;
+	}
+
+    void GLShader::Reload(const std::string& vertexShader, const std::string& fragmentShader)
+	{
+        std::unordered_map<GLenum, std::string> sources;
+		sources[GL_VERTEX_SHADER] = vertexShader;
+		sources[GL_FRAGMENT_SHADER] = fragmentShader;
+		Compile(sources);
+	}
+
 
     std::string GLShader::ReadFile(const std::string& filepath)
     {
@@ -143,7 +172,7 @@ namespace Nebula
 
 				glDeleteShader(shader);
 
-				LOG_ERR("%s\n", infoLog.data());
+				LOG_ERR("%s", infoLog.data());
 				LOG_ERR("Shader compilation failure!\n");
 				break;
 			}

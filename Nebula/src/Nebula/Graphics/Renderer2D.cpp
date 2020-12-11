@@ -11,9 +11,40 @@ namespace Nebula
 			samplers[i] = i;
 
 		//TODO: Material system that handles shaders
-		s_Data.TextureShader = Shader::Create(VFS::AbsolutePath(path));
+		s_Data.TextureShader = Shader::Create("TexQuad", VFS::AbsolutePath(path));
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+	}
+
+	void Renderer2D::ReloadShaders()
+	{
+		bool TexShaderFileFound = VFS::Exists("assets/shaders/TexQuad.glsl"); 
+		if(!TexShaderFileFound)
+		{
+			LOG_ERR("The shader TexQuad.glsl was not found. It could not be reloaded.\n");
+			LOG_ERR("Press Shift+F6 to load default shaders\n");
+		}
+		else
+		{
+			s_Data.TextureShader->Reload(VFS::AbsolutePath("assets/shaders/TexQuad.glsl"), true);
+			s_Data.TextureShader->Bind();
+
+			int32_t samplers[s_Data.MaxTextureSlots];
+			for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
+				samplers[i] = i;
+			s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+		}
+		
+		bool LineShaderFileFound = VFS::Exists("assets/shaders/Line.glsl");
+		if (!LineShaderFileFound)
+		{
+			LOG_ERR("The shader Line.glsl was not found. It could not be reloaded.\n");
+			LOG_ERR("Press Shift+F6 to load default shaders\n");
+		}
+		else
+		{
+			s_Data.LineShader->Reload(VFS::AbsolutePath("assets/shaders/Line.glsl"), true);
+		}
 	}
 
 	void Renderer2D::Init()
@@ -60,8 +91,10 @@ namespace Nebula
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		// //TODO: Material system that handles shaders
-		s_Data.TextureShader = Shader::Create("TexQuad", Builtin::TexQuad);
+		bool TexShaderFileFound = VFS::Exists("assets/shaders/TexQuad.glsl"); 
+		s_Data.TextureShader =  TexShaderFileFound ? Shader::Create("TexQuad", "assets/shaders/TexQuad.glsl") : Shader::Create("TexQuad", Builtin::TexQuad);
+		if (!TexShaderFileFound) LOG_WRN("The shader TexQuad.glsl was not found, the default shader will be used\n");
+
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
@@ -73,9 +106,12 @@ namespace Nebula
 		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
+		bool LineShaderFileFound = VFS::Exists("assets/shaders/Line.glsl");
+		s_Data.LineShader = LineShaderFileFound  ? Shader::Create("Line", "assets/shaders/TexQuad.glsl") : Shader::Create("Line", Builtin::Line);
+		if(!LineShaderFileFound) LOG_WRN("The shader Line.glsl was not found, the default shader will be used\n");
+		
 		s_Data.LineVertexArray = VertexArray::Create();
-
-		s_Data.LineShader = Shader::Create("Line", Builtin::Line);
+			
 		s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxLineVertices * sizeof(LineVertex));
 		s_Data.LineVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
@@ -281,7 +317,6 @@ namespace Nebula
 	void Renderer2D::DrawQuad(const Mat4f& transform, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
 		constexpr size_t quadVertexCount = 4;
-		Vec2f textureCoords[4] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxQuadIndices)
 			FlushAndReset();
@@ -289,7 +324,7 @@ namespace Nebula
 		float textureIndex = 0.0f;
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			if (s_Data.TextureSlots[i]->GetRendererID() == texture->GetRendererID())
 			{
 				textureIndex = (float)i;
 				break;
@@ -311,7 +346,7 @@ namespace Nebula
             Vec4f tempPos = Vec4f(transform * s_Data.QuadVertexPositions[i]);
             s_Data.QuadVertexBufferPtr->Position = { tempPos.X, tempPos.Y, tempPos.Z };
 			s_Data.QuadVertexBufferPtr->Color = tintColor;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadVertexBufferPtr->TexCoord = texture->GetTexCoords()[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;

@@ -208,6 +208,8 @@ namespace Nebula
 
     void WindowsWindow::OnUpdate()
     {
+        
+
         fflush(stdout);
         fflush(stderr);
 
@@ -217,6 +219,21 @@ namespace Nebula
             data.w_width = data.width;
             data.w_height = data.height;
         }
+        
+        if (data.width == 0 || data.height == 0)
+        {
+            minimized = true;
+        }
+        else if (minimized)
+        {
+            minimized = false;
+            wasMinimized = true; 
+        }
+        else
+        {
+            wasMinimized = false;
+        }
+        
         glfwPollEvents();
         context->SwapBuffers();
     }
@@ -303,11 +320,6 @@ namespace Nebula
         image.pixels = data;
 
         glfwSetWindowIcon(window, 1, &image);
-    }
-
-    bool WindowsWindow::IsMaximized()
-    {
-        return maximized;
     }
 
     void WindowsWindow::MaximizeWindow()

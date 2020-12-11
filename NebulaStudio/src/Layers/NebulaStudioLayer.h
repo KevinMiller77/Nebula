@@ -9,7 +9,8 @@
 
 namespace Nebula
 {
-    #define AUTOSAVE_INTERVAL 5.0f
+    #define SEC_TO_MINUTE 60.f
+    #define AUTOSAVE_INTERVAL (SEC_TO_MINUTE * 2.5f)
 
 
     class NebulaStudioLayer : public Layer
@@ -54,9 +55,17 @@ namespace Nebula
         void SaveScene();
         void SaveSceneAs();
         void OpenScene();
+
+        void CopyEntity();
+        bool IsClipboardFull() { return ClipboardFull; }
+        void PasteEntity();
+
     private:
 		Timer Autosave = Timer();
         std::string StartProjFileInput = std::string();
+
+        Entity Clipboard;
+        bool ClipboardFull = false;
 
         SceneHierarchyPanel SceneHierarchy;
         LogPanel Log;

@@ -7,8 +7,8 @@
 #include <Utils/Logging.h>
 namespace Nebula
 {
-    GLTexture2D::GLTexture2D(uint32_t width, uint32_t height)
-		: Width(width), Height(height)
+    GLTexture2D::GLTexture2D(uint32_t width, uint32_t height, bool child)
+		: Width(width), Height(height), ChildTexture(child)
 	{
 		NEB_PROFILE_FUNCTION();
 		Path = std::string();
@@ -25,10 +25,10 @@ namespace Nebula
 		glTextureParameteri(ID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
-	GLTexture2D::GLTexture2D(const std::string& path)
-		: Path(path)
+	GLTexture2D::GLTexture2D(const std::string& path, bool child)
+		: Path(path), ChildTexture(child)
 	{
-		valid = true;
+		m_Valid = true;
 		NEB_PROFILE_FUNCTION();
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
@@ -38,7 +38,7 @@ namespace Nebula
 		}
         if(!data)
 		{	
-			valid = false;
+			m_Valid = false;
 			LOG_ERR("Failed to load image for texture!\n----> Path was: %s\n", path.c_str());
 		}
 		Width = width;
@@ -61,7 +61,7 @@ namespace Nebula
 
 		if(!(internalFormat & dataFormat)) 
 		{
-			valid = false;
+			m_Valid = false;
 			LOG_ERR("Texture image format not supported!\n");
 		}
 
@@ -79,9 +79,31 @@ namespace Nebula
 		stbi_image_free(data);
 	}
 
+	GLTexture2D::GLTexture2D(GLTexture2D* parent, int width, int height, Mat42f textureCoords, bool child)
+		: ChildTexture(child)
+	{
+		if (!parent)
+		{
+			LOG_ERR("Could not make child texture! Parent was null\n");
+		}
+
+		// Most information is just copied from the parent, we dont have to
+		// load the texture twice
+		Path = parent->GetPath(); ID = parent->GetRendererID();
+		IntFormat = (GLenum)parent->GetIntFormat(); DataFormat = (GLenum)parent->GetDataFormat();
+
+		Width = width; 
+		Height = height;
+		TextureCoords = textureCoords;
+	}
+
+	
 	GLTexture2D::~GLTexture2D()
 	{
-		glDeleteTextures(1, &ID);
+		if(!ChildTexture)
+		{
+			glDeleteTextures(1, &ID);
+		}
 	}
 
 	void GLTexture2D::SetData(void* data, uint32_t size)
@@ -95,5 +117,21 @@ namespace Nebula
 	void GLTexture2D::Bind(uint32_t slot) const
 	{
 		glBindTextureUnit(slot, ID);
+	}
+
+	//	Pixel counts in
+	Ref<Texture2D> GLTexture2D::GetSubTexture(int xPosPixels, int yPosPixels, int xSizePixels, int ySizePixels)
+	{
+		float w = (float)Width;
+		float h = (float)Height;
+
+		Vec2f botL = { (float)(xPosPixels) 				 / w ,  (yPosPixels) / h };  // 0, 1
+		Vec2f botR = { (float)(xPosPixels + xSizePixels) / w , (yPosPixels)	/ h	};  //  1, 1
+		Vec2f topL = { (float)(xPosPixels) 				 / w , (yPosPixels + ySizePixels) / h	}; // 0, 0
+		Vec2f topR = { (float)(xPosPixels + xSizePixels) / w , (yPosPixels + ySizePixels) / h 	};  // 1 0
+
+		Mat42f out = { topL, topR, botR, botL};
+
+		return CreateRef<GLTexture2D>(this, xSizePixels, ySizePixels, out);
 	}
 }

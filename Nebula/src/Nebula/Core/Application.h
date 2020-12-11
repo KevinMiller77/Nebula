@@ -26,7 +26,6 @@ namespace Nebula
         Ref<Window> window;
         Ref<ImGuiLayer> imGuiLayer;
         bool running = true;
-        bool minimized = false;
         
         Timer fps;
         Timer ups;

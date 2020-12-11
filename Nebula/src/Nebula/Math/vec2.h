@@ -51,11 +51,15 @@ namespace Nebula
             return in.Normalize();
         }
 
+
         void operator+=(const Vec2& other)  { add(other); }
         void operator-=(const Vec2& other)  { subtract(other); }
         void operator*=(const Vec2& other)  { multiply(other); }
         void operator/=(const Vec2& other)  { divide(other); }
         
+        friend bool operator==(const Vec2<T>& left, const Vec2<T>& right)  { return (left.X ==  right.X && left.Y == right.Y); }
+        friend bool operator!=(const Vec2<T>& left, const Vec2<T>& right)  { return !(left.X == right.X && left.Y == right.Y); }
+
         friend Vec2<T> operator+(Vec2<T> left, Vec2<T> right)   { return Vec2<T>(left.X + right.X, left.Y + right.Y); }
         friend Vec2<T> operator-(Vec2<T> left, Vec2<T> right)   { return Vec2<T>(left.X - right.X, left.Y - right.Y); }
         friend Vec2<T> operator*(Vec2<T> left, Vec2<T> right)   { return Vec2<T>(left.X * right.X, left.Y * right.Y); }

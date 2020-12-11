@@ -66,6 +66,9 @@ namespace Nebula
 		virtual inline bool IsWindowed() = 0;
 
 		virtual bool IsMaximized() = 0;
+		virtual bool IsMinimized() = 0;
+		virtual bool WasMinimized() = 0;
+		
 		virtual void MaximizeWindow() = 0;
         virtual void RestoreWindow() = 0;
 		virtual void MinimizeWindow() = 0;

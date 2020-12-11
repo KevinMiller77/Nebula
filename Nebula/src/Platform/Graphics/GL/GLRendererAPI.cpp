@@ -5,7 +5,7 @@
 
 namespace Nebula
 {
-    void GLMessageCallback(
+    static void APIENTRY GLMessageCallback(
 		unsigned source,
 		unsigned type,
 		unsigned id,
@@ -16,10 +16,10 @@ namespace Nebula
 	{
 		switch (severity)
 		{
-			case GL_DEBUG_SEVERITY_HIGH:         LOG_ERR("%s", message); return;
-			case GL_DEBUG_SEVERITY_MEDIUM:       LOG_ERR("%s", message); return;
-			case GL_DEBUG_SEVERITY_LOW:          LOG_WRN("%s", message); return;
-			case GL_DEBUG_SEVERITY_NOTIFICATION: LOG_INF("%s", message); return;
+			case GL_DEBUG_SEVERITY_HIGH:         LOG_ERR("%s\n", message); return;
+			case GL_DEBUG_SEVERITY_MEDIUM:       LOG_ERR("%s\n", message); return;
+			case GL_DEBUG_SEVERITY_LOW:          LOG_WRN("%s\n", message); return;
+			case GL_DEBUG_SEVERITY_NOTIFICATION: LOG_INF("%s\n", message); return;
 		}
 		
 		LOG_INF("OpenGL Message: Unknown severity level!");
@@ -28,14 +28,18 @@ namespace Nebula
 
     void GLRendererAPI::Init() 
     {
-        // glEnable(GL_DEBUG_OUTPUT);
-        // glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        // glDebugMessageCallback(GLMessageCallback, nullptr);
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(GLMessageCallback, nullptr);
         
-        // glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+
+        // glDisable(GL_CULL_FACE);
+        // glEnable(GL_TEXTURE_2D);
+        // glAlphaFunc(GL_GREATER, 0.0f);
 
         glEnable(GL_MULTISAMPLE);
         glEnable(GL_DEPTH_TEST);

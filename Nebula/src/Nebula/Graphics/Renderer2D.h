@@ -91,6 +91,7 @@ namespace Nebula
 
 		//TEMP:
 		static void SetShader(std::string path);
+		static void ReloadShaders();
 
 		// Primitives
 		static void DrawQuad(const Vec2f& position, const Vec2f& size, const Vec4f& color);
@@ -107,6 +108,7 @@ namespace Nebula
 		static void DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 
 		static void DrawLine(const Vec3f& p0, const Vec3f& p1, const Vec4f& color = Vec4f(1.0f));
+
 
 		// Stats
 		static void ResetStats();

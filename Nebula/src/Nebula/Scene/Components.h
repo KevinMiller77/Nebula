@@ -40,6 +40,11 @@ namespace Nebula
 		Vec4f Color { 1.0f, 1.0f, 1.0f, 1.0f };
         Ref<Texture2D> Texture = nullptr;
         float TilingFactor = 1.0f;
+		bool IsTileMap = false;
+
+		Ref<TileMap> ParentTileMap = nullptr;
+		Vec2i TilePos = {0, 0};
+		Vec2i TileSize = {1, 1};
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
@@ -47,6 +52,17 @@ namespace Nebula
 			: Color(color) {}
         SpriteRendererComponent(Texture2D* texture, const Vec4f& color, float tilingFactor = 1.0f)
 			: Color(color), Texture(texture), TilingFactor(tilingFactor) {}
+		SpriteRendererComponent(Ref<TileMap> tileMap, Vec2i tilePos, Vec2i tileSize, const Vec4f& color, float tilingFactor = 1.0f)
+			: Color(color), TilingFactor(tilingFactor), TilePos(tilePos), TileSize(tileSize), ParentTileMap(tileMap),  IsTileMap(true)
+			{ LoadSelectedTile(); }
+
+		void LoadSelectedTile()
+		{
+			if (!IsTileMap) return;
+
+			if (!ParentTileMap) LOG_ERR("Tilemap was invalid in Sprite Rendering Tile Load\n");
+			Texture = ParentTileMap->GetTileAt(TilePos.X, TilePos.Y, TileSize.X, TileSize.Y);
+		}
 	};
 
 	struct CameraComponent

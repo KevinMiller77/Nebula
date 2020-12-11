@@ -55,47 +55,21 @@ namespace Nebula
         PlayStatus = SceneStatus::NOT_STARTED;
         EditorCamera = OrthographicCameraController(ViewportSize.X / ViewportSize.X);
 
-        textures.AddTexture("Missing", VFS::AbsolutePath("assets/textures/Missing.png"));
-        textures.AddTexture("Thumbnail", VFS::AbsolutePath("assets/textures/thumbnail.png"));
-
         SceneHierarchy.SetContext(ActiveScene);
         SceneHierarchy.SetTextureLib(&textures);
 
         FileBrowser.SetTitle("Project Browser");
-
-        Entity e_Floor = ActiveScene->CreateEntity("Floor");
-        e_Floor.AddComponent<RootEntityComponent>();
-        e_Floor.AddComponent<SpriteRendererComponent>();
-        
-        TransformComponent& tc = e_Floor.GetComponent<TransformComponent>();
-        tc.Translation.Y = -0.5f;
-        tc.Rotation.X = MATH_PI / 2;
-
-
-        std::vector<Entity>& Floor = e_Floor.AddComponent<ParentEntityComponent>().children;
-        for (float x = -15.0f ; x <= 15.1f ; x += 1.0f)
-        {
-            for (float y = -15.0f ; y <= 15.1f ; y += 1.0f)
-            {
-                Entity toAdd = ActiveScene->CreateEntity("Piece of Floor");
-                
-                SpriteRendererComponent& src = toAdd.AddComponent<SpriteRendererComponent>();
-                src.Texture = textures.GetTexture("Thumbnail");
-                src.Color.X = (float)0x96 / (float)0xFF; src.Color.Y = (float)0x4B / (float)0xFF; src.Color.Z = 0x00 / (float)0xFF;
-                
-                TransformComponent& tc = toAdd.GetComponent<TransformComponent>();
-                tc.Translation.X = x; tc.Translation.Y = y;
-                
-                Floor.push_back(toAdd);
-            }
-        }
-
     }
-
 
     float tsls = 0.0f;
     void NebulaStudioLayer::OnUpdate(float ts)
     {
+        if (ClipboardFull && !Clipboard.IsValid())
+        {
+            ClipboardFull = false;
+            Clipboard = Entity();
+        }
+
         if (Autosave.GetTimePassed() >= AUTOSAVE_INTERVAL)
         {
             StudioProject::SaveProjectFile(CurrentProject);
@@ -103,9 +77,9 @@ namespace Nebula
             LOG_INF("Autosaved project\n");
         }
 
-        if (FramebufferSpecification spec = FrameBuffer->GetSpecification();
-            // zero sized framebuffer is invalid
-            ViewportSize.X > 0.0f && ViewportSize.Y > 0.0f && (spec.Width != ViewportSize.X || spec.Height != ViewportSize.Y))
+        FramebufferSpecification spec = FrameBuffer->GetSpecification();
+        bool framebufferRefletsScreenSize = ViewportSize.X > 0.0f && ViewportSize.Y > 0.0f && (spec.Width != ViewportSize.X || spec.Height != ViewportSize.Y);
+        if (framebufferRefletsScreenSize || Application::Get()->GetWindow()->WasMinimized() || Application::Get()->GetWindow()->IsMaximized())
         {
             FrameBuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
@@ -208,6 +182,16 @@ namespace Nebula
         bool ctrl = Input::IsKeyPressed(KeyCode::LeftControl) || Input::IsKeyPressed(KeyCode::RightControl);
         bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
 
+        if (shift && Input::IsKeyPressed(KeyCode::F5))
+        {
+            Renderer::ReloadShaders();
+        }
+
+        if (Input::IsKeyPressed(KeyCode::Delete))
+        {
+            SceneHierarchy.RemoveSelection();
+        }
+
         if (ctrl)
         {
             switch ((KeyCode)e.GetKeyCode())
@@ -227,6 +211,15 @@ namespace Nebula
                 {
                     OpenScene();
                     break;
+                }
+                case(KeyCode::C):
+                {
+                    CopyEntity();
+                    break;
+                }
+                case(KeyCode::V):
+                {
+                    PasteEntity();
                 }
 
                 default:
@@ -298,6 +291,8 @@ namespace Nebula
 
         LOG_INF("New scene created.\n");
         SceneHierarchy.ClearSelection();
+
+        VFS::Unmount();
     }
     
     void NebulaStudioLayer::SaveScene()
@@ -364,6 +359,85 @@ namespace Nebula
         }
         LOG_INF("Open scene cancelled!\n");
         SceneHierarchy.ClearSelection();
+    }
+
+    
+    void NebulaStudioLayer::CopyEntity()
+    {
+        if (!SceneHierarchy.HasSelection())
+        {
+            LOG_ERR("Could not copy, no selection\n");
+            return;
+        }
+        else if (!SceneHierarchy.GetSelection().IsValid())
+        {
+            LOG_ERR("Could not copy, invalid selection\n");
+            return;
+        }
+
+        Clipboard = SceneHierarchy.GetSelection();
+        ClipboardFull = true;
+        LOG_INF("Copied entity: (%d) %s\n", Clipboard.GetID(), Clipboard.GetComponent<TagComponent>().Tag.c_str());
+    }
+
+    void NebulaStudioLayer::PasteEntity()
+    {
+        if (!ClipboardFull)
+        {
+            LOG_WRN("Could not paste entity. Reason: Nothing to paste!\n");
+            return;
+        }
+        else if (!Clipboard.IsValid())
+        {
+            LOG_WRN("Could not paste entity. Reason: Clipboard was not valid!\n");
+            return;
+        }
+        std::string tag = Clipboard.GetComponent<TagComponent>().Tag;
+        Entity newEntity = ActiveScene->CreateEntity(tag); 
+
+        if (Clipboard.HasComponent<TransformComponent>())
+        {
+            auto tc = Clipboard.GetComponent<TransformComponent>();
+            auto& tcNew = newEntity.GetComponent<TransformComponent>();
+            tcNew = TransformComponent(tc);
+        }
+
+        if (Clipboard.HasComponent<SpriteRendererComponent>())
+        {
+            auto src = Clipboard.GetComponent<SpriteRendererComponent>();
+            auto& srcNew = newEntity.AddComponent<SpriteRendererComponent>(src);
+            srcNew = SpriteRendererComponent(src);
+        }
+
+        if (Clipboard.HasComponent<CameraComponent>())
+        {
+            auto cc = Clipboard.GetComponent<CameraComponent>();
+            auto& ccNew = newEntity.AddComponent<CameraComponent>(cc);
+            ccNew = CameraComponent(cc);
+        }
+
+        if (Clipboard.HasComponent<NativeScriptComponent>())
+        {
+            auto nsc = Clipboard.GetComponent<NativeScriptComponent>();
+            auto& nscNew = newEntity.AddComponent<NativeScriptComponent>(nsc);
+            nscNew = NativeScriptComponent(nsc);
+        }
+
+        if (Clipboard.HasComponent<ParentEntityComponent>())
+        {
+            auto pec = Clipboard.GetComponent<ParentEntityComponent>();
+            auto& pecNew = newEntity.AddComponent<ParentEntityComponent>(pec);
+            pecNew = ParentEntityComponent(pec);
+        }
+
+        if (Clipboard.HasComponent<RootEntityComponent>())
+        {
+            auto root = Clipboard.GetComponent<RootEntityComponent>();
+            auto& rootNew = newEntity.AddComponent<RootEntityComponent>(root);
+            rootNew = RootEntityComponent(root);
+        }
+
+        LOG_INF("Entity pasted to active scene\n");
     }
 
 }

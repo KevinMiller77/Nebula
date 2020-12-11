@@ -68,12 +68,6 @@ namespace Nebula
 
     bool Application::OnWindowResize(WindowResizeEvent& e)
     {
-        if (e.GetScreenSize().X == 0 || e.GetScreenSize().Y == 0)
-        {
-            minimized = true;
-            return false;
-        }
-
         Renderer::OnWindowResize(e.GetScreenSize().X, e.GetScreenSize().Y);
         return false;
     }
@@ -167,7 +161,7 @@ namespace Nebula
                 float ts = time - lastFrameTime;
                 lastFrameTime = time;
 
-                if (!minimized)
+                if (!window->IsMinimized())
                 {
                     {
                         NEB_PROFILE_SCOPE("Update");

@@ -11,13 +11,15 @@ namespace Nebula
     class GLShader : public Shader
     {
     public:
-        GLShader(const std::string filepath);
+        // GLShader(const std::string filepath);
         GLShader(const std::string name, const std::string& shaderSrc);
         GLShader(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
         virtual ~GLShader() override;
 
         virtual void Bind();
         virtual void Unbind();
+        virtual void Reload(const std::string& input, bool inputIsFilePath = false);
+        virtual void Reload(const std::string& vertexShader, const std::string& fragmentShader);
         
         virtual void SetInt(const std::string name, int value);
         virtual void SetIntArray(const std::string name, int* values, int count);

@@ -101,4 +101,6 @@ namespace Nebula
     typedef Vec4<int>   Vec4i;
     typedef Vec4<unsigned int>   Vec4u;
 
+    typedef Vec4<Vec2f> Mat42f; 
+    typedef Vec4<Vec3f> Mat43f; 
 }

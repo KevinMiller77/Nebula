@@ -3,7 +3,48 @@
 #include <Nebula.h>
 
 namespace YAML {
+	template<>
+	struct convert<Nebula::Vec2i>
+	{
+		static Node encode(const Nebula::Vec2i& rhs)
+		{
+			Node node;
+			node.push_back(rhs.X);
+			node.push_back(rhs.Y);
+			return node;
+		}
 
+		static bool decode(const Node& node, Nebula::Vec2i& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+
+			rhs.X = node[0].as<int>();
+			rhs.Y = node[1].as<int>();
+			return true;
+		}
+	};
+	template<>
+	struct convert<Nebula::Vec2f>
+	{
+		static Node encode(const Nebula::Vec2f& rhs)
+		{
+			Node node;
+			node.push_back(rhs.X);
+			node.push_back(rhs.Y);
+			return node;
+		}
+
+		static bool decode(const Node& node, Nebula::Vec2f& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+
+			rhs.X = node[0].as<float>();
+			rhs.Y = node[1].as<float>();
+			return true;
+		}
+	};
 	template<>
 	struct convert<Nebula::Vec3f>
 	{
@@ -57,6 +98,20 @@ namespace YAML {
 
 namespace Nebula
 {
+	YAML::Emitter& operator<<(YAML::Emitter& out, const Vec2i& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.X << v.Y << YAML::EndSeq;
+		return out;
+	}
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const Vec2f& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.X << v.Y << YAML::EndSeq;
+		return out;
+	}
+
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vec3f& v)
 	{
 		out << YAML::Flow;
@@ -128,17 +183,22 @@ namespace Nebula
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			Ref<Texture2D> tex = spriteRendererComponent.Texture;
+
+			out << YAML::Key << "Has Tex" << YAML::Value << (bool)tex;
 			if (tex)
 			{
-				out << YAML::Key << "Has Tex" << YAML::Value << true;
 				out << YAML::Key << "Tex Path" << YAML::Value << VFS::Path(tex->GetPath());
 				out << YAML::Key << "Tex Width" << YAML::Value << tex->GetWidth();
 				out << YAML::Key << "Tex Height" << YAML::Value << tex->GetHeight();
 
-			}
-			else
-			{
-				out << YAML::Key << "Has Tex" << YAML::Value << false;
+				out << YAML::Key << "Is TileMap" << YAML::Value << spriteRendererComponent.IsTileMap;
+				if (spriteRendererComponent.IsTileMap)
+				{
+					out << YAML::Key << "Tile Pos" << YAML::Value << spriteRendererComponent.TilePos;
+					out << YAML::Key << "Tile Size" << YAML::Value << spriteRendererComponent.TileSize;
+					out << YAML::Key << "Tile Resolution" << YAML::Value << spriteRendererComponent.ParentTileMap->GetResolution();
+				}
+				
 			}
 			
 			out << YAML::EndMap; // SpriteRendererComponent
@@ -203,6 +263,9 @@ namespace Nebula
 	}
 
 
+	//	Map to ensure that we dont load the same tilemap a million times
+	std::unordered_map<std::string, Ref<TileMap>> deserializeTileMaps;
+
     bool SceneSerializer::DeserializeTxt(std::string path)
 	{
 		std::ifstream stream(path);
@@ -215,6 +278,7 @@ namespace Nebula
 
 		std::string sceneName = data["Scene"].as<std::string>();
 
+		deserializeTileMaps.clear();
 		auto entities = data["Entities"];
 		if (entities)
 		{
@@ -223,6 +287,7 @@ namespace Nebula
 				DeserializeEntity(entity);
 			}
 		}
+		deserializeTileMaps.clear();
 
 		return true;
 	}	
@@ -280,9 +345,38 @@ namespace Nebula
 				if (spriteRendererComponent["Has Tex"].as<bool>())
 				{
 					std::string path = spriteRendererComponent["Tex Path"].as<std::string>();
-					src.Texture = path.empty() ? 
-						Texture2D::Create(spriteRendererComponent["Tex Width"].as<uint32_t>(), spriteRendererComponent["Tex Height"].as<uint32_t>()) : 
-						Texture2D::Create(VFS::AbsolutePath(path));
+					if (path.empty() || !VFS::Exists(path)) 
+					{
+						LOG_ERR("While loading entity, the following texture was unable to be loaded ..\n %s\n", path.c_str());
+					}
+					else
+					{
+						src.IsTileMap = spriteRendererComponent["Is TileMap"].as<bool>();
+						if (spriteRendererComponent["Is TileMap"].as<bool>())
+						{
+							Ref<TileMap> tm;
+							if (deserializeTileMaps.find(path) != deserializeTileMaps.end())
+							{
+								tm = deserializeTileMaps[path];
+							}	
+							else
+							{
+								Vec2i res = spriteRendererComponent["Tile Resolution"].as<Vec2i>();
+								tm = CreateRef<TileMap>(VFS::AbsolutePath(path), res.X, res.Y);
+								deserializeTileMaps[path] = tm;
+							}
+							src.TilePos = spriteRendererComponent["Tile Pos"].as<Vec2i>();
+							src.TileSize = spriteRendererComponent["Tile Size"].as<Vec2i>();
+							src.ParentTileMap = tm;
+
+							src.Texture = tm->GetTileAt(src.TilePos.X, src.TilePos.Y, src.TileSize.X, src.TileSize.Y);
+						}
+						else
+						{
+							src.Texture = Texture2D::Create(VFS::AbsolutePath(path));
+						}
+						
+					}
 				}
 			}
 		}

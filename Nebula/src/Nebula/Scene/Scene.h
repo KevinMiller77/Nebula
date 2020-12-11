@@ -25,7 +25,7 @@ namespace Nebula
         virtual bool IsPrimaryCamera(Entity cameraEntity);
 
         virtual void OnPlay();
-        virtual void OnUpdate(float ts, SceneStatus status);
+        virtual void OnUpdate(float ts, SceneStatus status = SceneStatus::PLAYING);
         virtual void OnEditingUpdate(float ts, Camera* camera);
 
         void OnPhysicsUpdate(float ts) {}

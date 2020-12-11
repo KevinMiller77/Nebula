@@ -1,0 +1,40 @@
+Scene: Untitled
+Entities:
+  - Entity: 2268752316
+    TagComponent:
+      Tag: Tile map test
+    TransformComponent:
+      Translation: [0, 0, 0.100000001]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Has Tex: true
+      Tex Path: assets/textures/tilemap_packed.png
+      Tex Width: 16
+      Tex Height: 16
+      Is TileMap: true
+      Tile Pos: [1, 1]
+      Tile Size: [1, 1]
+      Tile Resolution: [16, 16]
+    RootEntityComponent:
+      {}
+  - Entity: 1588437975
+    TagComponent:
+      Tag: Blank Entity
+    TransformComponent:
+      Translation: [0.600000024, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 0.384313732]
+      Has Tex: true
+      Tex Path: assets/textures/tilemap_packed.png
+      Tex Width: 48
+      Tex Height: 48
+      Is TileMap: true
+      Tile Pos: [0, 15]
+      Tile Size: [3, 3]
+      Tile Resolution: [16, 16]
+    RootEntityComponent:
+      {}

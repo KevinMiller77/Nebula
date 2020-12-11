@@ -29,6 +29,14 @@ namespace Nebula
 		
 	}
 
+	
+    void Renderer::ReloadShaders()
+	{
+		Renderer2D::ReloadShaders();
+
+		LOG_INF("Shaders Reloaded\n");
+	}
+
     void Renderer::Submit(Ref<Shader> shader, Ref<VertexArray> vertexArray, const Mat4f transform)
 	{
         shader->Bind();
@@ -38,5 +46,6 @@ namespace Nebula
 		vertexArray->Bind();
 		RendererConfig::DrawIndexed(vertexArray, PrimativeType::TRIANGLES);
 	}
-    
+
+	   
 }

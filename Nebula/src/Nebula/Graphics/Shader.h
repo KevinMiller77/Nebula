@@ -15,6 +15,8 @@ namespace Nebula
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
+        virtual void Reload(const std::string& input, bool inputIsFilePath = false) = 0;
+        virtual void Reload(const std::string& vertexShader, const std::string& fragmentShader) = 0;
         
         virtual void SetInt(const std::string name, int value) = 0;
         virtual void SetIntArray(const std::string name, int* values, int count) = 0;
@@ -25,26 +27,25 @@ namespace Nebula
 
         virtual const std::string& GetName() const = 0;
 
-        static Ref<Shader> Create(const std::string& filepath);
         static Ref<Shader> Create(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
         static Ref<Shader> Create(const std::string name, const std::string& shaderSrc);
 
     };
 
-    class ShaderLibrary
-    {
-    public:
-        void Add(const std::string& name, Ref<Shader> shader);
-        void Add(Ref<Shader> shader);
+    // class ShaderLibrary
+    // {
+    // public:
+    //     void Add(const std::string& name, Ref<Shader> shader);
+    //     void Add(Ref<Shader> shader);
 
-        Ref<Shader> Load(const std::string& filepath);
-        Ref<Shader> Load(const std::string name, const std::string& filepath);
+    //     Ref<Shader> Load(const std::string& filepath);
+    //     Ref<Shader> Load(const std::string name, const std::string& filepath);
 
-        Ref<Shader> Get(std::string& name);
+    //     Ref<Shader> Get(std::string& name);
 
-        bool Exists(const std::string name);
-    private:
-        std::unordered_map<std::string, Ref<Shader>> shaders;
+    //     bool Exists(const std::string name);
+    // private:
+    //     std::unordered_map<std::string, Ref<Shader>> shaders;
     
-    };
+    // };
 }
