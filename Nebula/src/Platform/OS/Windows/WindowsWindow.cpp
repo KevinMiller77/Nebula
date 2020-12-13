@@ -40,15 +40,15 @@ namespace Nebula
     {
         if (!freopen(in.c_str(), "r+", stdin))
         {
-            assert("Could not open stdin");
+            LOG_ERR("Could not open stdin");
         }
         if (!freopen(out.c_str(), "w", stdout))
         {
-            assert("Could not open stdout");
+            LOG_ERR("Could not open stdout");
         }
         if (!freopen(err.c_str(), "w", stderr))
         {
-            assert("Could not open stderr");
+            LOG_ERR("Could not open stderr");
         }
 
         std::ifstream t("tmpout.txt");
