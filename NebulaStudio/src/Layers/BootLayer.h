@@ -40,6 +40,8 @@ namespace Nebula
         }
 
     private:
+        bool hasRecents = false;
+
         BootState State = GREET;
         char projLocation[256];
 

@@ -1,11 +1,33 @@
 #include "BootLayer.h"
 #include "imgui_internal.h"
 
+#include "../StudioApp.h"
 namespace Nebula
 {
     void BootLayer::OnAttach() 
     {
+        //TODO: Save editor configuration in the docu folder
+        if (std::filesystem::exists(EDITOR_CONFIG_PATH))
+        {
+            // First ever use
+            OpenEditorConfig();
+        }
+        else
+        {
+            CreateEditorConfig();
+        }
+
         memset(projLocation, 0, 256);
+
+        if (s_EditorConfig.recentProjectLocations.size() > 0)
+        {
+            LOG_INF("Recents opened - Found index - %s\n", s_EditorConfig.recentProjectLocations[0].c_str());
+            hasRecents = true;
+            memcpy(projLocation, s_EditorConfig.recentProjectLocations[0].data(), s_EditorConfig.recentProjectLocations[0].size());
+
+            State = PROJ_READY_OPEN;
+        }
+
     }
 
     void BootLayer::OnUpdate(float ts) 
@@ -75,6 +97,9 @@ namespace Nebula
                 {
                     memcpy(projLocation, chosenFile.c_str(), chosenFile.size() > 256 ? 256 : chosenFile.size());
                     State = PROJ_READY_OPEN;
+
+                    s_EditorConfig.recentProjectLocations.push_back(chosenFile);
+                    SaveEditorConfig();   
                 }
             }
         }
@@ -98,6 +123,9 @@ namespace Nebula
                 }
                 memcpy(projLocation, chosenFile.c_str(), chosenFile.size() > 256 ? 256 : chosenFile.size());
                 State = PROJ_READY_NEW;
+
+                s_EditorConfig.recentProjectLocations.push_back(chosenFile);
+                SaveEditorConfig();
             }
         }
         openProjButtonWidth = ImGui::GetItemRectSize().x;

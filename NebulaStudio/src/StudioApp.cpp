@@ -1,5 +1,5 @@
 #include <Nebula.h>
-
+#include "StudioApp.h"
 #include "Base/NebulaStudioProject.h"
 
 #include "Layers/NebulaStudioLayer.h"
@@ -9,6 +9,7 @@
 
 namespace Nebula
 {
+
     class Studio : public Application
     {
     public:
@@ -22,6 +23,7 @@ namespace Nebula
             {
                 window->SetIcon("icon.png");
             }
+
             bootLayer = CreateRef<BootLayer>();
             PushLayer(bootLayer);
 
@@ -57,6 +59,7 @@ namespace Nebula
         Ref<BootLayer> bootLayer = nullptr;
         Ref<NebulaStudioLayer> editorLayer = nullptr;
     };
+
 }
 
 Ref<Nebula::Application> CreateApplication()
