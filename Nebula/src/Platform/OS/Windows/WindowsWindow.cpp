@@ -38,9 +38,18 @@ namespace Nebula
 
     void WindowsWindow::SwapIO(std::string in, std::string out, std::string err)
     {
-        freopen(in.c_str(), "r+", stdin);
-        freopen(out.c_str(), "w", stdout);
-        freopen(err.c_str(), "w", stderr);
+        if (!freopen(in.c_str(), "r+", stdin))
+        {
+            assert("Could not open stdin");
+        }
+        if (!freopen(out.c_str(), "w", stdout))
+        {
+            assert("Could not open stdout");
+        }
+        if (!freopen(err.c_str(), "w", stderr))
+        {
+            assert("Could not open stderr");
+        }
 
         std::ifstream t("tmpout.txt");
         if (t.is_open())
@@ -48,7 +57,6 @@ namespace Nebula
             std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
             printf("%s", str.c_str());
         }
-
     }
 
     void WindowsWindow::EnableConsole()
