@@ -2,74 +2,77 @@ Scene: Untitled
 Entities:
   - Entity: 646932915
     TagComponent:
-      Tag: Something Else
+      Tag: Road
     TransformComponent:
-      Translation: [0, 0, 0.100000001]
+      Translation: [2, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [20, 20, 1]
+      Scale: [1, 3, 1]
     SpriteRendererComponent:
-      Color: [0.725490212, 0, 0, 1]
+      Color: [1, 1, 1, 1]
       Has Tex: true
-      Tex Path: assets/textures/thumbnail.png
-      Tex Width: 240
-      Tex Height: 240
-      Is TileMap: false
+      Tex Path: assets/textures/tilemap_packed.png
+      Tex Width: 16
+      Tex Height: 48
+      Is TileMap: true
+      Tile Pos: [1, 0]
+      Tile Size: [1, 3]
+      Tile Resolution: [16, 16]
     RootEntityComponent:
       {}
   - Entity: 1313616534
     TagComponent:
-      Tag: Camera
+      Tag: Road
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [3, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 75
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      FixedAspectRatio: false
+      Scale: [1, 3, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Has Tex: true
+      Tex Path: assets/textures/tilemap_packed.png
+      Tex Width: 16
+      Tex Height: 48
+      Is TileMap: true
+      Tile Pos: [1, 0]
+      Tile Size: [1, 3]
+      Tile Resolution: [16, 16]
     RootEntityComponent:
       {}
   - Entity: 3042881956
     TagComponent:
-      Tag: Pot
+      Tag: Road
     TransformComponent:
-      Translation: [0, -1, 0]
+      Translation: [4, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [3, 3, 1]
+      Scale: [1, 3, 1]
     SpriteRendererComponent:
-      Color: [1, 0.999989986, 0.999989986, 1]
+      Color: [1, 1, 1, 1]
       Has Tex: true
       Tex Path: assets/textures/tilemap_packed.png
-      Tex Width: 48
+      Tex Width: 16
       Tex Height: 48
       Is TileMap: true
-      Tile Pos: [0, 15]
-      Tile Size: [3, 3]
+      Tile Pos: [1, 0]
+      Tile Size: [1, 3]
       Tile Resolution: [16, 16]
     RootEntityComponent:
       {}
   - Entity: 86133791
     TagComponent:
-      Tag: Outdoor Garden
+      Tag: Road
     TransformComponent:
-      Translation: [0, 1, 0]
+      Translation: [5, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [3, 1, 1]
+      Scale: [1, 3, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       Has Tex: true
       Tex Path: assets/textures/tilemap_packed.png
-      Tex Width: 48
-      Tex Height: 16
+      Tex Width: 16
+      Tex Height: 48
       Is TileMap: true
-      Tile Pos: [3, 15]
-      Tile Size: [3, 1]
+      Tile Pos: [1, 0]
+      Tile Size: [1, 3]
       Tile Resolution: [16, 16]
     RootEntityComponent:
       {}
@@ -94,77 +97,89 @@ Entities:
       {}
   - Entity: 1066942004
     TagComponent:
-      Tag: Road
+      Tag: Outdoor Garden
     TransformComponent:
-      Translation: [5, 0, 0]
+      Translation: [0, 1, -0.100000001]
       Rotation: [0, 0, 0]
-      Scale: [1, 3, 1]
+      Scale: [3, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       Has Tex: true
       Tex Path: assets/textures/tilemap_packed.png
-      Tex Width: 16
-      Tex Height: 48
+      Tex Width: 48
+      Tex Height: 16
       Is TileMap: true
-      Tile Pos: [1, 0]
-      Tile Size: [1, 3]
+      Tile Pos: [3, 15]
+      Tile Size: [3, 1]
       Tile Resolution: [16, 16]
     RootEntityComponent:
       {}
   - Entity: 3071397075
     TagComponent:
-      Tag: Road
+      Tag: Pot
     TransformComponent:
-      Translation: [4, 0, 0]
+      Translation: [4.19999981, -2, -0.100000001]
       Rotation: [0, 0, 0]
-      Scale: [1, 3, 1]
+      Scale: [3, 3, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
+      Color: [1, 0.999989986, 0.999989986, 1]
       Has Tex: true
       Tex Path: assets/textures/tilemap_packed.png
-      Tex Width: 16
+      Tex Width: 48
       Tex Height: 48
       Is TileMap: true
-      Tile Pos: [1, 0]
-      Tile Size: [1, 3]
+      Tile Pos: [0, 15]
+      Tile Size: [3, 3]
       Tile Resolution: [16, 16]
     RootEntityComponent:
       {}
   - Entity: 2268752316
     TagComponent:
-      Tag: Road
+      Tag: Camera
     TransformComponent:
-      Translation: [3, 0, 0]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 3, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      Has Tex: true
-      Tex Path: assets/textures/tilemap_packed.png
-      Tex Width: 16
-      Tex Height: 48
-      Is TileMap: true
-      Tile Pos: [1, 0]
-      Tile Size: [1, 3]
-      Tile Resolution: [16, 16]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 75
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 15
+        OrthographicNear: -35
+        OrthographicFar: 35
+      FixedAspectRatio: true
     RootEntityComponent:
       {}
+    ParentEntityComponent:
+      Children:
+        - Entity: 1705310046
+          TagComponent:
+            Tag: Child
+          TransformComponent:
+            Translation: [-14, -7, -0.100000001]
+            Rotation: [0, 0, 0]
+            Scale: [1, 1, 1]
+          SpriteRendererComponent:
+            Color: [1, 0, 0, 1]
+            Has Tex: false
   - Entity: 1588437975
     TagComponent:
-      Tag: Road
+      Tag: Something Else
     TransformComponent:
-      Translation: [2, 0, 0]
+      Translation: [0, 0, 0.00100000005]
       Rotation: [0, 0, 0]
-      Scale: [1, 3, 1]
+      Scale: [81.8000031, 60.4000015, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
+      Color: [1, 0.999989986, 0.999989986, 1]
       Has Tex: true
-      Tex Path: assets/textures/tilemap_packed.png
-      Tex Width: 16
-      Tex Height: 48
+      Tex Path: assets/textures/grid.png
+      Tex Width: 32
+      Tex Height: 32
       Is TileMap: true
-      Tile Pos: [1, 0]
-      Tile Size: [1, 3]
-      Tile Resolution: [16, 16]
+      Tile Pos: [0, 0]
+      Tile Size: [1, 1]
+      Tile Resolution: [32, 32]
     RootEntityComponent:
       {}

@@ -328,4 +328,6 @@ namespace Nebula
     typedef Mat4<float> Mat4f;
     typedef Mat4<int>   Mat4i;
     typedef Mat4<unsigned int>   Mat4u;
+
+    bool DecomposeTransform(const Mat4f& transform, Vec3f& translation, Vec3f& rotation, Vec3f& scale);
 }

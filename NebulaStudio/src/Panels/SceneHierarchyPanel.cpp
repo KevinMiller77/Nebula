@@ -327,8 +327,6 @@ namespace Nebula {
 				ImGui::ColorEdit4("", spriteInfo.Color.elements);
 				ImGui::PopItemWidth();
 
-				std::vector<std::string> texNames = TextureLib->GetAllNames();
-
 				// Unsafe if, be careful
 				if (spriteInfo.IsTileMap) 
 					{ ImGui::Text("Tilemap File :"); ImGui::SameLine(); }
@@ -377,13 +375,13 @@ namespace Nebula {
 					DrawVec2iControl("Tile Position  ", spriteInfo.TilePos, 0,  maxPosX, 0, maxPosY);
 					DrawVec2iControl("Tile Size      ", spriteInfo.TileSize, 1, NMax(maxPosX - spriteInfo.TilePos.X, 1), 1, NMax(maxPosY - spriteInfo.TilePos.Y, 1));
 					spriteInfo.LoadSelectedTile();
-
-
+					
 					if (ImGui::Button("Open TileMap Menu... "))
 					{
 						ImGui::OpenPopup("Tilemap");
 					}
 					DrawTileMapChooser(entity);
+
 				}
 					
 
@@ -480,7 +478,17 @@ namespace Nebula {
 					if (ImGui::DragFloat("Far", &orthoFar))
 						camera.SetOrthographicFarClip(orthoFar);
 
-					ImGui::Checkbox("Fixed Aspect Ratio", &cameraComponent.FixedAspectRatio);
+					bool fixedARChanged = false;
+					if (ImGui::Checkbox("Fixed Aspect Ratio", &cameraComponent.FixedAspectRatio))
+						fixedARChanged = true;
+
+					bool trueARNotReflected = cameraComponent.FixedAspectRatio != cameraComponent.Camera.GetFixedAspectRatio(); 
+					bool updateCameraFixedAspectRatio = fixedARChanged || trueARNotReflected;
+					
+					if (updateCameraFixedAspectRatio)
+					{
+						cameraComponent.Camera.SetFixedAspectRatio(cameraComponent.FixedAspectRatio);
+					}
 				}
 
 
@@ -488,6 +496,11 @@ namespace Nebula {
 
 				if (deleteCamComp)
 				{
+					if (Context->GetPrimaryCamera().GetID() == entity.GetID())
+					{
+						Context->SetPrimaryCamera( { entt::null, nullptr } );
+					}
+
 					entity.RemoveComponent<CameraComponent>();
 				}
 			}

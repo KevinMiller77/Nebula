@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <math.h>
+#include <limits>
 
 namespace Nebula
 {
@@ -24,6 +25,7 @@ namespace Nebula
         }
         return a;
     }
+
 
     #define MATH_PI 3.141592654f
     #define PI2R_FACTOR MATH_PI / 180.0f

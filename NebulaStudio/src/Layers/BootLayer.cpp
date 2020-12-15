@@ -23,6 +23,7 @@ namespace Nebula
         {
             LOG_INF("Recents opened - Found index - %s\n", s_EditorConfig.recentProjectLocations[0].c_str());
             hasRecents = true;
+            memset(projLocation, 0, 256);
             memcpy(projLocation, s_EditorConfig.recentProjectLocations[0].data(), s_EditorConfig.recentProjectLocations[0].size());
 
             State = PROJ_READY_OPEN;
@@ -33,6 +34,10 @@ namespace Nebula
     void BootLayer::OnUpdate(float ts) 
     {
         std::string dirToMakeFileIn = std::string(projLocation);
+        if (dirToMakeFileIn == "Cancel")
+        {
+            return;
+        }
         std::string fileName = std::string(projLocation);
 
         dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/") + 1);
@@ -47,11 +52,23 @@ namespace Nebula
 
     void BootLayer::DrawProjSelection()
     {
+
         const float itemSpacing = ImGui::GetStyle().ItemSpacing.x;
 
         ImGui::Begin("Project Selection");
 
-        //Set cursor for text
+        // Put exit button in the top right
+        ImGui::Dummy({ ImGui::GetContentRegionAvailWidth() - cancelButtonWidth - ImGui::GetStyle().ItemSpacing.x, 0.0f }); ImGui::SameLine();
+        if (ImGui::Button(" X "))
+        {
+            State = DONE;
+            std::string n = "Cancel";
+            memset(projLocation, 0, 256);
+            memcpy(projLocation, n.data(), n.size());
+        }
+        cancelButtonWidth = ImGui::GetItemRectSize().x;
+
+        //Set cursor for text 
         float x_pos = (ImGui::GetWindowWidth() / 2.0f) - (greetingTextWidth / 2.0f);
         float y_pos = ImGui::GetWindowHeight() / 4.0f;
         ImGui::SetCursorPosX(x_pos);
@@ -95,6 +112,7 @@ namespace Nebula
             {
                 if(VFS::IsFile(chosenFile, true))
                 {
+                    memset(projLocation, 0, 256);
                     memcpy(projLocation, chosenFile.c_str(), chosenFile.size() > 256 ? 256 : chosenFile.size());
                     State = PROJ_READY_OPEN;
 
@@ -121,6 +139,7 @@ namespace Nebula
                 {
                     chosenFile += ".nsp";
                 }
+                memset(projLocation, 0, 256);
                 memcpy(projLocation, chosenFile.c_str(), chosenFile.size() > 256 ? 256 : chosenFile.size());
                 State = PROJ_READY_NEW;
 

@@ -11,7 +11,6 @@ namespace Nebula {
 		SceneHierarchyPanel(Ref<Scene> scene);
 
 		void SetContext(Ref<Scene> scene);
-		void SetTextureLib(TextureLibrary* lib) { TextureLib = lib; }
 
 		void OnImGuiRender();
 
@@ -51,8 +50,6 @@ namespace Nebula {
 		Ref<Texture2D> tilemapBase = nullptr;
 		Ref<TileMap> tileMap = nullptr;
 		Ref<Texture2D> tilePreview = nullptr;
-
-		TextureLibrary* TextureLib = nullptr;
 	};
 
 }

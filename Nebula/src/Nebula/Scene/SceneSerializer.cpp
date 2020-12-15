@@ -334,6 +334,7 @@ namespace Nebula
 			cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
 
 			cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+			cc.Camera.SetFixedAspectRatio(cc.FixedAspectRatio);
 		}
 
 		auto spriteRendererComponent = entity["SpriteRendererComponent"];

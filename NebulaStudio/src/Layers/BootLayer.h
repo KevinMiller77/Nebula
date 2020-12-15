@@ -8,7 +8,7 @@ namespace Nebula
     {
         enum BootState
         {
-            GREET, NEW_PROJ, PROJ_READY_NEW, PROJ_READY_OPEN, DONE
+            GREET, NEW_PROJ, PROJ_READY_NEW, PROJ_READY_OPEN, DONE, CANCEL
         };
 
     public:
@@ -50,6 +50,7 @@ namespace Nebula
         float newProjButtonWidth =  50.0f;
         float openProjButtonWidth = 50.0f;
         float submitButtonWidth= 50.0f;
+        float cancelButtonWidth = 50.0f;
 
         //Project Creation sizes
     };

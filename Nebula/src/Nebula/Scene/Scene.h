@@ -2,6 +2,7 @@
 #include <entt/entt.hpp>
 #include <Graphics/Camera.h>
 #include <Core/Ref.h>
+#include <deque>
 
 namespace Nebula
 {
@@ -23,9 +24,13 @@ namespace Nebula
         virtual Entity CreateEntity( const std::string& name = std::string());
         virtual void RemoveEntity(const Entity entity);
         virtual bool IsPrimaryCamera(Entity cameraEntity);
+        virtual Entity GetPrimaryCamera();
+        virtual void SetPrimaryCamera(Entity entity);
 
         virtual void OnPlay();
-        virtual void OnUpdate(float ts, SceneStatus status = SceneStatus::PLAYING);
+
+        // Returns only if there was an error and stop should be issued
+        virtual bool OnUpdate(float ts, SceneStatus status = SceneStatus::PLAYING);
         virtual void OnEditingUpdate(float ts, Camera* camera);
 
         void OnPhysicsUpdate(float ts) {}
@@ -35,6 +40,15 @@ namespace Nebula
         virtual void Render(entt::entity mainCamera = entt::null);
         virtual void Render(Camera* camera, Mat4f transform);
         virtual void SubmitEntity(Entity entity, const Mat4f& modelMat = Mat4f(1.0f));
+
+        struct WideRenderLayer
+        {
+            std::deque<entt::entity> e = std::deque<entt::entity>();
+            std::deque<Mat4f> t = std::deque<Mat4f>();
+        };
+
+        virtual void RenderWide(Mat4f transform);
+        virtual WideRenderLayer SubmitEntityWide(Entity entity, const Mat4f& modelMat = Mat4f(1.0f));
 
         virtual void OnStop();
         virtual void OnViewportResize(uint32_t width, uint32_t height);

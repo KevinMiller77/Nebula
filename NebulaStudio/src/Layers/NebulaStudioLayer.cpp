@@ -6,59 +6,21 @@ namespace Nebula
 
     Vec2f BoxPos = Vec2f(0.0, 0.0);
 
+    // Happens every time you open a project
+
     void NebulaStudioLayer::OnAttach()
     {
-        //Mount VFS
-        if (VFS::Exists(StartProjFileInput, true))
-        {
-            CurrentProject = StudioProject::LoadProjectFile(StartProjFileInput);
-            
-        }
-        else
-        {
-            CurrentProject = StudioProject::CreateProjectFile(StartProjFileInput);
-        }
-
-        if (VFS::Exists(CurrentProject.LastFileSystemMount, true))
-        {
-            VFS::Mount(CurrentProject.LastFileSystemMount);
-        }
-        else
-        {
-            std::string dir = std::string(CurrentProject.AbsolutePath);
-            dir = dir.substr(0, dir.find_last_of("/") + 1);
-
-            
-            if (VFS::Exists(dir, true))
-            {
-                CurrentProject.LastFileSystemMount = dir;
-                VFS::Mount(CurrentProject.LastFileSystemMount);
-            }
-        }
-
-
-        ActiveScene = CreateRef<Nebula::Scene>();
-        if (!CurrentProject.LastSceneOpened.empty())
-        {
-            SceneSerializer ser(ActiveScene);
-            ser.DeserializeTxt(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
-            ActiveScene->SetFilePath(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
-        }
-
-        Autosave.Start();
+        OpenProject(ProjFileInput);
 
         FramebufferSpecification fbSpec;
         fbSpec.Width = 1600;
         fbSpec.Height = 900;
         FrameBuffer = Framebuffer::Create(fbSpec);
 
-        PlayStatus = SceneStatus::NOT_STARTED;
-        EditorCamera = OrthographicCameraController(ViewportSize.X / ViewportSize.X);
+        // SceneHierarchy.SetTextureLib(&textures);
+        // FileBrowser.SetTitle("Project Browser");
 
-        SceneHierarchy.SetContext(ActiveScene);
-        SceneHierarchy.SetTextureLib(&textures);
-
-        FileBrowser.SetTitle("Project Browser");
+        InitInternalTextures();
     }
 
     float tsls = 0.0f;
@@ -72,7 +34,7 @@ namespace Nebula
 
         if (Autosave.GetTimePassed() >= AUTOSAVE_INTERVAL)
         {
-            StudioProject::SaveProjectFile(CurrentProject);
+            SaveProject(CurrentProject);
             Autosave.Start();
             LOG_INF("Autosaved project\n");
         }
@@ -98,7 +60,10 @@ namespace Nebula
         }
         else
         {
-            ActiveScene->OnUpdate(ts, PlayStatus);
+            if(ActiveScene->OnUpdate(ts, PlayStatus))
+            {
+                PlayStatus = SceneStatus::NOT_STARTED;
+            }
         }
 
         FrameBuffer->Unbind();   
@@ -106,29 +71,92 @@ namespace Nebula
 
     void NebulaStudioLayer::OnImGuiRender()
     {
+
+
         ImGui::Begin("Controls");
-        if(ImGui::Button("Play", ImVec2(25, 25)))
+        
+        ImGui::PushStyleColor(ImGuiCol_Button, {0, 0, 0, 0});
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, {0.3, 0.3, 0.3, 0.5});
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, {0, 0, 0, 0});
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 1, 1 });
+
+        bool greyOutPlay = PlayStatus != SceneStatus::NOT_STARTED && PlayStatus != SceneStatus::PAUSED;
+        bool greyOutPause = PlayStatus == SceneStatus::NOT_STARTED || PlayStatus == SceneStatus::PAUSED;
+        bool greyOutStop = PlayStatus == SceneStatus::NOT_STARTED;
+
+        if (greyOutPlay)
         {
-            if (PlayStatus == SceneStatus::NOT_STARTED)
-            {
-                ActiveScene->OnPlay();
-            }
-            PlayStatus = SceneStatus::PLAYING;
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
         }
-        ImGui::SameLine();
-        if(ImGui::Button("Pause", ImVec2(25, 25)))
+
+        if(ImGui::ImageButton((ImTextureID)Tex_PlayButton->GetRendererID(), { 30, 30 }))
         {
+            if (!ActiveScene->GetPrimaryCamera().IsValid())
+            {
+                LOG_ERR("Could not play! There was no camera in the scene.\n");
+            }
+            else
+            {
+                LOG_TMI("Play pressed\n");
+                if (PlayStatus == SceneStatus::NOT_STARTED)
+                {
+                    ActiveScene->OnPlay();
+                }
+                PlayStatus = SceneStatus::PLAYING;
+            }
+        }
+
+        if (greyOutPlay)
+        {
+            ImGui::PopItemFlag();
+            ImGui::PopStyleVar();
+        }
+
+        if (greyOutPause)
+        {
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+        }
+
+        ImGui::SameLine();
+        if(ImGui::ImageButton((ImTextureID)Tex_PauseButton->GetRendererID(), { 30, 30 }))
+        {
+            LOG_TMI("Pause pressed\n");
             if (PlayStatus == SceneStatus::PLAYING)
             {
                 PlayStatus = SceneStatus::PAUSED;
             }
         }
-        ImGui::SameLine();
-        if(ImGui::Button("Stop", ImVec2(25, 25)))
+
+        if (greyOutPause)
         {
+            ImGui::PopItemFlag();
+            ImGui::PopStyleVar();
+        }
+
+        if (greyOutStop)
+        {
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+        }
+
+        ImGui::SameLine();
+        if(ImGui::ImageButton((ImTextureID)Tex_StopButton->GetRendererID(), { 30, 30 }))
+        {
+            LOG_TMI("Stop pressed\n");
             PlayStatus = SceneStatus::NOT_STARTED;
             ActiveScene->OnStop();
         }
+
+        if (greyOutStop)
+        {
+            ImGui::PopItemFlag();
+            ImGui::PopStyleVar();
+        }
+
+        ImGui::PopStyleVar();
+        ImGui::PopStyleColor(3);
         ImGui::End();
 
         OnImGuiMenuBar();
@@ -237,18 +265,31 @@ namespace Nebula
         {
             if (ImGui::BeginMenu("File"))
             {
+                if (ImGui::MenuItem("New/Open Project"))
+                {
+                    ProjectSelection();
+                }
+                if (ImGui::MenuItem("Open Recent Project"))
+                {
+                    OpenRecentProject();
+                }
+                if (ImGui::MenuItem("Save Project"))
+                {
+                    SaveProject(CurrentProject);
+                }
+
+
+                ImGui::Separator();
                 if(ImGui::MenuItem("New Scene", "Ctrl+N"))
                 {
                     NewScene();
                 }
 
-                if (ImGui::MenuItem("Open...", "Ctrl+O"))
+                if (ImGui::MenuItem("Open Scene...", "Ctrl+O"))
                 {
                     OpenScene();
                 }
 
-                ImGui::Separator();
-                
                 if (!ActiveScene->GetFilePath().empty())
                 {
                     if(ImGui::MenuItem("Save Scene", "Ctrl+S"))
@@ -261,6 +302,12 @@ namespace Nebula
                     SaveSceneAs();
                 }
 
+                ImGui::Separator();
+                // ImGui::Text("System");
+                if (ImGui::MenuItem("Editor Preferences"))
+                {
+                    //TODO: Editor Preferences menu popup
+                }
                 if (ImGui::MenuItem("Exit")) 
                 {
                     Application::Get()->Close();
@@ -282,6 +329,82 @@ namespace Nebula
         }
 
     }
+
+    void NebulaStudioLayer::InitInternalTextures()
+    {
+        Tex_PlayButton = Texture2D::Create( VFS::AbsolutePath("assets/internal/nebula-play-button.png"));
+        Tex_PauseButton = Texture2D::Create(VFS::AbsolutePath("assets/internal/nebula-pause-button.png"));
+        Tex_StopButton = Texture2D::Create( VFS::AbsolutePath("assets/internal/nebula-stop-button.png"));
+    }
+
+    void NebulaStudioLayer::InitProject()
+    {
+        ActiveScene = CreateRef<Nebula::Scene>();
+        if (!CurrentProject.LastSceneOpened.empty())
+        {
+            SceneSerializer ser(ActiveScene);
+            ser.DeserializeTxt(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
+            ActiveScene->SetFilePath(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
+        }
+
+        Autosave.Start();
+        
+        PlayStatus = SceneStatus::NOT_STARTED;
+        EditorCamera = OrthographicCameraController(ViewportSize.X / ViewportSize.X);
+
+        SceneHierarchy.SetContext(ActiveScene);
+    }
+    
+    void NebulaStudioLayer::OpenRecentProject()
+    {
+        ImGui::MenuItem("This is a menu bar item");
+    }
+
+    void NebulaStudioLayer::ProjectSelection()
+    {
+        *App_SelectNewProject = true;
+    }
+
+    void NebulaStudioLayer::SaveProject(StudioProject::Project proj)
+    {
+        StudioProject::SaveProjectFile(proj);
+        LOG_INF("Project saved\n");
+    }
+    
+    void NebulaStudioLayer::OpenProject(const std::string& projPath)
+    {
+        //Mount VFS
+        if (VFS::Exists(projPath, true))
+        {
+            CurrentProject = StudioProject::LoadProjectFile(projPath);
+            
+        }
+        else
+        {
+            CurrentProject = StudioProject::CreateProjectFile(projPath);
+        }
+
+        if (VFS::Exists(CurrentProject.LastFileSystemMount, true))
+        {
+            VFS::Mount(CurrentProject.LastFileSystemMount);
+        }
+        else
+        {
+            std::string dir = std::string(CurrentProject.AbsolutePath);
+            dir = dir.substr(0, dir.find_last_of("/") + 1);
+
+            
+            if (VFS::Exists(dir, true))
+            {
+                CurrentProject.LastFileSystemMount = dir;
+                VFS::Mount(CurrentProject.LastFileSystemMount);
+            }
+        }
+
+        InitProject();
+    }
+
+    void SaveProject(StudioProject::Project proj);
 
     void NebulaStudioLayer::NewScene()
     {
@@ -336,9 +459,17 @@ namespace Nebula
         LOG_INF("Save scene cancelled!\n");
     }
     
-    void NebulaStudioLayer::OpenScene()
+    void NebulaStudioLayer::OpenScene(std::string scenePath)
     {
-        std::string filePath = Nebula::FileDialogs::OpenFile("nst");
+        std::string filePath;
+
+        {
+            if (filePath.empty())
+                std::string filePath = Nebula::FileDialogs::OpenFile("nst");
+            else
+                filePath = scenePath;
+        }
+            
         if (!filePath.empty())
         {
             

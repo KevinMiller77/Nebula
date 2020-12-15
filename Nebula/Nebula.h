@@ -39,4 +39,5 @@
 #include <Scene/Components.h>
 
 #include <ext/imgui/imgui.h>
+#include <ext/imgui/imgui_internal.h>
 

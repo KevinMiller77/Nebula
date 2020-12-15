@@ -3,7 +3,6 @@
 
 #include "../Base/NebulaStudioProject.h" 
 
-#include "Panels/FileBrowserPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/LogPanel.h"
 
@@ -16,20 +15,9 @@ namespace Nebula
     class NebulaStudioLayer : public Layer
     {
     public:
-        Ref<Scene> ActiveScene;
-        Entity CameraEntity;
 
-        static Vec4f clearColor;
-        Ref<Framebuffer> FrameBuffer;
-        bool ViewportFocused = false, ViewportHovered = false;
-        Vec2f ViewportSize = {1600.0f, 900.0f};
-
-        Ref<Shader> shader = nullptr;
-        TextureLibrary textures;
-        OrthographicCameraController EditorCamera;
-
-        NebulaStudioLayer(std::string startProjectFile)
-            : EditorCamera(OrthographicCameraController(ViewportSize.X / ViewportSize.Y)), StartProjFileInput(startProjectFile)
+        NebulaStudioLayer(std::string startProjectFile, Ref<bool> needNewProject)
+            : EditorCamera(OrthographicCameraController(ViewportSize.X / ViewportSize.Y)), ProjFileInput(startProjectFile), App_SelectNewProject(needNewProject)
         {
         }
 
@@ -43,6 +31,8 @@ namespace Nebula
 
         SceneStatus PlayStatus = SceneStatus::NOT_STARTED;
 
+        void InitInternalTextures();
+
         virtual void OnAttach() override;
         virtual void OnUpdate(float ts) override;
         void OnImGuiMenuBar();
@@ -51,26 +41,57 @@ namespace Nebula
         virtual void OnEvent(Event& e) override;
         bool OnKeyPressed(KeyPressedEvent& e);
 
+        void InitProject();
+        void ProjectSelection();
+        void OpenProject(const std::string& projPath);
+        void SaveProject(StudioProject::Project proj);
+
+
         void NewScene();
         void SaveScene();
         void SaveSceneAs();
-        void OpenScene();
+        // Pass in a path to the scene to open or
+        void OpenScene(std::string scenePath = std::string());
+        
+        // Menubar Elements
+        void OpenRecentProject();
+
 
         void CopyEntity();
         bool IsClipboardFull() { return ClipboardFull; }
         void PasteEntity();
 
+    public:
+        Ref<Scene> ActiveScene;
+        Entity CameraEntity;
+
+        static Vec4f clearColor;
+        Ref<Framebuffer> FrameBuffer;
+        bool ViewportFocused = false, ViewportHovered = false;
+        Vec2f ViewportSize = {1600.0f, 900.0f};
+
+        OrthographicCameraController EditorCamera;
+
     private:
 		Timer Autosave = Timer();
-        std::string StartProjFileInput = std::string();
+        std::string ProjFileInput = std::string();
+        std::string NewProjFileInput = std::string();
 
         Entity Clipboard;
         bool ClipboardFull = false;
 
+        // Must be set on creation, it is passed through from the application as a hook
+        Ref<bool> App_SelectNewProject = nullptr;
+
         SceneHierarchyPanel SceneHierarchy;
         LogPanel Log;
-        ImGui::FileBrowser FileBrowser;
+        // ImGui::FileBrowser FileBrowser;
         StudioProject::Project CurrentProject;
+
+        // Engine Needed Textures, should be set in InitInternalTextures
+        Ref<Texture2D> Tex_PlayButton;
+        Ref<Texture2D> Tex_PauseButton;
+        Ref<Texture2D> Tex_StopButton;
     };
 
 }

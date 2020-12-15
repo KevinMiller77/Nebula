@@ -33,6 +33,9 @@ namespace Nebula {
 		float GetOrthographicFarClip() const { return OrthographicFar; }
 		void SetOrthographicFarClip(float farClip) { OrthographicFar = farClip; RecalculateProjection(); }
 
+		void SetFixedAspectRatio(bool isFixed) { HasFixedAspectRatio = isFixed; RecalculateProjection(); }
+		bool GetFixedAspectRatio() { return HasFixedAspectRatio; }
+
 		ProjectionType GetProjectionType() const { return CamProjectionType; }
 		void SetProjectionType(ProjectionType type) { CamProjectionType = type; RecalculateProjection(); }
 		
@@ -54,7 +57,12 @@ namespace Nebula {
 
 		float AspectRatio = 0.0f;
 
+		bool HasFixedAspectRatio = false;
+		float FixedAspectRatio = 16.0f / 9.0f;
+
 		bool mainCamera = true;
+
+		friend class Scene;
 	};
 
 }
