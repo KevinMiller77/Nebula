@@ -15,12 +15,9 @@ namespace Nebula
         FramebufferSpecification fbSpec;
         fbSpec.Width = 1600;
         fbSpec.Height = 900;
+        fbSpec.Samples = 1;
         FrameBuffer = Framebuffer::Create(fbSpec);
 
-        // SceneHierarchy.SetTextureLib(&textures);
-        // FileBrowser.SetTitle("Project Browser");
-
-        InitInternalTextures();
     }
 
     float tsls = 0.0f;
@@ -55,7 +52,7 @@ namespace Nebula
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
             ActiveScene->OnEditingUpdate(ts, EditorCamera.GetCamera());
-            if(ViewportFocused)
+            if(ViewportFocused && ViewportHovered)
                 EditorCamera.OnUpdate(ts);
         }
         else
@@ -169,11 +166,14 @@ namespace Nebula
         
         Renderer2DStatistics stats = Renderer2D::GetStats();
         
+        ImGui::Text("FPS            : %f", Application::Get()->GetFPS());
+        ImGui::Text("UPS            : %f", Application::Get()->GetUPS());
+        ImGui::Separator();
         ImGui::Text("Draw Calls     : %d", stats.DrawCalls);    
         ImGui::Text("Quad Count     : %d", stats.QuadCount);    
         ImGui::Text("Vertex Count   : %d ", stats.GetTotalVertexCount());    
         ImGui::Text("Index Count    : %d", stats.GetTotalIndexCount());
-
+        
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
@@ -186,9 +186,8 @@ namespace Nebula
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        uint64_t textureID = FrameBuffer->GetColorAttachmentRendererID();
+        uint32_t textureID = FrameBuffer->GetColorAttachmentRendererID();
         ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.X, ViewportSize.Y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-        
         
         ImGui::End();
         ImGui::PopStyleVar();
@@ -196,7 +195,7 @@ namespace Nebula
 
     void NebulaStudioLayer::OnEvent(Event& e)
     {
-        if (PlayStatus == SceneStatus::NOT_STARTED && ViewportFocused)
+        if (PlayStatus == SceneStatus::NOT_STARTED && ViewportFocused && ViewportHovered)
         {
             EditorCamera.OnEvent(e);
         }
@@ -328,13 +327,6 @@ namespace Nebula
             ImGui::EndMenuBar();
         }
 
-    }
-
-    void NebulaStudioLayer::InitInternalTextures()
-    {
-        Tex_PlayButton = Texture2D::Create( VFS::AbsolutePath("assets/internal/nebula-play-button.png"));
-        Tex_PauseButton = Texture2D::Create(VFS::AbsolutePath("assets/internal/nebula-pause-button.png"));
-        Tex_StopButton = Texture2D::Create( VFS::AbsolutePath("assets/internal/nebula-stop-button.png"));
     }
 
     void NebulaStudioLayer::InitProject()

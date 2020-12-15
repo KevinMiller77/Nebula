@@ -38,6 +38,10 @@ namespace Nebula
 
     void WindowsWindow::SwapIO(std::string in, std::string out, std::string err)
     {
+        if (!std::filesystem::exists(in))
+        {
+            fclose(fopen(in.c_str(), "w"));
+        }
         if (!freopen(in.c_str(), "r+", stdin))
         {
             LOG_ERR("Could not open stdin\n");

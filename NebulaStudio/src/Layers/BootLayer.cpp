@@ -6,17 +6,6 @@ namespace Nebula
 {
     void BootLayer::OnAttach() 
     {
-        //TODO: Save editor configuration in the docu folder
-        if (std::filesystem::exists(EDITOR_CONFIG_PATH))
-        {
-            // First ever use
-            OpenEditorConfig();
-        }
-        else
-        {
-            CreateEditorConfig();
-        }
-
         memset(projLocation, 0, 256);
 
         if (s_EditorConfig.recentProjectLocations.size() > 0)
@@ -50,6 +39,20 @@ namespace Nebula
         }
     }
 
+    void Neb_PushButtonStyle()
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, {0, 0, 0, 0});
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, {0.3, 0.3, 0.3, 0.5});
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, {0, 0, 0, 0});
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 1, 1 });
+    }
+
+    void Neb_PopButtonStyle()
+    {
+        ImGui::PopStyleColor(3);
+        ImGui::PopStyleVar();
+    }
+
     void BootLayer::DrawProjSelection()
     {
 
@@ -59,13 +62,16 @@ namespace Nebula
 
         // Put exit button in the top right
         ImGui::Dummy({ ImGui::GetContentRegionAvailWidth() - cancelButtonWidth - ImGui::GetStyle().ItemSpacing.x, 0.0f }); ImGui::SameLine();
-        if (ImGui::Button(" X "))
+
+        Neb_PushButtonStyle();
+        if (ImGui::ImageButton((void*)Tex_Cancel->GetRendererID(), {32, 32}))
         {
             State = DONE;
             std::string n = "Cancel";
             memset(projLocation, 0, 256);
             memcpy(projLocation, n.data(), n.size());
         }
+        Neb_PopButtonStyle();
         cancelButtonWidth = ImGui::GetItemRectSize().x;
 
         //Set cursor for text 
@@ -148,6 +154,7 @@ namespace Nebula
             }
         }
         openProjButtonWidth = ImGui::GetItemRectSize().x;
+        float openProjButtonHeight = ImGui::GetItemRectSize().y;
 
         if (State == GREET)
         {
@@ -155,13 +162,20 @@ namespace Nebula
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
         }
 
-        x_pos = ImGui::GetWindowWidth() - (itemSpacing * 2 + submitButtonWidth);
-        ImGui::SetCursorPosX(x_pos);
-        if (ImGui::Button("  >  "))
+        ImGui::SameLine();
+        float x_off = ImGui::GetContentRegionAvailWidth() - submitButtonWidth - ImGui::GetStyle().ItemSpacing.x;
+        x_pos += openProjButtonWidth + itemSpacing * 2 + x_off;
+        y_pos = ImGui::GetCursorPosY() + (openProjButtonHeight / 2.0f) - 18;
+        ImGui::SetCursorPos( { x_pos, y_pos } );
+
+
+        Neb_PushButtonStyle();
+        if (ImGui::ImageButton((void*)Tex_Continue->GetRendererID(), {48, 36}))
         {
             State = DONE;
         }
         submitButtonWidth =  ImGui::GetItemRectSize().x;
+        Neb_PopButtonStyle();
 
         if (State == GREET)
         {
@@ -170,11 +184,6 @@ namespace Nebula
         }
 
         ImGui::End();
-    }
-
-    void BootLayer::DrawNewProjScreen()
-    {
-
     }
 
 

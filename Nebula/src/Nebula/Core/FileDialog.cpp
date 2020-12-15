@@ -47,4 +47,29 @@ namespace Nebula
 
 		return std::string();
 	}
+
+	
+	std::string FileDialogs::PickDir()
+	{
+		nfdchar_t* outPath = NULL;
+		nfdresult_t result = NFD_PickFolder(NULL, &outPath);
+
+		if (result == NFD_OKAY)
+		{
+			std::string out(outPath);
+			free(outPath);
+			out = ReplaceAll(out, "\\", "/");
+			return out;
+		}
+		else if ( result == NFD_CANCEL ) 
+		{
+		}
+		else 
+		{
+			printf("Error: %s\n", NFD_GetError() );
+		}
+
+		return std::string();
+
+	}
 }

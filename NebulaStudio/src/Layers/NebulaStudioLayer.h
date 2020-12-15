@@ -2,7 +2,7 @@
 #include <Nebula.h>
 
 #include "../Base/NebulaStudioProject.h" 
-
+#include "../StudioApp.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/LogPanel.h"
 
@@ -30,8 +30,6 @@ namespace Nebula
         }
 
         SceneStatus PlayStatus = SceneStatus::NOT_STARTED;
-
-        void InitInternalTextures();
 
         virtual void OnAttach() override;
         virtual void OnUpdate(float ts) override;
@@ -87,11 +85,6 @@ namespace Nebula
         LogPanel Log;
         // ImGui::FileBrowser FileBrowser;
         StudioProject::Project CurrentProject;
-
-        // Engine Needed Textures, should be set in InitInternalTextures
-        Ref<Texture2D> Tex_PlayButton;
-        Ref<Texture2D> Tex_PauseButton;
-        Ref<Texture2D> Tex_StopButton;
     };
 
 }

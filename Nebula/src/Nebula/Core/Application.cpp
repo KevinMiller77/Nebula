@@ -77,6 +77,9 @@ namespace Nebula
     {
 		NEB_PROFILE_FUNCTION();
         imGuiLayer->Begin();
+
+        OnGameImGui();
+        
         for (Ref<Layer> layer : EngLayerStack)
         {
             layer->OnImGuiRender();
@@ -98,7 +101,7 @@ namespace Nebula
 
         if (childInstance != nullptr)
         {
-            childInstance->OnGameUpdate();
+            childInstance->OnGameUpdate(ts);
         }
     }
 
@@ -150,6 +153,8 @@ namespace Nebula
         EngLayerStack.PopOverlay(layer);
     }
 
+    std::deque<float> rollingAvg;
+
     void Application::Run()
     {
         NEB_PROFILE_FUNCTION();
@@ -160,6 +165,30 @@ namespace Nebula
                 float time = (float)glfwGetTime();
                 float ts = time - lastFrameTime;
                 lastFrameTime = time;
+
+                if (rollingAvg.size() == 60)
+                {
+                    rollingAvg.pop_front();
+                }
+                if (ts == 0.0f)
+                {
+                    rollingAvg.push_back(0.1f);
+                }
+                else
+                {
+                    rollingAvg.push_back(1.0f / ts);
+                }
+                
+                
+                float avg = 0.0f;
+                for (auto t : rollingAvg)
+                {
+                    avg += t;
+                }
+                avg /= rollingAvg.size();
+
+                fpsNumber = avg;
+                upsNumber = avg;
 
                 if (!window->IsMinimized())
                 {

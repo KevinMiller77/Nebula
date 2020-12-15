@@ -29,6 +29,9 @@ namespace Nebula
         
         Timer fps;
         Timer ups;
+        float fpsNumber;
+        float upsNumber;
+
         float lastFrameTime;
 
         Application* childInstance;
@@ -53,8 +56,13 @@ namespace Nebula
         void OnEvent(Event& e);
         void OnImGuiRender();
 
-        virtual void OnGameUpdate() {};
+        virtual void OnGameUpdate(float ts) {};
         virtual void OnGameDraw()  {};
+        virtual void OnGameImGui() {};
+
+        float GetUPS() { return upsNumber; }
+        float GetFPS() { return fpsNumber; }
+        
 
         void PushLayer(Ref<Layer> layer);
         void PushOverlay(Ref<Layer> layer);

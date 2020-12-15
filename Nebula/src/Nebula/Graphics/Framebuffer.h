@@ -21,9 +21,13 @@ namespace Nebula
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
-		virtual void Resize(uint32 width, uint32 height) = 0;
+		virtual void Resize(uint32 width, uint32 height, bool forceRecreate = false) = 0;
 
-		virtual uint32 GetColorAttachmentRendererID() const = 0;
+		virtual void BindTexture(uint32_t slot = 0) const = 0;
+
+		virtual uint32_t GetRendererID() const = 0;
+		virtual uint32_t GetColorAttachmentRendererID() const = 0;
+		virtual uint32_t GetDepthAttachmentRendererID() const = 0;
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
 

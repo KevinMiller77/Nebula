@@ -1,5 +1,7 @@
 #include "LogPanel.h"
 
+#include "../StudioApp.h"
+
 namespace Nebula
 {
     LogPanel::LogPanel()
@@ -53,16 +55,16 @@ namespace Nebula
     //NOTE: Do not print to stdout from this function!! It will infinite loop
     void LogPanel::UpdateBuffer()
     {
-        if (!VFS::IsMounted() || !VFS::Exists("debug/stdout.txt")) return;
+        if (!std::filesystem::exists(s_EditorConfig.installDirectory + "NSAssets/debug/stdout.txt")) return;
 
         if (logFile)
         {
-            freopen(VFS::AbsolutePath("debug/stdout.txt").c_str(), "r", logFile);
+            freopen(std::string(s_EditorConfig.installDirectory + "NSAssets/debug/stdout.txt").c_str(), "r", logFile);
 
         }
         else
         {
-            logFile = fopen(VFS::AbsolutePath("debug/stdout.txt").c_str(), "r");
+            logFile = fopen(std::string(s_EditorConfig.installDirectory + "NSAssets/debug/stdout.txt").c_str(), "r");
         }
         
         const unsigned int TIMEOUT_TIME = 500; //MS

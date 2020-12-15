@@ -30,19 +30,13 @@ namespace Nebula
     {
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback(GLMessageCallback, nullptr);
-        
+        glDebugMessageCallback(GLMessageCallback, nullptr);        
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+        SetDepthTest(false);
+        SetMSAA(false);
+        SetAlphaBlend(false);
 
-        // glDisable(GL_CULL_FACE);
-        // glEnable(GL_TEXTURE_2D);
-        // glAlphaFunc(GL_GREATER, 0.0f);
-
-        glEnable(GL_MULTISAMPLE);
-        glEnable(GL_DEPTH_TEST);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
         glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     }
@@ -57,6 +51,39 @@ namespace Nebula
         glClearColor(color.X, color.Y, color.Z, color.W);
     }
     
+    void GLRendererAPI::SetAlphaBlend(bool enabled)
+    {
+        if (enabled)
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+            return;
+        }
+        
+        glDisable(GL_BLEND);
+    }
+
+    void GLRendererAPI::SetDepthTest(bool enabled)
+    {
+        if (enabled)
+        {
+            glEnable(GL_DEPTH_TEST);
+            return;
+        }
+
+        glDisable(GL_DEPTH_TEST);
+    }
+    
+    void GLRendererAPI::SetMSAA(bool enabled)
+    {
+        if (enabled)
+        {
+            glEnable(GL_MULTISAMPLE);
+            return;
+        }
+        glDisable(GL_MULTISAMPLE);
+    }
+
     void GLRendererAPI::Clear()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

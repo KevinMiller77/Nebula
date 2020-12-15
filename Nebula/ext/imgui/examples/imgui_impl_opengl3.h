@@ -24,6 +24,7 @@
 
 #pragma once
 #include "imgui.h"      // IMGUI_IMPL_API
+#include <unordered_map>
 
 // Backend API
 IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_Init(const char* glsl_version = NULL);
@@ -40,6 +41,8 @@ IMGUI_IMPL_API void     ImGui_ImplOpenGL3_DestroyDeviceObjects();
 // Specific OpenGL versions
 //#define IMGUI_IMPL_OPENGL_ES2     // Auto-detected on Emscripten
 //#define IMGUI_IMPL_OPENGL_ES3     // Auto-detected on iOS/Android
+
+extern std::unordered_map<uint32_t, uint8_t> IMMultisampleIDs;
 
 // Desktop OpenGL: attempt to detect default GL loader based on available header files.
 // If auto-detection fails or doesn't select the same GL loader file as used by your application,

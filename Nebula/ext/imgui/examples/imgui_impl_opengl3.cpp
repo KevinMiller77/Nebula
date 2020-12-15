@@ -73,6 +73,10 @@
 
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
+
+// Added by Kevin Miller
+std::unordered_map<uint32_t, uint8_t> IMMultisampleIDs = std::unordered_map<uint32_t, uint8_t>();
+
 #include <stdio.h>
 #if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
 #include <stddef.h>     // intptr_t
@@ -388,7 +392,18 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
                         glScissor((int)clip_rect.x, (int)clip_rect.y, (int)clip_rect.z, (int)clip_rect.w); // Support for GL 4.5 rarely used glClipControl(GL_UPPER_LEFT)
 
                     // Bind texture, Draw
-                    glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
+                    bool multisample = false;
+                    if (IMMultisampleIDs.find((GLuint)(intptr_t)pcmd->TextureId) != IMMultisampleIDs.end())
+                    {
+                        multisample = true;
+                        uint32_t id = (uint32_t)(intptr_t)pcmd->TextureId;
+                        int samples = IMMultisampleIDs[id];
+                        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, (GLuint)(intptr_t)pcmd->TextureId);
+                    }
+                    else
+                    {
+                        glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
+                    }
 #if IMGUI_IMPL_OPENGL_MAY_HAVE_VTX_OFFSET
                     if (g_GlVersion >= 320)
                         glDrawElementsBaseVertex(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void*)(intptr_t)(pcmd->IdxOffset * sizeof(ImDrawIdx)), (GLint)pcmd->VtxOffset);
@@ -407,7 +422,15 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
 
     // Restore modified GL state
     glUseProgram(last_program);
-    glBindTexture(GL_TEXTURE_2D, last_texture);
+    if (IMMultisampleIDs.find(last_texture) != IMMultisampleIDs.end())
+    {
+        int samples = IMMultisampleIDs[last_texture];
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, last_texture);
+    }
+    else
+    {
+        glBindTexture(GL_TEXTURE_2D, last_texture);
+    }
 #ifdef GL_SAMPLER_BINDING
     glBindSampler(0, last_sampler);
 #endif
@@ -453,7 +476,15 @@ bool ImGui_ImplOpenGL3_CreateFontsTexture()
     io.Fonts->TexID = (ImTextureID)(intptr_t)g_FontTexture;
 
     // Restore state
-    glBindTexture(GL_TEXTURE_2D, last_texture);
+    if (IMMultisampleIDs.find(last_texture) != IMMultisampleIDs.end())
+    {
+        int samples = IMMultisampleIDs[last_texture];
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, last_texture);
+    }
+    else
+    {
+        glBindTexture(GL_TEXTURE_2D, last_texture);
+    }
 
     return true;
 }
@@ -676,7 +707,15 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
     ImGui_ImplOpenGL3_CreateFontsTexture();
 
     // Restore modified GL state
-    glBindTexture(GL_TEXTURE_2D, last_texture);
+    if (IMMultisampleIDs.find(last_texture) != IMMultisampleIDs.end())
+    {
+        int samples = IMMultisampleIDs[last_texture];
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, last_texture);
+    }
+    else
+    {
+        glBindTexture(GL_TEXTURE_2D, last_texture);
+    }
     glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
 #ifndef IMGUI_IMPL_OPENGL_ES2
     glBindVertexArray(last_vertex_array);

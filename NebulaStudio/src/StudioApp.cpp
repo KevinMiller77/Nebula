@@ -9,13 +9,66 @@
 
 namespace Nebula
 {
-
+    bool hasWorkingDir = false;
     class Studio : public Application
     {
     public:
 
+        Studio() : Application(this)
+        {
+            //TODO: Save editor configuration in the docu folder
+            if (std::filesystem::exists(EDITOR_CONFIG_PATH))
+            {
+                // First ever use
+                OpenEditorConfig();
+                hasWorkingDir = true;
+            }
+            else
+            {
+                hasWorkingDir = false;
+            }
+
+            createNewProject = CreateRef<bool>();
+            *createNewProject = true;
+
+            RendererConfig::SetAlphaBlend(true);
+            RendererConfig::SetMSAA(MSAA);
+
+            window->SetVSync(true);
+            window->SetWindowSize(550, 270);
+
+            LOG_INF("Application created\n");
+        }
+
+        ~Studio() = default;
+
+        void OnGameUpdate(float ts) override
+        {
+            // Will only return true after project selection has finished
+            if(NewProjectUpdate())
+            {
+
+            }
+
+            RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);
+        }
+
+        bool MSAA = false;
+        void OnGameImGui() override
+        {
+            if (!hasWorkingDir)
+            {
+                DrawWorkingDirSelection();
+            }
+        }
+
         bool NewProjectUpdate()
         {
+            if (!hasWorkingDir)
+            {
+                return false;
+            }
+
             if (*createNewProject && !bootLayer)
             {
                 bootLayer = CreateRef<BootLayer>();
@@ -57,19 +110,12 @@ namespace Nebula
                 {
                     editorLayer->OpenProject(projFile);
                 }
-                
-
-                
+            
                 bootLayer->Done(false);
                 PopLayer(bootLayer);
                 bootLayer = nullptr;
                 
-                // VFS should be set in the bootLayer
-                std::string in = VFS::AbsolutePath("debug/stdin.txt");
-                std::string out = VFS::AbsolutePath("debug/stdout.txt");
-                std::string err = VFS::AbsolutePath("debug/stderr.txt");
-
-                window->SwapIO(in, out, err);
+               
                 *createNewProject = false;
 
                 return true;
@@ -78,33 +124,11 @@ namespace Nebula
             return false;
         }
 
-        Studio() : Application(this)
-        {
-            createNewProject = CreateRef<bool>();
-            *createNewProject = true;
+        float fps = 0.0f;
+        float ups = 0.0f;
 
-            window->SetVSync(true);
-
-            window->SetWindowSize(550, 275);
-            if(std::filesystem::exists("icon.png"))
-            {
-                window->SetIcon("icon.png");
-            }
-
-            LOG_INF("Application created\n");
-        }
-        ~Studio() = default;
-
-        void OnGameUpdate() override
-        {
-            // Will only return true after project selection has finished
-            if(NewProjectUpdate())
-            {
-
-            }
-
-            RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);
-        }
+        int numAvgCounts = 0;
+        float avgFps = 0.0f;
 
         Ref<BootLayer> bootLayer = nullptr;
         Ref<NebulaStudioLayer> editorLayer = nullptr;

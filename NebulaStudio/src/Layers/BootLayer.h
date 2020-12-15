@@ -18,7 +18,6 @@ namespace Nebula
         ~BootLayer() = default;
 
         void DrawProjSelection();
-        void DrawNewProjScreen();
 
         virtual void OnAttach() override;
         virtual void OnUpdate(float ts) override;
@@ -41,6 +40,7 @@ namespace Nebula
 
     private:
         bool hasRecents = false;
+        bool hasWorkingDir = true;
 
         BootState State = GREET;
         char projLocation[256];

@@ -37,6 +37,22 @@ namespace Nebula
             m_API->DrawIndexed(vertexArray, type, indexCount);
         }
 
+        static void SetAlphaBlend(bool enabled)
+        {
+            m_API->SetAlphaBlend(enabled);
+        }
+
+        static void SetDepthTest(bool enabled)
+        {
+            m_API->SetDepthTest(enabled);
+        }
+
+        static void SetMSAA(bool enabled)
+        {
+            m_API->SetMSAA(enabled);
+        }
+
+
     private:
         static Ref<RendererAPI> m_API;
     };
