@@ -290,6 +290,19 @@ namespace Nebula {
 				transform.Rotation = rot * Vec3f(PI2R_FACTOR, PI2R_FACTOR, PI2R_FACTOR);
 
 				DrawVec3Control("Scale   ", transform.Scale);
+
+				ImGui::SameLine(); 
+				ImGui::PushID(&transform.InheritScale);
+				ImGui::Checkbox("", &transform.InheritScale);
+				ImGui::PopID();
+
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::Text("Inherit Scale From Parent");
+					ImGui::EndTooltip();
+				}
+				
 				ImGui::PopItemWidth();
 
 				ImGui::TreePop();

@@ -2,11 +2,11 @@
 #include <chrono>
 #include <Core/NebulaCommon.h>
 
-using namespace std;
-using namespace chrono;
 
 namespace Nebula
 {
+    using namespace std;
+    using namespace chrono;
 
     class Timer
     {

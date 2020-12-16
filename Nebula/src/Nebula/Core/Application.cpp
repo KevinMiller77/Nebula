@@ -27,6 +27,8 @@ namespace Nebula
 
         VFS::Init();
 
+        Audio::Init();
+
         Renderer::Init();
 
         imGuiLayer = ImGuiLayer::Create();
@@ -92,17 +94,23 @@ namespace Nebula
         NEB_PROFILE_FUNCTION();
 
         uint32 newUpdate = ups.FrameKeep();
-        
-        for (Ref<Layer> layer : EngLayerStack)
         {
-            layer->OnUpdate(ts);
+            NEB_PROFILE_SCOPE("Layer updates");
+            for (Ref<Layer> layer : EngLayerStack)
+            {
+                layer->OnUpdate(ts);
+            }
+
         }
 
-
-        if (childInstance != nullptr)
         {
-            childInstance->OnGameUpdate(ts);
+            NEB_PROFILE_SCOPE("On Game Update");
+            if (childInstance != nullptr)
+            {
+                childInstance->OnGameUpdate(ts);
+            }
         }
+
     }
 
     void Application::OnEvent(Event& e)

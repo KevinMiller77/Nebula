@@ -63,6 +63,11 @@ namespace Nebula
             out.LastFileSystemMount = data["Project VFS Loc"].as<std::string>();
             out.LastSceneOpened = data["Last Opened Scene"].as<std::string>();
             
+            if (!VFS::Exists(out.LastSceneOpened))
+            {
+                out.LastSceneOpened = std::string();
+            }
+
             if (!VFS::Exists(out.LastFileSystemMount))
             {
                 std::string dirToMakeFileIn = std::string(path);

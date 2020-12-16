@@ -1,4 +1,5 @@
 workspace "Nebula"
+    architecture "x86_64"
     startproject "NebulaStudio"
     configurations 
     { 
@@ -19,6 +20,9 @@ workspace "Nebula"
         include "Nebula/ext/imgui"
         include "Nebula/ext/yaml-cpp"
         include "Nebula/ext/nativefiledialog"
+        include "Nebula/ext/libogg"
+        include "Nebula/ext/Vorbis"
+        include "Nebula/ext/OpenAL-Soft"
         -- include "Nebula/ext/freetype"
         group ""
         
@@ -43,7 +47,8 @@ project "NebulaEngine"
 
     defines
     {
-        "_CRT_SECURE_NO_WARNINGS"
+        "_CRT_SECURE_NO_WARNINGS",
+        "AL_LIBTYPE_STATIC"
     }
 
     sysincludedirs
@@ -52,11 +57,18 @@ project "NebulaEngine"
         "Nebula/src",
         "Nebula/src/Nebula",
         "Nebula/include",
+        "Nebula/ext",
         "Nebula/ext/imgui",
 		"Nebula/ext/glfw/include",
         "Nebula/ext/glad/include",
         "Nebula/ext/yaml-cpp/include",
-        "Nebula/ext/nativefiledialog/src/include"
+        "Nebula/ext/nativefiledialog/src/include",
+        "Nebula/ext/OpenAL-Soft/include",
+		"Nebula/ext/OpenAL-Soft/src",
+		"Nebula/ext/OpenAL-Soft/src/common",
+		"Nebula/ext/libogg/include",
+		"Nebula/ext/Vorbis/include",
+		"Nebula/ext/minimp3"
     }
 
     links
@@ -65,7 +77,9 @@ project "NebulaEngine"
         "glad",
         "glfw",
         "yaml-cpp",
-        "nfd"
+        "nfd",
+        "OpenAL-Soft",
+		"Vorbis"
         -- "freetype"
     }
 

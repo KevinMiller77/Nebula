@@ -98,12 +98,12 @@ REM ----------------------------------------------------------------------------
 :NebRun
 PUSHD %~DP0
 PUSHD ..\NebulaStudio
-IF NOT EXIST ..\bin\Debug\windows\NebulaStudio\NebulaStudio.exe (
+IF NOT EXIST ..\bin\Debug\windowsx86_64\NebulaStudio\NebulaStudio.exe (
     ECHO !! You have not compiled the application yet or complilation was unsuccessful !!
     ECHO.
     EXIT /B 0
 )
-START /WAIT ..\bin\Debug\windows\NebulaStudio\NebulaStudio.exe
+START /WAIT ..\bin\Debug\windowsx86_64\NebulaStudio\NebulaStudio.exe
 EXIT /B 0
 
 REM -----------------------------------------------------------------------------

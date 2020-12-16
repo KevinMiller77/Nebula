@@ -25,6 +25,15 @@ namespace Nebula
         float Magnitude()                                                   { return (float)sqrt((float)(X * X + Y * Y + Z * Z)); }
         static float Magnitude(const Vec3& in)                              { return (float)sqrt((float)(in.X * in.X + in.Y * in.Y + in.Z * in.Z)); }
 
+        bool IsNonzero()
+        {
+            bool one = X == 0;
+            bool too = Y == 0;
+            bool fre = Z == 0;
+
+            return !(one && too && fre);
+        }
+
         //  Return vlaue is in radians
         float AngleBetween(const Vec3<T>& other)
         { 

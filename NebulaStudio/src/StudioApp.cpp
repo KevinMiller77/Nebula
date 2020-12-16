@@ -16,6 +16,7 @@ namespace Nebula
 
         Studio() : Application(this)
         {
+            NEB_PROFILE_FUNCTION();
             //TODO: Save editor configuration in the docu folder
             if (std::filesystem::exists(EDITOR_CONFIG_PATH))
             {

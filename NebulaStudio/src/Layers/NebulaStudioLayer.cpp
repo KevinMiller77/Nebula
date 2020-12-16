@@ -18,6 +18,12 @@ namespace Nebula
         fbSpec.Samples = 1;
         FrameBuffer = Framebuffer::Create(fbSpec);
 
+        AudioSource as = Audio::LoadAudioSource(VFS::AbsolutePath("assets/sounds/HeadFirst.ogg"));
+        as.SetLoop(true);
+        as.SetGain(0.5f);
+        as.SetSpatial(true);
+
+        Audio::Play(as);
     }
 
     float tsls = 0.0f;
@@ -173,7 +179,7 @@ namespace Nebula
         ImGui::Text("Quad Count     : %d", stats.QuadCount);    
         ImGui::Text("Vertex Count   : %d ", stats.GetTotalVertexCount());    
         ImGui::Text("Index Count    : %d", stats.GetTotalIndexCount());
-        
+
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
@@ -553,7 +559,17 @@ namespace Nebula
             pecNew = ParentEntityComponent(pec);
         }
 
-        if (Clipboard.HasComponent<RootEntityComponent>())
+        if (SceneHierarchy.GetSelection().IsValid())
+        {
+            if (!SceneHierarchy.GetSelection().HasComponent<ParentEntityComponent>())
+            {
+                SceneHierarchy.GetSelection().AddComponent<ParentEntityComponent>();
+            } 
+            auto& parentComp = SceneHierarchy.GetSelection().GetComponent<ParentEntityComponent>();
+
+            parentComp.children.push_back(newEntity);
+        }
+        else if (Clipboard.HasComponent<RootEntityComponent>())
         {
             auto root = Clipboard.GetComponent<RootEntityComponent>();
             auto& rootNew = newEntity.AddComponent<RootEntityComponent>(root);

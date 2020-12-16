@@ -8,6 +8,8 @@
 #include <Core/VFS.h>
 #include <Core/Ref.h>
 
+#include <Debugging/Instrumentor.h>
+
 #include <Events/Event.h>
 #include <Events/InputCodes.h>
 #include <Events/KeyEvent.h>
@@ -18,6 +20,8 @@
 #include <Utils/Logging.h>
 #include <Utils/Timer.h>
 #include <Utils/StringOps.h>
+
+#include <Audio/AudioCore.h>
 
 #include <Math/Math.h>
 

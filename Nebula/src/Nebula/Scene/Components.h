@@ -22,6 +22,7 @@ namespace Nebula
 		Vec3f Translation 	= {	0.0f, 0.0f, 0.0f };
 		Vec3f Rotation		= { 0.0f, 0.0f, 0.0f };
 		Vec3f Scale			= { 1.0f, 1.0f, 1.0f };
+		bool InheritScale = false;
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;

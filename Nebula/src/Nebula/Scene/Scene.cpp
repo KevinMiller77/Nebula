@@ -114,11 +114,9 @@ namespace Nebula
 	void Scene::Render(Camera* camera, Mat4f transform)
 	{
 		Renderer2D::BeginScene(camera, transform);
-		RenderWide(transform);
 
 //	Using RenderWide to make sure children render properly
-#if 0
-
+#if 1
 		auto view = Registry.view<RootEntityComponent>();
 		if (!view.empty())
 		{
@@ -128,7 +126,8 @@ namespace Nebula
 				SubmitEntity(toSubmit);
 			}
 		}
-		
+#else
+		RenderWide(transform);
 #endif
 		Renderer2D::EndScene();
 	}
@@ -161,8 +160,18 @@ namespace Nebula
 			for (auto child : children)
 			{
 				Entity toSubmit{ child, this };
+				if (!toSubmit.GetComponent<TransformComponent>().InheritScale)
+				{
+					Vec3f pos, rot, scale;
+					DecomposeTransform(transform.GetTransformation(), pos, rot, scale);
+					if (scale.IsNonzero()) scale = 1.0f / scale;
 
-				SubmitEntity(toSubmit, newModel);
+					Mat4f invScale = modelMat * Mat4f::scale(scale);
+					Mat4f modelDescaled = transform.GetTransformation() * invScale;
+					SubmitEntity(toSubmit, modelDescaled);
+				}
+				else
+					SubmitEntity(toSubmit, newModel);
 			}
 		}
 	}

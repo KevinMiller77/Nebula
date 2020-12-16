@@ -147,6 +147,7 @@ namespace Nebula
 			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
+			out << YAML::Key  << "Inherit" << YAML::Value << tc.InheritScale;
 
 			out << YAML::EndMap; // TransformComponent
 		}
@@ -315,6 +316,7 @@ namespace Nebula
 			tc.Translation = transformComponent["Translation"].as<Vec3f>();
 			tc.Rotation = transformComponent["Rotation"].as<Vec3f>();
 			tc.Scale = transformComponent["Scale"].as<Vec3f>();
+			tc.InheritScale = transformComponent["Inherit"].as<bool>();
 		}
 
 		auto cameraComponent = entity["CameraComponent"];
