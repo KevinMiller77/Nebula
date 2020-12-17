@@ -15,6 +15,7 @@ namespace Nebula
         PLAYING = 1,
         PAUSED = 2,
     };
+    
     class Scene
     {
     public:
@@ -30,15 +31,16 @@ namespace Nebula
         virtual void OnPlay();
 
         // Returns only if there was an error and stop should be issued
-        virtual bool OnUpdate(float ts, SceneStatus status = SceneStatus::PLAYING);
-        virtual void OnEditingUpdate(float ts, Camera* camera);
+        virtual void OnUpdateRuntime(float ts);
+        virtual void OnUpdateEditor(float ts, Camera& camera);
 
+        // Currently Unused
         void OnPhysicsUpdate(float ts) {}
-        void OnUpdateCommon(float ts);
         void EvaluateChildren();
 
         virtual void Render(entt::entity mainCamera = entt::null);
-        virtual void Render(Camera* camera, Mat4f transform);
+        virtual void Render(Camera& camera, Mat4f transform);
+        
         virtual void SubmitEntity(Entity entity, const Mat4f& modelMat = Mat4f(1.0f));
 
         struct WideRenderLayer

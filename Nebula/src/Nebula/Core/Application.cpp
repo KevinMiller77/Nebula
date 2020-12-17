@@ -163,6 +163,33 @@ namespace Nebula
 
     std::deque<float> rollingAvg;
 
+    float FPSTick(float ts)
+    {
+
+        if (rollingAvg.size() == 60)
+        {
+            rollingAvg.pop_front();
+        }
+        if (ts == 0.0f)
+        {
+            rollingAvg.push_back(0.1f);
+        }
+        else
+        {
+            rollingAvg.push_back(1.0f / ts);
+        }
+
+
+        float avg = 0.0f;
+        for (auto t : rollingAvg)
+        {
+            avg += t;
+        }
+        avg /= rollingAvg.size();
+
+        return avg;
+    }
+
     void Application::Run()
     {
         NEB_PROFILE_FUNCTION();
@@ -172,29 +199,8 @@ namespace Nebula
                 NEB_PROFILE_SCOPE("RunLoop");
                 float time = (float)glfwGetTime();
                 float ts = time - lastFrameTime;
-                lastFrameTime = time;
 
-                if (rollingAvg.size() == 60)
-                {
-                    rollingAvg.pop_front();
-                }
-                if (ts == 0.0f)
-                {
-                    rollingAvg.push_back(0.1f);
-                }
-                else
-                {
-                    rollingAvg.push_back(1.0f / ts);
-                }
-                
-                
-                float avg = 0.0f;
-                for (auto t : rollingAvg)
-                {
-                    avg += t;
-                }
-                avg /= rollingAvg.size();
-
+                float avg = FPSTick(ts);
                 fpsNumber = avg;
                 upsNumber = avg;
 

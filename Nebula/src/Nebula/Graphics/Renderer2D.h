@@ -83,8 +83,8 @@ namespace Nebula
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(OrthographicCamera* camera);
-		static void BeginScene(Camera* camera, const Mat4f transform);
+		static void BeginScene(OrthographicCamera& camera);
+		static void BeginScene(Camera& camera, const Mat4f transform);
 		static void BeginScene(Mat4f& viewProj);
 		static void EndScene();
 		static void Flush();
@@ -108,7 +108,6 @@ namespace Nebula
 		static void DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 
 		static void DrawLine(const Vec3f& p0, const Vec3f& p1, const Vec4f& color = Vec4f(1.0f));
-
 
 		// Stats
 		static void ResetStats();

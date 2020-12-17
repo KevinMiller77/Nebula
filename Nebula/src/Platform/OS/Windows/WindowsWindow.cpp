@@ -33,7 +33,7 @@ namespace Nebula
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-        glfwWindowHint(GLFW_DECORATED, true);
+        glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
     }
 
     void WindowsWindow::SwapIO(std::string in, std::string out, std::string err)
@@ -196,6 +196,18 @@ namespace Nebula
         });
     }
 
+    void WindowsWindow::SetResizeable(bool resizeable) const
+    {
+        if(resizeable)
+        {
+            glfwSetWindowSizeLimits(window, 0, 0, 0xffff, 0xffff);
+        }
+        else {
+            int w, h;
+            glfwGetWindowSize(window, &w, &h);
+            glfwSetWindowSizeLimits(window, w, h, w, h);
+        }
+    }
 
     void WindowsWindow::ToggleFullscreen()
     {    

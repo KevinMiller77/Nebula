@@ -84,20 +84,26 @@ namespace Nebula
 
 	void Scene::Render(entt::entity mainCamera)
 	{
-		entt::entity camToUse;
+		Entity camToUse;
 		Mat4f transform;
 
 		if (mainCamera == entt::null)
 		{
-			camToUse = Entity { SceneMainCameraEntity, this };
+
+			camToUse = { SceneMainCameraEntity, this };
 			transform = SceneCameraTransform;
+
+			if (!camToUse.IsValid())
+			{
+				return;
+			}
 
 			auto& camComp = Registry.get<CameraComponent>(camToUse);
 			camComp.Camera.RecalculateProjection();
 		}
 		else
 		{
-			camToUse = mainCamera;
+			camToUse = { mainCamera, this };
 
 			auto transfComp = Registry.get<TransformComponent>(camToUse);
 			transform = transfComp.GetTransformation();
@@ -107,12 +113,14 @@ namespace Nebula
 		if (Registry.valid(camToUse))
 		{
 			auto& cam = Registry.get<CameraComponent>(camToUse);
-			Render(&cam.Camera, transform);
+			Render(cam.Camera, transform);
 		}
 	}
 
-	void Scene::Render(Camera* camera, Mat4f transform)
+	void Scene::Render(Camera& camera, Mat4f transform)
 	{
+		NEB_PROFILE_FUNCTION();
+		
 		Renderer2D::BeginScene(camera, transform);
 
 //	Using RenderWide to make sure children render properly
@@ -211,6 +219,8 @@ namespace Nebula
 
 	Scene::WideRenderLayer Scene::SubmitEntityWide(Entity entity, const Mat4f& modelMat)
 	{
+		NEB_PROFILE_FUNCTION();
+		
 		WideRenderLayer out = WideRenderLayer();
 
 		auto transform = entity.GetComponent<TransformComponent>();
@@ -246,34 +256,20 @@ namespace Nebula
 		return out;
 	}
     
-	bool Scene::OnUpdate(float ts, SceneStatus status)
+	void Scene::OnUpdateRuntime(float ts)
     {
-		OnUpdateCommon(ts);
-		if (status == SceneStatus::PLAYING)
+		NEB_PROFILE_FUNCTION();
+
+		// Update scripts
 		{
-			// Update scripts
+			NEB_PROFILE_SCOPE("Update scripts");
+			Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 			{
-				Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
-				{
-					nsc.Instance->OnUpdate(ts);
-				});
-			}
+				nsc.Instance->OnUpdate(ts);
+			});
 		}
-
-		if (SceneMainCameraEntity == entt::null)
-		{
-			LOG_ERR("Only scene camera was deleted, stopped playing\n");
-			return true;
-		}
-
-		Render();
-		return false;
-    }
-
-	void Scene::OnUpdateCommon(float ts)
-	{
-		EvaluateChildren();
-
+	
+		// Check for a new main camera in the scene
 		auto view = Registry.view<TransformComponent, CameraComponent>();
 		
 		if (SceneMainCameraEntity == entt::null)
@@ -307,7 +303,10 @@ namespace Nebula
 				SceneCameraTransform = transform.GetTransformation();
 			}	
 		}
-	}
+
+		EvaluateChildren();
+		Render();
+    }
 
 	void Scene::EvaluateChildren()
 	{
@@ -338,10 +337,9 @@ namespace Nebula
 	}
 
 	//TODO: Remove, the scene should only really use camera inside of it, not given an external one
-	void Scene::OnEditingUpdate(float ts, Camera* camera)
+	void Scene::OnUpdateEditor(float ts, Camera& camera)
     {
-		OnUpdateCommon(ts);
-		Render(camera, SceneCameraTransform);
+		Render(camera, camera.GetViewProjection());
     }
 
     void Scene::OnViewportResize(uint32_t width, uint32_t height)

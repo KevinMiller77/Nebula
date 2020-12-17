@@ -45,6 +45,7 @@ namespace Nebula
         uint32 GetHeight() const override;
 
         virtual void SetWindowSize(uint32 width, uint32 height) override;
+		virtual void SetResizeable(bool resizeable) const;
         
         uint32* GetWidthPtr() const override;
         uint32* GetHeightPtr() const override;

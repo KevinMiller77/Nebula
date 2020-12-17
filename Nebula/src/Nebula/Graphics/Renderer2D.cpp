@@ -136,32 +136,11 @@ namespace Nebula
 		delete[] s_Data.LineVertexBufferBase;
 	}
 
-	void Renderer2D::BeginScene(OrthographicCamera* camera)
+	void Renderer2D::BeginScene(Camera& camera, Mat4f transform)
 	{
 		ResetStats();
 
-		s_Data.viewProj = camera->GetViewProjection();
-
-		if(s_Data.TextureShader)
-		{
-			s_Data.TextureShader->Bind();
-			s_Data.TextureShader->SetMat4("u_ViewProjection", s_Data.viewProj);
-		}
-
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.LineIndexCount = 0;
-		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
-	}
-
-	void Renderer2D::BeginScene(Camera* camera, Mat4f transform)
-	{
-		ResetStats();
-
-		s_Data.viewProj = transform.invertMatrix() * camera->GetViewProjection();
+		s_Data.viewProj = transform.invertMatrix() * camera.GetViewProjection();
 
 		if (s_Data.TextureShader)
 		{
