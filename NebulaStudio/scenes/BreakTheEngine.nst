@@ -1,0 +1,42 @@
+Scene: Untitled
+Entities:
+  - Entity: 1066942004
+    TagComponent:
+      Tag: Shit
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Inherit: false
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Has Tex: true
+      Tex Path: assets/textures/tilemap_packed.png
+      Tex Width: 16
+      Tex Height: 16
+      Is TileMap: true
+      Tile Pos: [10, 0]
+      Tile Size: [1, 1]
+      Tile Resolution: [16, 16]
+    RootEntityComponent:
+      {}
+  - Entity: 3071397075
+    TagComponent:
+      Tag: Cam
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Inherit: false
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 75
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 15
+        OrthographicNear: -30
+        OrthographicFar: 30
+      FixedAspectRatio: true
+    RootEntityComponent:
+      {}

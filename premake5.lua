@@ -34,6 +34,8 @@ project "NebulaEngine"
         
         targetdir ("bin/" .. outputdir .. "/%{prj.name}")
         objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+        location ("build")
+
 
         -- pchheader("Nebula/Nebula_pch.h")
         -- pchsource("Nebula/src/Nebula_pch.h")
@@ -137,6 +139,7 @@ project "NebulaStudio"
     targetname("NebulaStudio")
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    location ("build")
 
     debugdir("./NebulaStudio")
     

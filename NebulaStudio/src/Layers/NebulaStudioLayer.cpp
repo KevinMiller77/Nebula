@@ -18,12 +18,18 @@ namespace Nebula
         fbSpec.Samples = 1;
         FrameBuffer = Framebuffer::Create(fbSpec);
 
+#if 0
+        // Remove!!! THis is a just an an audio test
+        // It takes FOREVER to load this sound
         AudioSource as = Audio::LoadAudioSource(VFS::AbsolutePath("assets/sounds/HeadFirst.ogg"));
         as.SetLoop(true);
         as.SetGain(0.5f);
         as.SetSpatial(true);
 
         Audio::Play(as);
+        LOG_INF("Playing assets/sounds/HeadFirst.ogg\n");
+#endif
+
     }
 
     float tsls = 0.0f;
@@ -57,16 +63,13 @@ namespace Nebula
 
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
-            ActiveScene->OnEditingUpdate(ts, EditorCamera.GetCamera());
+            ActiveScene->OnUpdateEditor(ts, *EditorCamera.GetCamera());
             if(ViewportFocused && ViewportHovered)
                 EditorCamera.OnUpdate(ts);
         }
         else
         {
-            if(ActiveScene->OnUpdate(ts, PlayStatus))
-            {
-                PlayStatus = SceneStatus::NOT_STARTED;
-            }
+            ActiveScene->OnUpdateRuntime(ts);
         }
 
         FrameBuffer->Unbind();   
@@ -95,19 +98,12 @@ namespace Nebula
 
         if(ImGui::ImageButton((ImTextureID)Tex_PlayButton->GetRendererID(), { 30, 30 }))
         {
-            if (!ActiveScene->GetPrimaryCamera().IsValid())
+            LOG_TMI("Play pressed\n");
+            if (PlayStatus == SceneStatus::NOT_STARTED)
             {
-                LOG_ERR("Could not play! There was no camera in the scene.\n");
+                ActiveScene->OnPlay();
             }
-            else
-            {
-                LOG_TMI("Play pressed\n");
-                if (PlayStatus == SceneStatus::NOT_STARTED)
-                {
-                    ActiveScene->OnPlay();
-                }
-                PlayStatus = SceneStatus::PLAYING;
-            }
+            PlayStatus = SceneStatus::PLAYING;
         }
 
         if (greyOutPlay)
@@ -375,7 +371,6 @@ namespace Nebula
         if (VFS::Exists(projPath, true))
         {
             CurrentProject = StudioProject::LoadProjectFile(projPath);
-            
         }
         else
         {
@@ -385,6 +380,10 @@ namespace Nebula
         if (VFS::Exists(CurrentProject.LastFileSystemMount, true))
         {
             VFS::Mount(CurrentProject.LastFileSystemMount);
+            if (VFS::Exists(CurrentProject.LastSceneOpened))
+            {
+                OpenScene(VFS::AbsolutePath(CurrentProject.LastSceneOpened));
+            }
         }
         else
         {
@@ -461,13 +460,15 @@ namespace Nebula
     {
         std::string filePath;
 
+        if (scenePath.empty())
         {
-            if (filePath.empty())
-                std::string filePath = Nebula::FileDialogs::OpenFile("nst");
-            else
-                filePath = scenePath;
+            filePath = Nebula::FileDialogs::OpenFile("nst");
         }
-            
+        else
+        {
+            filePath = scenePath;
+        }
+                    
         if (!filePath.empty())
         {
             

@@ -19,11 +19,12 @@ endif
 # #############################################
 
 RESCOMP = windres
-INCLUDES += -Isrc/include
+DEFINES += -DLIBOGG_EXPORTS -DWIN32 -DNDEBUG -D_WINDOWS -D_USRDLL
+INCLUDES += -Iinclude
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-LIBS += -luser32
+LIBS +=
 LDDEPS +=
 LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 define PREBUILDCMDS
@@ -34,19 +35,17 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/windowsx86_64/nfd
-TARGET = $(TARGETDIR)/nfd_d.lib
-OBJDIR = bin-int/Debug/windowsx86_64/nfd
-DEFINES += -DDEBUG
+TARGETDIR = bin/Debug/windowsx86_64/libogg
+TARGET = $(TARGETDIR)/libogg.lib
+OBJDIR = bin-int/Debug/windowsx86_64/libogg
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/windowsx86_64/nfd
-TARGET = $(TARGETDIR)/nfd.lib
-OBJDIR = bin-int/Release/windowsx86_64/nfd
-DEFINES += -DNDEBUG
+TARGETDIR = bin/Release/windowsx86_64/libogg
+TARGET = $(TARGETDIR)/libogg.lib
+OBJDIR = bin-int/Release/windowsx86_64/libogg
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
@@ -63,10 +62,10 @@ endif
 GENERATED :=
 OBJECTS :=
 
-GENERATED += $(OBJDIR)/nfd_common.o
-GENERATED += $(OBJDIR)/nfd_win.o
-OBJECTS += $(OBJDIR)/nfd_common.o
-OBJECTS += $(OBJDIR)/nfd_win.o
+GENERATED += $(OBJDIR)/bitwise.o
+GENERATED += $(OBJDIR)/framing.o
+OBJECTS += $(OBJDIR)/bitwise.o
+OBJECTS += $(OBJDIR)/framing.o
 
 # Rules
 # #############################################
@@ -76,7 +75,7 @@ all: $(TARGET)
 
 $(TARGET): $(GENERATED) $(OBJECTS) $(LDDEPS) | $(TARGETDIR)
 	$(PRELINKCMDS)
-	@echo Linking nfd
+	@echo Linking libogg
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -97,7 +96,7 @@ else
 endif
 
 clean:
-	@echo Cleaning nfd
+	@echo Cleaning libogg
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(GENERATED)
@@ -115,7 +114,7 @@ ifneq (,$(PCH))
 $(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)
 $(GCH): $(PCH) | prebuild
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
+	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) touch "$@"
@@ -130,12 +129,12 @@ endif
 # File Rules
 # #############################################
 
-$(OBJDIR)/nfd_common.o: src/nfd_common.c
+$(OBJDIR)/bitwise.o: src/bitwise.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/nfd_win.o: src/nfd_win.cpp
+$(OBJDIR)/framing.o: src/framing.c
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 -include $(OBJECTS:%.o=%.d)
 ifneq (,$(PCH))

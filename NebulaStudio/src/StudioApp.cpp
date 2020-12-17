@@ -36,7 +36,10 @@ namespace Nebula
             RendererConfig::SetMSAA(MSAA);
 
             window->SetVSync(true);
+
+            // Set the size of the welcome screen
             window->SetWindowSize(550, 270);
+            window->SetResizeable(false);
 
             LOG_INF("Application created\n");
         }
@@ -103,6 +106,8 @@ namespace Nebula
                 if (!editorLayer)
                 {
                     editorLayer = CreateRef<NebulaStudioLayer>(projFile, createNewProject);
+
+                    window->SetResizeable(true);
                     window->SetWindowSize((uint32_t)editorLayer->ViewportSize.X, (uint32_t)editorLayer->ViewportSize.Y);
 
                     PushLayer(editorLayer);
@@ -124,9 +129,6 @@ namespace Nebula
 
             return false;
         }
-
-        float fps = 0.0f;
-        float ups = 0.0f;
 
         int numAvgCounts = 0;
         float avgFps = 0.0f;

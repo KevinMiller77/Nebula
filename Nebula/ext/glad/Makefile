@@ -35,20 +35,20 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/linux/glad
-TARGET = $(TARGETDIR)/libglad.a
-OBJDIR = bin-int/Debug/linux/glad
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -std=c++17
-ALL_LDFLAGS += $(LDFLAGS)
+TARGETDIR = bin/Debug/windowsx86_64/glad
+TARGET = $(TARGETDIR)/glad.lib
+OBJDIR = bin-int/Debug/windowsx86_64/glad
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++17
+ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/linux/glad
-TARGET = $(TARGETDIR)/libglad.a
-OBJDIR = bin-int/Release/linux/glad
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -std=c++17
-ALL_LDFLAGS += $(LDFLAGS) -s
+TARGETDIR = bin/Release/windowsx86_64/glad
+TARGET = $(TARGETDIR)/glad.lib
+OBJDIR = bin-int/Release/windowsx86_64/glad
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17
+ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 
 endif
 
