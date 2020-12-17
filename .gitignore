@@ -19,6 +19,7 @@ console.txt
 *.xcodeproj/
 bin/
 bin-int/
+build/
 Products/
 x64/*
 Debug/*
