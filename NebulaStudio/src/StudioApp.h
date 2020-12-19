@@ -18,11 +18,15 @@ namespace Nebula
 
     extern EditorConfig s_EditorConfig;
 
-    extern bool hasWorkingDir;
+    extern bool hasInternalAssetDir;
 
     void OpenEditorConfig();
     void CreateEditorConfig();
     void SaveEditorConfig();
+
+    void AddRecentProject(std::string projectPath);
+    std::string GetMostRecentProject();
+    std::vector<std::string> GetRecentProjects();
 
     void DrawWorkingDirSelection();
 

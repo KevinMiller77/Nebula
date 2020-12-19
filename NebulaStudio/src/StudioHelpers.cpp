@@ -10,6 +10,41 @@ namespace Nebula
 {
     EditorConfig s_EditorConfig = EditorConfig();
 
+    
+    void AddRecentProject(std::string projectPath)
+    {
+        std::vector<std::string>& rpl = s_EditorConfig.recentProjectLocations;
+
+        for (int i = 0; i < rpl.size(); i++)
+        {
+            std::string s = rpl[i];
+            if (s == projectPath)
+            {
+                // If this already exists, we remove it from it's current place
+                // in the list and it will be added at the end below
+                rpl.erase(rpl.begin() + i);
+                break;
+            } 
+        }
+        rpl.push_back(projectPath);
+        SaveEditorConfig();
+    }
+
+
+    std::string GetMostRecentProject()
+    {
+        auto rpl = s_EditorConfig.recentProjectLocations;
+        int rplSize = rpl.size(); 
+
+        if (rplSize > 0)
+        {
+            return rpl[rplSize - 1];
+        }
+        return std::string();
+    }
+    
+    std::vector<std::string> GetRecentProjects();
+
     void OpenEditorConfig()
     {
         EditorConfig out;
@@ -32,7 +67,7 @@ namespace Nebula
         {
             if (!std::filesystem::exists(out.recentProjectLocations[i]))
             {
-                LOG_ERR("Project file %s not found\n", out.recentProjectLocations[i]);
+                LOG_INF("Project file %s not found. Removing from recents.\n", out.recentProjectLocations[i]);
                 out.recentProjectLocations.erase(out.recentProjectLocations.begin() + i);
             }
         }
@@ -159,7 +194,7 @@ namespace Nebula
             CreateEditorConfig();
             if(!s_EditorConfig.installDirectory.empty())
             {
-                hasWorkingDir = true;
+                hasInternalAssetDir = true;
             } 
         }
         workingDirButtonSize = ImGui::GetItemRectSize().x; 

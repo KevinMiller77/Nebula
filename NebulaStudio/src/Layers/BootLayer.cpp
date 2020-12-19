@@ -7,17 +7,16 @@ namespace Nebula
     void BootLayer::OnAttach() 
     {
         memset(projLocation, 0, 256);
+        std::string lastUsed = GetMostRecentProject();
 
-        if (s_EditorConfig.recentProjectLocations.size() > 0)
+        if (lastUsed.empty())
         {
-            LOG_INF("Recents opened - Found index - %s\n", s_EditorConfig.recentProjectLocations[0].c_str());
-            hasRecents = true;
-            memset(projLocation, 0, 256);
-            memcpy(projLocation, s_EditorConfig.recentProjectLocations[0].data(), s_EditorConfig.recentProjectLocations[0].size());
-
-            State = PROJ_READY_OPEN;
+            return;
         }
 
+        hasRecents = true;
+        State = PROJ_READY_OPEN;
+        memcpy(projLocation, lastUsed.data(), lastUsed.size());
     }
 
     void BootLayer::OnUpdate(float ts) 
@@ -122,8 +121,7 @@ namespace Nebula
                     memcpy(projLocation, chosenFile.c_str(), chosenFile.size() > 256 ? 256 : chosenFile.size());
                     State = PROJ_READY_OPEN;
 
-                    s_EditorConfig.recentProjectLocations.push_back(chosenFile);
-                    SaveEditorConfig();   
+                    SaveEditorConfig();
                 }
             }
         }
@@ -148,9 +146,6 @@ namespace Nebula
                 memset(projLocation, 0, 256);
                 memcpy(projLocation, chosenFile.c_str(), chosenFile.size() > 256 ? 256 : chosenFile.size());
                 State = PROJ_READY_NEW;
-
-                s_EditorConfig.recentProjectLocations.push_back(chosenFile);
-                SaveEditorConfig();
             }
         }
         openProjButtonWidth = ImGui::GetItemRectSize().x;

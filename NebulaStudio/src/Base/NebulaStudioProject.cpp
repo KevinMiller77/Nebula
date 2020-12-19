@@ -10,7 +10,13 @@ namespace Nebula
             std::string dirToMakeFileIn = std::string(path);
             dirToMakeFileIn = dirToMakeFileIn.substr(0, dirToMakeFileIn.find_last_of("/") + 1);
 
+
             Project proj;
+            
+            int nameSize = path.size() - 4 - dirToMakeFileIn.size();
+            proj.ProjectName = path.substr(dirToMakeFileIn.size(), nameSize);
+            LOG_INF("NAME: %s\n", proj.ProjectName.c_str());
+
             proj.AbsolutePath = path;
             proj.LastFileSystemMount = dirToMakeFileIn;
             proj.loaded = true;

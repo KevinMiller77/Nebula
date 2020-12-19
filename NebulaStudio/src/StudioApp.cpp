@@ -9,7 +9,7 @@
 
 namespace Nebula
 {
-    bool hasWorkingDir = false;
+    bool hasInternalAssetDir = false;
     class Studio : public Application
     {
     public:
@@ -22,11 +22,11 @@ namespace Nebula
             {
                 // First ever use
                 OpenEditorConfig();
-                hasWorkingDir = true;
+                hasInternalAssetDir = true;
             }
             else
             {
-                hasWorkingDir = false;
+                hasInternalAssetDir = false;
             }
 
             createNewProject = CreateRef<bool>();
@@ -57,10 +57,9 @@ namespace Nebula
             RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);
         }
 
-        bool MSAA = false;
         void OnGameImGui() override
         {
-            if (!hasWorkingDir)
+            if (!hasInternalAssetDir)
             {
                 DrawWorkingDirSelection();
             }
@@ -68,7 +67,7 @@ namespace Nebula
 
         bool NewProjectUpdate()
         {
-            if (!hasWorkingDir)
+            if (!hasInternalAssetDir)
             {
                 return false;
             }
@@ -132,6 +131,8 @@ namespace Nebula
 
         int numAvgCounts = 0;
         float avgFps = 0.0f;
+
+        bool MSAA = false;
 
         Ref<BootLayer> bootLayer = nullptr;
         Ref<NebulaStudioLayer> editorLayer = nullptr;

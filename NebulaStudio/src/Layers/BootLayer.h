@@ -40,7 +40,7 @@ namespace Nebula
 
     private:
         bool hasRecents = false;
-        bool hasWorkingDir = true;
+        bool hasInternalAssetDir = true;
 
         BootState State = GREET;
         char projLocation[256];

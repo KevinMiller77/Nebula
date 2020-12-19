@@ -41,6 +41,7 @@ namespace Nebula
 
         void InitProject();
         void ProjectSelection();
+        
         void OpenProject(const std::string& projPath);
         void SaveProject(StudioProject::Project proj);
 

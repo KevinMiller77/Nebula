@@ -19,8 +19,6 @@ namespace Nebula
         FrameBuffer = Framebuffer::Create(fbSpec);
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-        m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-
 
 #if 0
         // Remove!!! THis is a just an an audio test
@@ -200,7 +198,7 @@ namespace Nebula
 
     void NebulaStudioLayer::OnEvent(Event& e)
     {
-        if (PlayStatus == SceneStatus::NOT_STARTED && ViewportFocused && ViewportHovered)
+        if (PlayStatus == SceneStatus::NOT_STARTED && ViewportHovered)
         {
             m_EditorCamera.OnEvent(e);
         }
@@ -321,10 +319,13 @@ namespace Nebula
             if (ImGui::BeginMenu("About"))
             {
                 ImGui::Text("Nebula Studio");
-                ImGui::Text("Ver 0.5");
+                ImGui::Text("Ver 0.6.3");
                 ImGui::Text("");
-                ImGui::Text("Developed by:");
+                ImGui::Text("Main Developer:");
                 ImGui::Text("Kevin Miller");
+                ImGui::Text("");
+                ImGui::Text("Graphic Designer:");
+                ImGui::Text("Evan Hiltik");
 
                 ImGui::EndMenu();
             }
@@ -379,6 +380,7 @@ namespace Nebula
         {
             CurrentProject = StudioProject::CreateProjectFile(projPath);
         }
+        AddRecentProject(CurrentProject.AbsolutePath);
 
         if (VFS::Exists(CurrentProject.LastFileSystemMount, true))
         {
