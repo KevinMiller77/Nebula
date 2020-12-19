@@ -199,6 +199,7 @@ namespace Nebula
                 NEB_PROFILE_SCOPE("RunLoop");
                 float time = (float)glfwGetTime();
                 float ts = time - lastFrameTime;
+                lastFrameTime = time;
 
                 float avg = FPSTick(ts);
                 fpsNumber = avg;

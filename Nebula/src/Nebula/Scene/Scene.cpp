@@ -1,3 +1,4 @@
+
 #include "Scene.h"
 #include <numeric>
 #include <string_view>
@@ -357,7 +358,6 @@ namespace Nebula
 		}
 
 	}
-	
 	void Scene::OnUpdateEditor(float ts, Camera& camera)
     {
 		NEB_PROFILE_FUNCTION();
@@ -373,6 +373,10 @@ namespace Nebula
 				SubmitEntity(toSubmit);
 			}
 		}
+
+		Renderer2D::DrawLine(Vec3f(-5000.0f, 0.0f, 0.0f), Vec3f(5000.0f, 0.0f, 0.0f), Vec4f(1.0f, 0.0f, 0.0f, 0.5f));
+		Renderer2D::DrawLine(Vec3f(0.0f, -5000.0f, 0.0f), Vec3f(0.0f, 5000.0f, 0.0f), Vec4f(0.0f, 1.0f, 0.0f, 0.5f));
+		Renderer2D::DrawLine(Vec3f(0.0f, 0.0f, -5000.0f), Vec3f(0.0f, 0.0f, 5000.0f), Vec4f(0.0f, 0.0f, 1.0f, 0.5f));
 		Renderer2D::EndScene();
     }
 

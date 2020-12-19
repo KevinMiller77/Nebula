@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 3071397075
+  - Entity: 86133791
     TagComponent:
       Tag: Cam
     TransformComponent:
@@ -20,7 +20,7 @@ Entities:
       FixedAspectRatio: false
     RootEntityComponent:
       {}
-  - Entity: 2268752316
+  - Entity: 2996772340
     TagComponent:
       Tag: Blank Entity
     TransformComponent:
@@ -37,6 +37,26 @@ Entities:
       Is TileMap: true
       Tile Pos: [15, 0]
       Tile Size: [2, 2]
+      Tile Resolution: [16, 16]
+    RootEntityComponent:
+      {}
+  - Entity: 1066942004
+    TagComponent:
+      Tag: New E
+    TransformComponent:
+      Translation: [9, 0, 0]
+      Rotation: [1.57079637, 0, 0]
+      Scale: [5000, 5000, 1]
+      Inherit: false
+    SpriteRendererComponent:
+      Color: [1, 0.999989986, 0.999989986, 0.305882365]
+      Has Tex: true
+      Tex Path: assets/textures/grid.png
+      Tex Width: 80000
+      Tex Height: 80000
+      Is TileMap: true
+      Tile Pos: [0, 0]
+      Tile Size: [5000, 5000]
       Tile Resolution: [16, 16]
     RootEntityComponent:
       {}

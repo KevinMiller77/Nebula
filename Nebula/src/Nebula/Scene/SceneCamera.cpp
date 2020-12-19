@@ -45,8 +45,8 @@ namespace Nebula {
 			float AR = HasFixedAspectRatio ? FixedAspectRatio : AspectRatio;
 			float orthoLeft = -OrthographicSize * 0.5f * AR;
 			float orthoRight = OrthographicSize * 0.5f * AR;
-			float orthoBottom = -OrthographicSize * 0.5f;
-			float orthoTop = OrthographicSize * 0.5f;
+			float orthoBottom = OrthographicSize * 0.5f;
+			float orthoTop = -OrthographicSize * 0.5f;
 
 			m_Projection = Mat4f::orthographic(orthoLeft, orthoRight, orthoBottom, orthoTop, OrthographicNear, OrthographicFar);
 		}

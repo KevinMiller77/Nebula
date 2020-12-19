@@ -57,7 +57,7 @@ namespace Nebula {
 
 		Vec2f m_InitialMousePosition = { 0.0f, 0.0f };
 
-		float m_Distance = 5.0f;
+		float m_Distance = 10.0f;
 		float m_Pitch = 0.0f, m_Yaw = 0.0f;
 
 		float m_ViewportWidth = 1280, m_ViewportHeight = 720;

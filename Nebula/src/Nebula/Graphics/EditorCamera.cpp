@@ -20,11 +20,11 @@ namespace Nebula {
 
 	void EditorCamera::UpdateView()
 	{
-		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
+		m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
 		m_Position = CalculatePosition();
 
 		Quat orientation = GetOrientation();
-		m_ViewMatrix =  Mat4f::translation(m_Position) * orientation.AsMat4f();
+		m_ViewMatrix = orientation.AsMat4f() * Mat4f::translation(m_Position);
 		m_ViewMatrix = m_ViewMatrix.invertMatrix();
 	}
 
@@ -101,6 +101,8 @@ namespace Nebula {
 		float yawSign = GetUpDirection().Y < 0 ? -1.0f : 1.0f;
 		m_Yaw += yawSign * delta.X * RotationSpeed();
 		m_Pitch += delta.Y * RotationSpeed();
+
+		// LOG_INF("Yaw: %f\tPitch: %f\n", m_Yaw, m_Pitch);
 	}
 
 	void EditorCamera::MouseZoom(float delta)

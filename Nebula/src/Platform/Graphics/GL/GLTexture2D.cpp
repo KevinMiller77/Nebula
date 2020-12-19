@@ -130,7 +130,7 @@ namespace Nebula
 		Vec2f topL = { (float)(xPosPixels) 				 / w , (yPosPixels + ySizePixels) / h	}; // 0, 0
 		Vec2f topR = { (float)(xPosPixels + xSizePixels) / w , (yPosPixels + ySizePixels) / h 	};  // 1 0
 
-		Mat42f out = { topL, topR, botR, botL};
+		Mat42f out = { botL, botR, topR, topL};
 
 		return CreateRef<GLTexture2D>(this, xSizePixels, ySizePixels, out);
 	}

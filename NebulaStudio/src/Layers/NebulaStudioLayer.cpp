@@ -19,6 +19,9 @@ namespace Nebula
         FrameBuffer = Framebuffer::Create(fbSpec);
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
+        m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+
+
 #if 0
         // Remove!!! THis is a just an an audio test
         // It takes FOREVER to load this sound
@@ -64,10 +67,7 @@ namespace Nebula
 
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
-
-            if(ViewportFocused)
-                m_EditorCamera.OnUpdate(ts);
-            
+            m_EditorCamera.OnUpdate(ts);
             ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
         }
         else
@@ -346,6 +346,7 @@ namespace Nebula
 
         Autosave.Start();
         
+        PlayStatus = SceneStatus::NOT_STARTED;
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
         SceneHierarchy.SetContext(ActiveScene);

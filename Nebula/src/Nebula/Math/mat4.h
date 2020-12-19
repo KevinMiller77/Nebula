@@ -39,29 +39,29 @@ namespace Nebula
 
             result.elements[1 + 1 * 4] = 2.0f / (top - bottom);
 
-            result.elements[2 + 2 * 4] = -2.0f / (near - far);
+            result.elements[2 + 2 * 4] = -2.0f / (far - near);
 
-            result.elements[0 + 3 * 4] = -(left + right) / (left - right);
-            result.elements[1 + 3 * 4] = -(bottom + top) / (bottom - top);
-            result.elements[2 + 3 * 4] = -(far + near) / (far - near);
+            result.elements[0 + 3 * 4] = (-1.0f * (left + right)) / (right - left);
+            result.elements[1 + 3 * 4] = (-1.0f * (bottom + top)) / (top - bottom);
+            result.elements[2 + 3 * 4] = (-1.0f * (far + near)) / (far - near);
 
             return result;
         }
         static Mat4 perspective(float fov, float aspectRatio, float near, float far)
         {
-            Mat4<float> result(1.0f);
+            Mat4<float> result(0.0f);
 
             float q = (float) (1.0f / tan(0.5f * fov * (3.14123f / 180.0f)));
             float a = (float) (q / aspectRatio);
 
-            float b = -1.0f * ((near + far) / (far - near));
+            float b = (-1.0f * far) / (far - near);
             float c = (-2.0f * near * far) / (far - near);
 
             result.elements[0 + 0 * 4] = a;
             result.elements[1 + 1 * 4] = q;
             result.elements[2 + 2 * 4] = b;
-            result.elements[3 + 2 * 4] = c;
-            result.elements[2 + 3 * 4] = -1.0f;
+            result.elements[3 + 2 * 4] = -1.0f;
+            result.elements[2 + 3 * 4] = c;
 
             return result;
         }
