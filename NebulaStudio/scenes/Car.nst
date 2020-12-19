@@ -2,22 +2,22 @@ Scene: Untitled
 Entities:
   - Entity: 86133791
     TagComponent:
-      Tag: Cam
+      Tag: New E
     TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [9, 0, 0]
+      Rotation: [1.57079637, 0, 0]
+      Scale: [5000, 5000, 1]
       Inherit: false
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      FixedAspectRatio: false
+    SpriteRendererComponent:
+      Color: [1, 0.999989986, 0.999989986, 0.305882365]
+      Has Tex: true
+      Tex Path: assets/textures/grid.png
+      Tex Width: 80000
+      Tex Height: 80000
+      Is TileMap: true
+      Tile Pos: [0, 0]
+      Tile Size: [5000, 5000]
+      Tile Resolution: [16, 16]
     RootEntityComponent:
       {}
   - Entity: 2996772340
@@ -42,21 +42,21 @@ Entities:
       {}
   - Entity: 1066942004
     TagComponent:
-      Tag: New E
+      Tag: Cam
     TransformComponent:
-      Translation: [9, 0, 0]
-      Rotation: [1.57079637, 0, 0]
-      Scale: [5000, 5000, 1]
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
       Inherit: false
-    SpriteRendererComponent:
-      Color: [1, 0.999989986, 0.999989986, 0.305882365]
-      Has Tex: true
-      Tex Path: assets/textures/grid.png
-      Tex Width: 80000
-      Tex Height: 80000
-      Is TileMap: true
-      Tile Pos: [0, 0]
-      Tile Size: [5000, 5000]
-      Tile Resolution: [16, 16]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      FixedAspectRatio: false
     RootEntityComponent:
       {}

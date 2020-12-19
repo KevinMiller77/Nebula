@@ -80,6 +80,8 @@ namespace Nebula
 				pec.children.clear();
 			}
 			Registry.destroy(entity);
+
+			EvaluateChildren();
 		}
 	}
 
