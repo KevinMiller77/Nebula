@@ -70,6 +70,7 @@ namespace Nebula
         {
             return in.Normalize();
         }
+
         void operator+=(const Vec3& other)  { add(other); }
         void operator-=(const Vec3& other)  { subtract(other); }
         void operator*=(const Vec3& other)  { multiply(other); }

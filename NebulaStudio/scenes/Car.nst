@@ -1,0 +1,42 @@
+Scene: Untitled
+Entities:
+  - Entity: 3071397075
+    TagComponent:
+      Tag: Cam
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Inherit: false
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      FixedAspectRatio: false
+    RootEntityComponent:
+      {}
+  - Entity: 2268752316
+    TagComponent:
+      Tag: Blank Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Inherit: false
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Has Tex: true
+      Tex Path: assets/textures/tilemap_packed.png
+      Tex Width: 32
+      Tex Height: 32
+      Is TileMap: true
+      Tile Pos: [15, 0]
+      Tile Size: [2, 2]
+      Tile Resolution: [16, 16]
+    RootEntityComponent:
+      {}

@@ -67,7 +67,7 @@ namespace Nebula
 
 
 		rotation.Y = asin(-Row[0][2]);
-		if (cos(rotation.Y) != 0) {
+		if (cosf(rotation.Y) != 0) {
 			rotation.X = atan2(Row[1][2], Row[2][2]);
 			rotation.Z = atan2(Row[0][1], Row[0][0]);
 		}

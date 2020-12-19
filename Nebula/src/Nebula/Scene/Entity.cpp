@@ -10,6 +10,8 @@ namespace Nebula
 
 	bool Entity::IsValid()
 	{
+		if (!ParentScene) return false;
+
 		return ParentScene->Registry.valid(EntityHandle);
 	}
 

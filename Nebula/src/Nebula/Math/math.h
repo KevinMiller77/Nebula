@@ -6,3 +6,5 @@
 #include "Vec4.h"
 #include "Mat3.h"
 #include "Mat4.h"
+
+#include "Quat.h"

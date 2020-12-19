@@ -157,7 +157,7 @@ namespace Nebula
 		s_Data.TextureSlotIndex = 1;
 	}
 
-	void Renderer2D::BeginScene(Mat4f& viewProj)
+	void Renderer2D::BeginScene(Mat4f viewProj)
 	{
 		ResetStats();
         

@@ -140,7 +140,29 @@ namespace Nebula
 		Renderer2D::EndScene();
 	}
 
+///
+	void Scene::Render(Mat4f viewProj)
+	{
+		NEB_PROFILE_FUNCTION();
+		
+		Renderer2D::BeginScene(viewProj);
 
+//	Using RenderWide to make sure children render properly
+#if 1
+		auto view = Registry.view<RootEntityComponent>();
+		if (!view.empty())
+		{
+			for (auto entity : view)
+			{
+				Entity toSubmit { entity, this };
+				SubmitEntity(toSubmit);
+			}
+		}
+#else
+		RenderWide(transform);
+#endif
+		Renderer2D::EndScene();
+	}
 
 	void Scene::SubmitEntity(Entity entity, const Mat4f& modelMat)
 	{
@@ -335,11 +357,23 @@ namespace Nebula
 		}
 
 	}
-
-	//TODO: Remove, the scene should only really use camera inside of it, not given an external one
+	
 	void Scene::OnUpdateEditor(float ts, Camera& camera)
     {
-		Render(camera, camera.GetViewProjection());
+		NEB_PROFILE_FUNCTION();
+		Mat4f vp = camera.GetViewProjection();
+		Renderer2D::BeginScene(vp);
+		
+		auto view = Registry.view<RootEntityComponent>();
+		if (!view.empty())
+		{
+			for (auto entity : view)
+			{
+				Entity toSubmit { entity, this };
+				SubmitEntity(toSubmit);
+			}
+		}
+		Renderer2D::EndScene();
     }
 
     void Scene::OnViewportResize(uint32_t width, uint32_t height)

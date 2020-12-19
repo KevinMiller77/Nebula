@@ -19,9 +19,9 @@ namespace Nebula
         RendererConfig::SetViewport(0, 0, w, h);
 	}
 
-    void Renderer::BeginScene(Camera camera)
+    void Renderer::BeginScene(Ref<Camera> camera)
 	{
-        SceneData->ViewProjMatrix = camera.GetViewProjection();
+        SceneData->ViewProjMatrix = camera->GetViewProjection();
 	}
 
     void Renderer::EndScene()

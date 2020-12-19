@@ -38,7 +38,7 @@ namespace Nebula {
 	{
 		if (CamProjectionType == ProjectionType::Perspective)
 		{
-			ViewProjectionMatrix = Mat4f::perspective(PerspectiveFOV, HasFixedAspectRatio ? FixedAspectRatio : AspectRatio, PerspectiveNear, PerspectiveFar);
+			m_Projection = Mat4f::perspective(PerspectiveFOV, HasFixedAspectRatio ? FixedAspectRatio : AspectRatio, PerspectiveNear, PerspectiveFar);
 		}
 		else
 		{
@@ -48,7 +48,7 @@ namespace Nebula {
 			float orthoBottom = -OrthographicSize * 0.5f;
 			float orthoTop = OrthographicSize * 0.5f;
 
-			ViewProjectionMatrix = Mat4f::orthographic(orthoLeft, orthoRight, orthoBottom, orthoTop, OrthographicNear, OrthographicFar);
+			m_Projection = Mat4f::orthographic(orthoLeft, orthoRight, orthoBottom, orthoTop, OrthographicNear, OrthographicFar);
 		}
 		
 	}

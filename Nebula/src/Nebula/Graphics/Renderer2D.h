@@ -82,10 +82,9 @@ namespace Nebula
 	public:
 		static void Init();
 		static void Shutdown();
-
 		static void BeginScene(OrthographicCamera& camera);
 		static void BeginScene(Camera& camera, const Mat4f transform);
-		static void BeginScene(Mat4f& viewProj);
+		static void BeginScene(Mat4f viewProj);
 		static void EndScene();
 		static void Flush();
 

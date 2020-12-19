@@ -21,7 +21,7 @@ namespace Nebula
         static void OnWindowResize(uint32 w, uint32 h);
         static void ReloadShaders();
 
-        static void BeginScene(Camera camera);
+        static void BeginScene(Ref<Camera> camera);
         static void EndScene();
 
         static void Submit(Ref<Shader> shader, Ref<VertexArray> vertexArray, const Mat4f transform = Mat4f(1.0f));

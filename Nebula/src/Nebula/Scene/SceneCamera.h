@@ -11,13 +11,16 @@ namespace Nebula {
 		enum class ProjectionType { Perspective = 0, Orthographic = 1 };
 	public:
 		SceneCamera();
-		SceneCamera(float aspectRatio) { AspectRatio = aspectRatio; }
+		SceneCamera(float aspectRatio) : Camera() { AspectRatio = aspectRatio; }
 		virtual ~SceneCamera() = default;
 
 		void SetOrthographic(float size, float nearClip, float farClip);
 		void SetPerspective(float verticalFOV, float nearClip, float farClip);
 
 		void SetViewportSize(unsigned int width, unsigned int height);
+		
+        virtual const Mat4f& GetViewMatrix() const override { return ViewMatrix; };
+        virtual const Mat4f GetViewProjection() const override { return ViewMatrix * m_Projection; }
 
 		float GetPerspectiveVerticalFOV() const { return PerspectiveFOV; }
 		void SetPerspectiveVerticalFOV(float verticalFov) { PerspectiveFOV = verticalFov; RecalculateProjection(); }
@@ -47,6 +50,8 @@ namespace Nebula {
 		void RecalculateProjection();
 	private:
 		ProjectionType CamProjectionType = ProjectionType::Orthographic;
+
+		Mat4f ViewMatrix = Mat4f(1.0f);
 
 		//Degrees
 		float PerspectiveFOV = 75.0f;

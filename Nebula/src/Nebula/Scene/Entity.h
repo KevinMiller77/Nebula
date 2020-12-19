@@ -29,20 +29,12 @@ namespace Nebula
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
-			if(HasComponent<T>())
-            {
-            	// LOG_ERR("Entity already has component!");
-            }
 			return ParentScene->Registry.emplace<T>(EntityHandle, std::forward<Args>(args)...);
 		}
 
 		template<typename T>
 		T& GetComponent()
 		{
-			if(!HasComponent<T>())
-            {
-            //  LOG_ERR("Entity does not have component for grabbing!");
-            }
 			return ParentScene->Registry.get<T>(EntityHandle);
 		}
 
@@ -59,10 +51,6 @@ namespace Nebula
 		template<typename T>
 		void RemoveComponent()
 		{
-			if(!HasComponent<T>())
-            {
-            //  LOG_ERR("Entity does not have component for removal!");
-            }
 			ParentScene->Registry.remove<T>(EntityHandle);
 		}
 		

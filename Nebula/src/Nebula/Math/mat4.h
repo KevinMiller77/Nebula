@@ -54,14 +54,14 @@ namespace Nebula
             float q = (float) (1.0f / tan(0.5f * fov * (3.14123f / 180.0f)));
             float a = (float) (q / aspectRatio);
 
-            float b = (near + far) / (near - far);
-            float c = (2.0f * near * far) / (near - far);
+            float b = -1.0f * ((near + far) / (far - near));
+            float c = (-2.0f * near * far) / (far - near);
 
             result.elements[0 + 0 * 4] = a;
             result.elements[1 + 1 * 4] = q;
             result.elements[2 + 2 * 4] = b;
-            result.elements[3 + 2 * 4] = -1.0f;
-            result.elements[2 + 3 * 4] = c;
+            result.elements[3 + 2 * 4] = c;
+            result.elements[2 + 3 * 4] = -1.0f;
 
             return result;
         }
@@ -81,8 +81,8 @@ namespace Nebula
             Mat4<float> result(1.0f);
 
             float r = angle;
-            float c = (float) (cos(r));
-            float s = (float) (sin(r));
+            float c = (float) (cosf(r));
+            float s = (float) (sinf(r));
             float omc = 1.0f - c;
             
             float x = axis.X;

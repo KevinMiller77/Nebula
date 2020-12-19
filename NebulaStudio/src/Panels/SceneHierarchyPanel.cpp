@@ -20,19 +20,19 @@ namespace Nebula {
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		Context->Registry.each([&](auto entityID)
+		auto view = Context->Registry.view<RootEntityComponent>();
+
+		for (auto entityHandle : view)
 		{
-			Entity entity{ entityID , Context.get() };
-			if (entity.HasComponent<RootEntityComponent>())
+			Entity e = { entityHandle, Context.get() };
+
+			ImGui::PushID(e.GetComponent<TagComponent>().UUID);
+			if(DrawEntityNode(e))
 			{
-				ImGui::PushID(entity.GetComponent<TagComponent>().UUID);
-				if(DrawEntityNode(entity))
-				{
-					RemoveSelection();
-				}
-				ImGui::PopID();
+				RemoveSelection();
 			}
-		});
+			ImGui::PopID();
+		}
 
 		if (ImGui::BeginPopupContextWindow("##entity_context_add", 1, false))
 		{

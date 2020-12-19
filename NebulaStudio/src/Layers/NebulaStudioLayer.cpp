@@ -17,6 +17,7 @@ namespace Nebula
         fbSpec.Height = 900;
         fbSpec.Samples = 1;
         FrameBuffer = Framebuffer::Create(fbSpec);
+        m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
 #if 0
         // Remove!!! THis is a just an an audio test
@@ -54,7 +55,7 @@ namespace Nebula
         {
             FrameBuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
-            EditorCamera.OnResize(ViewportSize.X, ViewportSize.Y);
+            m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
         RendererConfig::Clear();
@@ -63,9 +64,11 @@ namespace Nebula
 
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
-            ActiveScene->OnUpdateEditor(ts, *EditorCamera.GetCamera());
-            if(ViewportFocused && ViewportHovered)
-                EditorCamera.OnUpdate(ts);
+
+            if(ViewportFocused)
+                m_EditorCamera.OnUpdate(ts);
+            
+            ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
         }
         else
         {
@@ -199,7 +202,7 @@ namespace Nebula
     {
         if (PlayStatus == SceneStatus::NOT_STARTED && ViewportFocused && ViewportHovered)
         {
-            EditorCamera.OnEvent(e);
+            m_EditorCamera.OnEvent(e);
         }
 
         EventDispatcher Dispatch(e);
@@ -343,8 +346,7 @@ namespace Nebula
 
         Autosave.Start();
         
-        PlayStatus = SceneStatus::NOT_STARTED;
-        EditorCamera = OrthographicCameraController(ViewportSize.X / ViewportSize.X);
+        m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
         SceneHierarchy.SetContext(ActiveScene);
     }

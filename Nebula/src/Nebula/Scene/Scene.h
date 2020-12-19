@@ -40,6 +40,7 @@ namespace Nebula
 
         virtual void Render(entt::entity mainCamera = entt::null);
         virtual void Render(Camera& camera, Mat4f transform);
+        virtual void Render(Mat4f viewProj);
         
         virtual void SubmitEntity(Entity entity, const Mat4f& modelMat = Mat4f(1.0f));
 

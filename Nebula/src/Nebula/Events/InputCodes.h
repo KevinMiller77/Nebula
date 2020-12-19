@@ -16,7 +16,7 @@ namespace Nebula
 		ButtonLast             = Button7,
 		ButtonLeft             = Button0,
 		ButtonRight            = Button1,
-		ButtonMiddle           = Button4
+		ButtonMiddle           = Button2
 	};
 
 	enum class KeyCode

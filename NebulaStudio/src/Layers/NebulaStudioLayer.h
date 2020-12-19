@@ -17,7 +17,7 @@ namespace Nebula
     public:
 
         NebulaStudioLayer(std::string startProjectFile, Ref<bool> needNewProject)
-            : EditorCamera(OrthographicCameraController(ViewportSize.X / ViewportSize.Y)), ProjFileInput(startProjectFile), App_SelectNewProject(needNewProject)
+            : m_EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f), ProjFileInput(startProjectFile), App_SelectNewProject(needNewProject)
         {
         }
 
@@ -67,9 +67,8 @@ namespace Nebula
         Ref<Framebuffer> FrameBuffer;
         bool ViewportFocused = false, ViewportHovered = false;
         Vec2f ViewportSize = {1600.0f, 900.0f};
-
-        OrthographicCameraController EditorCamera;
-
+        EditorCamera m_EditorCamera;
+        
     private:
 		Timer Autosave = Timer();
         std::string ProjFileInput = std::string();

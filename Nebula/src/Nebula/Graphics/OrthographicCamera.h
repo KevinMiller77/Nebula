@@ -19,12 +19,11 @@ namespace Nebula {
 		float GetRotation() const { return Rot; }
 		void SetRotation(float rotation) { Rot = rotation; RecalculateViewMatrix(); }
 
-		const Mat4f& GetProjectionMatrix() const { return ProjectionMatrix; }
-		const Mat4f& GetViewMatrix() const { return ViewMatrix; }
+		const Mat4f& GetViewMatrix() const override { return ViewMatrix; }
+		const Mat4f GetViewProjection() const override { return GetProjection() * ViewMatrix; }
 	private:
 		void RecalculateViewMatrix();
 	private:
-		Mat4f ProjectionMatrix;
 		Mat4f ViewMatrix;
 
 		Vec3f Pos = { 0.0f, 0.0f, 0.0f };

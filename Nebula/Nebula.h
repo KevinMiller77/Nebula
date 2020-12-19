@@ -33,6 +33,7 @@
 #include <Graphics/Renderer.h>
 #include <Graphics/Renderer2D.h>
 #include <Graphics/Camera.h>
+#include <Graphics/EditorCamera.h>
 #include <Graphics/OrthographicCamera.h>
 #include <Graphics/OrthographicCameraController.h>
 #include <Graphics/Framebuffer.h>
