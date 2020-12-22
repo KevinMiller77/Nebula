@@ -41,7 +41,7 @@ namespace Nebula {
 
 	float EditorCamera::RotationSpeed() const
 	{
-		return 0.8f;
+		return 0.6f;
 	}
 
 	float EditorCamera::ZoomSpeed() const

@@ -19,9 +19,16 @@ namespace Nebula
 
 	struct TransformComponent
 	{
+		// Anything can be either a quad or line
+		// Quad info
 		Vec3f Translation 	= {	0.0f, 0.0f, 0.0f };
 		Vec3f Rotation		= { 0.0f, 0.0f, 0.0f };
 		Vec3f Scale			= { 1.0f, 1.0f, 1.0f };
+
+		// Line info
+		Vec2<Vec3f> LineCoords = { {0.0f, 0.0f, 0.0f }, {0.0f, 0.0f, 0.0f }};
+
+
 		bool InheritScale = false;
 
 		TransformComponent() = default;
@@ -43,11 +50,29 @@ namespace Nebula
 
 	struct SpriteRendererComponent
 	{
+
+		// Render type is really only here in order to draw lines internally
+		// TODO: Expose this in the ui
+		enum class RenderType
+		{
+			NONE,
+			LINE,
+			QUAD,
+			SOMETHING_MORE_IDK_IS_THIS_ALL_THERE_IS_TO_LIFE
+		};
+		
+
+		// Remove in favor of make type NONE
+		bool hidden = false;
+		RenderType Type = RenderType::QUAD;
+		
 		Vec4f Color { 1.0f, 1.0f, 1.0f, 1.0f };
         Ref<Texture2D> Texture = nullptr;
-        float TilingFactor = 1.0f;
-		bool IsTileMap = false;
 
+        float TilingFactor = 1.0f;
+
+		// Tilemap entrance info
+		bool IsTileMap = false;
 		Ref<TileMap> ParentTileMap = nullptr;
 		Vec2i TilePos = {0, 0};
 		Vec2i TileSize = {1, 1};
@@ -108,10 +133,9 @@ namespace Nebula
 
 	struct RootEntityComponent
 	{
-		std::string placeholder = std::string();
+		bool VisibleOutsideRenderer = true;
 		
 		RootEntityComponent() = default;
 		RootEntityComponent(const RootEntityComponent&) = default;
 	};
-
 }

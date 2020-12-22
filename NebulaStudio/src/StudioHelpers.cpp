@@ -202,4 +202,10 @@ namespace Nebula
         ImGui::PopStyleVar(2);
         ImGui::End();
     }
+
+    
+    ImVec2 NebToImVec(Vec2f in)
+    {
+        return {in.X, in.Y};
+    }
 }

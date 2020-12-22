@@ -98,7 +98,7 @@ namespace Nebula
             LOG_INF("Filesystem wasnt mounted during exists check!!\n");
             return false;
         }
-        //TODO: Check that the path string is valid
+        
         bool result = std::filesystem::exists(absolutePath ? path : AbsoluteRoot + path);
         return result;
     }

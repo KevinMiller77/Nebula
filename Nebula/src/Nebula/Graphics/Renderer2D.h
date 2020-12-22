@@ -45,6 +45,7 @@ namespace Nebula
 		static const uint32_t MaxLineIndices = MaxLines * 6;
 
 		// TODO: Check actual number on machine
+		// Should I though? It will always be >=32 
 		static const uint32_t MaxTextureSlots = 32; 
 
 		Mat4f viewProj;

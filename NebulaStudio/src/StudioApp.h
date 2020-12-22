@@ -45,4 +45,6 @@ namespace Nebula
     extern Ref<Texture2D> Tex_Cancel;
     extern Ref<Texture2D> Tex_Continue;
 
+    ImVec2 NebToImVec(Vec2f in);
+
 }

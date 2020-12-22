@@ -169,23 +169,47 @@ namespace Nebula
 
 	void Scene::SubmitEntity(Entity entity, const Mat4f& modelMat)
 	{
+		auto tag = entity.GetComponent<TagComponent>();
 		auto transform = entity.GetComponent<TransformComponent>();
 
-		if (entity.HasComponent<SpriteRendererComponent>())
+		bool hasSRC = entity.HasComponent<SpriteRendererComponent>(); 
+
+		// If there is no src, it can't be hidden. If there is, isHidden - entity.src.hidden 
+		bool isHidden = hasSRC ? entity.GetComponent<SpriteRendererComponent>().hidden : false;
+		if (hasSRC)
 		{
 			auto sprite = entity.GetComponent<SpriteRendererComponent>();
-			Mat4f transformMat = transform.GetTransformation() * modelMat;
-			if (sprite.Texture)
+			if (!isHidden)
 			{
-				Renderer2D::DrawQuad(transformMat, sprite.Texture, sprite.TilingFactor, sprite.Color);
-			}
-			else
-			{
-				Renderer2D::DrawQuad(transformMat, sprite.Color);
+				Mat4f transformMat = transform.GetTransformation() * modelMat;
+				switch(sprite.Type)
+				{
+					case(SpriteRendererComponent::RenderType::QUAD):
+					{
+						if (sprite.Texture)
+						{
+							Renderer2D::DrawQuad(transformMat, sprite.Texture, sprite.TilingFactor, sprite.Color);
+						}
+						else
+						{
+							Renderer2D::DrawQuad(transformMat, sprite.Color);
+						}
+						break;
+					}
+					case(SpriteRendererComponent::RenderType::LINE):
+					{
+						Renderer2D::DrawLine(transform.LineCoords[0], transform.LineCoords[1], sprite.Color);
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
 			}
 		}
 
-		if (entity.HasComponent<ParentEntityComponent>())
+		if (entity.HasComponent<ParentEntityComponent>() && !isHidden)
 		{
 			Mat4f newModel = transform.GetTransformation() * modelMat;
 
@@ -376,9 +400,6 @@ namespace Nebula
 			}
 		}
 
-		Renderer2D::DrawLine(Vec3f(-5000.0f, 0.0f, 0.0f), Vec3f(5000.0f, 0.0f, 0.0f), Vec4f(1.0f, 0.0f, 0.0f, 0.5f));
-		Renderer2D::DrawLine(Vec3f(0.0f, -5000.0f, 0.0f), Vec3f(0.0f, 5000.0f, 0.0f), Vec4f(0.0f, 1.0f, 0.0f, 0.5f));
-		Renderer2D::DrawLine(Vec3f(0.0f, 0.0f, -5000.0f), Vec3f(0.0f, 0.0f, 5000.0f), Vec4f(0.0f, 0.0f, 1.0f, 0.5f));
 		Renderer2D::EndScene();
     }
 

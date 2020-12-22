@@ -50,8 +50,10 @@ namespace Nebula
             std::deque<Mat4f> t = std::deque<Mat4f>();
         };
 
+        // TODO: Remove
         virtual void RenderWide(Mat4f transform);
         virtual WideRenderLayer SubmitEntityWide(Entity entity, const Mat4f& modelMat = Mat4f(1.0f));
+        //
 
         virtual void OnStop();
         virtual void OnViewportResize(uint32_t width, uint32_t height);

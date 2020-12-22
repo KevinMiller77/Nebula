@@ -1,6 +1,5 @@
 #pragma once
 
-//TODO (Kevin): Add support for more platforms at their native level
 //Pass all things into the event from the platform. 
 //Reference all things according to the generic key names 
 //Ex. KEY_D0

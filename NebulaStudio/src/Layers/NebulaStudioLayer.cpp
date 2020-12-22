@@ -37,9 +37,9 @@ namespace Nebula
     float tsls = 0.0f;
     void NebulaStudioLayer::OnUpdate(float ts)
     {
-        if (ClipboardFull && !Clipboard.IsValid())
+        if (IsClipboardFull() && !Clipboard.IsValid())
         {
-            ClipboardFull = false;
+            ClipboardStatus = EMPTY;
             Clipboard = Entity();
         }
 
@@ -174,6 +174,7 @@ namespace Nebula
         ImGui::Separator();
         ImGui::Text("Draw Calls     : %d", stats.DrawCalls);    
         ImGui::Text("Quad Count     : %d", stats.QuadCount);    
+        ImGui::Text("Line Count     : %d", stats.LineCount);
         ImGui::Text("Vertex Count   : %d ", stats.GetTotalVertexCount());    
         ImGui::Text("Index Count    : %d", stats.GetTotalIndexCount());
 
@@ -222,7 +223,8 @@ namespace Nebula
             SceneHierarchy.RemoveSelection();
         }
 
-        if (ctrl)
+        // CTRL only
+        if (ctrl && !shift)
         {
             switch ((KeyCode)e.GetKeyCode())
             {
@@ -247,11 +249,73 @@ namespace Nebula
                     CopyEntity();
                     break;
                 }
+                case(KeyCode::X):
+                {
+                    CutEntity();
+                    break;
+                }
                 case(KeyCode::V):
                 {
                     PasteEntity();
+                    break;
                 }
 
+                default:
+                    break;
+            }
+        }
+        // SHIFT only
+        else if (!ctrl && shift)
+        {
+            switch((KeyCode)e.GetKeyCode())
+            {
+                case(KeyCode::H):
+                {
+                    Entity sel = SceneHierarchy.GetSelection(); 
+                    if(sel.IsValid())
+                    {
+                        if (sel.HasComponent<SpriteRendererComponent>())
+                        {
+                            auto& src = sel.GetComponent<SpriteRendererComponent>();
+                            src.hidden = !src.hidden;
+                        }
+                    }
+                    break;
+                }
+
+                default:
+                    break;
+            }
+        }
+        // Both CTRL and SHIFT
+        else if (ctrl && shift)
+        {
+            switch ((KeyCode)e.GetKeyCode())
+            {
+                case(KeyCode::A):
+                {
+                    // TODO: Toggle Axis color
+                    // ToggleAxis();
+                    break;
+                }
+                case(KeyCode::G):
+                {
+                    // TODO: Toggle Grid 
+                    // Also make the grid out of lines not sprites
+                    // Also Also, make sure the grid changes with the distance of the editor camera focal point
+                    ToggleGrid();
+                    break;
+                }
+
+                default:
+                    break;
+            }
+        }
+        // Simple key press
+        else
+        {
+            switch ((KeyCode)e.GetKeyCode())
+            {
                 default:
                     break;
             }
@@ -316,6 +380,59 @@ namespace Nebula
                 }
                 ImGui::EndMenu();
             }
+            if (ImGui::BeginMenu("Edit"))
+            {
+                bool haveSelection = GetSelectionFromSHP().IsValid(); 
+                if (!haveSelection)
+                {
+                    ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+                }
+
+                if (ImGui::MenuItem("Copy Entity", "Ctrl+C"))
+                {
+                    CopyEntity();
+                }
+                if (ImGui::MenuItem("Cut Entity", "Ctrl+X"))
+                {
+                    CutEntity();   
+                }
+
+                if(!haveSelection)
+                {
+                    ImGui::PopItemFlag();
+                    ImGui::PopStyleVar();
+                }
+
+                if (ClipboardStatus == EMPTY)
+                {
+                    ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+                }
+
+                if (ImGui::MenuItem("Paste Entity", "Ctrl+V"))
+                {
+                    PasteEntity();
+                }
+                
+                if (ClipboardStatus == EMPTY)
+                {
+                    ImGui::PopItemFlag();
+                    ImGui::PopStyleVar();
+                }
+                
+                ImGui::Separator();
+                if (ImGui::MenuItem("Delete Entity", "Del"))
+                {
+                    DeleteEntity();
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("View"))
+            {
+
+                ImGui::EndMenu();
+            }
             if (ImGui::BeginMenu("About"))
             {
                 ImGui::Text("Nebula Studio");
@@ -349,6 +466,8 @@ namespace Nebula
         
         PlayStatus = SceneStatus::NOT_STARTED;
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+
+        SetupAxisGrid();
 
         SceneHierarchy.SetContext(ActiveScene);
     }
@@ -414,10 +533,11 @@ namespace Nebula
         ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
         SceneHierarchy.SetContext(ActiveScene);
 
+
         LOG_INF("New scene created.\n");
         SceneHierarchy.ClearSelection();
 
-        VFS::Unmount();
+        SetupAxisGrid();
     }
     
     void NebulaStudioLayer::SaveScene()
@@ -489,6 +609,8 @@ namespace Nebula
 
             CurrentProject.LastSceneOpened = relPath;
 
+            SetupAxisGrid();
+
             LOG_INF("Opened scene!\n");
             return;
         }
@@ -496,28 +618,41 @@ namespace Nebula
         SceneHierarchy.ClearSelection();
     }
 
-    
-    void NebulaStudioLayer::CopyEntity()
+    Entity NebulaStudioLayer::GetSelectionFromSHP()
     {
         if (!SceneHierarchy.HasSelection())
         {
-            LOG_ERR("Could not copy, no selection\n");
-            return;
+            // LOG_ERR("Could not get selection from SHP, no selection\n");
+            return {entt::null, nullptr};
         }
         else if (!SceneHierarchy.GetSelection().IsValid())
         {
-            LOG_ERR("Could not copy, invalid selection\n");
+            // LOG_ERR("Could not get selection from SHP, invalid selection\n");
+            return {entt::null, nullptr};
+        }
+
+        return SceneHierarchy.GetSelection();
+    }
+
+    
+    void NebulaStudioLayer::CopyEntity(bool cut)
+    {
+        Entity e = GetSelectionFromSHP();
+        if (!e.IsValid())
+        {
+            LOG_INF("Copy failed.\n");
             return;
         }
 
-        Clipboard = SceneHierarchy.GetSelection();
-        ClipboardFull = true;
+        Clipboard = e;
+        ClipboardStatus = cut ? CUT : COPY;
+
         LOG_INF("Copied entity: (%d) %s\n", Clipboard.GetID(), Clipboard.GetComponent<TagComponent>().Tag.c_str());
     }
 
     void NebulaStudioLayer::PasteEntity()
     {
-        if (!ClipboardFull)
+        if (!IsClipboardFull())
         {
             LOG_WRN("Could not paste entity. Reason: Nothing to paste!\n");
             return;
@@ -582,7 +717,81 @@ namespace Nebula
             rootNew = RootEntityComponent(root);
         }
 
+        if (ClipboardStatus == CUT)
+        {
+            ActiveScene->RemoveEntity(Clipboard);
+            ClipboardStatus == EMPTY;
+        }
+
         LOG_INF("Entity pasted to active scene\n");
     }
 
+    void NebulaStudioLayer::DeleteEntity()
+    {
+        SceneHierarchy.RemoveSelection();
+    }
+
+    void NebulaStudioLayer::SetupAxisGrid()
+    {
+        if (!ActiveScene)
+            return;
+        
+        AxisGrid = ActiveScene->CreateEntity("Axis Grid Base");
+
+        auto& src = AxisGrid.AddComponent<SpriteRendererComponent>();
+        src.Type = SpriteRendererComponent::RenderType::NONE;
+
+        // Ensure the SHP will never see this entity (or it's children)
+        auto& root = AxisGrid.AddComponent<RootEntityComponent>();
+        root.VisibleOutsideRenderer = false;
+
+        auto& parent = AxisGrid.AddComponent<ParentEntityComponent>();
+
+
+        AxisGridX = ActiveScene->CreateEntity("Axis Grid X");
+        // Get tranform comps
+        auto& xTC = AxisGridX.GetComponent<TransformComponent>();
+        xTC.LineCoords = { {-5000.0f, 0.0f, 0.0f }, {5000.0f, 0.0f, 0.0f } };
+
+        // Make the sprite render comps
+        auto& xSRC = AxisGridX.AddComponent<SpriteRendererComponent>();
+        xSRC.Color = {0.5f, 0.0f, 0.0f, 0.75f};
+        xSRC.Type = SpriteRendererComponent::RenderType::LINE;
+
+        parent.children.push_back(AxisGridX);
+
+
+        AxisGridY = ActiveScene->CreateEntity("Axis Grid Y");
+
+        auto& yTC = AxisGridY.GetComponent<TransformComponent>();
+        yTC.LineCoords = { {0.0f, -5000.0f, 0.0f }, {0.0f, 5000.0f, 0.0f } };
+
+        auto& ySRC = AxisGridY.AddComponent<SpriteRendererComponent>();
+        ySRC.Type = SpriteRendererComponent::RenderType::LINE;
+        ySRC.Color = {0.0f, 0.5f, 0.0f, 0.75f};
+
+        parent.children.push_back(AxisGridY);
+        
+
+        AxisGridZ = ActiveScene->CreateEntity("Axis Grid Z");
+
+        auto& zTC = AxisGridZ.GetComponent<TransformComponent>();
+        zTC.LineCoords = { {0.0f, 0.0f, -5000.0f }, {0.0f, 0.0f, 5000.0f } };
+
+        auto& zSRC = AxisGridZ.AddComponent<SpriteRendererComponent>();
+        zSRC.Type = SpriteRendererComponent::RenderType::LINE;
+        zSRC.Color = {0.0f, 0.0f, 0.5f, 0.75f};
+
+        parent.children.push_back(AxisGridZ);
+    }
+
+    void NebulaStudioLayer::ToggleGrid()
+    {
+        if (AxisGrid.IsValid())
+        {
+            auto& src = AxisGrid.GetComponent<SpriteRendererComponent>();
+            src.hidden = !src.hidden;
+            LOG_INF("Toggled axis grid\n");
+        }
+    }
 }

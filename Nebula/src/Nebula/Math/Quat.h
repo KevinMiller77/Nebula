@@ -41,82 +41,45 @@ namespace Nebula
             S   = c.X * c.Y * c.Z + s.X * s.Y * s.Z;
             V.X = s.X * c.Y * c.Z - c.X * s.Y * s.Z;
             V.Y = c.X * s.Y * c.Z + s.X * c.Y * s.Z;
-            V.Z = -1.0f * (c.X * c.Y * s.Z - s.X * s.Y * c.Z);
-
-            // Vec3f vx = { 1, 0, 0}, vy = { 0, 1, 0 }, vz = { 0, 0, 1 };
-            // Quat qx(vx, n.X);
-            // Quat qy(vy, n.Y);
-            // Quat qz(vz, n.Z);
-
-            // Quat qt = qx * qy * qz;
-
-            // S = qt.S;
-            // V = qt.V;
+            V.Z = c.X * c.Y * s.Z - s.X * s.Y * c.Z;
         }
 
         Mat4f AsMat4f()
         {
 
-            float x = V.X;
-            float y = V.Y;
-            float z = V.Z;
-            float w = S;
+            Mat4f Result(1.0f);
+            float qxx(V.X * S);
+            float qyy(V.Y * V.Y);
+            float qzz(V.Z * V.Z);
+            float qxz(V.X * V.Z);
+            float qxy(V.X * V.Y);
+            float qyz(V.Y * V.Z);
+            float qwx(S * V.X);
+            float qwy(S * V.Y);
+            float qwz(S * V.Z);
 
-            // Mat4f mat(1.0f);
-            // float xx      = x * x;
-            // float xy      = x * y;
-            // float xz      = x * z;
-            // float xw      = x * w;
+            Result[0][0] = 1.0f - 2.0f * (qyy +  qzz);
+            Result[1][0] = 2.0f * (qxy + qwz);
+            Result[2][0] = 2.0f * (qxz - qwy);
+            Result[3][0] = 0.0f;
 
-            // float yy      = y * y;
-            // float yz      = y * z;
-            // float yw      = y * w;
 
-            // float zz      = z * z;
-            // float zw      = z * w;
+            Result[0][1] = 2.0f * (qxy - qwz);
+            Result[1][1] = 1.0f - 2.0f * (qxx +  qzz);
+            Result[2][1] = 2.0f * (qyz + qwx);
+            Result[3][1] = 0.0f;
 
-            // mat[0]  = 1 - 2 * ( yy + zz );
-            // mat[4]  =     2 * ( xy - zw );
-            // mat[8]  =     2 * ( xz + yw );
+            Result[0][2] = 2.0f * (qxz + qwy);
+            Result[1][2] = 2.0f * (qyz - qwx);
+            Result[2][2] = 1.0f - 2.0f * (qxx +  qyy);
+            Result[3][2] = 0.0f;
 
-            // mat[1]  =     2 * ( xy + zw );
-            // mat[5]  = 1 - 2 * ( xx + zz );
-            // mat[9]  =     2 * ( yz - xw );
+            Result[0][3] = 0.0f;
+            Result[1][3] = 0.0f;
+            Result[2][3] = 0.0f;
+            Result[3][3] = 1.0f;
 
-            // mat[2]  =     2 * ( xz - yw );
-            // mat[6]  =     2 * ( yz + xw );
-            // mat[10] = 1 - 2 * ( xx + yy );
-
-            // mat[3]  = mat[7] = mat[11] = mat[12] = mat[13] = mat[14] = 0;
-            // mat[15] = 1;
-
-            Mat4f out(1.0f);
-
-            Vec4f curRow(0.0f);
-            curRow.X = 1.0f - 2.0f * (y * y + z * z);
-            curRow.Y = 2.0f * (x * y - z * w);
-            curRow.Z = 2.0f * (x * z + y * w);
-            curRow.W = 0.0f;
-            out[0] = curRow;
-
-            curRow = Vec4f(0.0f);
-            curRow.X = 2.0f * (x * y + z * w);
-            curRow.Y = 1 - 2.0f * (x * x + z * z);
-            curRow.Z = 2.0f * (y * z - x * w);
-            curRow.W = 0.0f;
-            out[1] = curRow;
-            
-            curRow = Vec4f(0.0f);
-            curRow.X = 2.0f * (x * z - y * w);
-            curRow.Y = 2.0f * (y * z + x * w);
-            curRow.Z = 1.0f - 2.0f * (x * x + y * y);
-            curRow.W = 0.0f;
-            out[2] = curRow;
-
-            curRow = { 0.0f, 0.0f, 0.0f, 1.0f };
-            out[3] = curRow;
-
-            return out;
+            return Result;
         }
 
         Vec3f Rotate(Vec3f v)

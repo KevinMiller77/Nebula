@@ -131,7 +131,7 @@ namespace Nebula
 		out << YAML::BeginMap; // Entity
 
 		auto& tagComp = entity.GetComponent<TagComponent>();
-		out << YAML::Key << "Entity" << YAML::Value << tagComp.UUID; // TODO: Entity ID goes here
+		out << YAML::Key << "Entity" << YAML::Value << tagComp.UUID;
 
 		out << YAML::Key << "TagComponent";
 			out << YAML::BeginMap; // TagComponent
@@ -147,6 +147,8 @@ namespace Nebula
 			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
+			out << YAML::Key << "Line v0" << YAML::Value << tc.LineCoords[0];
+			out << YAML::Key << "Line v1" << YAML::Value << tc.LineCoords[1];
 			out << YAML::Key  << "Inherit" << YAML::Value << tc.InheritScale;
 
 			out << YAML::EndMap; // TransformComponent
@@ -182,7 +184,28 @@ namespace Nebula
 			out << YAML::BeginMap; // SpriteRendererComponent
 
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
+			out << YAML::Key << "Hidden" << YAML::Value << spriteRendererComponent.hidden;
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+			
+			out << YAML::Key << "Type";
+			switch(spriteRendererComponent.Type)
+			{
+				case(SpriteRendererComponent::RenderType::QUAD):
+				{
+					out << YAML::Value << "Quad";
+					break;
+				}
+				case(SpriteRendererComponent::RenderType::LINE):
+				{
+					out << YAML::Value << "Line";
+					break;
+				}
+				default:
+				{
+					out << YAML::Value << "None";
+				}
+			}
+
 			Ref<Texture2D> tex = spriteRendererComponent.Texture;
 
 			out << YAML::Key << "Has Tex" << YAML::Value << (bool)tex;
@@ -208,9 +231,10 @@ namespace Nebula
 		if (entity.HasComponent<RootEntityComponent>())
 		{
 			out << YAML::Key << "RootEntityComponent";
-			out << YAML::BeginMap; // TagComponent
+			out << YAML::Value;
+			out << YAML::BeginMap;
+			out << YAML::Key << "Visible" << YAML::Value << entity.GetComponent<RootEntityComponent>().VisibleOutsideRenderer;
 			out << YAML::EndMap;
-		
 		}
 		
 		if (entity.HasComponent<ParentEntityComponent>())
@@ -249,7 +273,10 @@ namespace Nebula
 
 			if (entity.HasComponent<RootEntityComponent>())
 			{
-				SerializeEntity(out, entity);
+				if (entity.GetComponent<RootEntityComponent>().VisibleOutsideRenderer)
+				{
+					SerializeEntity(out, entity);
+				}
 			}
 		});
 		out << YAML::EndSeq;
@@ -316,6 +343,8 @@ namespace Nebula
 			tc.Translation = transformComponent["Translation"].as<Vec3f>();
 			tc.Rotation = transformComponent["Rotation"].as<Vec3f>();
 			tc.Scale = transformComponent["Scale"].as<Vec3f>();
+			tc.LineCoords[0] = transformComponent["Line v0"].as<Vec3f>();
+			tc.LineCoords[1] = transformComponent["Line v0"].as<Vec3f>();
 			tc.InheritScale = transformComponent["Inherit"].as<bool>();
 		}
 
@@ -344,42 +373,49 @@ namespace Nebula
 		{
 			auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 			src.Color = spriteRendererComponent["Color"].as<Vec4f>();
+			src.hidden = spriteRendererComponent["Hidden"].as<bool>();
+			std::string t = spriteRendererComponent["Type"].as<std::string>();
+			
+			
+			if(t == "Quad")			{ src.Type = SpriteRendererComponent::RenderType::QUAD; }
+			else if(t == "Line") 	{ src.Type = SpriteRendererComponent::RenderType::LINE; }
+			else 					{ src.Type = SpriteRendererComponent::RenderType::NONE; }
+			//
+
+			if (spriteRendererComponent["Has Tex"].as<bool>())
 			{
-				if (spriteRendererComponent["Has Tex"].as<bool>())
+				std::string path = spriteRendererComponent["Tex Path"].as<std::string>();
+				if (path.empty() || !VFS::Exists(path)) 
 				{
-					std::string path = spriteRendererComponent["Tex Path"].as<std::string>();
-					if (path.empty() || !VFS::Exists(path)) 
+					LOG_ERR("While loading entity, the following texture was unable to be loaded ..\n %s\n", path.c_str());
+				}
+				else
+				{
+					src.IsTileMap = spriteRendererComponent["Is TileMap"].as<bool>();
+					if (spriteRendererComponent["Is TileMap"].as<bool>())
 					{
-						LOG_ERR("While loading entity, the following texture was unable to be loaded ..\n %s\n", path.c_str());
+						Ref<TileMap> tm;
+						if (deserializeTileMaps.find(path) != deserializeTileMaps.end())
+						{
+							tm = deserializeTileMaps[path];
+						}	
+						else
+						{
+							Vec2i res = spriteRendererComponent["Tile Resolution"].as<Vec2i>();
+							tm = CreateRef<TileMap>(VFS::AbsolutePath(path), res.X, res.Y);
+							deserializeTileMaps[path] = tm;
+						}
+						src.TilePos = spriteRendererComponent["Tile Pos"].as<Vec2i>();
+						src.TileSize = spriteRendererComponent["Tile Size"].as<Vec2i>();
+						src.ParentTileMap = tm;
+
+						src.Texture = tm->GetTileAt(src.TilePos.X, src.TilePos.Y, src.TileSize.X, src.TileSize.Y);
 					}
 					else
 					{
-						src.IsTileMap = spriteRendererComponent["Is TileMap"].as<bool>();
-						if (spriteRendererComponent["Is TileMap"].as<bool>())
-						{
-							Ref<TileMap> tm;
-							if (deserializeTileMaps.find(path) != deserializeTileMaps.end())
-							{
-								tm = deserializeTileMaps[path];
-							}	
-							else
-							{
-								Vec2i res = spriteRendererComponent["Tile Resolution"].as<Vec2i>();
-								tm = CreateRef<TileMap>(VFS::AbsolutePath(path), res.X, res.Y);
-								deserializeTileMaps[path] = tm;
-							}
-							src.TilePos = spriteRendererComponent["Tile Pos"].as<Vec2i>();
-							src.TileSize = spriteRendererComponent["Tile Size"].as<Vec2i>();
-							src.ParentTileMap = tm;
-
-							src.Texture = tm->GetTileAt(src.TilePos.X, src.TilePos.Y, src.TileSize.X, src.TileSize.Y);
-						}
-						else
-						{
-							src.Texture = Texture2D::Create(VFS::AbsolutePath(path));
-						}
-						
+						src.Texture = Texture2D::Create(VFS::AbsolutePath(path));
 					}
+					
 				}
 			}
 		}
@@ -387,7 +423,8 @@ namespace Nebula
 		auto rootEntityComponent = entity["RootEntityComponent"];
 		if (rootEntityComponent)
 		{
-			deserializedEntity.AddComponent<RootEntityComponent>();
+			auto& root = deserializedEntity.AddComponent<RootEntityComponent>();
+			root.VisibleOutsideRenderer = rootEntityComponent["Visible"].as<bool>();
 		}
 		
 		auto parentEntityComponent = entity["ParentEntityComponent"];

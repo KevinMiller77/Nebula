@@ -1,4 +1,5 @@
 #include "SceneHierarchyPanel.h"
+#include "../StudioApp.h"
 
 #include <imgui.h>
 #include <Scene/Components.h>
@@ -25,6 +26,11 @@ namespace Nebula {
 		for (auto entityHandle : view)
 		{
 			Entity e = { entityHandle, Context.get() };
+
+			if (!e.GetComponent<RootEntityComponent>().VisibleOutsideRenderer)
+			{
+				continue;
+			}
 
 			ImGui::PushID(e.GetComponent<TagComponent>().UUID);
 			if(DrawEntityNode(e))
@@ -251,28 +257,24 @@ namespace Nebula {
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
-		if (entity.HasComponent<TagComponent>())
+		auto& tag = entity.GetComponent<TagComponent>().Tag;
+		char buffer[256];
+		memset(buffer, 0, sizeof(buffer));
+		#ifdef NEB_PLATFORM_WINDOWS
+		strcpy_s(buffer, sizeof(buffer), tag.c_str());
+		#else
+		strcpy(buffer, tag.c_str());
+		#endif
+
+		ImGui::PushID(&tag);
+		ImGui::Text(" Tag	:");
+		ImGui::SameLine();
+		if (ImGui::InputText("", buffer, sizeof(buffer)))
 		{
-			auto& tag = entity.GetComponent<TagComponent>().Tag;
-
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			#ifdef NEB_PLATFORM_WINDOWS
-			strcpy_s(buffer, sizeof(buffer), tag.c_str());
-			#else
-			strcpy(buffer, tag.c_str());
-			#endif
-
-			ImGui::PushID(&tag);
-			ImGui::Text(" Tag	:");
-			ImGui::SameLine();
-			if (ImGui::InputText("", buffer, sizeof(buffer)))
-			{
-				tag = std::string(buffer);
-			}
-			
-			ImGui::PopID();
+			tag = std::string(buffer);
 		}
+		
+		ImGui::PopID();
 
 		if (entity.HasComponent<TransformComponent>())
 		{
@@ -316,6 +318,8 @@ namespace Nebula {
 			{
 				bool deleteSpriteComp = false;
 
+				auto& spriteInfo = entity.GetComponent<SpriteRendererComponent>();
+
 				ImGui::SameLine(ImGui::GetWindowWidth()-30);
 				if (ImGui::Button("..."))
 				{
@@ -323,7 +327,7 @@ namespace Nebula {
 				}
 
 				if (ImGui::BeginPopup("edit_spr_comp"))
-				{
+				{	
 					if (ImGui::Button("Delete"))
 					{
 						deleteSpriteComp = true;
@@ -332,7 +336,11 @@ namespace Nebula {
 				}
 
 
-				auto& spriteInfo = entity.GetComponent<SpriteRendererComponent>();
+
+				ImGui::Text("Hidden? : "); ImGui::SameLine(); 
+				ImGui::PushID(&tag);
+				ImGui::Checkbox("", &spriteInfo.hidden);	
+				ImGui::PopID();
 
 				ImGui::Text("Color        :");
 				ImGui::PushItemWidth(-1);
@@ -389,12 +397,31 @@ namespace Nebula {
 					DrawVec2iControl("Tile Size      ", spriteInfo.TileSize, 1, NMax(maxPosX - spriteInfo.TilePos.X, 1), 1, NMax(maxPosY - spriteInfo.TilePos.Y, 1));
 					spriteInfo.LoadSelectedTile();
 					
-					if (ImGui::Button("Open TileMap Menu... "))
+					Ref<Texture2D> preview = spriteInfo.Texture;
+					Vec2f sizeSmall = { min(2.0f * preview->GetWidth(), 64.0f), min(2.0f * preview->GetHeight(), 64.0f) };
+					Vec2f sizeLarge = { min(8.0f * preview->GetWidth(), 256.0f), min(8.0f * preview->GetHeight(), 256.0f) };
+					
+					ImVec2 uv1 = { preview->GetTexCoords()[0].X, preview->GetTexCoords()[2].Y };
+					ImVec2 uv2 = { preview->GetTexCoords()[2].X, preview->GetTexCoords()[0].Y };
+
+					float x_pos = (ImGui::GetContentRegionAvail().x / 2.0f) - (sizeSmall.X / 2.0f);
+
+					ImGui::Dummy({x_pos, 0.0f}); ImGui::SameLine();
+					ImGui::Image((void*)preview->GetRendererID(), NebToImVec(sizeSmall), uv1, uv2);
+
+					if (ImGui::IsItemHovered())
+					{
+
+						ImGui::BeginTooltip();
+						ImGui::Image((void*)preview->GetRendererID(), NebToImVec(sizeLarge), uv1, uv2);
+						ImGui::EndTooltip();
+					}
+
+					if (ImGui::IsItemClicked())
 					{
 						ImGui::OpenPopup("Tilemap");
 					}
 					DrawTileMapChooser(entity);
-
 				}
 					
 
@@ -647,8 +674,8 @@ namespace Nebula {
 
 				if (tilePreviewReady)
 				{
-					ImVec2 uv1 = { tilePreview->GetTexCoords()[0].X, tilePreview->GetTexCoords()[0].Y };
-					ImVec2 uv2 = { tilePreview->GetTexCoords()[2].X, tilePreview->GetTexCoords()[2].Y };
+					ImVec2 uv1 = { tilePreview->GetTexCoords()[0].X, tilePreview->GetTexCoords()[2].Y };
+					ImVec2 uv2 = { tilePreview->GetTexCoords()[2].X, tilePreview->GetTexCoords()[0].Y };
 				
 					ImGui::SameLine();
 					ImGui::Image((ImTextureID)tilePreview->GetRendererID(), { (float)(128 * tileSize.X), (float)(128 * tileSize.Y) }, uv1, uv2);
@@ -690,9 +717,9 @@ namespace Nebula {
 					// ImGui::PushStyleColor(ImGuiCol_ButtonActive, {0, 0, 0, 0});
 					
 					//TODO: Make an interactive picker
-					for (int y = maxTileY * tileRes.Y; y >= 0 ; y -= tileRes.Y)
+					for (int y = maxTileY * tileRes.Y ; y >= 0 ; y -= tileRes.Y)
 					{
-						for (int x = 0; x < maxTileX * tileRes.X; x += tileRes.X)
+						for (int x = 0; x <= maxTileX * tileRes.X; x += tileRes.X)
 						{
 							// Mat42f out = { topL, topR, botR, botL};
 							ImVec2 uv1 = { x / w, ( y + tileRes.Y ) / h };

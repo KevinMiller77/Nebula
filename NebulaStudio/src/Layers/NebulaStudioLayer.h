@@ -55,14 +55,23 @@ namespace Nebula
         // Menubar Elements
         void OpenRecentProject();
 
+        Entity GetSelectionFromSHP();
 
-        void CopyEntity();
-        bool IsClipboardFull() { return ClipboardFull; }
+        void CopyEntity(bool cut = false);
+        void CutEntity() { CopyEntity(true); }
+        bool IsClipboardFull() { return ClipboardStatus != EMPTY; }
         void PasteEntity();
+        void DeleteEntity();
+
+        // Toggle colored axis lines
+        void ToggleGrid();
 
     public:
         Ref<Scene> ActiveScene;
         Entity CameraEntity;
+        Entity AxisGrid, AxisGridX, AxisGridY, AxisGridZ; 
+
+        void SetupAxisGrid();
 
         static Vec4f clearColor;
         Ref<Framebuffer> FrameBuffer;
@@ -76,7 +85,13 @@ namespace Nebula
         std::string NewProjFileInput = std::string();
 
         Entity Clipboard;
-        bool ClipboardFull = false;
+
+        enum ClipboardStat
+        {
+            EMPTY,
+            COPY,
+            CUT
+        } ClipboardStatus = EMPTY;
 
         // Must be set on creation, it is passed through from the application as a hook
         Ref<bool> App_SelectNewProject = nullptr;
