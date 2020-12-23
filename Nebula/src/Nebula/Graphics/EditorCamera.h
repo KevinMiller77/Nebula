@@ -21,6 +21,7 @@ namespace Nebula {
 		inline void SetDistance(float distance) { m_Distance = distance; }
 
 		inline void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; UpdateProjection(); }
+		inline Vec2f GetViewportSize() { return {m_ViewportWidth, m_ViewportHeight}; }
 
 		const Mat4f& GetViewMatrix() const { return m_ViewMatrix; }
 		const Mat4f GetViewProjection() const { return m_ViewMatrix * m_Projection; }

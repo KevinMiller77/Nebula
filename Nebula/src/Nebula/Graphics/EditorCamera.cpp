@@ -69,7 +69,7 @@ namespace Nebula {
 			else if (Input::IsMouseButtonPressed(MouseCode::ButtonRight))
 				MouseZoom(delta.Y);
 			else if (Input::IsKeyPressed(KeyCode::R))
-				*this = EditorCamera();
+				*this = EditorCamera(45.0f, m_ViewportWidth / m_ViewportHeight, 0.1f, 1000.0f);
 		}
 
 		UpdateView();

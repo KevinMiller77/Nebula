@@ -187,8 +187,14 @@ namespace Nebula
         ViewportHovered = ImGui::IsWindowHovered();
         Application::Get()->GetImGuiLayer()->BlockEvents(!ViewportFocused || !ViewportHovered);
 
+
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
+        if (m_EditorCamera.GetViewportSize() != ViewportSize)
+        {
+            m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
+        }
 
         uint32_t textureID = FrameBuffer->GetColorAttachmentRendererID();
         ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.X, ViewportSize.Y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
@@ -465,7 +471,7 @@ namespace Nebula
         Autosave.Start();
         
         PlayStatus = SceneStatus::NOT_STARTED;
-        m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+        m_EditorCamera = EditorCamera(45.0f, ViewportSize.X / ViewportSize.Y, 0.1f, 1000.0f);
 
         SetupAxisGrid();
 
@@ -700,7 +706,8 @@ namespace Nebula
             pecNew = ParentEntityComponent(pec);
         }
 
-        if (SceneHierarchy.GetSelection().IsValid())
+        bool pastingAsChild = SceneHierarchy.GetSelection().IsValid(); 
+        if (pastingAsChild)
         {
             if (!SceneHierarchy.GetSelection().HasComponent<ParentEntityComponent>())
             {
@@ -710,12 +717,18 @@ namespace Nebula
 
             parentComp.children.push_back(newEntity);
         }
-        else if (Clipboard.HasComponent<RootEntityComponent>())
+
+        if (Clipboard.HasComponent<RootEntityComponent>())
         {
             auto root = Clipboard.GetComponent<RootEntityComponent>();
             auto& rootNew = newEntity.AddComponent<RootEntityComponent>(root);
             rootNew = RootEntityComponent(root);
         }
+        if (!pastingAsChild)
+        {
+            auto& root = newEntity.AddComponent<RootEntityComponent>();
+        }
+
 
         if (ClipboardStatus == CUT)
         {
