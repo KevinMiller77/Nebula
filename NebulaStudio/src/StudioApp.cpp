@@ -14,7 +14,7 @@ namespace Nebula
     {
     public:
 
-        Studio() : Application(this)
+        Studio() : Application(this, "Nebula Studio")
         {
             NEB_PROFILE_FUNCTION();
             //TODO: Save editor configuration in the docu folder

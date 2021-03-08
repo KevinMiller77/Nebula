@@ -1,30 +1,93 @@
 Scene: Untitled
 Entities:
-  - Entity: 3788471619
+  - Entity: 148703600
     TagComponent:
-      Tag: Cam
+      Tag: Grid
     TransformComponent:
-      Translation: [0, 0, 10.1999998]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [5000, 5000, 10000]
       Line v0: [0, 0, 0]
       Line v1: [0, 0, 0]
       Inherit: false
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      FixedAspectRatio: false
+    SpriteRendererComponent:
+      Hidden: true
+      Color: [1, 1, 1, 0]
+      Type: Quad
+      Has Tex: false
     RootEntityComponent:
       Visible: true
-  - Entity: 355253909
+    ParentEntityComponent:
+      Children:
+        - Entity: 4127416475
+          TagComponent:
+            Tag: Child
+          TransformComponent:
+            Translation: [0, 0, 0]
+            Rotation: [0, 1.57079637, 0]
+            Scale: [1, 1, 1]
+            Line v0: [0, 0, 0]
+            Line v1: [0, 0, 0]
+            Inherit: true
+          SpriteRendererComponent:
+            Hidden: false
+            Color: [1, 1, 1, 0.196078435]
+            Type: Quad
+            Has Tex: true
+            Tex Path: assets/textures/grid.png
+            Tex Width: 80000
+            Tex Height: 80000
+            Is TileMap: true
+            Tile Pos: [0, 0]
+            Tile Size: [5000, 5000]
+            Tile Resolution: [16, 16]
+        - Entity: 355253909
+          TagComponent:
+            Tag: Child
+          TransformComponent:
+            Translation: [0, 0, 0]
+            Rotation: [0, 0, 0]
+            Scale: [1, 1, 1]
+            Line v0: [0, 0, 0]
+            Line v1: [0, 0, 0]
+            Inherit: true
+          SpriteRendererComponent:
+            Hidden: false
+            Color: [1, 1, 1, 0.196078435]
+            Type: Quad
+            Has Tex: true
+            Tex Path: assets/textures/grid.png
+            Tex Width: 80000
+            Tex Height: 80000
+            Is TileMap: true
+            Tile Pos: [0, 0]
+            Tile Size: [5000, 5000]
+            Tile Resolution: [16, 16]
+        - Entity: 3788471619
+          TagComponent:
+            Tag: Child
+          TransformComponent:
+            Translation: [0, 0, 0]
+            Rotation: [1.57079637, 0, 0]
+            Scale: [1, 1, 1]
+            Line v0: [0, 0, 0]
+            Line v1: [0, 0, 0]
+            Inherit: true
+          SpriteRendererComponent:
+            Hidden: false
+            Color: [1, 1, 1, 0.196078435]
+            Type: Quad
+            Has Tex: true
+            Tex Path: assets/textures/grid.png
+            Tex Width: 80000
+            Tex Height: 80000
+            Is TileMap: true
+            Tile Pos: [0, 0]
+            Tile Size: [5000, 5000]
+            Tile Resolution: [16, 16]
+  - Entity: 1879364535
     TagComponent:
-      Tag: Blank Entity
+      Tag: Car
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
@@ -48,86 +111,23 @@ Entities:
       Visible: true
   - Entity: 3262036971
     TagComponent:
-      Tag: Grid
+      Tag: Cam
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [0, 0, 10.1999998]
       Rotation: [0, 0, 0]
-      Scale: [5000, 5000, 10000]
+      Scale: [1, 1, 1]
       Line v0: [0, 0, 0]
       Line v1: [0, 0, 0]
       Inherit: false
-    SpriteRendererComponent:
-      Hidden: true
-      Color: [1, 1, 1, 0]
-      Type: Quad
-      Has Tex: false
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      FixedAspectRatio: false
     RootEntityComponent:
       Visible: true
-    ParentEntityComponent:
-      Children:
-        - Entity: 1879364535
-          TagComponent:
-            Tag: Child
-          TransformComponent:
-            Translation: [0, 0, 0]
-            Rotation: [0, 1.57079637, 0]
-            Scale: [1, 1, 1]
-            Line v0: [0, 0, 0]
-            Line v1: [0, 0, 0]
-            Inherit: true
-          SpriteRendererComponent:
-            Hidden: false
-            Color: [1, 1, 1, 0.196078435]
-            Type: Quad
-            Has Tex: true
-            Tex Path: assets/textures/grid.png
-            Tex Width: 80000
-            Tex Height: 80000
-            Is TileMap: true
-            Tile Pos: [0, 0]
-            Tile Size: [5000, 5000]
-            Tile Resolution: [16, 16]
-        - Entity: 148703600
-          TagComponent:
-            Tag: Child
-          TransformComponent:
-            Translation: [0, 0, 0]
-            Rotation: [0, 0, 0]
-            Scale: [1, 1, 1]
-            Line v0: [0, 0, 0]
-            Line v1: [0, 0, 0]
-            Inherit: true
-          SpriteRendererComponent:
-            Hidden: false
-            Color: [1, 1, 1, 0.196078435]
-            Type: Quad
-            Has Tex: true
-            Tex Path: assets/textures/grid.png
-            Tex Width: 80000
-            Tex Height: 80000
-            Is TileMap: true
-            Tile Pos: [0, 0]
-            Tile Size: [5000, 5000]
-            Tile Resolution: [16, 16]
-        - Entity: 4127416475
-          TagComponent:
-            Tag: Child
-          TransformComponent:
-            Translation: [0, 0, 0]
-            Rotation: [1.57079637, 0, 0]
-            Scale: [1, 1, 1]
-            Line v0: [0, 0, 0]
-            Line v1: [0, 0, 0]
-            Inherit: true
-          SpriteRendererComponent:
-            Hidden: false
-            Color: [1, 1, 1, 0.196078435]
-            Type: Quad
-            Has Tex: true
-            Tex Path: assets/textures/grid.png
-            Tex Width: 80000
-            Tex Height: 80000
-            Is TileMap: true
-            Tile Pos: [0, 0]
-            Tile Size: [5000, 5000]
-            Tile Resolution: [16, 16]

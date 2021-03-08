@@ -7,7 +7,7 @@ namespace Nebula
     Ref<Application> Application::curEngine = nullptr;
 
 
-    Application::Application(Application* child)
+    Application::Application(Application* child, std::string mainWindowName)
         : childInstance(child)
     {
 		NEB_PROFILE_FUNCTION();
@@ -21,7 +21,7 @@ namespace Nebula
             LOG_ERR("Engine already exists!!\n");
         }
         curEngine = Ref<Application>(this);
-        window = Window::Create(WindowInfo());
+        window = Window::Create(WindowInfo(mainWindowName.c_str()));
         window->DisableConsole();
         window->SetEventCallback(NEB_BIND_EVENT_FN(Application::OnEvent));
 

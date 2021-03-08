@@ -42,8 +42,9 @@ namespace Nebula
         bool OnWindowResize(WindowResizeEvent& e);
 
     public:
-        Application(Application* child);
+        Application(Application* child, std::string mainWindowName = "Nebula Deafult Window");
         virtual ~Application();
+
 
         void Close();
 
