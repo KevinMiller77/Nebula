@@ -80,7 +80,7 @@ namespace Nebula
 		NEB_PROFILE_FUNCTION();
         imGuiLayer->Begin();
 
-        OnGameImGui();
+        OnAppImGui();
         
         for (Ref<Layer> layer : EngLayerStack)
         {
@@ -107,7 +107,7 @@ namespace Nebula
             NEB_PROFILE_SCOPE("On Game Update");
             if (childInstance != nullptr)
             {
-                childInstance->OnGameUpdate(ts);
+                childInstance->OnAppUpdate(ts);
             }
         }
 

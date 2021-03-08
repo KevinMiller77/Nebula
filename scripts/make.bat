@@ -23,7 +23,7 @@ IF %1==c (
 ) ELSE IF %1==cgb (
     GOTO NebCGB   
 ) ELSE IF %1==r (
-    GOTO NebRun
+    GOTO RunDec
 ) ELSE (
     ECHO Unknown Parameter
     GOTO ErroneousInput
@@ -45,6 +45,21 @@ ECHO Flags
 ECHO    -r - Run a build (Only works if a build has been done)
 ECHO.
 EXIT /B 0
+
+:RunDec
+IF [%2]==[] (
+    ECHO Error! You have not entered a known build target. Try again.
+    EXIT /B 0
+) 
+
+IF %2==ns ( 
+    GOTO NebRunNS
+) ELSE IF %2==ss (
+    GOTO NebRunSS
+) ELSE (
+    ECHO Error! You have not entered a known build target. Try again.
+    EXIT /B 0
+)   
 
 REM -----------------------------------------------------------------------------
 :NebGenerate
@@ -95,7 +110,7 @@ POPD
 EXIT /B 0
 
 REM -----------------------------------------------------------------------------
-:NebRun
+:NebRunNS
 PUSHD %~DP0
 PUSHD ..\NebulaStudio
 IF NOT EXIST ..\bin\Debug\windowsx86_64\NebulaStudio\NebulaStudio.exe (
@@ -104,6 +119,17 @@ IF NOT EXIST ..\bin\Debug\windowsx86_64\NebulaStudio\NebulaStudio.exe (
     EXIT /B 0
 )
 START /WAIT ..\bin\Debug\windowsx86_64\NebulaStudio\NebulaStudio.exe
+EXIT /B 0
+
+:NebRunSS
+PUSHD %~DP0
+PUSHD ..\SpaceSim
+IF NOT EXIST ..\bin\Debug\windowsx86_64\SpaceSim\SpaceSim.exe (
+    ECHO !! You have not compiled the application yet or complilation was unsuccessful !!
+    ECHO.
+    EXIT /B 0
+)
+START /WAIT ..\bin\Debug\windowsx86_64\SpaceSim\SpaceSim.exe
 EXIT /B 0
 
 REM -----------------------------------------------------------------------------
@@ -176,8 +202,16 @@ ECHO - Building with MSVC
 POPD
 POPD
 
-IF %2==-r (
-    GOTO NebRun
-)
+IF [%3]==[] (
+    ECHO Error! You have not entered a known build target. Try again.
+    EXIT /B 0
+) 
 
+IF %3==ns ( 
+    GOTO NebRunNS
+) ELSE IF %3==ss (
+    GOTO NebRunSS
+) ELSE (
+    ECHO Error! You have not entered a known build target. Try again.
+)   
 EXIT /B 0

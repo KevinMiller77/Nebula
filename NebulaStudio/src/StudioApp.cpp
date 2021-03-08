@@ -46,7 +46,7 @@ namespace Nebula
 
         ~Studio() = default;
 
-        void OnGameUpdate(float ts) override
+        void OnAppUpdate(float ts) override
         {
             // Will only return true after project selection has finished
             if(NewProjectUpdate())
@@ -57,7 +57,7 @@ namespace Nebula
             RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);
         }
 
-        void OnGameImGui() override
+        void OnAppImGui() override
         {
             if (!hasInternalAssetDir)
             {

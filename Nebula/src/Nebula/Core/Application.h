@@ -22,17 +22,20 @@ namespace Nebula
 {
     class Application
     {
-    protected:
-        Ref<Window> window;
-        Ref<ImGuiLayer> imGuiLayer;
-        bool running = true;
         
+    private:
         Timer fps;
         Timer ups;
         float fpsNumber;
         float upsNumber;
-
+        
         float lastFrameTime;
+
+    protected:
+        Ref<Window> window;
+        Ref<ImGuiLayer> imGuiLayer;
+        bool running = true;
+
 
         Application* childInstance;
         LayerStack EngLayerStack;
@@ -42,7 +45,7 @@ namespace Nebula
         bool OnWindowResize(WindowResizeEvent& e);
 
     public:
-        Application(Application* child, std::string mainWindowName = "Nebula Deafult Window");
+        Application(Application* child, std::string mainWindowName = "Nebula Default Window");
         virtual ~Application();
 
 
@@ -57,9 +60,9 @@ namespace Nebula
         void OnEvent(Event& e);
         void OnImGuiRender();
 
-        virtual void OnGameUpdate(float ts) {};
-        virtual void OnGameDraw()  {};
-        virtual void OnGameImGui() {};
+        virtual void OnAppUpdate(float ts) {};
+        virtual void OnAppDraw()  {};
+        virtual void OnAppImGui() {};
 
         float GetUPS() { return upsNumber; }
         float GetFPS() { return fpsNumber; }

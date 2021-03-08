@@ -1,31 +1,35 @@
 #include <Nebula.h>
+#include <GameLayer.h>
 class MainApp : public Nebula::Application
 {
 public:
+    //Game Layer
+    Ref<GameLayer> s_Game;
+
     MainApp() : Nebula::Application(this, "Space Sim")
     {
         //TODO: Settings loader or auto adjuster
-        window->SetVSync(true);
-        window->SetResizeable(true);
-        window->SetWindowSize(320, 280);
+        Nebula::RendererConfig::SetClearColor({0.3f, 0.3f, 0.3f, 1.0f});
 
+        window->SetVSync(true);
+        window->SetResizeable(false);
+
+        s_Game = CreateRef<GameLayer>(); 
+        PushLayer(s_Game);
 
     }
 
     ~MainApp() = default;
 
-    Ref<Nebula::Texture2D> tex;
-
-
-    void OnGameUpdate(float ts) override
+    void OnAppUpdate(float ts) override
     {
         
     }
 
-    void OnGameImGui() override
+    void OnAppImGui() override
     {
         ImGui::Begin("ImGui Window");
-        ImGui::Text("See how easy this is?");
+        ImGui::Text("See how easy this is? %f", GetFPS());
         ImGui::End();
     }
 
