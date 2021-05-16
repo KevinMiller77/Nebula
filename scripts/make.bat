@@ -197,7 +197,7 @@ IF EXIST ..\bin\Debug\windowsx86_64\NebulaStudio\NebulaStudio.exe (
 
 REM Build using msbuild
 ECHO - Building with MSVC
-"c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" Nebula.sln
+"c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" /m Nebula.sln
 
 POPD
 POPD

@@ -8,14 +8,16 @@ public:
 
     MainApp() : Nebula::Application(this, "Space Sim")
     {
-        //TODO: Settings loader or auto adjuster
-        Nebula::RendererConfig::SetClearColor({0.3f, 0.3f, 0.3f, 1.0f});
-
         window->SetVSync(true);
         window->SetResizeable(false);
+        window->SetWindowSize(1280, 720);
 
         s_Game = CreateRef<GameLayer>(); 
         PushLayer(s_Game);
+
+        Nebula::RendererConfig::SetClearColor({0.3f, 0.3f, 0.3f, 1.0f});
+        Nebula::RendererConfig::SetAlphaBlend(true);
+        Nebula::RendererConfig::SetMSAA(false);
 
     }
 
@@ -28,9 +30,7 @@ public:
 
     void OnAppImGui() override
     {
-        ImGui::Begin("ImGui Window");
-        ImGui::Text("See how easy this is? %f", GetFPS());
-        ImGui::End();
+
     }
 
 };
