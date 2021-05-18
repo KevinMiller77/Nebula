@@ -7,13 +7,16 @@ GameLayer::GameLayer() : Layer("Game Layer")
     e_Camera = m_Scene->CreateEntity("Main Cam");
     auto& camC = e_Camera.AddComponent<Nebula::CameraComponent>();
     camC.Camera = Nebula::SceneCamera(1600.0f / 900.0f);
+    camC.Camera.SetProjectionType(Nebula::SceneCamera::ProjectionType::Perspective);
     camC.FixedAspectRatio = true;
     
     m_Scene->SetPrimaryCamera(e_Camera);
     
-    // e_Square = m_Scene->CreateEntity("Square");
-    // e_Square.AddComponent<Nebula::RootEntityComponent>();
-    // e_Square.AddComponent<Nebula::SpriteRendererComponent>(Nebula::Vec4f(0.0f, 0.5f, 0.5f, 0.8f));
+    e_Square = m_Scene->CreateEntity("Square");
+    e_Square.AddComponent<Nebula::RootEntityComponent>();
+    e_Square.AddComponent<Nebula::SpriteRendererComponent>(Nebula::Vec4f(0.0f, 0.5f, 0.5f, 0.8f));
+    auto& tc = e_Square.GetComponent<Nebula::TransformComponent>();
+    tc.Translation.Z = -10.0f;
 
     InitGrid();
 }
@@ -27,12 +30,6 @@ void GameLayer::OnAttach()
     m_FrameBuffer = Nebula::Framebuffer::Create(fbSpec);
 
     m_Scene->OnPlay();
-
-    for (int i = 0; i < 1; i++) {
-        Nebula::Entity newE = m_Scene->CreateEntity(std::to_string(i).c_str());
-        newE.AddComponent<Nebula::RootEntityComponent>();
-        newE.AddComponent<Nebula::SpriteRendererComponent>(Nebula::Vec4f(0.0f, 0.5f, 0.5f, 0.8f));
-    }
 }
 
 void GameLayer::OnDetach() 

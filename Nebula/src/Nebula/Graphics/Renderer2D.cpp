@@ -53,11 +53,16 @@ namespace Nebula
 
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxQuadVertices * sizeof(QuadVertex));
 		s_Data.QuadVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float3, "a_Translation" },
+            { ShaderDataType::Float3, "a_Rotation" },
+            { ShaderDataType::Float3, "a_Scale" },
+            { ShaderDataType::Float4, "a_QuadIndexPos" },
+
 			{ ShaderDataType::Float4, "a_Color" },
 			{ ShaderDataType::Float2, "a_TexCoord" },
 			{ ShaderDataType::Float, "a_TexIndex" },
-			{ ShaderDataType::Float, "a_TilingFactor" }
+			{ ShaderDataType::Float, "a_TilingFactor" },
+            // { ShaderDataType::Mat4,   "a_ModelMat"}
 			});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
@@ -140,7 +145,30 @@ namespace Nebula
 	{
 		ResetStats();
 
-		s_Data.viewProj = transform.invertMatrix() * camera.GetViewProjection();
+		s_Data.viewProj = camera.GetProjection() * transform.invertMatrix();
+
+		if (s_Data.TextureShader)
+		{
+			s_Data.TextureShader.get()->Bind();
+			s_Data.TextureShader.get()->SetMat4("u_ViewProjection", s_Data.viewProj);
+		}
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.LineIndexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
+	}
+
+    void Renderer2D::BeginScene(EditorCamera& camera)
+	{
+		ResetStats();
+        
+        Renderer2D::DrawLine({-50000, 0, 0}, {50000, 0, 0}, {1.0, 1.0, 1.0, 1.0});
+
+		s_Data.viewProj = camera.GetViewProjection();
 
 		if (s_Data.TextureShader)
 		{
@@ -238,35 +266,93 @@ namespace Nebula
 
 	}
 
-	void Renderer2D::DrawQuad(const Vec2f& position, const Vec2f& size, const Vec4f& color)
+
+	void Renderer2D::DrawQuad(const Mat4f& modelMat, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color)
 	{
-		DrawQuad({ position.X, position.Y, 0.0f }, size, color);
+		DrawQuad(modelMat, { position.X, position.Y, 0.0f }, scale, rotation, color);
 	}
 
-	void Renderer2D::DrawQuad(const Vec3f& position, const Vec2f& size, const Vec4f& color)
+	void Renderer2D::DrawQuad(const Mat4f& modelMat, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color)
 	{
-		Mat4f translation = Mat4f::translation(position);
-		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
-		Mat4f transform = scale * translation;
+		constexpr size_t quadVertexCount = 4;
+		const float textureIndex = 0.0f; // White Texture
+		Vec2f textureCoords[4] = { Vec2f( 0.0f, 0.0f ), Vec2f( 1.0f, 0.0f ), Vec2f( 1.0f, 1.0f ), Vec2f( 0.0f, 1.0f ) };
+		const float tilingFactor = 1.0f;
 
-		
-		DrawQuad(transform, color);
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxQuadIndices)
+			FlushAndReset();
+
+		for (size_t i = 0; i < quadVertexCount; i++)
+		{
+            s_Data.QuadVertexBufferPtr->Translation = position;
+            s_Data.QuadVertexBufferPtr->Scale = scale;
+            s_Data.QuadVertexBufferPtr->Rotation = rotation;
+            s_Data.QuadVertexBufferPtr->Color = color;
+			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+            // s_Data.QuadVertexBufferPtr->ModelMat = modelMat;
+            s_Data.QuadVertexBufferPtr->QuadIndexPos = s_Data.QuadVertexPositions[i];
+			s_Data.QuadVertexBufferPtr++;
+		}
+
+		s_Data.QuadIndexCount += 6;
+
+		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const Vec2f& position, const Vec2f& size, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
+	void Renderer2D::DrawQuad(const Mat4f& modelMat, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
-		DrawQuad({ position.X, position.Y, 0.0f }, size, texture, tilingFactor, tintColor);
+		DrawQuad(modelMat, { position.X, position.Y, 0.0f }, scale, rotation, texture, tilingFactor, tintColor);
 	}
 
-	void Renderer2D::DrawQuad(const Vec3f& position, const Vec2f& size, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
+	void Renderer2D::DrawQuad(const Mat4f& modelMat, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
-		Mat4f translation = Mat4f::translation(position);
-		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
-		Mat4f transform = scale * translation;
+		constexpr size_t quadVertexCount = 4;
 
-		DrawQuad(transform, texture, tilingFactor, tintColor);
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxQuadIndices)
+			FlushAndReset();
+
+		float textureIndex = 0.0f;
+		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+		{
+			if (s_Data.TextureSlots[i]->GetRendererID() == texture->GetRendererID())
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		if (textureIndex == 0.0f)
+		{
+			if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+				FlushAndReset();
+
+			textureIndex = (float)s_Data.TextureSlotIndex;
+			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+			s_Data.TextureSlotIndex++;
+		}
+
+		for (size_t i = 0; i < quadVertexCount; i++)
+		{
+            s_Data.QuadVertexBufferPtr->Translation = position;
+            s_Data.QuadVertexBufferPtr->Rotation = rotation;
+            s_Data.QuadVertexBufferPtr->Scale = scale;
+			s_Data.QuadVertexBufferPtr->Color = tintColor;
+			s_Data.QuadVertexBufferPtr->TexCoord = texture->GetTexCoords()[i];
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+            s_Data.QuadVertexBufferPtr->QuadIndexPos = s_Data.QuadVertexPositions[i];
+
+            // s_Data.QuadVertexBufferPtr->ModelMat = modelMat;
+			s_Data.QuadVertexBufferPtr++;
+		}
+
+		s_Data.QuadIndexCount += 6;
+
+		s_Data.Stats.QuadCount++;
 	}
-
+/*
 	void Renderer2D::DrawQuad(const Mat4f& transform, const Vec4f& color)
 	{
 		constexpr size_t quadVertexCount = 4;
@@ -365,7 +451,7 @@ namespace Nebula
 
 		DrawQuad(transform, texture, tilingFactor, tintColor);
 	}
-
+*/
 	void Renderer2D::DrawLine(const Vec3f& p0, const Vec3f& p1, const Vec4f& color)
 	{
 		if (s_Data.LineIndexCount >= Renderer2DData::MaxLineIndices)

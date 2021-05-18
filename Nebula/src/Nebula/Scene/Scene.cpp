@@ -98,6 +98,7 @@ namespace Nebula
 
 			if (!camToUse.IsValid())
 			{
+                LOG_ERR("No main cam\n");
 				return;
 			}
 
@@ -121,9 +122,7 @@ namespace Nebula
 	}
 
 	void Scene::Render(Camera& camera, Mat4f transform)
-	{
-		NEB_PROFILE_FUNCTION();
-		
+	{		
 		Renderer2D::BeginScene(camera, transform);
 
 //	Using RenderWide to make sure children render properly
@@ -131,7 +130,7 @@ namespace Nebula
 		auto view = Registry.view<RootEntityComponent>();
 		if (!view.empty())
 		{
-			for (auto entity : view)
+			for (entt::entity entity : view)
 			{
 				Entity toSubmit { entity, this };
 				SubmitEntity(toSubmit);
@@ -149,7 +148,6 @@ namespace Nebula
 		NEB_PROFILE_FUNCTION();
 		
 		Renderer2D::BeginScene(viewProj);
-
 //	Using RenderWide to make sure children render properly
 #if 1
 		auto view = Registry.view<RootEntityComponent>();
@@ -169,6 +167,7 @@ namespace Nebula
 
 	void Scene::SubmitEntity(Entity entity, const Mat4f& modelMat)
 	{
+		NEB_PROFILE_FUNCTION();
 		auto tag = entity.GetComponent<TagComponent>();
 		auto transform = entity.GetComponent<TransformComponent>();
 
@@ -178,35 +177,35 @@ namespace Nebula
 		bool isHidden = hasSRC ? entity.GetComponent<SpriteRendererComponent>().hidden : false;
 		if (hasSRC)
 		{
-			auto sprite = entity.GetComponent<SpriteRendererComponent>();
-			if (!isHidden)
-			{
-				Mat4f transformMat = transform.GetTransformation() * modelMat;
-				switch(sprite.Type)
-				{
-					case(SpriteRendererComponent::RenderType::QUAD):
-					{
-						if (sprite.Texture)
-						{
-							Renderer2D::DrawQuad(transformMat, sprite.Texture, sprite.TilingFactor, sprite.Color);
-						}
-						else
-						{
-							Renderer2D::DrawQuad(transformMat, sprite.Color);
-						}
-						break;
-					}
-					case(SpriteRendererComponent::RenderType::LINE):
-					{
-						Renderer2D::DrawLine(transform.LineCoords[0], transform.LineCoords[1], sprite.Color);
-						break;
-					}
-					default:
-					{
-						break;
-					}
-				}
-			}
+            if (!isHidden)
+            {
+                auto sprite = entity.GetComponent<SpriteRendererComponent>();
+                // Mat4f transformMat = transform.GetTransformation() * modelMat;
+                switch(sprite.Type)
+                {
+                    case(SpriteRendererComponent::RenderType::QUAD):
+                    {
+                        if (sprite.Texture)
+                        {
+                            Renderer2D::DrawQuad(modelMat, transform.Translation, transform.Scale, transform.Rotation, sprite.Texture, sprite.TilingFactor, sprite.Color);
+                        }
+                        else
+                        {
+                            Renderer2D::DrawQuad(modelMat, transform.Translation, transform.Scale, transform.Rotation, sprite.Color);
+                        }
+                        break;
+                    }
+                    case(SpriteRendererComponent::RenderType::LINE):
+                    {
+                        Renderer2D::DrawLine(transform.LineCoords[0], transform.LineCoords[1], sprite.Color);
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
+                }
+            }
 		}
 
 		if (entity.HasComponent<ParentEntityComponent>() && !isHidden)
@@ -277,14 +276,13 @@ namespace Nebula
 		if (entity.HasComponent<SpriteRendererComponent>())
 		{
 			auto sprite = entity.GetComponent<SpriteRendererComponent>();
-			Mat4f transformMat = transform.GetTransformation() * modelMat;
 			if (sprite.Texture)
 			{
-				Renderer2D::DrawQuad(transformMat, sprite.Texture, sprite.TilingFactor, sprite.Color);
+				Renderer2D::DrawQuad(modelMat, transform.Translation, transform.Scale, transform.Rotation, sprite.Texture, sprite.TilingFactor, sprite.Color);
 			}
 			else
 			{
-				Renderer2D::DrawQuad(transformMat, sprite.Color);
+				Renderer2D::DrawQuad(modelMat, transform.Translation, transform.Scale, transform.Rotation, sprite.Color);
 			}
 		}
 
@@ -384,12 +382,13 @@ namespace Nebula
 		}
 
 	}
-	void Scene::OnUpdateEditor(float ts, Camera& camera)
+	void Scene::OnUpdateEditor(float ts, EditorCamera& camera)
     {
 		NEB_PROFILE_FUNCTION();
 		Mat4f vp = camera.GetViewProjection();
 		Renderer2D::BeginScene(vp);
-		
+
+        
 		auto view = Registry.view<RootEntityComponent>();
 		if (!view.empty())
 		{

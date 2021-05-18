@@ -24,7 +24,7 @@ namespace Nebula {
 		inline Vec2f GetViewportSize() { return {m_ViewportWidth, m_ViewportHeight}; }
 
 		const Mat4f& GetViewMatrix() const { return m_ViewMatrix; }
-		const Mat4f GetViewProjection() const { return m_ViewMatrix * m_Projection; }
+		const Mat4f GetViewProjection() const { return m_Projection * m_ViewMatrix; }
 
 		Vec3f GetUpDirection() const;
 		Vec3f GetRightDirection() const;

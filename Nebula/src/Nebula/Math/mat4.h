@@ -2,6 +2,7 @@
 #include <memory.h>
 #include "Vec3.h"
 #include "Vec4.h"
+#include <Utils/Logging.h>
 
 namespace Nebula
 {
@@ -54,14 +55,14 @@ namespace Nebula
             float q = (float) (1.0f / tan(0.5f * fov * (3.14123f / 180.0f)));
             float a = (float) (q / aspectRatio);
 
-            float b = (-1.0f * far) / (far - near);
+            float b = -1.0f * (far + near) / (far - near);
             float c = (-2.0f * near * far) / (far - near);
 
             result.elements[0 + 0 * 4] = a;
             result.elements[1 + 1 * 4] = q;
             result.elements[2 + 2 * 4] = b;
-            result.elements[3 + 2 * 4] = -1.0f;
-            result.elements[2 + 3 * 4] = c;
+            result.elements[2 + 3 * 4] = -1.0f;
+            result.elements[3 + 2 * 4] = c;
 
             return result;
         }
@@ -70,9 +71,9 @@ namespace Nebula
         {
             Mat4<float> result(1.0f);
 
-            result.elements[0 + 3 * 4] = translation.X;
-            result.elements[1 + 3 * 4] = translation.Y;
-            result.elements[2 + 3 * 4] = translation.Z;
+            result.elements[3 + 0 * 4] = translation.X;
+            result.elements[3 + 1 * 4] = translation.Y;
+            result.elements[3 + 2 * 4] = translation.Z;
 
             return result;
         }
@@ -81,25 +82,41 @@ namespace Nebula
             Mat4<float> result(1.0f);
 
             float r = angle;
-            float c = (float) (cosf(r));
+            
             float s = (float) (sinf(r));
+            float c = (float) (cosf(r));
             float omc = 1.0f - c;
             
-            float x = axis.X;
-            float y = axis.Y;
-            float z = axis.Z;
+            Vec3<T> a = axis;
+            a = a.Normalize();
 
-            result.elements[0 + 0 * 4] = x * omc + c;
-            result.elements[1 + 0 * 4] = y * x * omc + z * s;
-            result.elements[2 + 0 * 4] = x * z * omc - y * s;
+            float x = a.X;
+            float y = a.Y;
+            float z = a.Z;
 
-            result.elements[0 + 1 * 4] = x * y * omc - z * s;
-            result.elements[1 + 1 * 4] = y * omc + c;
-            result.elements[2 + 1 * 4] = y * z * omc + x * s;
+            float xx = x * x;
+            float xy = x * y;
+            float xz = x * z;
 
-            result.elements[0 + 2 * 4] = x * z * omc + y * s;
-            result.elements[1 + 2 * 4] = y * z * omc - x * s;
-            result.elements[2 + 2 * 4] = z * omc + c;
+            float yy = y * y;
+            float yz = y * z;
+
+            float zz = z * z;
+
+            float xyz = xy * z;
+            
+
+            result.elements[0 + 0 * 4] = xx * omc + c;
+            result.elements[1 + 0 * 4] = xy * omc + z * s;
+            result.elements[2 + 0 * 4] = xz * omc - y * s;
+
+            result.elements[0 + 1 * 4] = xy * omc - z * s;
+            result.elements[1 + 1 * 4] = yy * omc + c;
+            result.elements[2 + 1 * 4] = yz * omc + x * s;
+
+            result.elements[0 + 2 * 4] = xz * omc + y * s;
+            result.elements[1 + 2 * 4] = yz * omc - x * s;
+            result.elements[2 + 2 * 4] = zz * omc + c;
             
             return result;
         }
@@ -291,6 +308,32 @@ namespace Nebula
                 newRows[i / 4] = Vec4<float>(newMat.elements[i] * det, newMat.elements[i + 1] * det, newMat.elements[i + 2] * det, newMat.elements[i + 3] * det);
             return Mat4<float>(newRows[0], newRows[1], newRows[2], newRows[3]);
         }
+
+        Mat4<float> transpose() {
+            Mat4<float> out = Mat4<float>(1.0f);
+            out.elements[0] = elements[0];
+            out.elements[1] = elements[4];
+            out.elements[2] = elements[8];
+            out.elements[3] = elements[12];
+
+            out.elements[4] = elements[1];
+            out.elements[5] = elements[5];
+            out.elements[6] = elements[9];
+            out.elements[7] = elements[13];
+
+            out.elements[8] =  elements[2];
+            out.elements[9] =  elements[6];
+            out.elements[10] = elements[10];
+            out.elements[11] = elements[15];
+
+            out.elements[12] = elements[3];
+            out.elements[13] = elements[7];
+            out.elements[14] = elements[11];
+            out.elements[15] = elements[15];
+
+            return out;
+        }
+
     private:
         void add(const Mat4<T>& other)
         {

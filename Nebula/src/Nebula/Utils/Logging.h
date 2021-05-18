@@ -13,6 +13,13 @@
 #define LOG(type, ...)
 #endif
 
+#if DEBUG_LEVEL
+#define LOG_NAKED(...) printf(__VA_ARGS__)
+#else
+#define LOG_ERR(...)
+#endif
+
+
 //Error Log
 #if DEBUG_LEVEL > 0
 #define LOG_ERR(...) printf("[Nebula] E: " __VA_ARGS__)

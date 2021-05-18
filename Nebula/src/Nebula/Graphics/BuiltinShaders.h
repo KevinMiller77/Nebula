@@ -7,30 +7,64 @@ namespace Nebula
 	{
 		const std::string TexQuad = 
 		std::string("\r\n\
-		#type vertex\r\n\
-		#version 330 core\r\n\
-		\r\n\
-		layout(location = 0) in vec3 a_Position;\r\n\
-		layout(location = 1) in vec4 a_Color;\r\n\
-		layout(location = 2) in vec2 a_TexCoord;\r\n\
-		layout(location = 3) in float a_TexIndex;\r\n\
-		layout(location = 4) in float a_TilingFactor;\r\n\
-		\r\n\
-		uniform mat4 u_ViewProjection;\r\n\
-		\r\n\
-		out vec4 v_Color;\r\n\
-		out vec2 v_TexCoord;\r\n\
-		out float v_TexIndex;\r\n\
-		out float v_TilingFactor;\r\n\
-		\r\n\
-		void main()\r\n\
-		{\r\n\
-			v_Color = a_Color;\r\n\
-			v_TexCoord = a_TexCoord;\r\n\
-			v_TexIndex = a_TexIndex;\r\n\
-			v_TilingFactor = a_TilingFactor;\r\n\
-			gl_Position = u_ViewProjection * vec4(a_Position, 1.0);\r\n\
-		}\r\n\
+        #type vertex\r\n\
+        #version 330 core\r\n\
+        \r\n\
+		layout(location = 0) in vec3 a_Translation;\r\n\
+        layout(location = 1) in vec3 a_Rotation;\r\n\
+        layout(location = 2) in vec3 a_Scale;\r\n\
+        layout(location = 3) in vec4 a_QuadIndexPos;\r\n\
+        layout(location = 4) in vec4 a_Color;\r\n\
+        layout(location = 5) in vec2 a_TexCoord;\r\n\
+        layout(location = 6) in float a_TexIndex;\r\n\
+        layout(location = 7) in float a_TilingFactor;\r\n\
+        // layout(location = 8) in mat4 a_ModelMat;\r\n\
+\r\n\
+        uniform mat4 u_ViewProjection;\r\n\
+\r\n\
+        out vec4 v_Color;\r\n\
+        out vec2 v_TexCoord;\r\n\
+        out float v_TexIndex;\r\n\
+        out float v_TilingFactor;\r\n\
+\r\n\
+        mat4 rotationMatrix(vec3 axis, float angle)\r\n\
+        {\r\n\
+            axis = normalize(axis);\r\n\
+            float s = sin(angle);\r\n\
+            float c = cos(angle);\r\n\
+            float oc = 1.0 - c;\r\n\
+            \r\n\
+            return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\r\n\
+                        oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\r\n\
+                        oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\r\n\
+                        0.0,                                0.0,                                0.0,                                1.0);\r\n\
+        }\r\n\
+\r\n\
+        mat4 toScaleMatrix(vec3 scale) {\r\n\
+            return mat4(scale.x, 0,       0,       0,\r\n\
+                        0,       scale.y, 0,       0,\r\n\
+                        0,       0,       scale.z, 0,\r\n\
+                        0,       0,       0,       1);\r\n\
+        }\r\n\
+\r\n\
+        mat4 toTranslationMatrix(vec3 translation) {\r\n\
+            return mat4(1,              0,              0,              translation.x,\r\n\
+                        0,              1,              0,              translation.y,\r\n\
+                        0,              0,              1,              translation.z,\r\n\
+                        0,              0,              0,              1);\r\n\
+        }\r\n\
+\r\n\
+        void main()\r\n\
+        {\r\n\
+            v_Color = a_Color;\r\n\
+            v_TexCoord = a_TexCoord;\r\n\
+            v_TexIndex = a_TexIndex;\r\n\
+            v_TilingFactor = a_TilingFactor;\r\n\
+            mat4 scaleAsMat4 = toScaleMatrix(a_Scale);\r\n\
+            mat4 rotAsMat4 = rotationMatrix(vec3(1, 0, 0), a_Rotation.x) * rotationMatrix(vec3(0, 1, 0), a_Rotation.y) * rotationMatrix(vec3(0, 0, 1), a_Rotation.z);\r\n\
+            mat4 transAsMat4 = toTranslationMatrix(a_Translation);\r\n\
+            gl_Position = a_QuadIndexPos * scaleAsMat4 * rotAsMat4 * transAsMat4 * u_ViewProjection;\r\n\
+        }\r\n\
 		\r\n\
 		#type fragment\r\n\
 		#version 330 core\r\n\
@@ -101,7 +135,7 @@ namespace Nebula
 			void main()\r\n\
 			{\r\n\
 				v_Color = a_Color;\r\n\
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);\r\n\
+				gl_Position = vec4(a_Position, 1.0) * u_ViewProjection;\r\n\
 			}\r\n\
 			\r\n\
 			#type fragment\r\n\

@@ -22,10 +22,23 @@ namespace Nebula {
 	{
 		m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
 		m_Position = CalculatePosition();
+        printf("Editor Cam Pos: %f, %f, %f\n", m_Position.X, m_Position.Y, m_Position.Z);
 
 		Quat orientation = GetOrientation();
 		m_ViewMatrix = orientation.AsMat4f() * Mat4f::translation(m_Position);
-		m_ViewMatrix = m_ViewMatrix.invertMatrix();
+        m_ViewMatrix = m_ViewMatrix.invertMatrix();
+
+        LOG_DBG("Printing view matrix");
+        for (int i = 0; i < 4; i++) {
+            LOG_NAKED("\n\t [ ");
+            for (int j = 0; j < 4; j++) {
+                LOG_NAKED("%.02f, ", m_ViewMatrix.elements[j + i * 4]);
+            }
+            LOG_NAKED("]\n");
+        }
+        LOG_NAKED("\n");
+
+		// m_ViewMatrix = m_ViewMatrix.invertMatrix();
 	}
 
 	std::pair<float, float> EditorCamera::PanSpeed() const

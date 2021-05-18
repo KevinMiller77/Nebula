@@ -1,6 +1,6 @@
 #pragma once
 #include <entt/entt.hpp>
-#include <Graphics/Camera.h>
+#include <Graphics/EditorCamera.h>
 #include <Core/Ref.h>
 #include <deque>
 
@@ -32,7 +32,7 @@ namespace Nebula
 
         // Returns only if there was an error and stop should be issued
         virtual void OnUpdateRuntime(float ts);
-        virtual void OnUpdateEditor(float ts, Camera& camera);
+        virtual void OnUpdateEditor(float ts, EditorCamera& camera);
 
         // Currently Unused
         void OnPhysicsUpdate(float ts) {}

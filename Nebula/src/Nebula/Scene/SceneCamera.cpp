@@ -1,8 +1,6 @@
 
 #include "SceneCamera.h"
 
-#include <Math/math.h>
-
 namespace Nebula {
 
 	SceneCamera::SceneCamera()

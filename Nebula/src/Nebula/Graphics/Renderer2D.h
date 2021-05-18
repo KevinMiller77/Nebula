@@ -6,17 +6,22 @@
 #include <Graphics/OrthographicCamera.h>
 #include <Core/VFS.h>
 #include <Core/Ref.h>
+#include "EditorCamera.h"
 
 
 namespace Nebula
 {
 	struct QuadVertex
 	{
-		Vec3f Position;
+		Vec3f Translation;
+        Vec3f Rotation;
+        Vec3f Scale;
+        Vec4f QuadIndexPos;
 		Vec4f Color;
 		Vec2f TexCoord;
 		float TexIndex;
 		float TilingFactor;
+        // Mat4f ModelMat;
 	};
 
 	struct LineVertex
@@ -36,7 +41,7 @@ namespace Nebula
 	};
 	struct Renderer2DData
 	{
-		static const uint32_t MaxQuads = 20000;
+		static const uint32_t MaxQuads = 100000;
 		static const uint32_t MaxQuadVertices = MaxQuads * 4;
 		static const uint32_t MaxQuadIndices = MaxQuads * 6;
 
@@ -85,6 +90,7 @@ namespace Nebula
 		static void Shutdown();
 		static void BeginScene(OrthographicCamera& camera);
 		static void BeginScene(Camera& camera, const Mat4f transform);
+        static void BeginScene(EditorCamera& camera);
 		static void BeginScene(Mat4f viewProj);
 		static void EndScene();
 		static void Flush();
@@ -94,18 +100,19 @@ namespace Nebula
 		static void ReloadShaders();
 
 		// Primitives
-		static void DrawQuad(const Vec2f& position, const Vec2f& size, const Vec4f& color);
-		static void DrawQuad(const Vec3f& position, const Vec2f& size, const Vec4f& color);
-		static void DrawQuad(const Vec2f& position, const Vec2f& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
-		static void DrawQuad(const Vec3f& position, const Vec2f& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+		static void DrawQuad(const Mat4f& modelMat, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color);
+		static void DrawQuad(const Mat4f& modelMat, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color);
+		static void DrawQuad(const Mat4f& modelMat, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+		static void DrawQuad(const Mat4f& modelMat, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 
+        /* Depracted with the newer shader
 		static void DrawQuad(const Mat4f& transform, const Vec4f& color);
 		static void DrawQuad(const Mat4f& transform, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
-
 		static void DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Vec4f& color);
 		static void DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Vec4f& color);
 		static void DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 		static void DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+        */
 
 		static void DrawLine(const Vec3f& p0, const Vec3f& p1, const Vec4f& color = Vec4f(1.0f));
 
