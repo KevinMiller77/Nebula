@@ -42,13 +42,31 @@ namespace Nebula
             V.X = s.X * c.Y * c.Z - c.X * s.Y * s.Z;
             V.Y = c.X * s.Y * c.Z + s.X * c.Y * s.Z;
             V.Z = c.X * c.Y * s.Z - s.X * s.Y * c.Z;
+
+            // Quat result = Quat({1, 0, 0}, n.X) * Quat({0, 1, 0}, n.Y) * Quat({0, 0, 1}, n.Z);
+            // S = result.S;
+            // V = result.V;
+
+            Normalize();
+        }
+
+        float GetS() const {
+            return S;
+        }
+
+        Vec3f GetV() const {
+            return V;
+        }
+
+        Vec3f GetEulerAngles() {
+            return V;
         }
 
         Mat4f AsMat4f()
         {
 
             Mat4f Result(1.0f);
-            float qxx(V.X * S);
+            float qxx(V.X * V.X);
             float qyy(V.Y * V.Y);
             float qzz(V.Z * V.Z);
             float qxz(V.X * V.Z);
@@ -58,37 +76,55 @@ namespace Nebula
             float qwy(S * V.Y);
             float qwz(S * V.Z);
 
-            Result[0][0] = 1.0f - 2.0f * (qyy +  qzz);
-            Result[1][0] = 2.0f * (qxy + qwz);
-            Result[2][0] = 2.0f * (qxz - qwy);
-            Result[3][0] = 0.0f;
+            Result.elements[0 + 0 * 4] = 1.0f - 2.0f * (qyy +  qzz);
+            Result.elements[0 + 1 * 4] = 2.0f * (qxy + qwz);
+            Result.elements[0 + 2 * 4] = 2.0f * (qxz - qwy);
+            Result.elements[0 + 3 * 4] = 0.0f;
 
+            Result.elements[1 + 0 * 4] = 2.0f * (qxy - qwz);
+            Result.elements[1 + 1 * 4] = 1.0f - 2.0f * (qxx + qzz);
+            Result.elements[1 + 2 * 4] = 2.0f * (qyz + qwx);
+            Result.elements[1 + 3 * 4] = 0.0f;
 
-            Result[0][1] = 2.0f * (qxy - qwz);
-            Result[1][1] = 1.0f - 2.0f * (qxx +  qzz);
-            Result[2][1] = 2.0f * (qyz + qwx);
-            Result[3][1] = 0.0f;
+            Result.elements[2 + 0 * 4] = 2.0f * (qxz + qwy);
+            Result.elements[2 + 1 * 4] = 2.0f * (qyz - qwx);
+            Result.elements[2 + 2 * 4] = 1.0f - 2.0f * (qxx + qyy);
+            Result.elements[2 + 3 * 4] = 0.0f;
 
-            Result[0][2] = 2.0f * (qxz + qwy);
-            Result[1][2] = 2.0f * (qyz - qwx);
-            Result[2][2] = 1.0f - 2.0f * (qxx +  qyy);
-            Result[3][2] = 0.0f;
-
-            Result[0][3] = 0.0f;
-            Result[1][3] = 0.0f;
-            Result[2][3] = 0.0f;
-            Result[3][3] = 1.0f;
+            Result.elements[3 + 0 * 4] = 0.0f;
+            Result.elements[3 + 1 * 4] = 0.0f;
+            Result.elements[3 + 2 * 4] = 0.0f;
+            Result.elements[3 + 3 * 4] = 1.0f;
 
             return Result;
         }
 
         Vec3f Rotate(Vec3f v)
         {
-            Vec3f QuatVector = {V.X, V.Y, V.Z};
-            Vec3f uv = QuatVector.Cross(v);
-            Vec3f uuv = QuatVector.Cross(uv);
+            // Vec3f u = {V.X, V.Y, V.Z};
+            // Vec3f dotUV = Vec3f::Dot(u, v);
+            // Vec3f uv = u.Cross(v);
+            // Vec3f uuv = u.Cross(uv);
+
+            // Vec3f out = (2.0f * dotUV * u) + ((S * S - dotUV) * v) + (2.0f * S * uv);
+
+
+            Vec3f QuatVector = GetV();
+            Vec3f uv(QuatVector.Cross(v));
+            Vec3f uuv(QuatVector.Cross(uv));
 
             return v + ((uv * S) + uuv) * 2.0f;
+
+            // return v + 2.0 * V.Cross(V.Cross(v) + S * v);
+        }
+
+        Vec3f Forward() {
+            Vec3f out;
+            out.X = 2.0f * (V.X * V.Z + S * V.Y);
+            out.Y = 2.0f * (V.Y * V.Z - S * V.X);
+            out.Z = 1.0f - 2.0f * (V.X * V.X + V.Y * V.Y);
+
+            return out.Normalize();
         }
 
         float Normal()

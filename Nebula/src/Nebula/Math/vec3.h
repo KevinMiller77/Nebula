@@ -50,9 +50,9 @@ namespace Nebula
         Vec3<T> Cross(const Vec3<T> other)
         {
             Vec3<T> result = Vec3<T>(0);
-            result.X = Y * other.Z + Z * other.Y;
-            result.Y = X * other.Z + Z * other.X;
-            result.Z = X * other.Y + Y * other.X;
+            result.X = Y * other.Z - Z * other.Y;
+            result.Y = Z * other.X - X * other.Z;
+            result.Z = X * other.Y - Y * other.X;
             return result;
         }
         static Vec3 Cross(const Vec3& left, const Vec3& right)              { return left.Cross(right); }

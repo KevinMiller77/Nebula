@@ -48,6 +48,7 @@ namespace Nebula {
 
 		std::pair<float, float> PanSpeed() const;
 		float RotationSpeed() const;
+        float MovementSpeed() const;
 		float ZoomSpeed() const;
 	private:
 		float m_FOV = 45.0f, m_AspectRatio = 1.778f, m_NearClip = 0.1f, m_FarClip = 1000.0f;

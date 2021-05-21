@@ -20,25 +20,24 @@ namespace Nebula {
 
 	void EditorCamera::UpdateView()
 	{
-		m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
+		// m_Pitch = 0.0f; //m_Pitch = 0.0f; // Lock the camera's rotation
 		m_Position = CalculatePosition();
-        printf("Editor Cam Pos: %f, %f, %f\n", m_Position.X, m_Position.Y, m_Position.Z);
+        
+        // LOG_DBG("Cam Pos: %f, %f, %f\n", m_Position.X, m_Position.Y, m_Position.Z);
 
 		Quat orientation = GetOrientation();
-		m_ViewMatrix = orientation.AsMat4f() * Mat4f::translation(m_Position);
+		m_ViewMatrix = Mat4f::translation(m_Position) * orientation.AsMat4f();
         m_ViewMatrix = m_ViewMatrix.invertMatrix();
 
-        LOG_DBG("Printing view matrix");
-        for (int i = 0; i < 4; i++) {
-            LOG_NAKED("\n\t [ ");
-            for (int j = 0; j < 4; j++) {
-                LOG_NAKED("%.02f, ", m_ViewMatrix.elements[j + i * 4]);
-            }
-            LOG_NAKED("]\n");
-        }
-        LOG_NAKED("\n");
-
-		// m_ViewMatrix = m_ViewMatrix.invertMatrix();
+        // printf("\n");
+		// for (int i = 0; i < 4; i++) {
+        //     printf("[ ");
+		// 	for (int j = 0; j < 4; j++) {
+		// 		printf("%f ", m_ViewMatrix.transpose().elements[i * 4 + j]);
+		// 	}
+		// 	printf(" ]\n");
+		// }
+		// printf("\n");
 	}
 
 	std::pair<float, float> EditorCamera::PanSpeed() const
@@ -57,6 +56,10 @@ namespace Nebula {
 		return 0.6f;
 	}
 
+    float EditorCamera::MovementSpeed() const {
+        return 0.15f;
+    }
+
 	float EditorCamera::ZoomSpeed() const
 	{
 		float distance = m_Distance * 0.2f;
@@ -68,12 +71,15 @@ namespace Nebula {
 
 	void EditorCamera::OnUpdate(float ts)
 	{
+        bool modified = false;
+        const Vec2f& mouse = Input::GetMousePos();
+
+        Vec2f delta = (mouse - m_InitialMousePosition) * 0.003f;
+        m_InitialMousePosition = mouse;
+
 		if (Input::IsKeyPressed(KeyCode::LeftAlt))
 		{
-			const Vec2f& mouse = Input::GetMousePos();
-
-			Vec2f delta = (mouse - m_InitialMousePosition) * 0.003f;
-			m_InitialMousePosition = mouse;
+            modified = true;
 
 			if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle))
 				MousePan(delta);
@@ -83,9 +89,46 @@ namespace Nebula {
 				MouseZoom(delta.Y);
 			else if (Input::IsKeyPressed(KeyCode::R))
 				*this = EditorCamera(45.0f, m_ViewportWidth / m_ViewportHeight, 0.1f, 1000.0f);
-		}
+            else {
+                modified = false;
+            }
 
-		UpdateView();
+        }
+
+        if (Input::IsKeyPressed(KeyCode::W)) {
+            m_FocalPoint += GetForwardDirection() * MovementSpeed();
+            modified = true;
+        }
+        if (Input::IsKeyPressed(KeyCode::S)) {
+            m_FocalPoint -= GetForwardDirection() * MovementSpeed();
+            modified = true;
+        }
+        if (Input::IsKeyPressed(KeyCode::D)) {
+            m_FocalPoint += GetRightDirection() * MovementSpeed();
+            modified = true;
+        }
+        if (Input::IsKeyPressed(KeyCode::A)) {
+            m_FocalPoint -= GetRightDirection() * MovementSpeed();
+            modified = true;
+        }
+        if (Input::IsKeyPressed(KeyCode::Space)) {
+            m_FocalPoint += GetUpDirection() * MovementSpeed();
+            modified = true;
+        }
+        if (Input::IsKeyPressed(KeyCode::LeftShift)) {
+            m_FocalPoint -= GetUpDirection() * MovementSpeed();
+            modified = true;
+        }
+        if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle)) {
+            MouseRotate(delta);
+            modified = true;
+
+        }
+		
+        if (modified) {
+            UpdateView();
+        }
+
 	}
 
 	void EditorCamera::OnEvent(Event& e)
@@ -107,6 +150,7 @@ namespace Nebula {
 		auto [xSpeed, ySpeed] = PanSpeed();
 		m_FocalPoint += -1.0f * GetRightDirection() * delta.X * xSpeed * m_Distance;
 		m_FocalPoint += GetUpDirection() * delta.Y * ySpeed * m_Distance;
+
 	}
 
 	void EditorCamera::MouseRotate(const Vec2f& delta)
@@ -114,6 +158,7 @@ namespace Nebula {
 		float yawSign = GetUpDirection().Y < 0 ? -1.0f : 1.0f;
 		m_Yaw += yawSign * delta.X * RotationSpeed();
 		m_Pitch += delta.Y * RotationSpeed();
+
 
 		// LOG_INF("Yaw: %f\tPitch: %f\n", m_Yaw, m_Pitch);
 	}
@@ -140,12 +185,22 @@ namespace Nebula {
 
 	Vec3f EditorCamera::GetForwardDirection() const
 	{
-		return GetOrientation().Rotate({0.0f, 0.0f, -1.0f});
+        Quat ori = GetOrientation();
+        Quat ForwQ = GetOrientation() * Quat(0, {0, 0, -1});
+        
+
+        Vec3f Forw = GetOrientation().Rotate({0.0f, 0.0f, -1.0f});
+        // LOG_DBG("Orientation: S: %f, v: {%f, %f, %f}\n", ori.GetS(), ori.GetV().X, ori.GetV().Y, ori.GetV().Z);
+        // LOG_DBG("Forward: {%f, %f, %f}\n", Forw.X, Forw.Y, Forw.Z); 
+        // LOG_DBG("Forward As Quat: S: %f, v: {%f, %f, %f}\n", ForwQ.GetS(), ForwQ.GetV().X, ForwQ.GetV().Y, ForwQ.GetV().Z);
+    	return Forw;
+        
 	}
 
 	Vec3f EditorCamera::CalculatePosition() const
 	{
-		return m_FocalPoint - GetForwardDirection() * m_Distance;
+        // LOG_DBG("Focal pt: %f, %f, %f\n", m_FocalPoint.X, m_FocalPoint.Y, m_FocalPoint.Z);
+		return m_FocalPoint - (GetForwardDirection() * m_Distance);
 	}
 
 	Quat EditorCamera::GetOrientation() const
