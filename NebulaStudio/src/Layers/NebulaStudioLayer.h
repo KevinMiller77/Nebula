@@ -6,6 +6,8 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/LogPanel.h"
 
+#include <ImGuizmo.h>
+
 namespace Nebula
 {
     #define SEC_TO_MINUTE 60.f
@@ -100,6 +102,9 @@ namespace Nebula
         LogPanel Log;
         // ImGui::FileBrowser FileBrowser;
         StudioProject::Project CurrentProject;
+
+        bool m_RenderImGuizmo = true;
+        ImGuizmo::OPERATION m_CurrentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE; 
     };
 
 }

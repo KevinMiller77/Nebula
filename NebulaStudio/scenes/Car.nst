@@ -2,25 +2,25 @@ Scene: Untitled
 Entities:
   - Entity: 1705310046
     TagComponent:
-      Tag: Grid
+      Tag: Car
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [1, 1, 1]
       Rotation: [0, 0, 0]
-      Scale: [5000, 5000, 1]
+      Scale: [1, 1, 1]
       Line v0: [0, 0, 0]
       Line v1: [0, 0, 0]
       Inherit: false
     SpriteRendererComponent:
-      Hidden: true
-      Color: [1, 1, 1, 1]
+      Hidden: false
+      Color: [1, 0.999989986, 0.999989986, 1]
       Type: Quad
       Has Tex: true
-      Tex Path: assets/textures/grid.png
-      Tex Width: 80000
-      Tex Height: 80000
+      Tex Path: assets/textures/tilemap_packed.png
+      Tex Width: 32
+      Tex Height: 32
       Is TileMap: true
-      Tile Pos: [0, 0]
-      Tile Size: [5000, 5000]
+      Tile Pos: [15, 0]
+      Tile Size: [2, 2]
       Tile Resolution: [16, 16]
     RootEntityComponent:
       Visible: true
@@ -48,25 +48,25 @@ Entities:
       Visible: true
   - Entity: 1313616534
     TagComponent:
-      Tag: Car
+      Tag: Grid
     TransformComponent:
-      Translation: [0, 0.200000003, 1.60000002]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [2, 2.5999999, 1]
+      Scale: [5000, 5000, 1]
       Line v0: [0, 0, 0]
       Line v1: [0, 0, 0]
       Inherit: false
     SpriteRendererComponent:
-      Hidden: false
-      Color: [1, 0.999989986, 0.999989986, 1]
+      Hidden: true
+      Color: [1, 1, 1, 1]
       Type: Quad
       Has Tex: true
-      Tex Path: assets/textures/tilemap_packed.png
-      Tex Width: 32
-      Tex Height: 32
+      Tex Path: assets/textures/grid.png
+      Tex Width: 80000
+      Tex Height: 80000
       Is TileMap: true
-      Tile Pos: [15, 0]
-      Tile Size: [2, 2]
+      Tile Pos: [0, 0]
+      Tile Size: [5000, 5000]
       Tile Resolution: [16, 16]
     RootEntityComponent:
       Visible: true

@@ -70,6 +70,7 @@ namespace Nebula
 		#version 330 core\r\n\
 		\r\n\
 		layout(location = 0) out vec4 color;\r\n\
+		layout(location = 1) out vec4 color2;\r\n\
 		\r\n\
 		in vec4 v_Color;\r\n\
 		in vec2 v_TexCoord;\r\n\
@@ -117,6 +118,7 @@ namespace Nebula
 				case 31: texColor *= texture(u_Textures[31], v_TexCoord * v_TilingFactor); break;\r\n\
 			}\r\n\
 			color = texColor;\r\n\
+            color2 = vec4(1.0, 0, 0, 1.0);\r\n\
 		}\r\n\
 		");
 

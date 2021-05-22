@@ -13,6 +13,7 @@ namespace Nebula
         OpenProject(ProjFileInput);
 
         FramebufferSpecification fbSpec;
+        fbSpec.Attachments = {FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth};
         fbSpec.Width = 1600;
         fbSpec.Height = 900;
         fbSpec.Samples = 1;
@@ -65,7 +66,7 @@ namespace Nebula
 
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
-            m_EditorCamera.OnUpdate(ts);
+            m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
             ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
         }
         else
@@ -196,9 +197,40 @@ namespace Nebula
             m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
-        uint32_t textureID = FrameBuffer->GetColorAttachmentRendererID();
+        uint32_t textureID = FrameBuffer->GetColorAttachmentsRendererID()[0];
         ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.X, ViewportSize.Y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         
+        Entity selectedEntity = SceneHierarchy.GetSelection();
+        bool shouldDrawImGuizmo = PlayStatus == SceneStatus::NOT_STARTED && m_RenderImGuizmo;
+        if (selectedEntity.IsValid() && shouldDrawImGuizmo) {
+
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
+            Vec2f windowSize = {ImGui::GetWindowWidth(), ImGui::GetWindowHeight()}; 
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowSize.X, windowSize.Y);
+
+            Mat4f viewMat = m_EditorCamera.GetViewMatrix();
+            viewMat = Mat4f::AsRowMajor(viewMat);
+
+            Mat4f projMat = m_EditorCamera.GetProjection();
+            projMat = Mat4f::AsRowMajor(projMat);
+
+            auto& selectedTC = selectedEntity.GetComponent<TransformComponent>();
+            Mat4f entityTransform = selectedTC.GetTransformation();
+            entityTransform = Mat4f::AsRowMajor(entityTransform);
+            
+            ImGuizmo::Manipulate(viewMat.elements, projMat.elements, m_CurrentGizmoOperation, ImGuizmo::MODE::LOCAL, entityTransform.elements);
+
+            if(ImGuizmo::IsUsing()) {
+                Vec3f t(0.0f), r(0.0f), s(0.0f); 
+                DecomposeTransform(entityTransform, t, r, s);
+
+                selectedTC.Translation = t;
+                selectedTC.Rotation = r;
+                selectedTC.Scale = s;
+            }
+        }
+
         ImGui::End();
         ImGui::PopStyleVar();
     }
@@ -288,7 +320,6 @@ namespace Nebula
                     }
                     break;
                 }
-
                 default:
                     break;
             }
@@ -322,6 +353,28 @@ namespace Nebula
         {
             switch ((KeyCode)e.GetKeyCode())
             {
+                
+                case(KeyCode::D1): {
+                    m_RenderImGuizmo = false;
+                    break;
+                }
+                case(KeyCode::D2): {
+                    m_RenderImGuizmo = true;
+                    m_CurrentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+                    break;
+                }
+                case(KeyCode::D3): {
+                    m_RenderImGuizmo = true;
+                    m_CurrentGizmoOperation = ImGuizmo::OPERATION::SCALE;
+                    break;
+                }
+                case(KeyCode::D4): {
+                    m_CurrentGizmoOperation = ImGuizmo::OPERATION::ROTATE;                    
+                    m_RenderImGuizmo = true;
+
+                    break;
+                }
+
                 default:
                     break;
             }

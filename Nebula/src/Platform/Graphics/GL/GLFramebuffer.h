@@ -14,20 +14,25 @@ namespace Nebula
 		virtual void Bind() override;
 		virtual void Unbind() override;
 
-		virtual void Resize(uint32 width, uint32 height, bool forceRecreate = false) override;
+		virtual void Resize(uint32 width, uint32 height) override;
+        void Invalidate();
 
-        virtual void BindTexture(uint32_t slot = 0) const override;
+        // virtual void BindTexture(uint32_t slot = 0) const override;
 
 		virtual uint32_t GetRendererID() const override { return ID; };
-		virtual uint32_t GetDepthAttachmentRendererID() const override { return DepthAttachment; };
-		virtual uint32 GetColorAttachmentRendererID() const override { return ColorAttachment; }
+		virtual uint32_t GetDepthAttachmentRendererID() const override { return m_DepthAttachment; };
+		virtual std::vector<uint32> GetColorAttachmentsRendererID() const override { return m_ColorAttachments; }
 
 		virtual const FramebufferSpecification& GetSpecification() const override { return Spec; }
     private:
         uint32 ID;
-        uint32 ColorAttachment = 0;
-        uint32 DepthAttachment = 0;
       
         FramebufferSpecification Spec;
+
+        std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecs;
+        FramebufferTextureSpecification m_DepthAttachmentSpec = FramebufferTextureFormat::Depth; 
+
+        std::vector<uint32_t> m_ColorAttachments;
+        uint32_t m_DepthAttachment;
     };
 }

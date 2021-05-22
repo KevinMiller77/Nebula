@@ -13,7 +13,7 @@ namespace Nebula
 
         virtual ~Camera() = default;
 
-        Mat4f GetProjection() const { return m_Projection; }
+        Mat4f& GetProjection() const { return (Mat4f&)m_Projection; }
         
         virtual const Mat4f& GetViewMatrix() const = 0;
         virtual const Mat4f GetViewProjection() const = 0;

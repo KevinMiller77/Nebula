@@ -14,7 +14,7 @@ namespace Nebula {
 		EditorCamera() { UpdateProjection(); };
 		EditorCamera(float fov, float aspectRatio, float nearClip, float farClip);
 
-		void OnUpdate(float ts);
+		void OnUpdate(float ts, bool viewportFocused = false);
 		void OnEvent(Event& e);
 
 		inline float GetDistance() const { return m_Distance; }

@@ -38,7 +38,7 @@ namespace Nebula
 
 		const Mat4f GetTransformation() const
 		{
-			Mat4f rot = Mat4f(1.0f) * Mat4f::rotation(Rotation.X, { 1.0f, 0.0f, 0.0f }) * Mat4f::rotation(Rotation.Y, { 0.0f, 1.0f, 0.0f }) * Mat4f::rotation(Rotation.Z, { 0.0f, 0.0f, 1.0f });
+			Mat4f rot = Quat(Rotation).AsMat4f();
             // Mat4f rot = Quat(Rotation * (3.1412f)).AsMat4f().transpose();
 			return Mat4f(1.0f) * Mat4f::translation(Translation) * rot * Mat4f::scale(Scale);
 		}

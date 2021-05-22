@@ -131,6 +131,25 @@ namespace Nebula
 
             return result;
         }
+
+        static Mat4 AsRowMajor(Mat4 in) {
+            Mat4 out(1);
+            for(int i = 0; i < 4; i++) {
+                for(int j = 0; j < 4; j++) {
+                    out.elements[i + j * 4] = in.elements[j + i * 4];
+                }
+            }
+            return out;
+        }
+        static Mat4 AsColumnMajor(Mat4 in) {
+            Mat4 out(1);
+            for(int i = 0; i < 4; i++) {
+                for(int j = 0; j < 4; j++) {
+                    out.elements[j + i * 4] = in.elements[i + j * 4];
+                }
+            }
+            return out;
+        }
         
         const Vec4<T>& operator[](int index) const  { return rows[index]; }
         Vec4<T>& operator[](int index)              { return rows[index]; }

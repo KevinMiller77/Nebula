@@ -69,8 +69,9 @@ namespace Nebula {
 		return speed;
 	}
 
-	void EditorCamera::OnUpdate(float ts)
+	void EditorCamera::OnUpdate(float ts, bool viewportIsFocused)
 	{
+
         bool modified = false;
         const Vec2f& mouse = Input::GetMousePos();
 
@@ -83,8 +84,6 @@ namespace Nebula {
 
 			if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle))
 				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(MouseCode::ButtonLeft))
-				MouseRotate(delta);
 			else if (Input::IsMouseButtonPressed(MouseCode::ButtonRight))
 				MouseZoom(delta.Y);
 			else if (Input::IsKeyPressed(KeyCode::R))
@@ -95,34 +94,37 @@ namespace Nebula {
 
         }
 
-        if (Input::IsKeyPressed(KeyCode::W)) {
-            m_FocalPoint += GetForwardDirection() * MovementSpeed();
-            modified = true;
-        }
-        if (Input::IsKeyPressed(KeyCode::S)) {
-            m_FocalPoint -= GetForwardDirection() * MovementSpeed();
-            modified = true;
-        }
-        if (Input::IsKeyPressed(KeyCode::D)) {
-            m_FocalPoint += GetRightDirection() * MovementSpeed();
-            modified = true;
-        }
-        if (Input::IsKeyPressed(KeyCode::A)) {
-            m_FocalPoint -= GetRightDirection() * MovementSpeed();
-            modified = true;
-        }
-        if (Input::IsKeyPressed(KeyCode::Space)) {
-            m_FocalPoint += GetUpDirection() * MovementSpeed();
-            modified = true;
-        }
-        if (Input::IsKeyPressed(KeyCode::LeftShift)) {
-            m_FocalPoint -= GetUpDirection() * MovementSpeed();
-            modified = true;
-        }
-        if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle)) {
-            MouseRotate(delta);
-            modified = true;
-
+        if(viewportIsFocused) {
+            if (Input::IsKeyPressed(KeyCode::W)) {
+                m_FocalPoint += GetForwardDirection() * MovementSpeed();
+                modified = true;
+            }
+            if (Input::IsKeyPressed(KeyCode::S)) {
+                m_FocalPoint -= GetForwardDirection() * MovementSpeed();
+                modified = true;
+            }
+            if (Input::IsKeyPressed(KeyCode::D)) {
+                m_FocalPoint += GetRightDirection() * MovementSpeed();
+                modified = true;
+            }
+            if (Input::IsKeyPressed(KeyCode::A)) {
+                m_FocalPoint -= GetRightDirection() * MovementSpeed();
+                modified = true;
+            }
+            if (Input::IsKeyPressed(KeyCode::Space)) {
+                m_FocalPoint += GetUpDirection() * (MovementSpeed() / m_AspectRatio);
+                modified = true;
+            }
+            if (Input::IsKeyPressed(KeyCode::LeftShift)) {
+                m_FocalPoint -= GetUpDirection() * (MovementSpeed() / m_AspectRatio);
+                modified = true;
+            }
+            if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle)) {
+                float distModifier = m_Distance / 10.f;
+                distModifier = distModifier > 10.0f ? 10.0f : distModifier;
+				MouseRotate(delta * distModifier);
+                modified = true;
+            }
         }
 		
         if (modified) {
@@ -133,6 +135,7 @@ namespace Nebula {
 
 	void EditorCamera::OnEvent(Event& e)
 	{
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(NEB_BIND_EVENT_FN(EditorCamera::OnMouseScroll));
 	}

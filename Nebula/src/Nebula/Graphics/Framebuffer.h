@@ -4,11 +4,42 @@
 
 namespace Nebula
 {
+    enum class FramebufferTextureFormat 
+    {
+        None = 0,
+
+        //Col
+        RGBA8, 
+
+        //Depth-Stencil
+        DEPTH24STENCIL8,
+
+        Depth = DEPTH24STENCIL8
+    };
+    struct FramebufferTextureSpecification 
+    {
+        FramebufferTextureSpecification() = default;
+        FramebufferTextureSpecification(FramebufferTextureFormat format)
+            : TextureFormat(format) {}
+
+        FramebufferTextureFormat TextureFormat;
+    };
+
+    struct FramebufferAttachmentSpecification
+    {
+        FramebufferAttachmentSpecification() = default;
+        FramebufferAttachmentSpecification(std::initializer_list<FramebufferTextureSpecification> attachments)
+            : TextureAttachments(attachments) {}
+
+        std::vector<FramebufferTextureSpecification> TextureAttachments;
+    };
+
     struct FramebufferSpecification
 	{
 		uint32 Width = 0, Height = 0;
 		// FramebufferFormat Format = 
 		uint32 Samples = 1;
+        FramebufferAttachmentSpecification Attachments;
 
 		bool SwapChainTarget = false;
 	};
@@ -21,13 +52,11 @@ namespace Nebula
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
-		virtual void Resize(uint32 width, uint32 height, bool forceRecreate = false) = 0;
-
-		virtual void BindTexture(uint32_t slot = 0) const = 0;
+		virtual void Resize(uint32 width, uint32 height) = 0;
 
 		virtual uint32_t GetRendererID() const = 0;
-		virtual uint32_t GetColorAttachmentRendererID() const = 0;
 		virtual uint32_t GetDepthAttachmentRendererID() const = 0;
+		virtual std::vector<uint32_t> GetColorAttachmentsRendererID() const = 0;
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
 
