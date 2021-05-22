@@ -23,6 +23,7 @@ workspace "Nebula"
         include "Nebula/ext/libogg"
         include "Nebula/ext/Vorbis"
         include "Nebula/ext/OpenAL-Soft"
+        include "Nebula/ext/imguizmo"
         -- include "Nebula/ext/freetype"
         group ""
         
@@ -61,6 +62,7 @@ project "NebulaEngine"
         "Nebula/include",
         "Nebula/ext",
         "Nebula/ext/imgui",
+        "Nebula/ext/imguizmo",
 		"Nebula/ext/glfw/include",
         "Nebula/ext/glad/include",
         "Nebula/ext/yaml-cpp/include",
@@ -76,6 +78,7 @@ project "NebulaEngine"
     links
     {
         "imgui",
+        "imguizmo",
         "glad",
         "glfw",
         "yaml-cpp",
@@ -261,6 +264,7 @@ project "NebulaStudio"
         "Nebula",
 
         "Nebula/ext/imgui",
+        "Nebula/ext/imguizmo",
         "Nebula/ext/yaml-cpp/include",
         "Nebula/include",
         "Nebula/src/Nebula"
