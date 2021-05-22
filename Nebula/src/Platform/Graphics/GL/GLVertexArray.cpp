@@ -66,11 +66,6 @@ namespace Nebula
 				case ShaderDataType::Float2:
 				case ShaderDataType::Float3:
 				case ShaderDataType::Float4:
-				case ShaderDataType::Int:
-				case ShaderDataType::Int2:
-				case ShaderDataType::Int3:
-				case ShaderDataType::Int4:
-				case ShaderDataType::Bool:
 				{
 					glEnableVertexAttribArray(indexPosition);
 					glVertexAttribPointer(indexPosition,
@@ -82,6 +77,21 @@ namespace Nebula
 					indexPosition++;
 					break;
 				}
+				case ShaderDataType::Int:
+				case ShaderDataType::Int2:
+				case ShaderDataType::Int3:
+				case ShaderDataType::Int4:
+				case ShaderDataType::Bool:
+                {
+                    glEnableVertexAttribArray(indexPosition);
+					glVertexAttribIPointer(indexPosition,
+						element.GetComponentCount(),
+						ShaderDataTypeToOpenGLBaseType(element.Type),
+						layout.GetStride(),
+						(const void*)element.Offset);
+					indexPosition++;
+                    break;
+                }
 				case ShaderDataType::Mat3:
 				case ShaderDataType::Mat4:
 				{

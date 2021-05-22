@@ -40,6 +40,7 @@ namespace Nebula
         
         virtual void OnEvent(Event& e) override;
         bool OnKeyPressed(KeyPressedEvent& e);
+        bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
         void InitProject();
         void ProjectSelection();
@@ -85,6 +86,10 @@ namespace Nebula
 		Timer Autosave = Timer();
         std::string ProjFileInput = std::string();
         std::string NewProjFileInput = std::string();
+
+        Vec2f m_ViewportBounds[2];
+        int m_HoveringEntity = -1;
+        bool m_HoveringViewport = false;
 
         Entity Clipboard;
 

@@ -21,6 +21,7 @@ namespace Nebula
 		Vec2f TexCoord;
 		float TexIndex;
 		float TilingFactor;
+        int   EntityID;
         // Mat4f ModelMat;
 	};
 
@@ -100,10 +101,10 @@ namespace Nebula
 		static void ReloadShaders();
 
 		// Primitives
-		static void DrawQuad(const Mat4f& modelMat, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color);
-		static void DrawQuad(const Mat4f& modelMat, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color);
-		static void DrawQuad(const Mat4f& modelMat, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
-		static void DrawQuad(const Mat4f& modelMat, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+		static void DrawQuad(const Mat4f& modelMat, const int entityID, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color);
+		static void DrawQuad(const Mat4f& modelMat, const int entityID, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color);
+		static void DrawQuad(const Mat4f& modelMat, const int entityID, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
+		static void DrawQuad(const Mat4f& modelMat, const int entityID, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const Vec4f& tintColor = Vec4f(1.0f));
 
         /* Depracted with the newer shader
 		static void DrawQuad(const Mat4f& transform, const Vec4f& color);

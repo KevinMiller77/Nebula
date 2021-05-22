@@ -32,16 +32,16 @@ namespace Nebula
             glBindTexture(TextureTarget(multisampled), id);
         }
 
-        static void AttachColorTexture(uint32_t colorAttachment, int samples, GLenum format, uint32_t width, uint32_t height, int index) {
+        static void AttachColorTexture(uint32_t colorAttachment, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index) {
             bool multisampled = samples > 1;
             if (multisampled)
             {
-                glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampled, format, width, height, GL_FALSE);
+                glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampled, internalFormat, width, height, GL_FALSE);
             }
             else
             {
                 // TODO: Extract data type from format
-                glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -68,6 +68,16 @@ namespace Nebula
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             }
 			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), depthAttachment, 0);
+        }
+
+        static GLenum FBTextureFormatToGL(FramebufferTextureFormat format) {
+            switch(format) {
+                case (FramebufferTextureFormat::RGBA8):     return GL_RGBA8;
+                case (FramebufferTextureFormat::RED_INT):   return GL_RED_INTEGER;
+            }
+
+            assert(false);
+            return 0;
         }
     }
 
@@ -123,6 +133,25 @@ namespace Nebula
         Invalidate();		
 	}
 
+    int GLFramebuffer::ReadPixel(uint32 colorAttachmentID, int x, int y) 
+    {
+        assert(colorAttachmentID < m_ColorAttachments.size());
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + colorAttachmentID);
+        int pixel;
+        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixel);
+
+        return pixel;
+    }
+
+    void GLFramebuffer::ClearTextureAttachment(uint32 attachmentID, const int value) {
+        FramebufferTextureFormat format = m_ColorAttachmentSpecs[attachmentID].TextureFormat;
+        glClearTexImage(m_ColorAttachments[attachmentID], 0, Utils::FBTextureFormatToGL(format), GL_INT, &value);
+    }
+    void GLFramebuffer::ClearTextureAttachment(uint32 attachmentID, const float value) {
+        FramebufferTextureFormat format = m_ColorAttachmentSpecs[attachmentID].TextureFormat;
+        glClearTexImage(m_ColorAttachments[attachmentID], 0, Utils::FBTextureFormatToGL(format), GL_FLOAT, &value);
+    }
+
     void GLFramebuffer::Invalidate() 
     {
         if (ID)
@@ -148,7 +177,11 @@ namespace Nebula
                 Utils::BindTexture(multisample, m_ColorAttachments[i]);
                 switch(m_ColorAttachmentSpecs[i].TextureFormat) {
                     case(FramebufferTextureFormat::RGBA8): {
-                        Utils::AttachColorTexture(m_ColorAttachments[i], Spec.Samples, GL_RGBA8, Spec.Width, Spec.Height, i);
+                        Utils::AttachColorTexture(m_ColorAttachments[i], Spec.Samples, GL_RGBA8, GL_RGBA, Spec.Width, Spec.Height, i);
+                        break;
+                    }
+                    case(FramebufferTextureFormat::RED_INT): {
+                        Utils::AttachColorTexture(m_ColorAttachments[i], Spec.Samples, GL_R32I, GL_RED_INTEGER, Spec.Width, Spec.Height, i);
                         break;
                     }
                     default:

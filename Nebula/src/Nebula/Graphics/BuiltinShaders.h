@@ -18,6 +18,7 @@ namespace Nebula
         layout(location = 5) in vec2 a_TexCoord;\r\n\
         layout(location = 6) in float a_TexIndex;\r\n\
         layout(location = 7) in float a_TilingFactor;\r\n\
+        layout(location = 8) in int a_EntityID;\r\n\
         // layout(location = 8) in mat4 a_ModelMat;\r\n\
 \r\n\
         uniform mat4 u_ViewProjection;\r\n\
@@ -26,6 +27,7 @@ namespace Nebula
         out vec2 v_TexCoord;\r\n\
         out float v_TexIndex;\r\n\
         out float v_TilingFactor;\r\n\
+        flat out int v_EntityID;\r\n\
 \r\n\
         mat4 rotationMatrix(vec3 axis, float angle)\r\n\
         {\r\n\
@@ -60,6 +62,7 @@ namespace Nebula
             v_TexCoord = a_TexCoord;\r\n\
             v_TexIndex = a_TexIndex;\r\n\
             v_TilingFactor = a_TilingFactor;\r\n\
+            v_EntityID = a_EntityID;\r\n\
             mat4 scaleAsMat4 = toScaleMatrix(a_Scale);\r\n\
             mat4 rotAsMat4 = rotationMatrix(vec3(1, 0, 0), a_Rotation.x) * rotationMatrix(vec3(0, 1, 0), a_Rotation.y) * rotationMatrix(vec3(0, 0, 1), a_Rotation.z);\r\n\
             mat4 transAsMat4 = toTranslationMatrix(a_Translation);\r\n\
@@ -69,13 +72,14 @@ namespace Nebula
 		#type fragment\r\n\
 		#version 330 core\r\n\
 		\r\n\
-		layout(location = 0) out vec4 color;\r\n\
-		layout(location = 1) out vec4 color2;\r\n\
+		layout(location = 0) out vec4 o_Color;\r\n\
+		layout(location = 1) out int o_EntityID;\r\n\
 		\r\n\
 		in vec4 v_Color;\r\n\
 		in vec2 v_TexCoord;\r\n\
 		in float v_TexIndex;\r\n\
 		in float v_TilingFactor;\r\n\
+        flat in int v_EntityID;\r\n\
 		\r\n\
 		uniform sampler2D u_Textures[32];\r\n\
 		\r\n\
@@ -117,8 +121,13 @@ namespace Nebula
 				case 30: texColor *= texture(u_Textures[30], v_TexCoord * v_TilingFactor); break;\r\n\
 				case 31: texColor *= texture(u_Textures[31], v_TexCoord * v_TilingFactor); break;\r\n\
 			}\r\n\
-			color = texColor;\r\n\
-            color2 = vec4(1.0, 0, 0, 1.0);\r\n\
+			o_Color = texColor;\r\n\
+            if (texColor.w == 0.0) {\r\n\
+                o_EntityID = -1;\r\n\
+            }\r\n\
+            else {\r\n\
+                o_EntityID = v_EntityID;\r\n\
+            }\r\n\
 		}\r\n\
 		");
 

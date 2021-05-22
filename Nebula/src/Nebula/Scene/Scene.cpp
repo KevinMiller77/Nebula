@@ -180,6 +180,8 @@ namespace Nebula
             if (!isHidden)
             {
                 auto sprite = entity.GetComponent<SpriteRendererComponent>();
+                
+                // LOG_DBG("Comp %s, %d\n", entity.GetComponent<TagComponent>().Tag.c_str(), entity.GetID());
                 // Mat4f transformMat = transform.GetTransformation() * modelMat;
                 switch(sprite.Type)
                 {
@@ -187,11 +189,11 @@ namespace Nebula
                     {
                         if (sprite.Texture)
                         {
-                            Renderer2D::DrawQuad(modelMat, transform.Translation, transform.Scale, transform.Rotation, sprite.Texture, sprite.TilingFactor, sprite.Color);
+                            Renderer2D::DrawQuad(modelMat, (int)entity.GetID(), transform.Translation, transform.Scale, transform.Rotation, sprite.Texture, sprite.TilingFactor, sprite.Color);
                         }
                         else
                         {
-                            Renderer2D::DrawQuad(modelMat, transform.Translation, transform.Scale, transform.Rotation, sprite.Color);
+                            Renderer2D::DrawQuad(modelMat, (int)entity.GetID(), transform.Translation, transform.Scale, transform.Rotation, sprite.Color);
                         }
                         break;
                     }
@@ -278,11 +280,11 @@ namespace Nebula
 			auto sprite = entity.GetComponent<SpriteRendererComponent>();
 			if (sprite.Texture)
 			{
-				Renderer2D::DrawQuad(modelMat, transform.Translation, transform.Scale, transform.Rotation, sprite.Texture, sprite.TilingFactor, sprite.Color);
+				Renderer2D::DrawQuad(modelMat, (int)entity.GetID(), transform.Translation, transform.Scale, transform.Rotation, sprite.Texture, sprite.TilingFactor, sprite.Color);
 			}
 			else
 			{
-				Renderer2D::DrawQuad(modelMat, transform.Translation, transform.Scale, transform.Rotation, sprite.Color);
+				Renderer2D::DrawQuad(modelMat, (int)entity.GetID(), transform.Translation, transform.Scale, transform.Rotation, sprite.Color);
 			}
 		}
 

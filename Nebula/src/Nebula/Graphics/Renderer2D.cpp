@@ -62,6 +62,7 @@ namespace Nebula
 			{ ShaderDataType::Float2, "a_TexCoord" },
 			{ ShaderDataType::Float, "a_TexIndex" },
 			{ ShaderDataType::Float, "a_TilingFactor" },
+            { ShaderDataType::Int, "a_EntityID" },
             // { ShaderDataType::Mat4,   "a_ModelMat"}
 			});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
@@ -267,12 +268,12 @@ namespace Nebula
 	}
 
 
-	void Renderer2D::DrawQuad(const Mat4f& modelMat, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color)
+	void Renderer2D::DrawQuad(const Mat4f& modelMat, const int entityID,  const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color)
 	{
-		DrawQuad(modelMat, { position.X, position.Y, 0.0f }, scale, rotation, color);
+		DrawQuad(modelMat, entityID, { position.X, position.Y, 0.0f }, scale, rotation, color);
 	}
 
-	void Renderer2D::DrawQuad(const Mat4f& modelMat, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color)
+	void Renderer2D::DrawQuad(const Mat4f& modelMat, const int entityID,  const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Vec4f& color)
 	{
 		constexpr size_t quadVertexCount = 4;
 		const float textureIndex = 0.0f; // White Texture
@@ -284,6 +285,7 @@ namespace Nebula
 
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
+            s_Data.QuadVertexBufferPtr->EntityID = entityID;
             s_Data.QuadVertexBufferPtr->Translation = position;
             s_Data.QuadVertexBufferPtr->Scale = scale;
             s_Data.QuadVertexBufferPtr->Rotation = rotation;
@@ -301,12 +303,12 @@ namespace Nebula
 		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const Mat4f& modelMat, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
+	void Renderer2D::DrawQuad(const Mat4f& modelMat, const int entityID, const Vec2f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
-		DrawQuad(modelMat, { position.X, position.Y, 0.0f }, scale, rotation, texture, tilingFactor, tintColor);
+		DrawQuad(modelMat, entityID, { position.X, position.Y, 0.0f }, scale, rotation, texture, tilingFactor, tintColor);
 	}
 
-	void Renderer2D::DrawQuad(const Mat4f& modelMat, const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
+	void Renderer2D::DrawQuad(const Mat4f& modelMat, const int entityID,  const Vec3f& position, const Vec3f& scale, Vec3f& rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
 	{
 		constexpr size_t quadVertexCount = 4;
 
@@ -335,6 +337,7 @@ namespace Nebula
 
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
+            s_Data.QuadVertexBufferPtr->EntityID = entityID;
             s_Data.QuadVertexBufferPtr->Translation = position;
             s_Data.QuadVertexBufferPtr->Rotation = rotation;
             s_Data.QuadVertexBufferPtr->Scale = scale;

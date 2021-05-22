@@ -15,6 +15,10 @@ namespace Nebula
 		virtual void Unbind() override;
 
 		virtual void Resize(uint32 width, uint32 height) override;
+        virtual int ReadPixel(uint32 colorAttachmentID, int x, int y) override;
+        virtual void ClearTextureAttachment(uint32 attachmentID, const int value) override;
+        virtual void ClearTextureAttachment(uint32 attachmentID, const float value) override;
+
         void Invalidate();
 
         // virtual void BindTexture(uint32_t slot = 0) const override;

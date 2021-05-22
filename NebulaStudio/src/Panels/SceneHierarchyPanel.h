@@ -19,6 +19,7 @@ namespace Nebula {
 		inline bool HasSelection()	  { if(SelectionContext != Entity()) { return SelectionContext.IsValid(); } return false; }
 		inline void RemoveSelection() { if (HasSelection()) { Context->RemoveEntity(SelectionContext); } SelectionContext = {}; } 
 		inline void ClearSelection() { SelectionContext = {}; }
+        inline void SetSelection(Entity e) { if(e.IsValid()) SelectionContext = e; }
 
 	private:
 		void DrawVec2iControl(std::string label, Vec2i& data, int min1, int max1, int min2, int max2, float extraPadding = 0.0f);

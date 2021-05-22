@@ -9,7 +9,8 @@ namespace Nebula
         None = 0,
 
         //Col
-        RGBA8, 
+        RGBA8,
+        RED_INT,
 
         //Depth-Stencil
         DEPTH24STENCIL8,
@@ -53,6 +54,9 @@ namespace Nebula
 		virtual void Unbind() = 0;
 
 		virtual void Resize(uint32 width, uint32 height) = 0;
+        virtual int ReadPixel(uint32 attachmentID, int x, int y) = 0;
+        virtual void ClearTextureAttachment(uint32 attachmentID, const int value) = 0;
+        virtual void ClearTextureAttachment(uint32 attachmentID, const float value) = 0;
 
 		virtual uint32_t GetRendererID() const = 0;
 		virtual uint32_t GetDepthAttachmentRendererID() const = 0;

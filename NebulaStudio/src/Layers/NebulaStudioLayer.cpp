@@ -13,7 +13,7 @@ namespace Nebula
         OpenProject(ProjFileInput);
 
         FramebufferSpecification fbSpec;
-        fbSpec.Attachments = {FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth};
+        fbSpec.Attachments = {FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::Depth};
         fbSpec.Width = 1600;
         fbSpec.Height = 900;
         fbSpec.Samples = 1;
@@ -60,14 +60,33 @@ namespace Nebula
             m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
-        RendererConfig::Clear();
         FrameBuffer->Bind();
         RendererConfig::Clear();
 
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
+            FrameBuffer->ClearTextureAttachment(1, -1);
+
             m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
             ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+
+            Vec2f pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
+            pos.X -= m_ViewportBounds[0].X; 
+            pos.Y -= m_ViewportBounds[0].Y;
+            Vec2f viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+            pos.Y = viewportSize.Y - pos.Y;
+            int mouseX = (int)pos.X;
+            int mouseY = (int)pos.Y;
+
+            if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.X && mouseY < (int)viewportSize.Y) {
+                m_HoveringEntity = FrameBuffer->ReadPixel(1, mouseX, mouseY);
+                m_HoveringViewport = true;
+            }
+            else {
+                m_HoveringViewport = false;
+                m_HoveringEntity = -1;
+            }
+
         }
         else
         {
@@ -183,6 +202,7 @@ namespace Nebula
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Viewport");
+        Vec2f viewportOffset = {ImGui::GetCursorPos().x, ImGui::GetCursorPos().y};
 
         ViewportFocused = ImGui::IsWindowFocused();
         ViewportHovered = ImGui::IsWindowHovered();
@@ -199,7 +219,18 @@ namespace Nebula
 
         uint32_t textureID = FrameBuffer->GetColorAttachmentsRendererID()[0];
         ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.X, ViewportSize.Y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+        Vec2f windowSize = {ImGui::GetWindowSize().x, ImGui::GetWindowSize().y};
+
+        Vec2f minBound = {ImGui::GetWindowPos().x, ImGui::GetWindowPos().y};
+        minBound.X += viewportOffset.X; 
+        minBound.Y += viewportOffset.Y; 
         
+        Vec2f maxBound = {minBound.X + windowSize.X, minBound.Y + windowSize.Y};
+
+        m_ViewportBounds[0] = minBound;
+        m_ViewportBounds[1] = maxBound;
+
         Entity selectedEntity = SceneHierarchy.GetSelection();
         bool shouldDrawImGuizmo = PlayStatus == SceneStatus::NOT_STARTED && m_RenderImGuizmo;
         if (selectedEntity.IsValid() && shouldDrawImGuizmo) {
@@ -244,6 +275,7 @@ namespace Nebula
 
         EventDispatcher Dispatch(e);
         Dispatch.Dispatch<KeyPressedEvent>(NEB_BIND_EVENT_FN(NebulaStudioLayer::OnKeyPressed));
+        Dispatch.Dispatch<MouseButtonPressedEvent>(NEB_BIND_EVENT_FN(NebulaStudioLayer::OnMouseButtonPressed));
     }
 
     bool NebulaStudioLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -377,6 +409,30 @@ namespace Nebula
 
                 default:
                     break;
+            }
+        }
+
+        return false;
+    }
+
+    
+    bool NebulaStudioLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e) {
+        if (ImGuizmo::IsOver() || !m_HoveringViewport) {
+            return true;
+        }
+
+        switch (e.getButton()) {
+            case(MouseCode::ButtonLeft): {
+                if (m_HoveringEntity == -1) {
+                    SceneHierarchy.ClearSelection();
+                } else {
+                    LOG_DBG("Setting selection: %d\n", m_HoveringEntity);
+                    SceneHierarchy.SetSelection({(entt::entity)m_HoveringEntity, ActiveScene.get()});
+                }
+                break;
+            }
+            default: {
+                break;
             }
         }
 
