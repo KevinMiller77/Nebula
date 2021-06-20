@@ -615,8 +615,8 @@ namespace Nebula{
 			}
 		}
 
-		//Reflect(shaderData[0]);
-		//Reflect(shaderData[1]);
+		Reflect(shaderData[0]);
+		Reflect(shaderData[1]);
 	}
 
     void GLShader::AddShaderReloadedCallback(const ShaderReloadedCallback& callback)
@@ -866,8 +866,8 @@ namespace Nebula{
 		uint8_t* buffer = new uint8_t[size];
 		memcpy(buffer, data, size);
 
-		Renderer::Submit([=]()
-		{
+		// Renderer::Submit([=]()
+		// {
 			ShaderUniformBuffer* uniformBuffer = nullptr;
 			for (auto& [bindingPoint, ub] : s_UniformBuffers)
 			{
@@ -883,7 +883,7 @@ namespace Nebula{
 			glNamedBufferSubData(uniformBuffer->RendererID, 0, size, buffer);
 
 			delete[] buffer;
-		});
+		// });
 	}
 
     

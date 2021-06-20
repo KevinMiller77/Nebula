@@ -98,7 +98,6 @@ namespace Nebula{
 
 		bool TexShaderFileFound = VFS::Exists("assets/shaders/TexQuad.glsl"); 
 		s_2DData.TextureShader =  TexShaderFileFound ? Shader::Create("assets/shaders/TexQuad.glsl") : Shader::Create(Builtin::TexQuadShader);
-		if (!TexShaderFileFound) LOG_WRN("The shader TexQuad.glsl was not found, the default shader will be used\n");
 
 		s_2DData.TextureShader->Bind();
 		s_2DData.TextureShader->SetUniform("u_Textures", samplers, s_2DData.MaxTextureSlots);
@@ -112,7 +111,7 @@ namespace Nebula{
 		s_2DData.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
 		bool LineShaderFileFound = VFS::Exists("assets/shaders/Line.glsl");
-		s_2DData.LineShader = LineShaderFileFound  ? Shader::Create("assets/shaders/TexQuad.glsl") : Shader::Create(Builtin::LineShader);
+		s_2DData.LineShader = LineShaderFileFound  ? Shader::Create("assets/shaders/Line.glsl") : Shader::Create(Builtin::LineShader);
 		
 		s_2DData.LineVertexArray = VertexArray::Create();
 			
@@ -151,7 +150,7 @@ namespace Nebula{
 		if (s_2DData.TextureShader)
 		{
 			s_2DData.TextureShader.get()->Bind();
-			s_2DData.TextureShader.get()->SetUniform("u_ViewProjection", s_2DData.viewProj);
+			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 		}
 
 		s_2DData.QuadIndexCount = 0;
@@ -176,7 +175,7 @@ namespace Nebula{
 		if (s_2DData.TextureShader)
 		{
 			s_2DData.TextureShader.get()->Bind();
-			s_2DData.TextureShader.get()->SetUniform("u_ViewProjection", s_2DData.viewProj);
+			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 		}
 
 		s_2DData.QuadIndexCount = 0;
@@ -199,7 +198,7 @@ namespace Nebula{
 		if (s_2DData.TextureShader)
 		{
 			s_2DData.TextureShader->Bind();
-			s_2DData.TextureShader->SetUniform("u_ViewProjection", s_2DData.viewProj);
+			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 		}
 
 		s_2DData.QuadIndexCount = 0;
@@ -220,7 +219,7 @@ namespace Nebula{
 			s_2DData.QuadVertexBuffer->SetData(s_2DData.QuadVertexBufferBase, data);
 			
 			s_2DData.TextureShader->Bind();
-			s_2DData.TextureShader->SetUniform("u_ViewProjection", s_2DData.viewProj);
+			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 
 			// Bind textures
 			for (uint32_t i = 0; i < s_2DData.TextureSlotIndex; i++)
@@ -239,7 +238,7 @@ namespace Nebula{
 			s_2DData.LineVertexBuffer->SetData(s_2DData.LineVertexBufferBase, data);
 
 			s_2DData.LineShader->Bind();
-			s_2DData.LineShader->SetUniform("u_ViewProjection", s_2DData.viewProj);
+			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 
 			s_2DData.LineVertexArray->Bind();
 			s_2DData.LineIndexBuffer->Bind();
@@ -359,106 +358,7 @@ namespace Nebula{
 
 		s_2DData.Stats.QuadCount++;
 	}
-/*
-	void Renderer2D::DrawQuad(const Mat4f& transform, const Vec4f& color)
-	{
-		constexpr size_t quadVertexCount = 4;
-		const float textureIndex = 0.0f; // White Texture
-		Vec2f textureCoords[4] = { Vec2f( 0.0f, 0.0f ), Vec2f( 1.0f, 0.0f ), Vec2f( 1.0f, 1.0f ), Vec2f( 0.0f, 1.0f ) };
-		const float tilingFactor = 1.0f;
 
-		if (s_2DData.QuadIndexCount >= Renderer2DData::MaxQuadIndices)
-			FlushAndReset();
-
-		for (size_t i = 0; i < quadVertexCount; i++)
-		{
-            Vec4f tempPos = Vec4f(transform * s_2DData.QuadVertexPositions[i]);
-            s_2DData.QuadVertexBufferPtr->Position = { tempPos.X, tempPos.Y, tempPos.Z };
-            s_2DData.QuadVertexBufferPtr->Color = color;
-			s_2DData.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_2DData.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_2DData.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_2DData.QuadVertexBufferPtr++;
-		}
-
-		s_2DData.QuadIndexCount += 6;
-
-		s_2DData.Stats.QuadCount++;
-	}
-
-	void Renderer2D::DrawQuad(const Mat4f& transform, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
-	{
-		constexpr size_t quadVertexCount = 4;
-
-		if (s_2DData.QuadIndexCount >= Renderer2DData::MaxQuadIndices)
-			FlushAndReset();
-
-		float textureIndex = 0.0f;
-		for (uint32_t i = 1; i < s_2DData.TextureSlotIndex; i++)
-		{
-			if (s_2DData.TextureSlots[i]->GetRendererID() == texture->GetRendererID())
-			{
-				textureIndex = (float)i;
-				break;
-			}
-		}
-
-		if (textureIndex == 0.0f)
-		{
-			if (s_2DData.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
-				FlushAndReset();
-
-			textureIndex = (float)s_2DData.TextureSlotIndex;
-			s_2DData.TextureSlots[s_2DData.TextureSlotIndex] = texture;
-			s_2DData.TextureSlotIndex++;
-		}
-
-		for (size_t i = 0; i < quadVertexCount; i++)
-		{
-            Vec4f tempPos = Vec4f(transform * s_2DData.QuadVertexPositions[i]);
-            s_2DData.QuadVertexBufferPtr->Position = { tempPos.X, tempPos.Y, tempPos.Z };
-			s_2DData.QuadVertexBufferPtr->Color = tintColor;
-			s_2DData.QuadVertexBufferPtr->TexCoord = texture->GetTexCoords()[i];
-			s_2DData.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_2DData.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_2DData.QuadVertexBufferPtr++;
-		}
-
-		s_2DData.QuadIndexCount += 6;
-
-		s_2DData.Stats.QuadCount++;
-	}
-
-	void Renderer2D::DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Vec4f& color)
-	{
-		DrawRotatedQuad({ position.X, position.Y, 0.0f }, size, rotation, color);
-	}
-
-	void Renderer2D::DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Vec4f& color)
-	{
-		Mat4f translation = Mat4f::translation(position);
-		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
-		Mat4f rot = Mat4f::rotation(rotation, Vec3f(0,0,1));
-		Mat4f transform = rot * scale * translation;
-
-		DrawQuad(transform, color);
-	}
-
-	void Renderer2D::DrawRotatedQuad(const Vec2f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
-	{
-		DrawRotatedQuad({ position.X, position.Y, 0.0f }, size, rotation, texture, tilingFactor, tintColor);
-	}
-
-	void Renderer2D::DrawRotatedQuad(const Vec3f& position, const Vec2f& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const Vec4f& tintColor)
-	{
-		Mat4f translation = Mat4f::translation(position);
-		Mat4f scale = Mat4f::scale(Vec3f(size.X, size.Y, 1.0f));
-		Mat4f rot = Mat4f::rotation(rotation, Vec3f(0,0,1));
-		Mat4f transform = rot * scale * translation;
-
-		DrawQuad(transform, texture, tilingFactor, tintColor);
-	}
-*/
 	void Renderer2D::DrawLine(const Vec3f& p0, const Vec3f& p1, const Vec4f& color)
 	{
 		if (s_2DData.LineIndexCount >= Renderer2DData::MaxLineIndices)

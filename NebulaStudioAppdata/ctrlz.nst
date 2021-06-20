@@ -1,0 +1,48 @@
+Scene: Untitled
+Entities:
+  - Entity: 86133791
+    TagComponent:
+      Tag: 1
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 0]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 75
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      FixedAspectRatio: false
+    RootEntityComponent:
+      Visible: true
+  - Entity: 2996772340
+    TagComponent:
+      Tag: Sq
+    TransformComponent:
+      Translation: [0.0200033188, 0, 0.0484921336]
+      Rotation: [0, -0, 0]
+      Scale: [1, 2, 1]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    SpriteRendererComponent:
+      Hidden: false
+      Color: [1, 1, 1, 1]
+      Type: Quad
+      Has Tex: true
+      Tex Path: D:/dev/Nebula/NebulaStudio/assets/textures/tilemap_packed.png
+      Tex Width: 16
+      Tex Height: 32
+      Is TileMap: true
+      Tile Pos: [16, 5]
+      Tile Size: [1, 2]
+      Tile Resolution: [16, 16]
+    RootEntityComponent:
+      Visible: true
