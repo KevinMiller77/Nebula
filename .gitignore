@@ -27,3 +27,5 @@ Release/*
 ext/freetype/bin
 .vs/
 */Makefile
+Nebula/SPIRV-Tools/*.lib
+Nebula/glslang/*.lib
