@@ -28,6 +28,6 @@ Release/*
 ext/freetype/bin
 .vs/
 */Makefile
-Nebula/ext/SPIRV-Tools/*.lib
-Nebula/ext/glslang/*.lib
+Nebula/ext/SPIRV-Tools/*
+Nebula/ext/glslang/*
 NebulaStudio/NebulaEditorSettings.yaml
