@@ -30,3 +30,4 @@ ext/freetype/bin
 */Makefile
 Nebula/ext/SPIRV-Tools/*.lib
 Nebula/ext/glslang/*.lib
+NebulaStudio/NebulaEditorSettings.yaml
