@@ -265,9 +265,7 @@ namespace Nebula{
 
 			GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 			if (location == -1) {
-				GLenum err = glGetError();
-				printf("Print to the file\n\n");
-				assert(false);
+				//assert(false);
 			}
 			m_Resources[name] = ShaderResourceDeclaration(name, binding, 1);
 			glUniform1i(location, binding);

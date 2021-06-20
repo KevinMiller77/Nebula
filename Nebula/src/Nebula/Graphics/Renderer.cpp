@@ -19,8 +19,7 @@ namespace Nebula{
 
     void Renderer::Init()
 	{
-     
-
+    
         RendererConfig::Init();
 		Renderer2D::Init();
 
