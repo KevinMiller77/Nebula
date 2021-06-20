@@ -26,6 +26,7 @@ namespace Nebula {
 
 	void Material::AllocateStorage()
 	{
+
 		const auto& shaderBuffers = m_Shader->GetShaderBuffers();
 
         if (shaderBuffers.size() > 1) {

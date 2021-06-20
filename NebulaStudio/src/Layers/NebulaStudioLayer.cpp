@@ -3,6 +3,8 @@
 namespace Nebula
 {
     Vec2f BoxPos = Vec2f(0.0, 0.0);
+    bool drawMesh = false;
+    Ref<Mesh> s_Mesh1;
 
     // Happens every time you open a project
 
@@ -22,9 +24,9 @@ namespace Nebula
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-        std::string assetPath = VFS::AbsolutePath("assets/mesh/45ACP/Handgun_obj.obj");
-        if (VFS::Exists(assetPath, true)) {
-            // Mesh m = Mesh(assetPath);
+        std::string assetPath = VFS::AbsolutePath("assets/mesh/m16/m16.obj");
+        if (assetPath != "") {
+            s_Mesh1 = CreateRef<Mesh>(assetPath);
         }        
     }
 
@@ -73,6 +75,13 @@ namespace Nebula
 
             m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
             ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+
+            if (s_Mesh1) {
+                Ref<RenderPass> pass = RenderPass::Create({ FrameBuffer });
+                Renderer::BeginRenderPass(pass, false);
+                Renderer::SubmitMesh(s_Mesh1, Mat4f(1.0f));
+                Renderer::EndRenderPass();
+            }
 
             Vec2f pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
             pos.X -= m_ViewportBounds[0].X; 

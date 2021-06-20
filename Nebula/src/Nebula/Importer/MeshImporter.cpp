@@ -90,7 +90,7 @@ namespace Nebula {
         }
 
         bool LoadMaterialsFromFile(Ref<iMeshScene> scene, const std::string& filepath) {
-            std::string currentDirectory = filepath.substr(0, filepath.find_last_of("/") + 1);
+            std::string currentDirectory = std::filesystem::path(filepath).parent_path().string() + "/";
 
             std::ifstream matFile;
             matFile.open(filepath, std::ios::in);
@@ -289,7 +289,7 @@ namespace Nebula {
         }
 
         Ref<iMeshScene> ImportMesh_OBJ(const std::string& filepath) {
-            std::string currentDirectory = filepath.substr(0, filepath.find_last_of("/") + 1);
+            std::string currentDirectory = std::filesystem::path(filepath).parent_path().string() + "/";
             std::string fileNameNoExt = std::filesystem::path(filepath).stem().string();
 
             Ref<iMeshScene> outMeshScene = CreateRef<iMeshScene>();
@@ -347,7 +347,7 @@ namespace Nebula {
                 // Scene and Root Node parameters
                 if (tokensOnLine[0] == "mtllib") {
                     std::string matPath = currentDirectory + tokensOnLine[1];
-                    if(!VFS::IsFile(matPath, true)) {
+                    if(!VFS::Exists(matPath, true)) {
                         LOG_ERR("[Mesh Importer] Material in obj did not exist: %s", matPath.c_str());
                         continue;
                     }

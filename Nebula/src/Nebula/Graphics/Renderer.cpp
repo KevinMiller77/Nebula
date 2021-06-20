@@ -25,7 +25,7 @@ namespace Nebula{
 
         s_ShaderLibrary = CreateRef<ShaderLibrary>();
         // Add all shaders to the lib here
-        // s_ShaderLibrary->Load(std::filesystem::absolute("assets/shaders/PBR_Static.glsl").string());
+        s_ShaderLibrary->Load(std::filesystem::absolute("assets/shaders/PBR_Static.glsl").string());
     }
     void Renderer::Shutdown()
 	{
@@ -71,9 +71,9 @@ namespace Nebula{
 		// auto material = overrideMaterial ? overrideMaterial : mesh->GetMaterialInstance();
 		// auto shader = material->GetShader();
 
-		mesh->m_VertexBuffer->Bind();
-		mesh->m_Pipeline->Bind();
-		mesh->m_IndexBuffer->Bind();
+			mesh->m_VertexBuffer->Bind();
+			mesh->m_Pipeline->Bind();
+			mesh->m_IndexBuffer->Bind();
 
 		auto& materials = mesh->GetMaterials();
 		for (Submesh& submesh : mesh->m_Submeshes)
@@ -93,14 +93,14 @@ namespace Nebula{
 			}
 			
 			auto transformUniform = transform * submesh.Transform;
-			shader->SetUniformBuffer("Transform", &transformUniform, sizeof(Mat4f));
+			shader->SetUniformBuffer("Transform", &transformUniform, sizeof(Vec4f) * 4);
 
             if (material->GetFlag(MaterialFlag::DepthTest))	
                 RendererConfig::SetDepthTest(true);
             else
                 RendererConfig::SetDepthTest(false);
 
-            RendererConfig::DrawElementsBaseVertex(GL_TRIANGLES, submesh.IndexCount, GL_UNSIGNED_INT, (void*)(sizeof(uint32_t) * submesh.BaseIndex), submesh.BaseVertex);
+            RendererConfig::DrawElementsBaseVertex(GL_TRIANGLES, submesh.IndexCount, GL_UNSIGNED_INT, 0, submesh.BaseVertex);
 		}
 	}
 
@@ -154,9 +154,9 @@ namespace Nebula{
         renderPass->GetSpecification().TargetFramebuffer->Bind();
         if (clear) {
             Vec4f clearColor = renderPass->GetSpecification().TargetFramebuffer->GetSpecification().ClearColor;
-            Renderer::Submit([=]() {
+            //Renderer::Submit([=]() {
                 RendererConfig::Clear(clearColor);
-            });
+            //});
         }
 	}
 

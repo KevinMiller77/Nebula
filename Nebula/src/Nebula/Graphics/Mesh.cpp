@@ -32,7 +32,7 @@ namespace Nebula {
 			assert(false);
 		}
 
-        Ref<MeshFile> sceneMeshFile = std::static_pointer_cast<MeshFile>(sceneFile);
+        Ref<MeshFile> sceneMeshFile = Importer::s_ImportMesh(filename);
         Ref<iMeshScene> sceneRef = sceneMeshFile->meshScene;
 		if (!sceneRef->HasMeshes()) {
 			LOG_ERR("Failed to load meshRef file: %s\n", filename.c_str());
@@ -48,7 +48,7 @@ namespace Nebula {
         Ref<iMeshRoot> rootRef = m_Scene->mRootNode;
 
         assert(rootRef->HasPositions(), "Meshes require positions.");
-        assert(rootRef->HasNormals(), "Meshes require normals.");
+        //assert(rootRef->HasNormals(), "Meshes require normals.");
 
         std::vector<Vec3f> l_Positions = rootRef->mPositions;
         std::vector<Vec3f> l_Normals = rootRef->mNormals;
@@ -116,7 +116,7 @@ namespace Nebula {
                 for (int vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
                     Vertex vertex;
 					vertex.Position = l_Positions[i_Positions[vertexIdx] - 1];
-					vertex.Normal = l_Normals[i_Normals[vertexIdx] - 1];
+					//vertex.Normal = l_Normals[i_Normals[vertexIdx] - 1];
 					aabb.Min.X = min(vertex.Position.X, aabb.Min.X);
 					aabb.Min.Y = min(vertex.Position.Y, aabb.Min.Y);
 					aabb.Min.Z = min(vertex.Position.Z, aabb.Min.Z);
@@ -234,7 +234,7 @@ namespace Nebula {
 					{
 						m_Textures[i] = texture;
                         mi->Set("u_AlbedoTexture", m_Textures[i]);
-						mi->Set("u_MaterialUniforms.AlbedoTexToggle", 1.0f);
+						// TODO!!!!!!!!!!!!!! mi->Set("u_MaterialUniforms.AlbedoTexToggle", 1.0f);
 					}
 					else
 					{
@@ -250,26 +250,26 @@ namespace Nebula {
 				}
 
 				// Normal maps
-				mi->Set("u_MaterialUniforms.NormalTexToggle", 0.0f);
-				if (material->GetTexture(iMeshTextureType::NORMAL, 0, &texturePath))
-				{
-					LOG_INF("    Normal map path = %s\n", texturePath.c_str());
-					auto texture = Texture2D::Create(texturePath);
-					if (texture->IsValid())
-					{
-						m_Textures.push_back(texture);
-						mi->Set("u_NormalTexture", texture);
-						mi->Set("u_MaterialUniforms.NormalTexToggle", 1.0f);
-					}
-					else
-					{
-						LOG_ERR("   Could not load texture: %s\n", texturePath.c_str());
-					}
-				}
-				else
-				{
-					LOG_ERR("    No normal map\n");
-				}
+				// mi->Set("u_MaterialUniforms.NormalTexToggle", 0.0f);
+				// if (material->GetTexture(iMeshTextureType::NORMAL, 0, &texturePath))
+				// {
+				// 	LOG_INF("    Normal map path = %s\n", texturePath.c_str());
+				// 	auto texture = Texture2D::Create(texturePath);
+				// 	if (texture->IsValid())
+				// 	{
+				// 		m_Textures.push_back(texture);
+				// 		mi->Set("u_NormalTexture", texture);
+				// 		mi->Set("u_MaterialUniforms.NormalTexToggle", 1.0f);
+				// 	}
+				// 	else
+				// 	{
+				// 		LOG_ERR("   Could not load texture: %s\n", texturePath.c_str());
+				// 	}
+				// }
+				// else
+				// {
+				// 	LOG_ERR("    No normal map\n");
+				// }
 
 				// TODO: Roughness map
                 // TODO: Metalness map
@@ -302,8 +302,11 @@ namespace Nebula {
 				{ ShaderDataType::Float2, "a_TexCoord" },
 			};
 		}
+		pipelineSpecification.Layout = m_VertexBufferLayout;
+				
+		m_Pipeline = Pipeline::Create(pipelineSpecification);
 
-		m_IndexBuffer = IndexBuffer::Create((uint32_t*)m_Indices.data(), m_Indices.size() * sizeof(Index));
+		m_IndexBuffer = IndexBuffer::Create((uint32_t*)m_Indices.data(), m_Indices.size() * 3);
 	}
 
 	Mesh::~Mesh()

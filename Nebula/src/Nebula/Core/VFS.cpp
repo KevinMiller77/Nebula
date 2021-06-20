@@ -76,7 +76,11 @@ namespace Nebula{
         if (!IsMounted()) {
             return std::filesystem::absolute(path).string();
         }
-        return AbsoluteRoot + path;
+        std::string intendedOut = AbsoluteRoot + path;
+        if (Exists(intendedOut, true)) {
+            return intendedOut;
+        }
+        return std::filesystem::absolute(path).string();
     }
 
     

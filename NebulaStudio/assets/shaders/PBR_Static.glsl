@@ -20,7 +20,7 @@ layout (std140, binding = 0) uniform Camera
 	mat4 u_ViewProjectionMatrix;
 };
 
-layout (push_constant) uniform Transform
+layout (std140, binding = 1) uniform Transform
 {
 	mat4 u_Transform;
 };
@@ -46,7 +46,7 @@ void main()
 	Output.WorldTransform = mat3(u_Transform);
 	Output.Binormal = a_Binormal;
 
-	gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0);
+	gl_Position = vec4(a_Position, 1.0) * u_Transform * u_ViewProjectionMatrix;
 }
 
 #type fragment
@@ -80,7 +80,7 @@ layout (location = 0) in VertexOutput Input;
 
 layout(location = 0) out vec4 color;
 
-layout (std140, binding = 1) uniform Environment
+layout (std140, binding = 2) uniform Environment
 {
 	Light lights;
 	vec3 u_CameraPosition; // Offset = 32
