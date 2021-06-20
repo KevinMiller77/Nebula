@@ -3,8 +3,7 @@
 #include <string>
 #include <fstream>
 
-class NFile
-{
+class NFile{
 public:
     enum NFileAccess
     {

@@ -2,8 +2,7 @@
 #include <Graphics/Buffer.h>
 
 
-namespace Nebula
-{
+namespace Nebula{
     class GLVertexBuffer : public VertexBuffer
 	{
 	public:
@@ -29,12 +28,13 @@ namespace Nebula
 		GLIndexBuffer(uint32_t* indices, uint32_t count);
 		virtual ~GLIndexBuffer();
 
-		virtual void Bind() const;
-		virtual void Unbind() const;
+		virtual void Bind() const override;
+		virtual void Unbind() const override;
 
-		virtual uint32_t GetCount() const { return count; }
+		virtual uint32_t GetCount() const override { return m_Count; }
+
 	private:
 		uint32_t ID;
-		uint32_t count;
+		uint32_t m_Count;
 	};
 }

@@ -4,8 +4,7 @@
 #include <Core/Ref.h>
 #include <deque>
 
-namespace Nebula
-{
+namespace Nebula{
     class Entity;
 
 
@@ -61,6 +60,10 @@ namespace Nebula
 
         virtual std::string GetFilePath() { return AssociatedFilePath; }
         virtual void SetFilePath(std::string path) { AssociatedFilePath = path; }
+
+        template <typename T>
+        inline entt::basic_view<entt::entity, entt::exclude_t<>, T> GetView() { return Registry.view<T>(); }
+
     private:
         entt::registry Registry;
         std::string AssociatedFilePath = std::string();

@@ -18,8 +18,7 @@
 
 int main(int argv, char** argc);
 
-namespace Nebula
-{
+namespace Nebula{
     class Application
     {
         

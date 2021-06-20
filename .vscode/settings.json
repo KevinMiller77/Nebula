@@ -81,6 +81,11 @@
         "cstdarg": "cpp",
         "future": "cpp",
         "optional": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "format": "cpp",
+        "bit": "cpp",
+        "clocale": "cpp",
+        "stop_token": "cpp",
+        "bitset": "cpp"
     }
 }

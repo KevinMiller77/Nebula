@@ -10,8 +10,7 @@
 
 #include <../ext/imgui/imgui.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class ImGuiLayer : public Layer
     {
     public:

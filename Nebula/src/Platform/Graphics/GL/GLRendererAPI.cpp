@@ -3,8 +3,7 @@
 #include <Utils/Logging.h>
 #include <glad/glad.h>
 
-namespace Nebula
-{
+namespace Nebula{
     static void APIENTRY GLMessageCallback(
 		unsigned source,
 		unsigned type,
@@ -88,28 +87,42 @@ namespace Nebula
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
+    
+    void GLRendererAPI::Clear(Vec4f color) {
+        glClearColor(color.X, color.Y, color.Z, color.W);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    }
 
-    void GLRendererAPI::DrawIndexed(const Ref<VertexArray> vertexArray, PrimativeType type, uint32 indexCount)
-    {
-        uint32 count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+    
+    void GLRendererAPI::DrawIndexed(const int numIndices, PrimativeType type, bool depthTest) { 
+
+        SetDepthTest(depthTest);
         
         switch(type)
         {
             case(TRIANGLES):
             {
-                glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+                glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
                 break;
             }
             case(LINES):
             {
-                glDrawElements(GL_LINES, count, GL_UNSIGNED_INT, nullptr);
+                glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_INT, nullptr);
                 break;
             }
             default:
                 break;
         }
+
+        if (!depthTest)
+			glEnable(GL_DEPTH_TEST);
         
         glBindTexture(GL_TEXTURE_2D, 0);
     }
+
+    void GLRendererAPI::DrawElementsBaseVertex(uint32_t mode, uint32_t size, uint32_t type, void* indices, uint32_t base) {
+        glDrawElementsBaseVertex(mode, size, type, indices, base);
+    }
+
 	
 }

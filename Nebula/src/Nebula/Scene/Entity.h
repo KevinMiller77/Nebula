@@ -5,8 +5,7 @@
 #include <string>
 #include "Scene.h"
 
-namespace Nebula
-{
+namespace Nebula{
     class Entity
 	{
 	public:

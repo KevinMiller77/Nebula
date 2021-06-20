@@ -1,0 +1,98 @@
+Scene: Untitled
+Entities:
+  - Entity: 1879364535
+    TagComponent:
+      Tag: Blank Entity
+    TransformComponent:
+      Translation: [0, 0.948684871, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 2, 1]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    SpriteRendererComponent:
+      Hidden: false
+      Color: [1, 1, 1, 1]
+      Type: Quad
+      Has Tex: true
+      Tex Path: assets/textures/tilemap_packed.png
+      Tex Width: 16
+      Tex Height: 32
+      Is TileMap: true
+      Tile Pos: [16, 8]
+      Tile Size: [1, 2]
+      Tile Resolution: [16, 16]
+    RootEntityComponent:
+      Visible: true
+  - Entity: 3042881956
+    TagComponent:
+      Tag: Source
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    AudioSourceComponent:
+      Path: C:/Users/kevin/Dev/Nebula/NebulaStudio/assets/sounds/HeadFirst.ogg
+      Loop: false
+      Spatial: true
+      Gain: 1
+      Pitch: 1
+    RootEntityComponent:
+      Visible: true
+  - Entity: 86133791
+    TagComponent:
+      Tag: Scripted Cam
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 75
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      FixedAspectRatio: false
+    AudioListenerComponent:
+      Main Listener: true
+    RootEntityComponent:
+      Visible: true
+  - Entity: 2996772340
+    TagComponent:
+      Tag: Blank Entity
+    TransformComponent:
+      Translation: [0.0332606733, -0.508033454, 0.00738537824]
+      Rotation: [0, -0, 0]
+      Scale: [2, 2, 1]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    SpriteRendererComponent:
+      Hidden: false
+      Color: [1, 1, 1, 1]
+      Type: Quad
+      Has Tex: true
+      Tex Path: assets/textures/tilemap_packed.png
+      Tex Width: 32
+      Tex Height: 32
+      Is TileMap: true
+      Tile Pos: [15, 0]
+      Tile Size: [2, 2]
+      Tile Resolution: [16, 16]
+    AudioSourceComponent:
+      Path: C:/Users/kevin/Music/Wiz Khalifa - Taylor Allderdice (DatPiff.com)/04 - Guilty Conscience (Prod By Sparky Banks) (DatPiff Exclusive).mp3
+      Loop: false
+      Spatial: true
+      Gain: 1
+      Pitch: 1
+    RootEntityComponent:
+      Visible: true

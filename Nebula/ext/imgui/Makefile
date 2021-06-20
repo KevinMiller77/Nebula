@@ -35,17 +35,17 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/windowsx86_64/imgui
-TARGET = $(TARGETDIR)/imgui.lib
-OBJDIR = bin-int/Debug/windowsx86_64/imgui
+TARGETDIR = bin/Debug/linuxx86_64/imgui
+TARGET = $(TARGETDIR)/libimgui.a
+OBJDIR = bin-int/Debug/linuxx86_64/imgui
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++17
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/windowsx86_64/imgui
-TARGET = $(TARGETDIR)/imgui.lib
-OBJDIR = bin-int/Release/windowsx86_64/imgui
+TARGETDIR = bin/Release/linuxx86_64/imgui
+TARGET = $(TARGETDIR)/libimgui.a
+OBJDIR = bin-int/Release/linuxx86_64/imgui
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s

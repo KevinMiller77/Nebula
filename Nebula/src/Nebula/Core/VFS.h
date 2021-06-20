@@ -5,8 +5,7 @@
 
 #include <Utils/Logging.h>
 
-namespace Nebula
-{
+namespace Nebula{
     enum class VFSerr
     {
         NONE = 0,

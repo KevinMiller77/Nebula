@@ -5,8 +5,7 @@
 #include <glad/glad.h>
 
 #include <ext/imgui/examples/imgui_impl_opengl3.h>
-namespace Nebula
-{
+namespace Nebula{
     static const uint32 C_MaxFrameBufferSize = 8192;
 
     static GLenum TextureTarget(bool multisampled) {

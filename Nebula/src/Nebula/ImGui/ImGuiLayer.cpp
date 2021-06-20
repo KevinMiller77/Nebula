@@ -5,8 +5,7 @@
 // #include <Platform/Graphics/Metal/imgui/MetalImGuiLayer.h>
 
 #include <Nebula_pch.h>
-namespace Nebula
-{
+namespace Nebula{
     Ref<ImGuiLayer> ImGuiLayer::Create()
     {
         NEB_PROFILE_FUNCTION();

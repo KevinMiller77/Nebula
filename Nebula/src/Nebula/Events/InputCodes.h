@@ -1,7 +1,6 @@
 #pragma once
 
-namespace Nebula
-{
+namespace Nebula{
 	enum class MouseCode
 	{
 		Button0                = 0,

@@ -8,8 +8,7 @@
 
 #include <GLFW/glfw3.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class Input
     {
         std::map<KeyCode, bool> keys;

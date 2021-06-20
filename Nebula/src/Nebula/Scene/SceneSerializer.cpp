@@ -96,8 +96,7 @@ namespace YAML {
 	};
 }
 
-namespace Nebula
-{
+namespace Nebula{
 	YAML::Emitter& operator<<(YAML::Emitter& out, const Vec2i& v)
 	{
 		out << YAML::Flow;
@@ -184,7 +183,7 @@ namespace Nebula
 			out << YAML::BeginMap; // SpriteRendererComponent
 
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
-			out << YAML::Key << "Hidden" << YAML::Value << spriteRendererComponent.hidden;
+			out << YAML::Key << "Hidden" << YAML::Value << spriteRendererComponent.Hidden;
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			
 			out << YAML::Key << "Type";
@@ -226,6 +225,31 @@ namespace Nebula
 			}
 			
 			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
+        if (entity.HasComponent<AudioListenerComponent>())
+		{
+			out << YAML::Key << "AudioListenerComponent";
+			out << YAML::Value;
+			    out << YAML::BeginMap;
+			    out << YAML::Key << "Main Listener" << YAML::Value << entity.GetComponent<AudioListenerComponent>().IsActiveListener;
+                out << YAML::EndMap;
+		}
+
+        if (entity.HasComponent<AudioSourceComponent>())
+		{
+			out << YAML::Key << "AudioSourceComponent";
+			out << YAML::Value;
+            {
+
+                out << YAML::BeginMap;
+                out << YAML::Key << "Path" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetFilePath();
+                out << YAML::Key << "Loop" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetLoop();
+                out << YAML::Key << "Spatial" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetSpatial();
+                out << YAML::Key << "Gain" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetGain();
+                out << YAML::Key << "Pitch" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetPitch();
+                out << YAML::EndMap;
+            }
 		}
 
 		if (entity.HasComponent<RootEntityComponent>())
@@ -373,7 +397,7 @@ namespace Nebula
 		{
 			auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 			src.Color = spriteRendererComponent["Color"].as<Vec4f>();
-			src.hidden = spriteRendererComponent["Hidden"].as<bool>();
+			src.Hidden = spriteRendererComponent["Hidden"].as<bool>();
 			std::string t = spriteRendererComponent["Type"].as<std::string>();
 			
 			
@@ -419,6 +443,23 @@ namespace Nebula
 				}
 			}
 		}
+
+        auto audioListenerComponent = entity["AudioListenerComponent"];
+        if (audioListenerComponent) {
+            auto& listenerComp = deserializedEntity.AddComponent<AudioListenerComponent>();
+            listenerComp.IsActiveListener = audioListenerComponent["Main Listener"].as<bool>();
+        }
+
+        auto audioSourceComponent = entity["AudioSourceComponent"];
+        if (audioSourceComponent) {
+            std::string path = audioSourceComponent["Path"].as<std::string>();
+            bool spatial = audioSourceComponent["Spatial"].as<bool>();
+            bool loop = audioSourceComponent["Loop"].as<bool>();
+            float gain = audioSourceComponent["Gain"].as<float>();
+            float pitch = audioSourceComponent["Pitch"].as<float>();
+
+            auto& sourceComp = deserializedEntity.AddComponent<AudioSourceComponent>(path, spatial, loop, gain, pitch);
+        }
 
 		auto rootEntityComponent = entity["RootEntityComponent"];
 		if (rootEntityComponent)

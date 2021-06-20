@@ -1,8 +1,7 @@
 #include "Application.h"
 #include "Input.h"
 
-namespace Nebula
-{
+namespace Nebula{
     Input* Input::s_Input = new Input;
 
     bool Input::IsKeyPressedInt(KeyCode key) 

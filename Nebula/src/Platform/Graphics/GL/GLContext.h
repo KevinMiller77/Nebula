@@ -4,8 +4,7 @@
 
 struct GLFWwindow;
 
-namespace Nebula
-{
+namespace Nebula{
     class GLContext : public GraphicsContext
     {
     public:

@@ -3,8 +3,7 @@
 #include <Nebula_pch.h>
 #include <glad/glad.h>
 
-namespace Nebula
-{
+namespace Nebula{
     
 	/////////////////////////////////////////////////////////////////////////////
 	// VertexBuffer /////////////////////////////////////////////////////////////
@@ -54,7 +53,7 @@ namespace Nebula
 	/////////////////////////////////////////////////////////////////////////////
 
 	GLIndexBuffer::GLIndexBuffer(uint32_t* indices, uint32_t count)
-		: count(count)
+		: m_Count(count)
 	{
 		NEB_PROFILE_FUNCTION();
 		glCreateBuffers(1, &ID);

@@ -1,7 +1,6 @@
 #include "StringOps.h"
 
-namespace Nebula
-{
+namespace Nebula{
     bool EndsWith(std::string str1, std::string str2)
     {
         size_t sizeStr1 = str1.size();

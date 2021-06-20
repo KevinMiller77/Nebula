@@ -3,8 +3,7 @@
 #include "Buffer.h"
 #include <Core/Ref.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class VertexArray
     {
     public:

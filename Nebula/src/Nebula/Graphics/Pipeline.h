@@ -4,13 +4,14 @@
 
 #include "Shader.h"
 #include "Buffer.h"
+#include "RenderPass.h"
 
-namespace Nebula
-{
-    struct PipelineSpec
+namespace Nebula{
+    struct PipelineSpecification
     {
-        Ref<Shader> plShader;
-        BufferLayout plLayout;
+        Ref<Shader>     Shader;
+        BufferLayout    Layout;
+        Ref<RenderPass> RenderPass;
     };
 
     class Pipeline
@@ -18,13 +19,13 @@ namespace Nebula
     public:
         virtual ~Pipeline() = default;
 
-        virtual PipelineSpec& GetSpec() = 0;
-        virtual const PipelineSpec SetSpec() = 0;
+        virtual PipelineSpecification& GetSpec() = 0;
+        virtual void SetSpec(const PipelineSpecification& spec) = 0;
 
         virtual void Invalidate() = 0;
 
         virtual void Bind() = 0;
 
-        static Ref<Pipeline> Create(const PipelineSpec& spec);
+        static Ref<Pipeline> Create(const PipelineSpecification& spec);
     };
 }

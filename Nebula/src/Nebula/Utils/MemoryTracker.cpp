@@ -1,7 +1,6 @@
 #include "MemoryTracker.h"
 
-namespace Nebula
-{
+namespace Nebula{
     MemoryMetrics::MemoryMetrics(bool strtTracker) 
     {
         enable = true; 

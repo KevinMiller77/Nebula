@@ -13,8 +13,7 @@
 #include <GLFW/glfw3.h>
 
 #include <Nebula_pch.h>
-namespace Nebula
-{
+namespace Nebula{
 
     void GLImGuiLayer::OnAttach()
     {
@@ -103,7 +102,7 @@ namespace Nebula
 
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         // because it would be confusing to have two docking targets within each others.
-        ImGuiWindowFlags window_flags  =  /*ImGuiWindowFlags_MenuBar*/ ImGuiWindowFlags_NoDocking;
+        ImGuiWindowFlags window_flags  =  ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
         if (opt_fullscreen)
         {
             ImGuiViewport* viewport = ImGui::GetMainViewport();

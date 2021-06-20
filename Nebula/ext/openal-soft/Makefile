@@ -19,12 +19,12 @@ endif
 # #############################################
 
 RESCOMP = windres
-DEFINES += -DAL_LIBTYPE_STATIC -DWIN32 -D_WINDOWS -DAL_BUILD_LIBRARY -DAL_ALEXT_PROTOTYPES -D_WIN32 -D_WIN32_WINNT=0x0502 -D_CRT_SECURE_NO_WARNINGS -DNOMINMAX -DCMAKE_INTDIR=\"Debug\" -DOpenAL_EXPORTS
+DEFINES += -DAL_LIBTYPE_STATIC
 INCLUDES += -Isrc -Isrc/alc -Isrc/common -Iinclude -Iinclude/AL
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-LIBS += -lwinmm
+LIBS +=
 LDDEPS +=
 LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 define PREBUILDCMDS
@@ -35,17 +35,17 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/windowsx86_64/OpenAL-Soft
-TARGET = $(TARGETDIR)/OpenAL-Soft.lib
-OBJDIR = bin-int/Debug/windowsx86_64/OpenAL-Soft
+TARGETDIR = bin/Debug/linuxx86_64/OpenAL-Soft
+TARGET = $(TARGETDIR)/libOpenAL-Soft.a
+OBJDIR = bin-int/Debug/linuxx86_64/OpenAL-Soft
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++14
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/windowsx86_64/OpenAL-Soft
-TARGET = $(TARGETDIR)/OpenAL-Soft.lib
-OBJDIR = bin-int/Release/windowsx86_64/OpenAL-Soft
+TARGETDIR = bin/Release/linuxx86_64/OpenAL-Soft
+TARGET = $(TARGETDIR)/libOpenAL-Soft.a
+OBJDIR = bin-int/Release/linuxx86_64/OpenAL-Soft
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++14
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s

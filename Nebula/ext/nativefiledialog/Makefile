@@ -23,7 +23,7 @@ INCLUDES += -Isrc/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-LIBS += -luser32
+LIBS +=
 LDDEPS +=
 LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 define PREBUILDCMDS
@@ -34,18 +34,18 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/windowsx86_64/nfd
-TARGET = $(TARGETDIR)/nfd_d.lib
-OBJDIR = bin-int/Debug/windowsx86_64/nfd
+TARGETDIR = bin/Debug/linuxx86_64/nfd
+TARGET = $(TARGETDIR)/libnfd_d.a
+OBJDIR = bin-int/Debug/linuxx86_64/nfd
 DEFINES += -DDEBUG
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/windowsx86_64/nfd
-TARGET = $(TARGETDIR)/nfd.lib
-OBJDIR = bin-int/Release/windowsx86_64/nfd
+TARGETDIR = bin/Release/linuxx86_64/nfd
+TARGET = $(TARGETDIR)/libnfd.a
+OBJDIR = bin-int/Release/linuxx86_64/nfd
 DEFINES += -DNDEBUG
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2
@@ -64,9 +64,9 @@ GENERATED :=
 OBJECTS :=
 
 GENERATED += $(OBJDIR)/nfd_common.o
-GENERATED += $(OBJDIR)/nfd_win.o
+GENERATED += $(OBJDIR)/nfd_zenity.o
 OBJECTS += $(OBJDIR)/nfd_common.o
-OBJECTS += $(OBJDIR)/nfd_win.o
+OBJECTS += $(OBJDIR)/nfd_zenity.o
 
 # Rules
 # #############################################
@@ -115,7 +115,7 @@ ifneq (,$(PCH))
 $(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)
 $(GCH): $(PCH) | prebuild
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
+	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) touch "$@"
@@ -133,9 +133,9 @@ endif
 $(OBJDIR)/nfd_common.o: src/nfd_common.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/nfd_win.o: src/nfd_win.cpp
+$(OBJDIR)/nfd_zenity.o: src/nfd_zenity.c
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 -include $(OBJECTS:%.o=%.d)
 ifneq (,$(PCH))

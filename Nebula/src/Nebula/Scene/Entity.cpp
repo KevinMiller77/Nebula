@@ -1,8 +1,7 @@
 #include "Entity.h"
 #include "Scene.h"
 
-namespace Nebula
-{
+namespace Nebula{
     Entity::Entity(entt::entity handle, Nebula::Scene* scene)
 		: EntityHandle(handle), ParentScene(scene) {}
 

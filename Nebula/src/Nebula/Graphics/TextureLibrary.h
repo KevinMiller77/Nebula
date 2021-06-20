@@ -3,8 +3,7 @@
 
 
 //Probably phasing this out
-namespace Nebula
-{
+namespace Nebula{
     class TextureLibrary
     {
     public:

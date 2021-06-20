@@ -1,9 +1,9 @@
 #pragma once
 #include <Core/NebulaCommon.h>
 #include <Core/Ref.h>
+#include <Math/math.h>
 
-namespace Nebula
-{
+namespace Nebula{
     enum class FramebufferTextureFormat 
     {
         None = 0,
@@ -41,6 +41,7 @@ namespace Nebula
 		// FramebufferFormat Format = 
 		uint32 Samples = 1;
         FramebufferAttachmentSpecification Attachments;
+        Vec4f ClearColor = {0.1f, 0.1f, 0.1f, 1.0f};
 
 		bool SwapChainTarget = false;
 	};

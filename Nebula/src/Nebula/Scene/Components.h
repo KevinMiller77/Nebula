@@ -4,8 +4,7 @@
 #include <Utils/GUID.h>
 #include "Scriptable.h"
 #include "SceneCamera.h"
-namespace Nebula
-{
+namespace Nebula{
     struct TagComponent
 	{
 		std::string Tag;
@@ -64,7 +63,7 @@ namespace Nebula
 		
 
 		// Remove in favor of make type NONE
-		bool hidden = false;
+		bool Hidden = false;
 		RenderType Type = RenderType::QUAD;
 		
 		Vec4f Color { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -139,4 +138,27 @@ namespace Nebula
 		RootEntityComponent() = default;
 		RootEntityComponent(const RootEntityComponent&) = default;
 	};
+
+
+    struct AudioSourceComponent
+    {
+        Ref<AudioSource> Source = CreateRef<AudioSource>();
+
+        AudioSourceComponent() = default;
+        AudioSourceComponent(const AudioSourceComponent&) = default;
+
+        AudioSourceComponent(std::string& source, bool spatial) 
+        : Source(AudioSource::LoadFromFile(source, spatial)) {}
+        AudioSourceComponent(std::string& source, bool spatial, bool loop, float gain, float pitch) 
+        : Source(AudioSource::LoadFromFile(source, spatial, loop, gain, pitch)) {}
+    };
+    struct AudioListenerComponent
+    {
+        bool IsActiveListener = false;
+
+        AudioListenerComponent() = default;
+        AudioListenerComponent(const AudioListenerComponent&) = default;
+    };
+
+
 }

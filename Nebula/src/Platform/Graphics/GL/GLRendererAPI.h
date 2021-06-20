@@ -1,8 +1,7 @@
 #include <Graphics/RendererAPI.h>
 #include <Core/NebulaCommon.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class GLRendererAPI : public RendererAPI
 	{
 	public:
@@ -11,11 +10,15 @@ namespace Nebula
 
 		virtual void SetClearColor(const Vec4f& color) override;
 		virtual void Clear() override;
+        virtual void Clear(Vec4f color) override;
 
 		virtual void SetAlphaBlend(bool enabled) override;
         virtual void SetDepthTest(bool enabled) override;
         virtual void SetMSAA(bool enabled) override;
 
-		virtual void DrawIndexed(const Ref<VertexArray> vertexArray, PrimativeType type, uint32 indexCount = 0) override;
+		virtual void DrawIndexed(const int numIndices, PrimativeType type, bool depthTest) override;
+        virtual void DrawElementsBaseVertex(uint32_t mode, uint32_t size, uint32_t type, void* indices, uint32_t base) override;
+        
+        
 	};
 }

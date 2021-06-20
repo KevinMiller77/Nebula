@@ -1,32 +1,171 @@
 #include "Renderer.h"
+#include "RendererAPI.h"
 
-namespace Nebula
-{
+namespace Nebula{
     Renderer::SceneData_t* Renderer::SceneData = new Renderer::SceneData_t;
+    Ref<ShaderLibrary> Renderer::s_ShaderLibrary = nullptr;
+    struct RendererData
+	{
+		Ref<RenderPass> m_ActiveRenderPass;
+		RenderCommandQueue m_CommandQueue;
+		// Ref<ShaderLibrary> m_ShaderLibrary;
+
+		Ref<VertexBuffer> m_FullscreenQuadVertexBuffer;
+		Ref<IndexBuffer> m_FullscreenQuadIndexBuffer;
+		Ref<Pipeline> m_FullscreenQuadPipeline;
+	};
+
+	static RendererData s_Data;
 
     void Renderer::Init()
 	{
+     
+
         RendererConfig::Init();
 		Renderer2D::Init();
+
+        s_ShaderLibrary = CreateRef<ShaderLibrary>();
+        // Add all shaders to the lib here
+        // s_ShaderLibrary->Load(std::filesystem::absolute("assets/shaders/PBR_Static.glsl").string());
     }
     void Renderer::Shutdown()
 	{
         Renderer2D::Shutdown();
 	}
 
+    void Renderer::SubmitQuad(Ref<MaterialInstance> material, const Mat4f& transform)
+	{
+		bool depthTest = true;
+		if (material)
+		{
+			material->Bind();
+			depthTest = material->GetFlag(MaterialFlag::DepthTest);
+
+			auto shader = material->GetShader();
+			shader->SetUniformBuffer("Transform", &transform, sizeof(Mat4f));
+		}
+
+		s_Data.m_FullscreenQuadVertexBuffer->Bind();
+		s_Data.m_FullscreenQuadPipeline->Bind();
+		s_Data.m_FullscreenQuadIndexBuffer->Bind();
+		RendererConfig::DrawIndexed(6, PrimativeType::TRIANGLES, depthTest);
+	}
+
+	void Renderer::SubmitFullscreenQuad(Ref<MaterialInstance> material)
+	{
+		bool depthTest = true;
+		if (material)
+		{
+			material->Bind();
+			depthTest = material->GetFlag(MaterialFlag::DepthTest);
+		}
+
+		s_Data.m_FullscreenQuadVertexBuffer->Bind();
+		s_Data.m_FullscreenQuadPipeline->Bind();
+		s_Data.m_FullscreenQuadIndexBuffer->Bind();
+		RendererConfig::DrawIndexed(6, PrimativeType::TRIANGLES, depthTest);
+	}
+
+	void Renderer::SubmitMesh(Ref<Mesh> mesh, const Mat4f& transform, Ref<MaterialInstance> overrideMaterial)
+	{
+		// TODO: Sort this out
+		// auto material = overrideMaterial ? overrideMaterial : mesh->GetMaterialInstance();
+		// auto shader = material->GetShader();
+
+		mesh->m_VertexBuffer->Bind();
+		mesh->m_Pipeline->Bind();
+		mesh->m_IndexBuffer->Bind();
+
+		auto& materials = mesh->GetMaterials();
+		for (Submesh& submesh : mesh->m_Submeshes)
+		{
+			// Material
+			auto material = overrideMaterial ? overrideMaterial : materials[submesh.MaterialIndex];
+			auto shader = material->GetShader();
+			material->Bind();
+
+			if (false && mesh->m_IsAnimated)
+			{
+				for (size_t i = 0; i < mesh->m_BoneTransforms.size(); i++)
+				{
+					std::string uniformName = std::string("u_BoneTransforms[") + std::to_string(i) + std::string("]");
+					mesh->m_MeshShader->SetUniform(uniformName, mesh->m_BoneTransforms[i]);
+				}
+			}
+			
+			auto transformUniform = transform * submesh.Transform;
+			shader->SetUniformBuffer("Transform", &transformUniform, sizeof(Mat4f));
+
+            if (material->GetFlag(MaterialFlag::DepthTest))	
+                RendererConfig::SetDepthTest(true);
+            else
+                RendererConfig::SetDepthTest(false);
+
+            RendererConfig::DrawElementsBaseVertex(GL_TRIANGLES, submesh.IndexCount, GL_UNSIGNED_INT, (void*)(sizeof(uint32_t) * submesh.BaseIndex), submesh.BaseVertex);
+		}
+	}
+
+    void Renderer::DrawAABB(Ref<Mesh> mesh, const Mat4f& transform, const Vec4f& color)
+	{
+		for (Submesh& submesh : mesh->m_Submeshes)
+		{
+			auto& aabb = submesh.BoundingBox;
+			auto aabbTransform = transform * submesh.Transform;
+			DrawAABB(aabb, aabbTransform);
+		}
+	}
+
+	void Renderer::DrawAABB(const AABB& aabb, const Mat4f& transform, const Vec4f& color /*= Vec4f(1.0f)*/)
+	{
+		Vec4f min = { aabb.Min.X, aabb.Min.Y, aabb.Min.Z, 1.0f };
+		Vec4f max = { aabb.Max.X, aabb.Max.Y, aabb.Max.Z, 1.0f };
+
+		Vec4f corners[8] =
+		{
+			transform * Vec4f { aabb.Min.X, aabb.Min.Y, aabb.Max.Z, 1.0f },
+			transform * Vec4f { aabb.Min.X, aabb.Max.Y, aabb.Max.Z, 1.0f },
+			transform * Vec4f { aabb.Max.X, aabb.Max.Y, aabb.Max.Z, 1.0f },
+			transform * Vec4f { aabb.Max.X, aabb.Min.Y, aabb.Max.Z, 1.0f },
+
+			transform * Vec4f { aabb.Min.X, aabb.Min.Y, aabb.Min.Z, 1.0f },
+			transform * Vec4f { aabb.Min.X, aabb.Max.Y, aabb.Min.Z, 1.0f },
+			transform * Vec4f { aabb.Max.X, aabb.Max.Y, aabb.Min.Z, 1.0f },
+			transform * Vec4f { aabb.Max.X, aabb.Min.Y, aabb.Min.Z, 1.0f }
+		};
+
+		for (uint32_t i = 0; i < 4; i++)
+			Renderer2D::DrawLine(corners[i].XYZ(), corners[(i + 1) % 4].XYZ(), color);
+
+		for (uint32_t i = 0; i < 4; i++)
+			Renderer2D::DrawLine(corners[i + 4].XYZ(), corners[((i + 1) % 4) + 4].XYZ(), color);
+
+		for (uint32_t i = 0; i < 4; i++)
+			Renderer2D::DrawLine(corners[i].XYZ(), corners[i + 4].XYZ(), color);
+	}
+
+
     void Renderer::OnWindowResize(uint32 w, uint32 h)
 	{
         RendererConfig::SetViewport(0, 0, w, h);
 	}
 
-    void Renderer::BeginScene(Ref<Camera> camera)
-	{
-        SceneData->ViewProjMatrix = camera->GetViewProjection();
+    void Renderer::BeginRenderPass(Ref<RenderPass> renderPass, bool clear) {
+        s_Data.m_ActiveRenderPass = renderPass;
+
+        renderPass->GetSpecification().TargetFramebuffer->Bind();
+        if (clear) {
+            Vec4f clearColor = renderPass->GetSpecification().TargetFramebuffer->GetSpecification().ClearColor;
+            Renderer::Submit([=]() {
+                RendererConfig::Clear(clearColor);
+            });
+        }
 	}
 
-    void Renderer::EndScene()
+    void Renderer::EndRenderPass()
 	{
-		
+		assert(s_Data.m_ActiveRenderPass, "No active render pass! Have you called Renderer::EndRenderPass twice?");
+		s_Data.m_ActiveRenderPass->GetSpecification().TargetFramebuffer->Unbind();
+		s_Data.m_ActiveRenderPass = nullptr;
 	}
 
 	
@@ -37,15 +176,14 @@ namespace Nebula
 		LOG_INF("Shaders Reloaded\n");
 	}
 
-    void Renderer::Submit(Ref<Shader> shader, Ref<VertexArray> vertexArray, const Mat4f transform)
-	{
-        shader->Bind();
-		shader->SetMat4("u_ViewProjection", SceneData->ViewProjMatrix);
-		shader->SetMat4("u_Transform", transform);
-
-		vertexArray->Bind();
-		RendererConfig::DrawIndexed(vertexArray, PrimativeType::TRIANGLES);
-	}
+    
+    void Renderer::WaitAndRender() {
+        s_Data.m_CommandQueue.Execute();
+    }
+    
+    RenderCommandQueue& Renderer::GetRenderCommandQueue() {
+        return s_Data.m_CommandQueue;
+    }
 
 	   
 }

@@ -3,8 +3,7 @@
 #include <Nebula_pch.h>
 #include <glad/glad.h>
 
-namespace Nebula
-{
+namespace Nebula{
     static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
 	{
 		switch (type)

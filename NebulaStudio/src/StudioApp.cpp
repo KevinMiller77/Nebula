@@ -53,8 +53,6 @@ namespace Nebula
             {
 
             }
-
-            RendererConfig::SetClearColor(NebulaStudioLayer::clearColor);
         }
 
         void OnAppImGui() override

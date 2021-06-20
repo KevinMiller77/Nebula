@@ -1,8 +1,7 @@
 #pragma once
 #include "MathCommon.h"
 
-namespace Nebula
-{
+namespace Nebula{
     template <typename T>
     struct Vec4
     {
@@ -52,6 +51,10 @@ namespace Nebula
         {
             return in.Normalize();
         }
+        Vec3<T> XYZ() {
+            return {X, Y, Z};
+        }
+
 
         void operator+=(const Vec4& other)  { add(other); }
         void operator-=(const Vec4& other)  { subtract(other); }

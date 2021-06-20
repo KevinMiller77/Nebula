@@ -4,9 +4,7 @@
 #include <Core/NebulaCommon.h>
 #include <Core/Ref.h>
 
-namespace Nebula
-{
-
+namespace Nebula{
     class RendererConfig
     {
     public:
@@ -32,11 +30,20 @@ namespace Nebula
             m_API->Clear();
         }
 
-        static void DrawIndexed(const Ref<VertexArray> vertexArray, PrimativeType type, uint32 indexCount = 0)
+        static void Clear(Vec4f color)
         {
-            m_API->DrawIndexed(vertexArray, type, indexCount);
+            m_API->Clear(color);
         }
 
+        static void DrawIndexed(const int numVertices, PrimativeType type, bool depthTest)
+        {
+            m_API->DrawIndexed(numVertices, type, depthTest);
+        }
+
+        static void DrawElementsBaseVertex(uint32_t mode, uint32_t size, uint32_t type, void* indices, uint32_t base)
+        {
+            m_API->DrawElementsBaseVertex(mode, size, type, indices, base);
+        }
         static void SetAlphaBlend(bool enabled)
         {
             m_API->SetAlphaBlend(enabled);
@@ -51,6 +58,7 @@ namespace Nebula
         {
             m_API->SetMSAA(enabled);
         }
+
 
 
     private:

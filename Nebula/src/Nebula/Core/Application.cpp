@@ -2,8 +2,7 @@
 
 #include <Nebula.h>
 
-namespace Nebula
-{
+namespace Nebula{
     Ref<Application> Application::curEngine = nullptr;
 
 

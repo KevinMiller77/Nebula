@@ -14,8 +14,7 @@
 
 struct GLFWwindow;
 
-namespace Nebula
-{
+namespace Nebula{
 
     struct WindowsData
     {

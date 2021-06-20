@@ -9,8 +9,7 @@
 #include <GLFW/glfw3.h>
 
 
-namespace Nebula
-{
+namespace Nebula{
     Ref<GraphicsContext> GraphicsContext::Create(void* window)
     {
         #ifdef NEB_GAPI_OPENGL

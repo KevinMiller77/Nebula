@@ -5,8 +5,7 @@
 
 #include <Nebula_pch.h>
 
-namespace Nebula
-{
+namespace Nebula{
     Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
 	{
 		switch (RendererAPI::GetAPI())

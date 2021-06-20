@@ -6,8 +6,7 @@
 #include "yaml-cpp/yaml.h"
 #include <fstream>
 
-namespace Nebula
-{
+namespace Nebula{
     class SceneSerializer
     {
     public:

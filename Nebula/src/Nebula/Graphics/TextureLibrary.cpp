@@ -1,8 +1,7 @@
 #include "TextureLibrary.h"
 
 //Probably phasing this out
-namespace Nebula
-{
+namespace Nebula{
     TextureLibrary::~TextureLibrary()
     {
         Library.clear();

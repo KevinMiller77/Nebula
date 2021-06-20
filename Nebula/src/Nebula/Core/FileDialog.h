@@ -2,8 +2,7 @@
 #include <Core/VFS.h>
 #include <ext/nativefiledialog/src/include/nfd.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class FileDialogs
     {
     public:

@@ -188,14 +188,7 @@ namespace Nebula {
 
 	Vec3f EditorCamera::GetForwardDirection() const
 	{
-        Quat ori = GetOrientation();
-        Quat ForwQ = GetOrientation() * Quat(0, {0, 0, -1});
-        
-
         Vec3f Forw = GetOrientation().Rotate({0.0f, 0.0f, -1.0f});
-        // LOG_DBG("Orientation: S: %f, v: {%f, %f, %f}\n", ori.GetS(), ori.GetV().X, ori.GetV().Y, ori.GetV().Z);
-        // LOG_DBG("Forward: {%f, %f, %f}\n", Forw.X, Forw.Y, Forw.Z); 
-        // LOG_DBG("Forward As Quat: S: %f, v: {%f, %f, %f}\n", ForwQ.GetS(), ForwQ.GetV().X, ForwQ.GetV().Y, ForwQ.GetV().Z);
     	return Forw;
         
 	}

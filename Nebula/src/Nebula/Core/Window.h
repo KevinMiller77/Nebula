@@ -10,8 +10,7 @@
 
 #include <Core/NebulaCommon.h>
 
-namespace Nebula
-{
+namespace Nebula{
 	//Information a generic window will need for construction
 	struct WindowInfo
 	{

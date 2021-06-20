@@ -1,7 +1,6 @@
 #include "FileIO.h"
 
-namespace Nebula
-{
+namespace Nebula{
     FileContents ReadFileContents(const char *filePath)
     {
         FileContents result;

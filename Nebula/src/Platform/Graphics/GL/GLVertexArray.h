@@ -3,8 +3,7 @@
 #include <Graphics/VertexArray.h>
 #include <Core/NebulaCommon.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class GLVertexArray : public VertexArray
     {
     public:

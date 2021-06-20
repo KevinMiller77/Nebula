@@ -2,8 +2,7 @@
 
 #include "Event.h"
 
-namespace Nebula
-{
+namespace Nebula{
     class WindowResizeEvent : public Event
     {
     protected:

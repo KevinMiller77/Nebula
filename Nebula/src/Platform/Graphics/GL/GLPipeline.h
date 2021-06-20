@@ -2,21 +2,21 @@
 
 #include <Graphics/Pipeline.h>
 
-namespace Nebula
-{
-    class GLPipeline : public Pipeline
-    {
+namespace Nebula {
+    class GLPipeline : public Pipeline{
     public:
-        virtual ~Pipeline() = default;
+        GLPipeline(const PipelineSpecification& spec);
+        virtual ~GLPipeline() override;
 
-        virtual PipelineSpec& GetSpec() = 0;
-        virtual const PipelineSpec SetSpec() = 0;
+        virtual PipelineSpecification& GetSpec() override { return m_Specification; }
+        virtual void SetSpec(const PipelineSpecification& spec) override { m_Specification = spec; Invalidate(); }
 
-        virtual void Invalidate() = 0;
+        virtual void Invalidate() override;
 
-        virtual void Bind() = 0;
+        virtual void Bind() override;
 
     private:
-        
+		PipelineSpecification m_Specification;
+		uint32_t m_VertexArrayRendererID = 0;
     };
 }

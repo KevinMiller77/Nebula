@@ -19,7 +19,7 @@ endif
 # #############################################
 
 RESCOMP = windres
-DEFINES += -D_GLFW_WIN32
+DEFINES += -D_GLFW_X11
 INCLUDES += -isystem include/GLFW -isystem ../../include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
@@ -35,17 +35,17 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/windowsx86_64/glfw
-TARGET = $(TARGETDIR)/glfw.lib
-OBJDIR = bin-int/Debug/windowsx86_64/glfw
+TARGETDIR = bin/Debug/linuxx86_64/glfw
+TARGET = $(TARGETDIR)/libglfw.a
+OBJDIR = bin-int/Debug/linuxx86_64/glfw
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++17
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/windowsx86_64/glfw
-TARGET = $(TARGETDIR)/glfw.lib
-OBJDIR = bin-int/Release/windowsx86_64/glfw
+TARGETDIR = bin/Release/linuxx86_64/glfw
+TARGET = $(TARGETDIR)/libglfw.a
+OBJDIR = bin-int/Release/linuxx86_64/glfw
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
@@ -65,33 +65,35 @@ OBJECTS :=
 GENERATED += $(OBJDIR)/context.o
 GENERATED += $(OBJDIR)/egl_context.o
 GENERATED += $(OBJDIR)/glfw_window.o
+GENERATED += $(OBJDIR)/glx_context.o
 GENERATED += $(OBJDIR)/init.o
 GENERATED += $(OBJDIR)/input.o
+GENERATED += $(OBJDIR)/linux_joystick.o
 GENERATED += $(OBJDIR)/monitor.o
 GENERATED += $(OBJDIR)/osmesa_context.o
+GENERATED += $(OBJDIR)/posix_thread.o
+GENERATED += $(OBJDIR)/posix_time.o
 GENERATED += $(OBJDIR)/vulkan.o
-GENERATED += $(OBJDIR)/wgl_context.o
-GENERATED += $(OBJDIR)/win32_init.o
-GENERATED += $(OBJDIR)/win32_joystick.o
-GENERATED += $(OBJDIR)/win32_monitor.o
-GENERATED += $(OBJDIR)/win32_thread.o
-GENERATED += $(OBJDIR)/win32_time.o
-GENERATED += $(OBJDIR)/win32_window.o
+GENERATED += $(OBJDIR)/x11_init.o
+GENERATED += $(OBJDIR)/x11_monitor.o
+GENERATED += $(OBJDIR)/x11_window.o
+GENERATED += $(OBJDIR)/xkb_unicode.o
 OBJECTS += $(OBJDIR)/context.o
 OBJECTS += $(OBJDIR)/egl_context.o
 OBJECTS += $(OBJDIR)/glfw_window.o
+OBJECTS += $(OBJDIR)/glx_context.o
 OBJECTS += $(OBJDIR)/init.o
 OBJECTS += $(OBJDIR)/input.o
+OBJECTS += $(OBJDIR)/linux_joystick.o
 OBJECTS += $(OBJDIR)/monitor.o
 OBJECTS += $(OBJDIR)/osmesa_context.o
+OBJECTS += $(OBJDIR)/posix_thread.o
+OBJECTS += $(OBJDIR)/posix_time.o
 OBJECTS += $(OBJDIR)/vulkan.o
-OBJECTS += $(OBJDIR)/wgl_context.o
-OBJECTS += $(OBJDIR)/win32_init.o
-OBJECTS += $(OBJDIR)/win32_joystick.o
-OBJECTS += $(OBJDIR)/win32_monitor.o
-OBJECTS += $(OBJDIR)/win32_thread.o
-OBJECTS += $(OBJDIR)/win32_time.o
-OBJECTS += $(OBJDIR)/win32_window.o
+OBJECTS += $(OBJDIR)/x11_init.o
+OBJECTS += $(OBJDIR)/x11_monitor.o
+OBJECTS += $(OBJDIR)/x11_window.o
+OBJECTS += $(OBJDIR)/xkb_unicode.o
 
 # Rules
 # #############################################
@@ -164,10 +166,16 @@ $(OBJDIR)/egl_context.o: src/egl_context.c
 $(OBJDIR)/glfw_window.o: src/glfw_window.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/glx_context.o: src/glx_context.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/init.o: src/init.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/input.o: src/input.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/linux_joystick.o: src/linux_joystick.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/monitor.o: src/monitor.c
@@ -176,28 +184,25 @@ $(OBJDIR)/monitor.o: src/monitor.c
 $(OBJDIR)/osmesa_context.o: src/osmesa_context.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/posix_thread.o: src/posix_thread.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/posix_time.o: src/posix_time.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/vulkan.o: src/vulkan.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/wgl_context.o: src/wgl_context.c
+$(OBJDIR)/x11_init.o: src/x11_init.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/win32_init.o: src/win32_init.c
+$(OBJDIR)/x11_monitor.o: src/x11_monitor.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/win32_joystick.o: src/win32_joystick.c
+$(OBJDIR)/x11_window.o: src/x11_window.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/win32_monitor.o: src/win32_monitor.c
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/win32_thread.o: src/win32_thread.c
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/win32_time.o: src/win32_time.c
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/win32_window.o: src/win32_window.c
+$(OBJDIR)/xkb_unicode.o: src/xkb_unicode.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 

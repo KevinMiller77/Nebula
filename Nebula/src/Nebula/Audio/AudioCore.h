@@ -2,41 +2,69 @@
 
 #include <iostream>
 #include <string>
+#include <Math/math.h>
+#include <Core/Ref.h>
+
+#include <thread>
+#include <mutex>
+
 
 namespace Nebula {
 
 	class AudioSource
 	{
 	public:
+
+		AudioSource() = default;
+        AudioSource(const std::string& file, bool spatial, bool loop, float gain, float pitch);
 		~AudioSource();
 
 		bool IsLoaded() const { return m_Loaded; }
+        std::string& GetFilePath() { return m_FilePath; }
 
-		void SetPosition(float x, float y, float z);
+		Vec3f GetPosition() { return m_Position; }
+		float GetGain()     { return m_Gain; }
+		float GetPitch()    { return m_Pitch; }
+		bool GetSpatial()   { return m_Spatial; }
+		bool GetLoop()      { return m_Loop; }
+
+		void SetPosition(Vec3f pos);
 		void SetGain(float gain);
 		void SetPitch(float pitch);
 		void SetSpatial(bool spatial);
 		void SetLoop(bool loop);
 
+        void Play();
+        void Stop();
+
+        bool IsPlaying() { return m_Playing; }
+
+        void Invalidate();
+
 		std::pair<uint32_t, uint32_t> GetLengthMinutesAndSeconds() const;
 
-		static AudioSource LoadFromFile(const std::string& file, bool spatial = false);
+		static Ref<AudioSource> LoadFromFile(const std::string& file, bool spatial = false);
+		static Ref<AudioSource> LoadFromFile(const std::string& file, bool spatial, bool loop, float gain, float pitch);
 	private:
-		AudioSource() = default;
-		AudioSource(uint32_t handle, bool loaded, float length);
 
 		uint32_t m_BufferHandle = 0;
 		uint32_t m_SourceHandle = 0;
 		bool m_Loaded = false;
 		bool m_Spatial = false;
+        bool m_Playing = false;
 
 		float m_TotalDuration = 0; // in seconds
 		
 		// Attributes
-		float m_Position[3] = { 0.0f, 0.0f, 0.0f };
+		Vec3f m_Position = { 0.0f, 0.0f, 0.0f };
 		float m_Gain = 1.0f;
 		float m_Pitch = 1.0f;
 		bool m_Loop = false;
+
+
+        std::string m_FilePath = std::string();
+
+        std::mutex m_AccessMutex = std::mutex();
 
 		friend class Audio;
 	};
@@ -46,14 +74,19 @@ namespace Nebula {
 	public:
 		static void Init();
 
-		static AudioSource LoadAudioSource(const std::string& filename);
+		static void LoadAudioSource(Ref<AudioSource> source);
 		static void Play(const AudioSource& source);
+        static void Stop(const AudioSource& source);
+
+        static void SetListenerPos(Vec3f& pos);
+        static void SetListenerVelocity(Vec3f& pos);
+        static void SetListenerOrientation(Vec3f& forward, Vec3f& up);
 
 		// TODO: temporary whilst Nebula Audio is in early dev
 		static void SetDebugLogging(bool log);
 	private:
-		static AudioSource LoadAudioSourceOgg(const std::string& filename);
-		static AudioSource LoadAudioSourceMP3(const std::string& filename);
+		static void LoadAudioSourceOgg(Ref<AudioSource> source);
+		static void LoadAudioSourceMP3(Ref<AudioSource> source);
 	};
 
 }

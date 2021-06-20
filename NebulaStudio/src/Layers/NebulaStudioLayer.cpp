@@ -2,14 +2,13 @@
 
 namespace Nebula
 {
-    Vec4f NebulaStudioLayer::clearColor = {0.1f, 0.1f, 0.1f, 1.0f};
-
     Vec2f BoxPos = Vec2f(0.0, 0.0);
 
     // Happens every time you open a project
 
     void NebulaStudioLayer::OnAttach()
     {
+        // Get a scene from the project input
         OpenProject(ProjFileInput);
 
         FramebufferSpecification fbSpec;
@@ -17,22 +16,16 @@ namespace Nebula
         fbSpec.Width = 1600;
         fbSpec.Height = 900;
         fbSpec.Samples = 1;
+        fbSpec.ClearColor = {0.1f, 0.1f, 0.1f, 1.0f};
+        RendererConfig::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
         FrameBuffer = Framebuffer::Create(fbSpec);
+
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-
-#if 0
-        // Remove!!! THis is a just an an audio test
-        // It takes FOREVER to load this sound
-        AudioSource as = Audio::LoadAudioSource(VFS::AbsolutePath("assets/sounds/HeadFirst.ogg"));
-        as.SetLoop(true);
-        as.SetGain(0.5f);
-        as.SetSpatial(true);
-
-        Audio::Play(as);
-        LOG_INF("Playing assets/sounds/HeadFirst.ogg\n");
-#endif
-
+        std::string assetPath = VFS::AbsolutePath("assets/mesh/45ACP/Handgun_obj.obj");
+        if (VFS::Exists(assetPath, true)) {
+            // Mesh m = Mesh(assetPath);
+        }        
     }
 
     float tsls = 0.0f;
@@ -61,10 +54,21 @@ namespace Nebula
         }
 
         FrameBuffer->Bind();
+        RendererConfig::SetAlphaBlend(true);
         RendererConfig::Clear();
 
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
+            auto v = ActiveScene->GetView<AudioSourceComponent>();
+            for (auto entityHandle : v) {
+                Entity e = { entityHandle, ActiveScene.get() };
+                auto& asc = e.GetComponent<AudioSourceComponent>();
+
+                if (asc.Source->IsPlaying()) {
+                    asc.Source->Stop();
+                }
+            }
+
             FrameBuffer->ClearTextureAttachment(1, -1);
 
             m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
@@ -78,12 +82,12 @@ namespace Nebula
             int mouseX = (int)pos.X;
             int mouseY = (int)pos.Y;
 
-            if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.X && mouseY < (int)viewportSize.Y) {
+
+
+            if (ViewportFocused && ViewportHovered) {
                 m_HoveringEntity = FrameBuffer->ReadPixel(1, mouseX, mouseY);
-                m_HoveringViewport = true;
             }
             else {
-                m_HoveringViewport = false;
                 m_HoveringEntity = -1;
             }
 
@@ -232,9 +236,19 @@ namespace Nebula
         m_ViewportBounds[1] = maxBound;
 
         Entity selectedEntity = SceneHierarchy.GetSelection();
-        bool shouldDrawImGuizmo = PlayStatus == SceneStatus::NOT_STARTED && m_RenderImGuizmo;
-        if (selectedEntity.IsValid() && shouldDrawImGuizmo) {
 
+        // Check if we should draw gizmos
+        bool shouldDrawImGuizmo = PlayStatus == SceneStatus::NOT_STARTED;
+        shouldDrawImGuizmo = shouldDrawImGuizmo && m_RenderImGuizmo;
+        shouldDrawImGuizmo = shouldDrawImGuizmo && selectedEntity.IsValid();
+
+        // Only draw if entity has sprite component AND is not hidden
+        shouldDrawImGuizmo = shouldDrawImGuizmo && selectedEntity.HasComponent<SpriteRendererComponent>();
+        if (shouldDrawImGuizmo) {
+            shouldDrawImGuizmo = shouldDrawImGuizmo && !selectedEntity.GetComponent<SpriteRendererComponent>().Hidden;
+        }
+
+        if (shouldDrawImGuizmo) {
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
             Vec2f windowSize = {ImGui::GetWindowWidth(), ImGui::GetWindowHeight()}; 
@@ -347,7 +361,7 @@ namespace Nebula
                         if (sel.HasComponent<SpriteRendererComponent>())
                         {
                             auto& src = sel.GetComponent<SpriteRendererComponent>();
-                            src.hidden = !src.hidden;
+                            src.Hidden = !src.Hidden;
                         }
                     }
                     break;
@@ -417,7 +431,7 @@ namespace Nebula
 
     
     bool NebulaStudioLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e) {
-        if (ImGuizmo::IsOver() || !m_HoveringViewport) {
+        if (ImGuizmo::IsOver() || !ViewportHovered) {
             return true;
         }
 
@@ -426,8 +440,16 @@ namespace Nebula
                 if (m_HoveringEntity == -1) {
                     SceneHierarchy.ClearSelection();
                 } else {
+                    Entity startEntity = SceneHierarchy.GetSelection();
+
                     LOG_DBG("Setting selection: %d\n", m_HoveringEntity);
                     SceneHierarchy.SetSelection({(entt::entity)m_HoveringEntity, ActiveScene.get()});
+
+                    // If selection changes, make sure gizmo is running
+                    if (SceneHierarchy.GetSelection() != startEntity) {
+                        m_CurrentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+                        m_RenderImGuizmo = true;
+                    }
                 }
                 break;
             }
@@ -719,8 +741,8 @@ namespace Nebula
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             SceneHierarchy.SetContext(ActiveScene);
 
-            Nebula::SceneSerializer serializer(ActiveScene);
-            serializer.DeserializeTxt(filePath);
+            //Nebula::SceneSerializer serializer(ActiveScene);
+            //serializer.DeserializeTxt(filePath);
 
             CurrentProject.LastSceneOpened = relPath;
 
@@ -814,6 +836,18 @@ namespace Nebula
             auto& pecNew = newEntity.AddComponent<ParentEntityComponent>(pec);
             pecNew = ParentEntityComponent(pec);
         }
+        if (Clipboard.HasComponent<AudioListenerComponent>())
+        {
+            auto pec = Clipboard.GetComponent<AudioListenerComponent>();
+            auto& pecNew = newEntity.AddComponent<AudioListenerComponent>(pec);
+            pecNew = AudioListenerComponent(pec);
+        }
+        if (Clipboard.HasComponent<AudioSourceComponent>())
+        {
+            auto pec = Clipboard.GetComponent<AudioSourceComponent>();
+            auto& pecNew = newEntity.AddComponent<AudioSourceComponent>(pec);
+            pecNew.Source = AudioSource::LoadFromFile(pec.Source->GetFilePath(), false);
+        }
 
         bool pastingAsChild = SceneHierarchy.GetSelection().IsValid(); 
         if (pastingAsChild)
@@ -832,10 +866,6 @@ namespace Nebula
             auto root = Clipboard.GetComponent<RootEntityComponent>();
             auto& rootNew = newEntity.AddComponent<RootEntityComponent>(root);
             rootNew = RootEntityComponent(root);
-        }
-        if (!pastingAsChild)
-        {
-            auto& root = newEntity.AddComponent<RootEntityComponent>();
         }
 
 
@@ -912,7 +942,7 @@ namespace Nebula
         if (AxisGrid.IsValid())
         {
             auto& src = AxisGrid.GetComponent<SpriteRendererComponent>();
-            src.hidden = !src.hidden;
+            src.Hidden = !src.Hidden;
             LOG_INF("Toggled axis grid\n");
         }
     }

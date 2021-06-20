@@ -1,8 +1,7 @@
 #pragma once
 #include "Vec3.h"
 
-namespace Nebula
-{
+namespace Nebula{
     template <typename T> 
     struct Mat3
     {

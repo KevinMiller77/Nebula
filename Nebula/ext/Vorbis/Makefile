@@ -19,7 +19,7 @@ endif
 # #############################################
 
 RESCOMP = windres
-DEFINES += -DLIBOGG_EXPORTS -DWIN32 -DNDEBUG
+DEFINES += -DLIBOGG_EXPORTS
 INCLUDES += -Iinclude -I../libogg/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
@@ -33,23 +33,23 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/windowsx86_64/Vorbis
-TARGET = $(TARGETDIR)/Vorbis.lib
-OBJDIR = bin-int/Debug/windowsx86_64/Vorbis
+TARGETDIR = bin/Debug/linuxx86_64/Vorbis
+TARGET = $(TARGETDIR)/libVorbis.a
+OBJDIR = bin-int/Debug/linuxx86_64/Vorbis
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
-LIBS += ../libogg/bin/Debug/windowsx86_64/libogg/libogg.lib
-LDDEPS += ../libogg/bin/Debug/windowsx86_64/libogg/libogg.lib
+LIBS += ../libogg/bin/Debug/linuxx86_64/libogg/liblibogg.a
+LDDEPS += ../libogg/bin/Debug/linuxx86_64/libogg/liblibogg.a
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/windowsx86_64/Vorbis
-TARGET = $(TARGETDIR)/Vorbis.lib
-OBJDIR = bin-int/Release/windowsx86_64/Vorbis
+TARGETDIR = bin/Release/linuxx86_64/Vorbis
+TARGET = $(TARGETDIR)/libVorbis.a
+OBJDIR = bin-int/Release/linuxx86_64/Vorbis
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2
-LIBS += ../libogg/bin/Release/windowsx86_64/libogg/libogg.lib
-LDDEPS += ../libogg/bin/Release/windowsx86_64/libogg/libogg.lib
+LIBS += ../libogg/bin/Release/linuxx86_64/libogg/liblibogg.a
+LDDEPS += ../libogg/bin/Release/linuxx86_64/libogg/liblibogg.a
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 
 endif
@@ -65,6 +65,7 @@ GENERATED :=
 OBJECTS :=
 
 GENERATED += $(OBJDIR)/analysis.o
+GENERATED += $(OBJDIR)/barkmel.o
 GENERATED += $(OBJDIR)/bitrate.o
 GENERATED += $(OBJDIR)/block.o
 GENERATED += $(OBJDIR)/codebook.o
@@ -77,16 +78,20 @@ GENERATED += $(OBJDIR)/lpc.o
 GENERATED += $(OBJDIR)/lsp.o
 GENERATED += $(OBJDIR)/mapping0.o
 GENERATED += $(OBJDIR)/mdct.o
+GENERATED += $(OBJDIR)/misc.o
 GENERATED += $(OBJDIR)/psy.o
+GENERATED += $(OBJDIR)/psytune.o
 GENERATED += $(OBJDIR)/registry.o
 GENERATED += $(OBJDIR)/res0.o
 GENERATED += $(OBJDIR)/sharedbook.o
 GENERATED += $(OBJDIR)/smallft.o
 GENERATED += $(OBJDIR)/synthesis.o
+GENERATED += $(OBJDIR)/tone.o
 GENERATED += $(OBJDIR)/vorbisenc.o
 GENERATED += $(OBJDIR)/vorbisfile.o
 GENERATED += $(OBJDIR)/window.o
 OBJECTS += $(OBJDIR)/analysis.o
+OBJECTS += $(OBJDIR)/barkmel.o
 OBJECTS += $(OBJDIR)/bitrate.o
 OBJECTS += $(OBJDIR)/block.o
 OBJECTS += $(OBJDIR)/codebook.o
@@ -99,12 +104,15 @@ OBJECTS += $(OBJDIR)/lpc.o
 OBJECTS += $(OBJDIR)/lsp.o
 OBJECTS += $(OBJDIR)/mapping0.o
 OBJECTS += $(OBJDIR)/mdct.o
+OBJECTS += $(OBJDIR)/misc.o
 OBJECTS += $(OBJDIR)/psy.o
+OBJECTS += $(OBJDIR)/psytune.o
 OBJECTS += $(OBJDIR)/registry.o
 OBJECTS += $(OBJDIR)/res0.o
 OBJECTS += $(OBJDIR)/sharedbook.o
 OBJECTS += $(OBJDIR)/smallft.o
 OBJECTS += $(OBJDIR)/synthesis.o
+OBJECTS += $(OBJDIR)/tone.o
 OBJECTS += $(OBJDIR)/vorbisenc.o
 OBJECTS += $(OBJDIR)/vorbisfile.o
 OBJECTS += $(OBJDIR)/window.o
@@ -174,6 +182,9 @@ endif
 $(OBJDIR)/analysis.o: lib/analysis.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/barkmel.o: lib/barkmel.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/bitrate.o: lib/bitrate.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
@@ -210,7 +221,13 @@ $(OBJDIR)/mapping0.o: lib/mapping0.c
 $(OBJDIR)/mdct.o: lib/mdct.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/misc.o: lib/misc.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/psy.o: lib/psy.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/psytune.o: lib/psytune.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/registry.o: lib/registry.c
@@ -226,6 +243,9 @@ $(OBJDIR)/smallft.o: lib/smallft.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/synthesis.o: lib/synthesis.c
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/tone.o: lib/tone.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/vorbisenc.o: lib/vorbisenc.c

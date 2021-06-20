@@ -2,8 +2,7 @@
 #include <Core/Layer.h>
 #include <Core/Ref.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class LayerStack
     {
     public:
@@ -29,7 +28,7 @@ namespace Nebula
 
         Ref<Layer> operator[](int index) {return layers[index];}
 
-        unsigned int GetSize() { return layers.size(); }
+        size_t GetSize() { return layers.size(); }
     private:
         std::vector<Ref<Layer>> layers;
         unsigned int layerInsertIndex = 0;

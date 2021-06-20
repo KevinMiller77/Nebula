@@ -3,8 +3,7 @@
 #include "RendererConfig.h"
 #include <Platform/Graphics/GL/GLVertexArray.h>
 
-namespace Nebula
-{
+namespace Nebula{
     Ref<VertexArray> VertexArray::Create()
 	{
 		switch (RendererAPI::GetAPI())

@@ -2,8 +2,7 @@
 
 #include <ImGui/ImGuiLayer.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class GLImGuiLayer : public ImGuiLayer
     {
     public:

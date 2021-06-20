@@ -4,8 +4,7 @@
 #include "Vec4.h"
 #include <Utils/Logging.h>
 
-namespace Nebula
-{
+namespace Nebula{
     template <typename T> 
     struct Mat4
     {
@@ -77,6 +76,8 @@ namespace Nebula
 
             return result;
         }
+
+
         static Mat4 rotation(float angle, const Vec3<T>& axis)
         {
             Mat4<float> result(1.0f);
@@ -119,6 +120,9 @@ namespace Nebula
             result.elements[2 + 2 * 4] = zz * omc + c;
             
             return result;
+        }
+        static Mat4 rotation(const Vec3<T> axis) {
+            return Mat4(1) * Mat4::rotation(axis.X, {1, 0 ,0}) * Mat4::rotation(axis.Y, {0, 1 ,0}) * Mat4::rotation(axis.Z, {0, 0 ,1});
         }
         
         static Mat4 scale(const Vec3<T>& scale)

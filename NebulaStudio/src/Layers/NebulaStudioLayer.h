@@ -76,7 +76,6 @@ namespace Nebula
 
         void SetupAxisGrid();
 
-        static Vec4f clearColor;
         Ref<Framebuffer> FrameBuffer;
         bool ViewportFocused = false, ViewportHovered = false;
         Vec2f ViewportSize = {1600.0f, 900.0f};

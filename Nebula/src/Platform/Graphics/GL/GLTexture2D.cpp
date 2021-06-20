@@ -5,8 +5,7 @@
 #include <Nebula_pch.h>
 #include <glad/glad.h>
 #include <Utils/Logging.h>
-namespace Nebula
-{
+namespace Nebula{
     GLTexture2D::GLTexture2D(uint32_t width, uint32_t height, bool child)
 		: Width(width), Height(height), ChildTexture(child)
 	{

@@ -2,8 +2,7 @@
 
 #include "Event.h"
 
-namespace Nebula
-{
+namespace Nebula{
 	class KeyEvent : public Event
 		{
 		protected:

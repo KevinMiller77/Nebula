@@ -2,8 +2,7 @@
 
 #include <memory>
 #include <Core/NebulaCommon.h>
-namespace Nebula
-{
+namespace Nebula{
     class MemoryMetrics
     {
     private:

@@ -1,6 +1,5 @@
 #include "RendererConfig.h"
 
-namespace Nebula
-{
+namespace Nebula{
     Ref<RendererAPI> RendererConfig::m_API = RendererAPI::Create(); 
 }

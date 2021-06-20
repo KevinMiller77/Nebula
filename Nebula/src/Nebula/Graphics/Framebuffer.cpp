@@ -3,8 +3,7 @@
 
 #include <Nebula.h>
 
-namespace Nebula
-{
+namespace Nebula{
     Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
     {
         switch(RendererAPI::GetAPI())

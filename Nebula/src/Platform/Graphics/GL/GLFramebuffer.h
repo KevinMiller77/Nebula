@@ -3,8 +3,7 @@
 #include <Graphics/Framebuffer.h>
 #include <Core/NebulaCommon.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class GLFramebuffer : public Framebuffer
     {
     public:

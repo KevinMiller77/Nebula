@@ -4,8 +4,7 @@
 #include <Utils/Logging.h>
 #include <Math/math.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class GraphicsContext
     {
     public:

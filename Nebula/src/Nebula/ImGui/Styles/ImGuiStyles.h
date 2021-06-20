@@ -1,8 +1,7 @@
 #pragma once
 #include <Nebula.h>
 
-namespace Nebula
-{
+namespace Nebula{
     namespace NebImGui
     {
 

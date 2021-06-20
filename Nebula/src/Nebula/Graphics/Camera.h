@@ -2,8 +2,7 @@
 
 #include <Math/math.h>
 
-namespace Nebula
-{
+namespace Nebula{
     class Camera
     {
     public:

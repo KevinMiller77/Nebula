@@ -1,7 +1,6 @@
 #include "Math.h"
 
-namespace Nebula
-{
+namespace Nebula{
 
 #define EPISILON_MAX 1.192092896e-07F
 

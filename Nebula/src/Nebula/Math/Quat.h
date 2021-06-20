@@ -5,8 +5,7 @@
 #include "Mat4.h"
 
 
-namespace Nebula
-{
+namespace Nebula{
     class Quat
     {
     private:
@@ -49,6 +48,17 @@ namespace Nebula
 
             Normalize();
         }
+
+        Vec3f GetForwardVec() {
+            return Rotate({0.0f, 0.0f, -1.0f});
+        }
+        Vec3f GetUpVec() {
+            return Rotate({0.0f, 1.0f, 0.0f});
+        }
+        Vec3f GetRightVec() {
+            return Rotate({1.0f, 0.0f, -1.0f});
+        }
+
 
         float GetS() const {
             return S;
@@ -101,21 +111,12 @@ namespace Nebula
 
         Vec3f Rotate(Vec3f v)
         {
-            // Vec3f u = {V.X, V.Y, V.Z};
-            // Vec3f dotUV = Vec3f::Dot(u, v);
-            // Vec3f uv = u.Cross(v);
-            // Vec3f uuv = u.Cross(uv);
-
-            // Vec3f out = (2.0f * dotUV * u) + ((S * S - dotUV) * v) + (2.0f * S * uv);
-
 
             Vec3f QuatVector = GetV();
             Vec3f uv(QuatVector.Cross(v));
             Vec3f uuv(QuatVector.Cross(uv));
 
             return v + ((uv * S) + uuv) * 2.0f;
-
-            // return v + 2.0 * V.Cross(V.Cross(v) + S * v);
         }
 
         Vec3f Forward() {
@@ -129,8 +130,8 @@ namespace Nebula
 
         float Normal()
         { 
-            float r = S * S;
-            float i = V.Magnitude() * V.Magnitude();
+            double r = S * S;
+            double i = V.Magnitude() * V.Magnitude();
             return sqrt(r + i); 
         }
 
@@ -205,9 +206,6 @@ namespace Nebula
             { this->S -= n.S; this->V -= n.V; }
         void operator*=(const Quat& n)
             { *(this) = multiply(n); }
-
-        void operator*=(const float& n)
-            { this->S * n; this->V * n; }
 
     private:
         Quat multiply(const Quat& n)

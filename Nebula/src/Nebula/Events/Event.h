@@ -11,8 +11,7 @@
 
 #include <functional>
 
-namespace Nebula
-{
+namespace Nebula{
     enum class EventType
     {
         None = 0,

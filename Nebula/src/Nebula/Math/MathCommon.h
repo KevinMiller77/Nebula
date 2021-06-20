@@ -4,8 +4,7 @@
 #include <math.h>
 #include <limits>
 
-namespace Nebula
-{
+namespace Nebula{
     template<typename T>
     T NMin(T a, T b)
     {

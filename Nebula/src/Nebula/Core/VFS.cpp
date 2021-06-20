@@ -1,7 +1,6 @@
 #include "VFS.h"
 
-namespace Nebula
-{
+namespace Nebula{
     
     bool VFS::Mounted;
     std::string VFS::AbsoluteRoot;
@@ -74,7 +73,9 @@ namespace Nebula
     
     std::string VFS::AbsolutePath(std::string path)
     {
-        
+        if (!IsMounted()) {
+            return std::filesystem::absolute(path).string();
+        }
         return AbsoluteRoot + path;
     }
 
@@ -95,8 +96,8 @@ namespace Nebula
     {
         if (!absolutePath && !IsMounted())
         {
-            LOG_INF("Filesystem wasnt mounted during exists check!!\n");
-            return false;
+            LOG_INF("Filesystem wasnt mounted during exists check!! Checking with c++ fs.\n");
+            return std::filesystem::exists(std::filesystem::absolute(path));
         }
         
         bool result = std::filesystem::exists(absolutePath ? path : AbsoluteRoot + path);

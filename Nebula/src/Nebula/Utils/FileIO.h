@@ -7,8 +7,7 @@
 
 // Palatform FileIO interface header
 
-namespace Nebula 
-{
+namespace Nebula {
     struct FileContents {
         unsigned int length;
         char *data;

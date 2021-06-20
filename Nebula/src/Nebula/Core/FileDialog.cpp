@@ -1,7 +1,6 @@
 #include "FileDialog.h"
 
-namespace Nebula
-{
+namespace Nebula{
     std::string FileDialogs::OpenFile(const char* filter)
     {
 		nfdchar_t *outPath = NULL;

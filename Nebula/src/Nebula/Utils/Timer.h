@@ -3,8 +3,7 @@
 #include <Core/NebulaCommon.h>
 
 
-namespace Nebula
-{
+namespace Nebula{
     using namespace std;
     using namespace chrono;
 

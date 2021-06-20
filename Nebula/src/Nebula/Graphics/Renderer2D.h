@@ -9,8 +9,7 @@
 #include "EditorCamera.h"
 
 
-namespace Nebula
-{
+namespace Nebula{
 	struct QuadVertex
 	{
 		Vec3f Translation;
@@ -82,6 +81,8 @@ namespace Nebula
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;
 
+        bool DepthTest = true;
+
 		Renderer2DStatistics Stats;
 	};
     class Renderer2D
@@ -89,10 +90,9 @@ namespace Nebula
 	public:
 		static void Init();
 		static void Shutdown();
-		static void BeginScene(OrthographicCamera& camera);
-		static void BeginScene(Camera& camera, const Mat4f transform);
-        static void BeginScene(EditorCamera& camera);
-		static void BeginScene(Mat4f viewProj);
+		static void BeginScene(Camera& camera, const Mat4f transform, bool depthTest);
+        static void BeginScene(EditorCamera& camera, bool depthTest);
+		static void BeginScene(Mat4f viewProj, bool depthTest);
 		static void EndScene();
 		static void Flush();
 

@@ -12,8 +12,7 @@
 #include <Platform/OS/MacOS/MacWindow.h>
 #endif
 
-namespace Nebula
-{
+namespace Nebula{
 	Ref<Window> Window::Create(const WindowInfo& inf)
 	{
 	#ifdef NEB_PLATFORM_WINDOWS

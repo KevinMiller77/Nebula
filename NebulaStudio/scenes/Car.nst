@@ -1,12 +1,36 @@
 Scene: Untitled
 Entities:
-  - Entity: 1705310046
+  - Entity: 3126577947
+    TagComponent:
+      Tag: Source
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    RootEntityComponent:
+      Visible: true
+  - Entity: 4127416475
+    TagComponent:
+      Tag: AudioSource
+    TransformComponent:
+      Translation: [0, 0, 0.400000006]
+      Rotation: [0, 0, 0.00698131695]
+      Scale: [1, 1, 1]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    RootEntityComponent:
+      Visible: true
+  - Entity: 148703600
     TagComponent:
       Tag: Car
     TransformComponent:
-      Translation: [1, 1, 1]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [0.0916858763, 0.411557019, -0.53442204]
+      Rotation: [1.49444664, -0, 0]
+      Scale: [1, 1.00000012, 1.00000012]
       Line v0: [0, 0, 0]
       Line v1: [0, 0, 0]
       Inherit: false
@@ -24,29 +48,7 @@ Entities:
       Tile Resolution: [16, 16]
     RootEntityComponent:
       Visible: true
-  - Entity: 646932915
-    TagComponent:
-      Tag: Cam
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      Line v0: [0, 0, 0]
-      Line v1: [0, 0, 0]
-      Inherit: false
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      FixedAspectRatio: false
-    RootEntityComponent:
-      Visible: true
-  - Entity: 1313616534
+  - Entity: 1879364535
     TagComponent:
       Tag: Grid
     TransformComponent:
@@ -68,5 +70,34 @@ Entities:
       Tile Pos: [0, 0]
       Tile Size: [5000, 5000]
       Tile Resolution: [16, 16]
+    RootEntityComponent:
+      Visible: true
+  - Entity: 3262036971
+    TagComponent:
+      Tag: Blank Entity
+    TransformComponent:
+      Translation: [0.012731526, 0.00705828518, 0.0196472406]
+      Rotation: [-1.56807864, -0.0249641128, 0.00282231276]
+      Scale: [2.4941237, 2.30701876, 2.23558927]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    SpriteRendererComponent:
+      Hidden: false
+      Color: [0.877451003, 0, 0, 1]
+      Type: Quad
+      Has Tex: false
+    RootEntityComponent:
+      Visible: true
+  - Entity: 1705310046
+    TagComponent:
+      Tag: Source
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
     RootEntityComponent:
       Visible: true

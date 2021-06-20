@@ -35,19 +35,19 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/windowsx86_64/yaml-cpp
-TARGET = $(TARGETDIR)/yaml-cpp.lib
-OBJDIR = bin-int/Debug/windowsx86_64/yaml-cpp
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++17
+TARGETDIR = bin/Debug/linuxx86_64/yaml-cpp
+TARGET = $(TARGETDIR)/libyaml-cpp.a
+OBJDIR = bin-int/Debug/linuxx86_64/yaml-cpp
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -fPIC -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -fPIC -g -std=c++17
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/windowsx86_64/yaml-cpp
-TARGET = $(TARGETDIR)/yaml-cpp.lib
-OBJDIR = bin-int/Release/windowsx86_64/yaml-cpp
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17
+TARGETDIR = bin/Release/linuxx86_64/yaml-cpp
+TARGET = $(TARGETDIR)/libyaml-cpp.a
+OBJDIR = bin-int/Release/linuxx86_64/yaml-cpp
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -fPIC
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -fPIC -std=c++17
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 
 endif

@@ -63,9 +63,9 @@ namespace Nebula {
 		return 0;
 	}
 
-	AudioSource Audio::LoadAudioSourceOgg(const std::string& filename)
+	void Audio::LoadAudioSourceOgg(Ref<AudioSource> source)
 	{
-		FILE* f = fopen(filename.c_str(), "rb");
+		FILE* f = fopen(source->m_FilePath.c_str(), "rb");
 
 		OggVorbis_File vf;
 		if (ov_open_callbacks(f, &vf, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0)
@@ -83,7 +83,7 @@ namespace Nebula {
 
 		if (s_DebugLog)
 		{
-			NAUD_LOG("File Info - " << filename << ":");
+			NAUD_LOG("File Info - " << source->m_FilePath << ":");
 			NAUD_LOG("  Channels: " << channels);
 			NAUD_LOG("  Sample Rate: " << sampleRate);
 			NAUD_LOG("  Expected size: " << bufferSize);
@@ -133,21 +133,26 @@ namespace Nebula {
 		alGenBuffers(1, &buffer);
 		alBufferData(buffer, alFormat, oggBuffer, size, sampleRate);
 
-		AudioSource result = { buffer, true, trackLength };
-		alGenSources(1, &result.m_SourceHandle);
-		alSourcei(result.m_SourceHandle, AL_BUFFER, buffer);
+        source->m_BufferHandle = buffer;
+        source->m_Loaded = true;
+        source->m_TotalDuration = trackLength;
+        
+		alGenSources(1, &source->m_SourceHandle);
+		alSourcei(source->m_SourceHandle, AL_BUFFER, buffer);
 
-		if (alGetError() != AL_NO_ERROR)
+		if (alGetError() != AL_NO_ERROR) {
 			NAUD_LOG("Failed to setup sound source");
-
-		return result;
+        }
 	}
 
-	AudioSource Audio::LoadAudioSourceMP3(const std::string& filename)
+	void Audio::LoadAudioSourceMP3(Ref<AudioSource> source)
 	{
 		mp3dec_file_info_t info;
-		int loadResult = mp3dec_load(&s_Mp3d, filename.c_str(), &info, NULL, NULL);
+		int loadResult = mp3dec_load(&s_Mp3d, source->m_FilePath.c_str(), &info, NULL, NULL);
+        ALenum err = alGetError();
+        
 		uint32_t size = info.samples * sizeof(mp3d_sample_t);
+
 
 		auto sampleRate = info.hz;
 		auto channels = info.channels;
@@ -158,25 +163,27 @@ namespace Nebula {
 		alGenBuffers(1, &buffer);
 		alBufferData(buffer, alFormat, info.buffer, size, sampleRate);
 
-		AudioSource result = { buffer, true, lengthSeconds };
-		alGenSources(1, &result.m_SourceHandle);
-		alSourcei(result.m_SourceHandle, AL_BUFFER, buffer);
+        source->m_BufferHandle = buffer;
+        source->m_Loaded = true;
+        source->m_TotalDuration = lengthSeconds;
+
+		alGenSources(1, &source->m_SourceHandle);
+		alSourcei(source->m_SourceHandle, AL_BUFFER, buffer);
 
 		if (s_DebugLog)
 		{
-			NAUD_LOG("File Info - " << filename << ":");
+			NAUD_LOG("File Info - " << source->m_FilePath << ":");
 			NAUD_LOG("  Channels: " << channels);
 			NAUD_LOG("  Sample Rate: " << sampleRate);
 			NAUD_LOG("  Size: " << size << " bytes");
 
-			auto [mins, secs] = result.GetLengthMinutesAndSeconds();
+			auto [mins, secs] = source->GetLengthMinutesAndSeconds();
 			NAUD_LOG("  Length: " << mins << "m" << secs << "s");
 		}
 
-		if (alGetError() != AL_NO_ERROR)
-			std::cout << "Failed to setup sound source" << std::endl;
-
-		return result;
+        err = alGetError();
+		if (err != AL_NO_ERROR)
+			std::cout << "Failed to setup sound source with error: " << err << std::endl;
 	}
 
 	static void PrintAudioDeviceInfo()
@@ -212,24 +219,52 @@ namespace Nebula {
 		alListenerfv(AL_ORIENTATION, listenerOri);
 	}
 
-	AudioSource Audio::LoadAudioSource(const std::string& filename)
+
+    void Audio::SetListenerPos(Vec3f& pos) {
+		alListenerfv(AL_POSITION, pos.elements);
+    }
+    
+    void Audio::SetListenerVelocity(Vec3f& vel) {
+		alListenerfv(AL_VELOCITY, vel.elements);
+    }
+
+    void Audio::SetListenerOrientation(Vec3f& forward, Vec3f& up) {
+        ALfloat ori[6];
+        ori[0] = forward.X; ori[1] = forward.Y; ori[2] = forward.Z;
+        ori[3] = up.X; ori[4] = up.Y; ori[5] = up.Z; 
+
+		alListenerfv(AL_ORIENTATION, ori);
+    }
+
+	void Audio::LoadAudioSource(Ref<AudioSource> source)
 	{
-		auto format = GetFileFormat(filename);
+        source->m_AccessMutex.lock();
+		auto format = GetFileFormat(source->m_FilePath);
 		switch (format)
 		{
-			case AudioFileFormat::Ogg:  return LoadAudioSourceOgg(filename);
-			case AudioFileFormat::MP3:  return LoadAudioSourceMP3(filename);
+			case AudioFileFormat::Ogg:  {
+                LoadAudioSourceOgg(source);
+                break;
+            }
+			case AudioFileFormat::MP3: {
+                LoadAudioSourceMP3(source);
+                break;
+            }  
 		}
-
-		// Loading failed or unsupported file type
-		return { 0, false, 0 };
+        source->m_AccessMutex.unlock();
 	}
 	
+    // Returns true if started playing
 	void Audio::Play(const AudioSource& audioSource)
 	{
 		// Play the sound until it finishes
-		alSourcePlay(audioSource.m_SourceHandle);
-
+        if (audioSource.IsLoaded()) {
+            ALint state;
+            alGetSourcei(audioSource.m_SourceHandle, AL_SOURCE_STATE, &state);
+            if (state != AL_PLAYING) {
+                alSourcePlay(audioSource.m_SourceHandle);
+            }
+        }
 		// TODO: current playback time and playback finished callback
 		// eg.
 		// ALfloat offset;
@@ -238,59 +273,104 @@ namespace Nebula {
 		// alGetSourcef(audioSource.m_SourceHandle, AL_SEC_OFFSET, &offset);
 	}
 
+
+    // Returns true if stopped playing
+    void Audio::Stop(const AudioSource& audioSource) {
+        if (audioSource.IsLoaded()) {
+            ALint state;
+            alGetSourcei(audioSource.m_SourceHandle, AL_SOURCE_STATE, &state);
+            if (state == AL_PLAYING) {
+                alSourceStop(audioSource.m_SourceHandle);
+            }
+        }
+    }
+
 	void Audio::SetDebugLogging(bool log)
 	{
 		s_DebugLog = log;
 	}
 
-	AudioSource::AudioSource(uint32_t handle, bool loaded, float length)
-		: m_BufferHandle(handle), m_Loaded(loaded), m_TotalDuration(length)
-	{
-	}
+    
+    AudioSource::AudioSource(const std::string& file, bool spatial, bool loop, float gain, float pitch) 
+        : m_FilePath(file), m_Spatial(spatial), m_Loop(loop), m_Gain(gain), m_Pitch(pitch) {}
 
 	AudioSource::~AudioSource()
 	{
 		// TODO: free openal audio source?
+        // Invalidate();
 	}
 
-	void AudioSource::SetPosition(float x, float y, float z)
+    void AudioSource::Play() 
+    {
+        Audio::Play(*this);
+        m_Playing = true; 
+    }
+
+    void AudioSource::Stop() {
+        Audio::Stop(*this);
+        m_Playing = false;
+    }
+
+    void AudioSource::Invalidate() {
+        if (!IsLoaded()) {
+            return;
+        }
+
+        Stop();
+
+        m_Loaded = false;
+        alDeleteBuffers(1, &m_BufferHandle);
+        alDeleteSources(1, &m_SourceHandle);
+    }
+
+	void AudioSource::SetPosition(Vec3f pos)
 	{
+        m_AccessMutex.lock();
 		//alSource3f(source, AL_VELOCITY, 0, 0, 0);
 
-		m_Position[0] = x;
-		m_Position[1] = y;
-		m_Position[2] = z;
+		m_Position[0] = pos.X;
+		m_Position[1] = pos.Y;
+		m_Position[2] = pos.Z;
 
-		alSourcefv(m_SourceHandle, AL_POSITION, m_Position);
+		alSourcefv(m_SourceHandle, AL_POSITION, m_Position.elements);
+        m_AccessMutex.unlock();
 	}
 
 	void AudioSource::SetGain(float gain)
 	{
+        m_AccessMutex.lock();
 		m_Gain = gain;
 
 		alSourcef(m_SourceHandle, AL_GAIN, gain);
+        m_AccessMutex.unlock();
 	}
 
 	void AudioSource::SetPitch(float pitch)
 	{
+        m_AccessMutex.lock();
 		m_Pitch = pitch;
 
 		alSourcef(m_SourceHandle, AL_PITCH, pitch);
+        m_AccessMutex.unlock();
 	}
 
 	void AudioSource::SetSpatial(bool spatial)
 	{
+        m_AccessMutex.lock();
 		m_Spatial = spatial;
 
 		alSourcei(m_SourceHandle, AL_SOURCE_SPATIALIZE_SOFT, spatial ? AL_TRUE : AL_FALSE);
 		alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
+        m_AccessMutex.unlock();
 	}
 
 	void AudioSource::SetLoop(bool loop)
 	{
+        m_AccessMutex.lock();
 		m_Loop = loop;
 
 		alSourcei(m_SourceHandle, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
+        m_AccessMutex.unlock();
 	}
 
 	std::pair<uint32_t, uint32_t> AudioSource::GetLengthMinutesAndSeconds() const
@@ -298,10 +378,19 @@ namespace Nebula {
 		return { (uint32_t)(m_TotalDuration / 60.0f), (uint32_t)m_TotalDuration % 60 };
 	}
 
-	AudioSource AudioSource::LoadFromFile(const std::string& file, bool spatial)
+	Ref<AudioSource> AudioSource::LoadFromFile(const std::string& file, bool spatial)
 	{
-		AudioSource result = Audio::LoadAudioSource(file);
-		result.SetSpatial(spatial);
+		return LoadFromFile(file, spatial, false, 1.0f, 1.0f);
+	}
+
+    Ref<AudioSource> AudioSource::LoadFromFile(const std::string& file, bool spatial, bool loop, float gain, float pitch)
+	{
+		Ref<AudioSource> result = CreateRef<AudioSource>(file, spatial, loop, gain, pitch);
+
+		NAUD_LOG("Allocating space for audio file\n");
+        std::thread (Audio::LoadAudioSource, result).detach();
+        //loadThread.join();
+
 		return result;
 	}
 

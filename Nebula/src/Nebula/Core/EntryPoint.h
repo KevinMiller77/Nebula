@@ -7,8 +7,7 @@
 
 extern Ref<Nebula::Application> CreateApplication();
 
-int main(int argv, char** argc)
-{
+int main(int argv, char** argc){
     NEB_PROFILE_BEGIN_SESSION("Start App", "Nebula-Startup.json");
     auto app = CreateApplication();
     NEB_PROFILE_END_SESSION();

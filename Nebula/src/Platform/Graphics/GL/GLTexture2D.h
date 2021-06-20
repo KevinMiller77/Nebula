@@ -5,8 +5,7 @@
 
 typedef uint32 GLenum;
 
-namespace Nebula
-{
+namespace Nebula{
     class GLTexture2D : public Texture2D
 	{
 	public:
@@ -23,8 +22,8 @@ namespace Nebula
 		virtual std::string GetPath() override { return Path; };
 		virtual uint32_t GetRendererID() const override { return ID; }
 		virtual Mat42f GetTexCoords() const override { return TextureCoords; };
-		virtual uint32_t GetIntFormat() override { return IntFormat; } 
-		virtual uint32_t GetDataFormat() override { return DataFormat; }
+		virtual uint32_t GetIntFormat() { return IntFormat; } 
+		virtual uint32_t GetDataFormat()  { return DataFormat; }
 		virtual Ref<Texture2D> GetSubTexture(int xPosPixels, int yPosPixels, int xSizePixels = 16, int yTileSize = 16) override;
 		
 		virtual void SetData(void* data, uint32_t size) override;

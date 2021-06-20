@@ -1,8 +1,7 @@
 #pragma once
 #include "MathCommon.h"
 
-namespace Nebula
-{
+namespace Nebula{
     template <typename T>
     struct Vec2
     {

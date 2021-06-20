@@ -5,8 +5,7 @@
 #include <vector>
 #include <Nebula.h>
 
-namespace Nebula
-{
+namespace Nebula{
     Scene::Scene()
     {
     }
@@ -123,7 +122,7 @@ namespace Nebula
 
 	void Scene::Render(Camera& camera, Mat4f transform)
 	{		
-		Renderer2D::BeginScene(camera, transform);
+		Renderer2D::BeginScene(camera, transform, false);
 
 //	Using RenderWide to make sure children render properly
 #if 1
@@ -147,7 +146,7 @@ namespace Nebula
 	{
 		NEB_PROFILE_FUNCTION();
 		
-		Renderer2D::BeginScene(viewProj);
+		Renderer2D::BeginScene(viewProj, false);
 //	Using RenderWide to make sure children render properly
 #if 1
 		auto view = Registry.view<RootEntityComponent>();
@@ -174,7 +173,7 @@ namespace Nebula
 		bool hasSRC = entity.HasComponent<SpriteRendererComponent>(); 
 
 		// If there is no src, it can't be hidden. If there is, isHidden - entity.src.hidden 
-		bool isHidden = hasSRC ? entity.GetComponent<SpriteRendererComponent>().hidden : false;
+		bool isHidden = hasSRC ? entity.GetComponent<SpriteRendererComponent>().Hidden : false;
 		if (hasSRC)
 		{
             if (!isHidden)
@@ -317,6 +316,38 @@ namespace Nebula
 				nsc.Instance->OnUpdate(ts);
 			});
 		}
+
+        //Update Sound Info
+        {
+
+            auto alcView = Registry.view<TransformComponent, AudioListenerComponent>();
+                    
+            bool hadListener = false;
+            for (auto entity : alcView) {
+                auto& [transform, audio] = alcView.get<TransformComponent, AudioListenerComponent>(entity);
+                if (!audio.IsActiveListener) {
+                    continue;
+                }
+                Audio::SetListenerPos(transform.Translation);
+
+                Quat viewing = Quat(transform.Rotation);
+                Audio::SetListenerOrientation(viewing.GetForwardVec(), viewing.GetUpVec());
+
+                //TODO: When physics system exists, use it
+                // Audio::SetListenerVelocity();
+
+                hadListener = true;
+            }
+            auto ascView = Registry.view<TransformComponent, AudioSourceComponent>();
+            for (auto entity : ascView) {
+                auto& [transform, audio] = ascView.get<TransformComponent, AudioSourceComponent>(entity);
+                audio.Source->SetPosition(transform.Translation);
+                if (!hadListener && audio.Source->IsPlaying()) {
+                    audio.Source->Stop();
+                }
+            }
+
+        }
 	
 		// Check for a new main camera in the scene
 		auto view = Registry.view<TransformComponent, CameraComponent>();
@@ -335,6 +366,7 @@ namespace Nebula
 			}
 		}
 
+        // Get Main Camera information for renderer
 		for (auto entity : view)
 		{
 			auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
@@ -388,7 +420,7 @@ namespace Nebula
     {
 		NEB_PROFILE_FUNCTION();
 		Mat4f vp = camera.GetViewProjection();
-		Renderer2D::BeginScene(vp);
+		Renderer2D::BeginScene(vp, false);
 
         
 		auto view = Registry.view<RootEntityComponent>();

@@ -24,6 +24,7 @@ workspace "Nebula"
         include "Nebula/ext/Vorbis"
         include "Nebula/ext/OpenAL-Soft"
         include "Nebula/ext/imguizmo"
+        include "Nebula/ext/SPIRV-Cross"
         -- include "Nebula/ext/freetype"
         group ""
         
@@ -72,7 +73,9 @@ project "NebulaEngine"
 		"Nebula/ext/OpenAL-Soft/src/common",
 		"Nebula/ext/libogg/include",
 		"Nebula/ext/Vorbis/include",
-		"Nebula/ext/minimp3"
+		"Nebula/ext/minimp3",
+        "Nebula/ext/SPIRV-Cross/",
+        "Nebula/ext/shaderc/include"
     }
 
     links
@@ -84,7 +87,8 @@ project "NebulaEngine"
         "yaml-cpp",
         "nfd",
         "OpenAL-Soft",
-		"Vorbis"
+		"Vorbis",
+        "SPIRV-Cross",
         -- "freetype"
     }
 
@@ -92,7 +96,17 @@ project "NebulaEngine"
         systemversion "latest"
         links
         {
-            "opengl32"
+            "opengl32",
+            "Nebula/ext/shaderc/lib/Debug/shaderc.lib",
+            "Nebula/ext/shaderc/lib/Debug/shaderc_util.lib",
+            "Nebula/ext/glslang/lib/Debug/GenericCodeGend.lib",
+            "Nebula/ext/glslang/lib/Debug/glslangd.lib",
+            "Nebula/ext/glslang/lib/Debug/MachineIndependentd.lib",
+            "Nebula/ext/glslang/lib/Debug/OGLCompilerd.lib",
+            "Nebula/ext/glslang/lib/Debug/OSDependentd.lib",
+            "Nebula/ext/glslang/lib/Debug/SPIRVd.lib",
+            "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools.lib",
+            "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools-opt.lib",
         }
 
     filter "system:macosx"

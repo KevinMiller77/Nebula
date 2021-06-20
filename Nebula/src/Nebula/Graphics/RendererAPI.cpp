@@ -2,8 +2,7 @@
 
 #include <Platform/Graphics/GL/GLRendererAPI.h>
 
-namespace Nebula
-{
+namespace Nebula{
     RendererAPI::API RendererAPI::NebAPI = RendererAPI::API::OpenGL;
 
     Ref<RendererAPI> RendererAPI::Create()

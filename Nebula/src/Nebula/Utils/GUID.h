@@ -1,8 +1,7 @@
 #pragma once
 #include <unordered_map>
 
-namespace Nebula
-{
+namespace Nebula{
     typedef unsigned long GUID_t;
 
     unsigned long xorshf96();
