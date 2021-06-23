@@ -14,6 +14,8 @@
 *.gitignore
 *.make
 *.yaml
+*.frag
+*.vert
 
 console.txt
 *.xcodeproj/
