@@ -97,17 +97,35 @@ project "NebulaEngine"
         links
         {
             "opengl32",
-            "Nebula/ext/shaderc/lib/Debug/shaderc.lib",
-            "Nebula/ext/shaderc/lib/Debug/shaderc_util.lib",
-            "Nebula/ext/glslang/lib/Debug/GenericCodeGend.lib",
-            "Nebula/ext/glslang/lib/Debug/glslangd.lib",
-            "Nebula/ext/glslang/lib/Debug/MachineIndependentd.lib",
-            "Nebula/ext/glslang/lib/Debug/OGLCompilerd.lib",
-            "Nebula/ext/glslang/lib/Debug/OSDependentd.lib",
-            "Nebula/ext/glslang/lib/Debug/SPIRVd.lib",
-            "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools.lib",
-            "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools-opt.lib",
         }
+        filter "configurations:Release"
+        links {
+                "Nebula/ext/shaderc/lib/Release/shaderc.lib",
+                "Nebula/ext/shaderc/lib/Release/shaderc_util.lib",
+                "Nebula/ext/glslang/lib/Release/GenericCodeGen.lib",
+                "Nebula/ext/glslang/lib/Release/glslang.lib",
+                "Nebula/ext/glslang/lib/Release/MachineIndependent.lib",
+                "Nebula/ext/glslang/lib/Release/OGLCompiler.lib",
+                "Nebula/ext/glslang/lib/Release/OSDependent.lib",
+                "Nebula/ext/glslang/lib/Release/SPIRV.lib",
+                "Nebula/ext/SPIRV-Tools/lib/Release/SPIRV-Tools.lib",
+                "Nebula/ext/SPIRV-Tools/lib/Release/SPIRV-Tools-opt.lib",
+            }
+        filter "configurations:Debug"
+            links 
+            {
+                "Nebula/ext/shaderc/lib/Debug/shaderc.lib",
+                "Nebula/ext/shaderc/lib/Debug/shaderc_util.lib",
+                "Nebula/ext/glslang/lib/Debug/GenericCodeGend.lib",
+                "Nebula/ext/glslang/lib/Debug/glslangd.lib",
+                "Nebula/ext/glslang/lib/Debug/MachineIndependentd.lib",
+                "Nebula/ext/glslang/lib/Debug/OGLCompilerd.lib",
+                "Nebula/ext/glslang/lib/Debug/OSDependentd.lib",
+                "Nebula/ext/glslang/lib/Debug/SPIRVd.lib",
+                "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools.lib",
+                "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools-opt.lib",
+            }
+
 
     filter "system:macosx"
         systemversion "latest"
@@ -133,104 +151,6 @@ project "NebulaEngine"
             "GL",
             "GLU",
             "dl"
-        }
-
-    filter "configurations:Debug"
-        defines "NEB_DEBUG"
-        runtime "Debug"
-        symbols "on"
-
-    filter "configurations:Release"
-        defines "NEB_RELEASE"
-        runtime "Release"
-        optimize "on"
-
-
-project "SpaceSim"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++17"
-    staticruntime "on"  
-    
-    
-    targetname("SpaceSim")
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-    location ("build")
-
-    debugdir("./SpaceSim")
-    
-
-    files
-    {
-        "SpaceSim/src/**.h",
-        "SpaceSim/src/**.cpp"
-    }
-
-    defines
-    {
-        "_CRT_SECURE_NO_WARNINGS",
-        "FT2_BUILD_LIBRARY"
-    }
-
-    sysincludedirs
-    {
-        "SpaceSim/src",
-        "SpaceSim/src/Nebula",
-        "SpaceSim/include",
-        "Nebula",
-
-        "Nebula/ext/imgui",
-        "Nebula/ext/yaml-cpp/include",
-        "Nebula/include",
-        "Nebula/src/Nebula"
-    }
-
-    links
-    {
-        "NebulaEngine"
-    }
-
-    filter "system:windows"
-        systemversion "latest"
-        ignoredefaultlibraries
-        {
-            "user32", 
-            "gdi32", 
-            "shell32",
-            "msvcrtd"
-        }
-
-    filter "system:macosx"
-        systemversion "latest"
-        links
-        {
-            "IOKit.framework", 
-            "OpenGL.framework",
-            "Cocoa.framework",
-            "CoreVideo.framework"
-        }
-
-
-    filter "system:linux"
-        systemversion "latest"
-        defines
-        {
-            "GLFW_SUPPLIED",
-            "_LIBS_SUPPLIED"
-        }
-        links
-        {
-            "X11",
-            "GL",
-            "GLU",
-            "dl",
-            "pthread",
-            "imgui",
-            "glad",
-            "glfw",
-            "yaml-cpp",
-            "nfd"
         }
 
     filter "configurations:Debug"
