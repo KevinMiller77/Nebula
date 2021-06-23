@@ -87,8 +87,16 @@ namespace Nebula{
 		for (Submesh& submesh : mesh->m_Submeshes)
 		{
 			// Material
-			auto material = overrideMaterial ? overrideMaterial : materials[submesh.MaterialIndex];
-			auto shader = material->GetShader();
+			Ref<MaterialInstance> material;
+			if (overrideMaterial) {
+				material = overrideMaterial;
+			} else if (materials.size() == 0) {
+				material = MaterialInstance::Create(mesh->m_BaseMaterial);
+			} else {
+				 materials[submesh.MaterialIndex];
+			}
+			
+			Ref<Shader> shader = material->GetShader();
 			material->Bind();
 
 			if (false && mesh->m_IsAnimated)

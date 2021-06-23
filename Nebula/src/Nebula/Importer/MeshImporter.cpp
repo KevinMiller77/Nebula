@@ -312,13 +312,19 @@ namespace Nebula {
                     outMeshScene->mNumMeshes++;
                     outMeshScene->mMeshes.push_back(currentSubNodeRef);
                     NodeOpen = false;
-                };
+                }
             };
             auto l_InitNewNode = [&NodeOpen, &outMeshScene, &currentSubNodeRef](const std::string& name) {
-                currentSubNodeRef = CreateRef<iMeshNode>();
-                currentSubNodeRef->mName = name;
+                if (NodeOpen) {
+                    LOG_ERR("[Mesh Importer] New node attempted to be initialized but the previous was not closed!\n");
+                    return;
+                }
+                else {
+                    currentSubNodeRef = CreateRef<iMeshNode>();
+                    currentSubNodeRef->mName = name;
 
-                NodeOpen = true;
+                    NodeOpen = true;
+                }
             };
 
             std::string currentLine;
@@ -386,6 +392,11 @@ namespace Nebula {
                     smoothingEnabled = tokensOnLine[1] == "1" ? true : false;
                 }
                 else if (tokensOnLine[0] == "f") {
+                    // If a face begins and no node is open, open one with a throwaway name
+                    if (!NodeOpen) {
+                        l_InitNewNode("Unnamed Node.00" + std::to_string(outMeshScene->mNumMeshes));
+                    }
+
                     std::vector<Ref<iMeshFace>> parsedFaces = ParseFaces(tokensOnLine, smoothingEnabled, currentSubNodeRef);
 
                     for (Ref<iMeshFace> parsedFace : parsedFaces) {
