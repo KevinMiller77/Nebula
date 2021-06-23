@@ -5,7 +5,6 @@
 *.exe
 *.ilk
 *.pdb
-*.obj
 *.o
 *.Makefile
 *.xcworkspace
