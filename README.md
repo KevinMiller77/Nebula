@@ -1,6 +1,6 @@
 # Nebula Game Engine #
 
-Welcome to the Nebula Game engine! A (currently) small and easy to use game engine in C++.
+Welcome to the Nebula Game engine! A small and easy to use game engine in C++.
 
 # Screenshots #
 
@@ -30,19 +30,20 @@ If you need to quickly get yourself a rendering loop and get some 2D/3D objects 
 - OpenGL backend
 - Custom Math library
 - Dear ImGui integration for UI
-- Full debugging system and tracer
+- Full debugging system and tracer output
 - Custom event system
 - Texturing
 - Framebuffers
 - GLSL shaders
 - C++ scripting
+- 3D Object importing (OBJ)
+- 3D Object animation (in C++ only)
+- 3D Audio System
 # Planned Features #
 - MacOS (Would work if they didn't ditch OpenGL right before it got fancy)
 - Multithreading
-- Easier importing of obj or fbx files
+- Fbx files
 - Particles
 - Text
-- Sound
 - Custom UI library
-- Animation Engine
 - C# Scripting
