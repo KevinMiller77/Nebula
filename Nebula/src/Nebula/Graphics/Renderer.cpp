@@ -93,7 +93,7 @@ namespace Nebula{
 			} else if (materials.size() == 0) {
 				material = MaterialInstance::Create(mesh->m_BaseMaterial);
 			} else {
-				 materials[submesh.MaterialIndex];
+				material = materials[submesh.MaterialIndex];
 			}
 			
 			Ref<Shader> shader = material->GetShader();
