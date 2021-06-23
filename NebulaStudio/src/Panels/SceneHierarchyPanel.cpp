@@ -545,6 +545,63 @@ namespace Nebula {
 				}
 			}
 		}
+		if (entity.HasComponent<MeshComponent>() ) {
+			ImGui::Separator();
+
+            if (ImGui::TreeNodeEx((void*)typeid(AudioSourceComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Mesh" )) {
+				auto& mc = entity.GetComponent<MeshComponent>();
+				Ref<Mesh> mesh = mc.Mesh;
+
+                bool deleteMesh = false;
+                ImGui::SameLine(ImGui::GetWindowWidth()-30);
+				if (ImGui::Button("..."))
+				{
+					ImGui::OpenPopup("edit_mesh_comp");
+				}
+
+				if (ImGui::BeginPopup("edit_mesh_comp"))
+				{
+					if (ImGui::MenuItem("Delete Component"))
+					{
+                        deleteMesh = true;
+    				}
+					ImGui::EndPopup();
+				}
+                
+
+                ImGui::Text("Mesh File : "); ImGui::SameLine();
+
+                
+				if (mesh) {
+					bool hasMeshFile = mesh->GetFilePath() != "";
+					bool currentlyLoading = mesh->GetFilePath() != "" && !mesh->IsLoaded();
+
+					std::string currentPath = VFS::Path(mesh->GetFilePath());
+					ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth()  * 0.5f);
+					ImGui::InputText("", currentPath.data(), currentPath.size() + 1);
+				}
+
+                ImGui::SameLine();
+                if (ImGui::Button(" Set... "))
+				{
+                    std::string NewPath = FileDialogs::OpenFile("obj,fbx");
+                    if (VFS::Exists(NewPath, true))
+                    {
+                        // mesh->Invalidate();
+                        mesh = CreateRef<Mesh>(NewPath);
+						mesh->m_EntityID = entity.GetID();
+						mc.Mesh = mesh;
+                    }
+				}
+
+				ImGui::TreePop();
+
+				if (deleteMesh)
+				{
+					entity.RemoveComponent<MeshComponent>();
+				}
+            }
+		}
 
         if (entity.HasComponent<AudioSourceComponent>()) {
             ImGui::Separator();
@@ -725,6 +782,13 @@ namespace Nebula {
 				if(!entity.HasComponent<AudioListenerComponent>())
 				{
 					entity.AddComponent<AudioListenerComponent>();
+				}
+			}
+			if(ImGui::Button("Mesh Component"))
+			{	
+				if(!entity.HasComponent<MeshComponent>())
+				{
+					entity.AddComponent<MeshComponent>();
 				}
 			}
 

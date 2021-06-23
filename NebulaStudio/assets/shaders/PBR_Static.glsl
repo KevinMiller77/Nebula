@@ -15,14 +15,16 @@ layout(location = 2) in vec3 a_Tangent;
 layout(location = 3) in vec3 a_Binormal;
 layout(location = 4) in vec2 a_TexCoord;
 
-layout (std140, binding = 0) uniform Camera
-{
+layout (std140, binding = 0) uniform Camera {
 	mat4 u_ViewProjectionMatrix;
 };
 
-layout (std140, binding = 1) uniform Transform
-{
+layout (std140, binding = 1) uniform Transform {
 	mat4 u_Transform;
+};
+
+layout (std140, binding = 2) uniform Entity {
+	int u_EntityID;
 };
 
 struct VertexOutput
@@ -36,6 +38,7 @@ struct VertexOutput
 };
 
 layout (location = 0) out VertexOutput Output;
+layout (location = 10) out flat int f_EntityID;
 
 void main()
 {
@@ -47,10 +50,14 @@ void main()
 	Output.Binormal = a_Binormal;
 
 	gl_Position = vec4(a_Position, 1.0) * u_Transform * u_ViewProjectionMatrix;
+	f_EntityID = u_EntityID;
 }
 
 #type fragment
 #version 450 core
+
+layout(location = 0) out vec4 color;
+layout(location = 1) out int o_EntityID;
 
 const float PI = 3.141592;
 const float Epsilon = 0.00001;
@@ -77,10 +84,9 @@ struct VertexOutput
 };
 
 layout (location = 0) in VertexOutput Input;
+layout (location = 10) flat in int f_EntityID;
 
-layout(location = 0) out vec4 color;
-
-layout (std140, binding = 2) uniform Environment
+layout (std140, binding = 3) uniform Environment
 {
 	Light lights;
 	vec3 u_CameraPosition; // Offset = 32
@@ -335,4 +341,5 @@ void main()
 
 	vec3 albedo = texture(u_AlbedoTexture, Input.TexCoord).rgb; 
 	color = vec4(texture(u_AlbedoTexture, Input.TexCoord).rgb, 1);
+	o_EntityID = f_EntityID;
 }

@@ -10,8 +10,6 @@ namespace Nebula
 
     void NebulaStudioLayer::OnAttach()
     {
-        // Get a scene from the project input
-        OpenProject(ProjFileInput);
 
         FramebufferSpecification fbSpec;
         fbSpec.Attachments = {FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::Depth};
@@ -20,14 +18,15 @@ namespace Nebula
         fbSpec.Samples = 1;
         fbSpec.ClearColor = {0.1f, 0.1f, 0.1f, 1.0f};
         RendererConfig::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
-        FrameBuffer = Framebuffer::Create(fbSpec);
+        RenderPassSpecification rpSpec;
+        rpSpec.TargetFramebuffer = Framebuffer::Create(fbSpec);
+
+        m_RenderPassSpec = rpSpec;
+
+        // Get a scene from the project input
+        OpenProject(ProjFileInput);
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-
-        std::string assetPath = VFS::AbsolutePath("assets/mesh/m16/m16.obj");
-        if (assetPath != "") {
-            s_Mesh1 = CreateRef<Mesh>(assetPath);
-        }        
     }
 
     float tsls = 0.0f;
@@ -46,16 +45,16 @@ namespace Nebula
             LOG_INF("Autosaved project\n");
         }
 
-        FramebufferSpecification spec = FrameBuffer->GetSpecification();
+        FramebufferSpecification spec = m_RenderPassSpec.TargetFramebuffer->GetSpecification();
         bool framebufferRefletsScreenSize = ViewportSize.X > 0.0f && ViewportSize.Y > 0.0f && (spec.Width != ViewportSize.X || spec.Height != ViewportSize.Y);
         if (framebufferRefletsScreenSize || Application::Get()->GetWindow()->WasMinimized() || Application::Get()->GetWindow()->IsMaximized())
         {
-            FrameBuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
+            m_RenderPassSpec.TargetFramebuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
-        FrameBuffer->Bind();
+        m_RenderPassSpec.TargetFramebuffer->Bind();
         RendererConfig::SetAlphaBlend(true);
         RendererConfig::Clear();
 
@@ -71,15 +70,17 @@ namespace Nebula
                 }
             }
 
-            FrameBuffer->ClearTextureAttachment(1, -1);
+            m_RenderPassSpec.TargetFramebuffer->ClearTextureAttachment(1, -1);
 
             m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
             ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
             if (s_Mesh1) {
-                Ref<RenderPass> pass = RenderPass::Create({ FrameBuffer });
+                Ref<RenderPass> pass = RenderPass::Create(m_RenderPassSpec);
                 Renderer::BeginRenderPass(pass, false);
-                Renderer::SubmitMesh(s_Mesh1, Mat4f(1.0f));
+                if(s_Mesh1->IsLoaded()) {
+                    Renderer::SubmitMesh(s_Mesh1, Mat4f(1.0f));
+                }
                 Renderer::EndRenderPass();
             }
 
@@ -94,7 +95,7 @@ namespace Nebula
 
 
             if (ViewportFocused && ViewportHovered) {
-                m_HoveringEntity = FrameBuffer->ReadPixel(1, mouseX, mouseY);
+                m_HoveringEntity = m_RenderPassSpec.TargetFramebuffer->ReadPixel(1, mouseX, mouseY);
             }
             else {
                 m_HoveringEntity = -1;
@@ -106,7 +107,7 @@ namespace Nebula
             ActiveScene->OnUpdateRuntime(ts);
         }
 
-        FrameBuffer->Unbind();   
+        m_RenderPassSpec.TargetFramebuffer->Unbind();   
     }
 
     void NebulaStudioLayer::OnImGuiRender()
@@ -230,7 +231,7 @@ namespace Nebula
             m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
-        uint32_t textureID = FrameBuffer->GetColorAttachmentsRendererID()[0];
+        uint32_t textureID = m_RenderPassSpec.TargetFramebuffer->GetColorAttachmentsRendererID()[0];
         ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.X, ViewportSize.Y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
         Vec2f windowSize = {ImGui::GetWindowSize().x, ImGui::GetWindowSize().y};
@@ -252,9 +253,10 @@ namespace Nebula
         shouldDrawImGuizmo = shouldDrawImGuizmo && selectedEntity.IsValid();
 
         // Only draw if entity has sprite component AND is not hidden
-        shouldDrawImGuizmo = shouldDrawImGuizmo && selectedEntity.HasComponent<SpriteRendererComponent>();
         if (shouldDrawImGuizmo) {
-            shouldDrawImGuizmo = shouldDrawImGuizmo && !selectedEntity.GetComponent<SpriteRendererComponent>().Hidden;
+            bool shouldDrawSprite = selectedEntity.HasComponent<SpriteRendererComponent>() ? !selectedEntity.GetComponent<SpriteRendererComponent>().Hidden : false;
+            bool shouldDrawMesh = selectedEntity.HasComponent<MeshComponent>() ? selectedEntity.GetComponent<MeshComponent>().Mesh && selectedEntity.GetComponent<MeshComponent>().Mesh->IsLoaded() : false;
+            shouldDrawImGuizmo = shouldDrawImGuizmo && (shouldDrawMesh || shouldDrawSprite);
         }
 
         if (shouldDrawImGuizmo) {
@@ -600,7 +602,7 @@ namespace Nebula
 
     void NebulaStudioLayer::InitProject()
     {
-        ActiveScene = CreateRef<Nebula::Scene>();
+        ActiveScene = CreateRef<Nebula::Scene>(m_RenderPassSpec);
         if (!CurrentProject.LastSceneOpened.empty())
         {
             SceneSerializer ser(ActiveScene);
@@ -675,7 +677,7 @@ namespace Nebula
 
     void NebulaStudioLayer::NewScene()
     {
-        ActiveScene = CreateRef<Nebula::Scene>();
+        ActiveScene = CreateRef<Nebula::Scene>(m_RenderPassSpec);
         ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
         SceneHierarchy.SetContext(ActiveScene);
 
@@ -745,7 +747,7 @@ namespace Nebula
             
             std::string relPath = VFS::Path(filePath);
 
-            ActiveScene = CreateRef<Nebula::Scene>();
+            ActiveScene = CreateRef<Nebula::Scene>(m_RenderPassSpec);
             ActiveScene->SetFilePath(relPath);
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             SceneHierarchy.SetContext(ActiveScene);

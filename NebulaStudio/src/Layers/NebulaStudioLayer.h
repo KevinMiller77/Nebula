@@ -76,7 +76,7 @@ namespace Nebula
 
         void SetupAxisGrid();
 
-        Ref<Framebuffer> FrameBuffer;
+        RenderPassSpecification m_RenderPassSpec;
         bool ViewportFocused = false, ViewportHovered = false;
         Vec2f ViewportSize = {1600.0f, 900.0f};
         EditorCamera m_EditorCamera;
