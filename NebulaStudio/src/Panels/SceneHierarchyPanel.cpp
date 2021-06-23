@@ -756,12 +756,14 @@ namespace Nebula {
 		ImGui::SameLine();
 		if(ImGui::BeginPopup("new_comp"))
 		{
+			bool popupUsed = false;
 			if(ImGui::Button("Sprite Rendering Component"))
 			{
 				if (!entity.HasComponent<SpriteRendererComponent>())
 				{
 					entity.AddComponent<SpriteRendererComponent>();
 				}
+				popupUsed = true;
 			}
 			if(ImGui::Button("Camera Component"))
 			{	
@@ -769,6 +771,7 @@ namespace Nebula {
 				{
 					entity.AddComponent<CameraComponent>(Context->GetViewportSize());
 				}
+				popupUsed = true;
 			}
             if(ImGui::Button("Audio Source Component"))
 			{	
@@ -776,6 +779,7 @@ namespace Nebula {
 				{
 					entity.AddComponent<AudioSourceComponent>();
 				}
+				popupUsed = true;
 			}
             if(ImGui::Button("Audio Listener Component"))
 			{	
@@ -783,6 +787,7 @@ namespace Nebula {
 				{
 					entity.AddComponent<AudioListenerComponent>();
 				}
+				popupUsed = true;
 			}
 			if(ImGui::Button("Mesh Component"))
 			{	
@@ -790,6 +795,11 @@ namespace Nebula {
 				{
 					entity.AddComponent<MeshComponent>();
 				}
+				popupUsed = true;
+			}
+
+			if (popupUsed) {
+				ImGui::CloseCurrentPopup();
 			}
 
 			ImGui::EndPopup();
