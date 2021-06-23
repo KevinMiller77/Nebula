@@ -32,3 +32,4 @@ ext/freetype/bin
 Nebula/ext/SPIRV-Tools/*
 Nebula/ext/glslang/*
 NebulaStudio/NebulaEditorSettings.yaml
+NebulaStudio/assets/shaders/cached/
