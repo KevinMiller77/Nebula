@@ -17,37 +17,24 @@ namespace Nebula{
 
 	void Renderer2D::ReloadShaders()
 	{
-		bool TexShaderFileFound = VFS::Exists("assets/shaders/TexQuad.glsl"); 
-		if(!TexShaderFileFound)
-		{
-			LOG_ERR("The shader TexQuad.glsl was not found. It could not be reloaded.\n");
-			LOG_ERR("Press Shift+F6 to load default shaders\n");
-		}
-		else
-		{
-			s_2DData.TextureShader->Reload();
-			s_2DData.TextureShader->Bind();
+		// TexQuad
+		s_2DData.TextureShader->Reload(true);
+		s_2DData.TextureShader->Bind();
 
-			int32_t samplers[s_2DData.MaxTextureSlots];
-			for (uint32_t i = 0; i < s_2DData.MaxTextureSlots; i++)
-				samplers[i] = i;
-			s_2DData.TextureShader->SetUniform("u_Textures", samplers, s_2DData.MaxTextureSlots);
+		// Tex samplers
+		int32_t samplers[s_2DData.MaxTextureSlots];
+		for (uint32_t i = 0; i < s_2DData.MaxTextureSlots; i++) {
+			samplers[i] = i;
 		}
+		s_2DData.TextureShader->SetUniform("u_Textures", samplers, s_2DData.MaxTextureSlots);
 		
-		bool LineShaderFileFound = VFS::Exists("assets/shaders/Line.glsl");
-		if (!LineShaderFileFound)
-		{
-			LOG_ERR("The shader Line.glsl was not found. It could not be reloaded.\n");
-			LOG_ERR("Press Shift+F6 to load default shaders\n");
-		}
-		else
-		{
-			s_2DData.LineShader->Reload();
-		}
+		// Line
+		s_2DData.LineShader->Reload(true);
 	}
 
 	void Renderer2D::Init()
 	{
+		// Init Quad Props
 		s_2DData.QuadVertexArray = VertexArray::Create();
 
 		s_2DData.QuadVertexBuffer = VertexBuffer::Create(s_2DData.MaxQuadVertices * sizeof(QuadVertex));
@@ -96,8 +83,8 @@ namespace Nebula{
 		for (uint32_t i = 0; i < s_2DData.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		bool TexShaderFileFound = VFS::Exists("assets/shaders/TexQuad.glsl"); 
-		s_2DData.TextureShader =  TexShaderFileFound ? Shader::Create("assets/shaders/TexQuad.glsl") : Shader::Create(Builtin::TexQuadShader);
+		s_2DData.TextureShader = Renderer::GetShaderLibrary()->Get("TexQuad");
+		assert(s_2DData.TextureShader);
 
 		s_2DData.TextureShader->Bind();
 		s_2DData.TextureShader->SetUniform("u_Textures", samplers, s_2DData.MaxTextureSlots);
@@ -110,9 +97,9 @@ namespace Nebula{
 		s_2DData.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
 		s_2DData.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
-		bool LineShaderFileFound = VFS::Exists("assets/shaders/Line.glsl");
-		s_2DData.LineShader = LineShaderFileFound  ? Shader::Create("assets/shaders/Line.glsl") : Shader::Create(Builtin::LineShader);
-		
+		// Init Line Props
+
+		s_2DData.LineShader = Renderer::GetShaderLibrary()->Get("Line");
 		s_2DData.LineVertexArray = VertexArray::Create();
 			
 		s_2DData.LineVertexBuffer = VertexBuffer::Create(s_2DData.MaxLineVertices * sizeof(LineVertex));

@@ -44,7 +44,6 @@ namespace Nebula {
 
 	void Material::OnShaderReloaded()
 	{
-		return;
 		AllocateStorage();
 		
 		for (auto mi : m_MaterialInstances)

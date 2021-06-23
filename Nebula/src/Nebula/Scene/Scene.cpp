@@ -6,8 +6,9 @@
 #include <Nebula.h>
 
 namespace Nebula{
-    Scene::Scene()
+    Scene::Scene(RenderPassSpecification spec)
     {
+		m_RenderPass = RenderPass::Create(spec);
     }
     Scene::~Scene()
     {
@@ -84,7 +85,7 @@ namespace Nebula{
 		}
 	}
 
-	void Scene::Render(entt::entity mainCamera)
+	void Scene::BeginScene(entt::entity mainCamera)
 	{
 		Entity camToUse;
 		Mat4f transform;
@@ -116,16 +117,25 @@ namespace Nebula{
 		if (Registry.valid(camToUse))
 		{
 			auto& cam = Registry.get<CameraComponent>(camToUse);
-			Render(cam.Camera, transform);
+			BeginScene(cam.Camera, transform);
 		}
 	}
 
-	void Scene::Render(Camera& camera, Mat4f transform)
-	{		
+	void Scene::BeginScene(Camera& camera, Mat4f transform)
+	{	
+		// Be sure to always start renderer FIRST!
+		Renderer::BeginRenderPass(m_RenderPass, true);
 		Renderer2D::BeginScene(camera, transform, false);
+	}
 
-//	Using RenderWide to make sure children render properly
-#if 1
+	void Scene::BeginScene(Mat4f viewProj)
+	{
+		//Be sure to always stop renderer LAST!
+		Renderer2D::BeginScene(viewProj, false);
+		Renderer::EndRenderPass();
+	}
+	
+	void Scene::Render() {
 		auto view = Registry.view<RootEntityComponent>();
 		if (!view.empty())
 		{
@@ -135,32 +145,9 @@ namespace Nebula{
 				SubmitEntity(toSubmit);
 			}
 		}
-#else
-		RenderWide(transform);
-#endif
-		Renderer2D::EndScene();
 	}
 
-///
-	void Scene::Render(Mat4f viewProj)
-	{
-		NEB_PROFILE_FUNCTION();
-		
-		Renderer2D::BeginScene(viewProj, false);
-//	Using RenderWide to make sure children render properly
-#if 1
-		auto view = Registry.view<RootEntityComponent>();
-		if (!view.empty())
-		{
-			for (auto entity : view)
-			{
-				Entity toSubmit { entity, this };
-				SubmitEntity(toSubmit);
-			}
-		}
-#else
-		RenderWide(transform);
-#endif
+	void Scene::EndScene() {
 		Renderer2D::EndScene();
 	}
 
@@ -207,6 +194,13 @@ namespace Nebula{
                     }
                 }
             }
+		}
+
+		if(entity.HasComponent<MeshComponent>()) {
+			Ref<Mesh> mesh = entity.GetComponent<MeshComponent>().Mesh;
+			if (mesh) {
+				Renderer::SubmitMesh(mesh, transform.GetTransformation());
+			}
 		}
 
 		if (entity.HasComponent<ParentEntityComponent>() && !isHidden)

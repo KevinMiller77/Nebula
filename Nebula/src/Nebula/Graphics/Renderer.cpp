@@ -17,15 +17,21 @@ namespace Nebula{
 
 	static RendererData s_Data;
 
+	std::vector<std::string> Renderer2DShaders = {"TexQuad", "Line"};
     void Renderer::Init()
 	{
-    
         RendererConfig::Init();
-		Renderer2D::Init();
 
         s_ShaderLibrary = CreateRef<ShaderLibrary>();
-        // Add all shaders to the lib here
-        s_ShaderLibrary->Load(std::filesystem::absolute("assets/shaders/PBR_Static.glsl").string());
+
+		// 2D Textures (!!! DO NOT RELOAD THESE FROM THE 3D RENDERER !!!)
+        s_ShaderLibrary->Load(VFS::AbsolutePath("assets/shaders/Line.glsl"));
+        s_ShaderLibrary->Load(VFS::AbsolutePath("assets/shaders/TexQuad.glsl"));
+
+        // Add all shaders to the renderer lib here
+        s_ShaderLibrary->Load(VFS::AbsolutePath("assets/shaders/PBR_Static.glsl"));
+
+		Renderer2D::Init();
     }
     void Renderer::Shutdown()
 	{
@@ -41,7 +47,7 @@ namespace Nebula{
 			depthTest = material->GetFlag(MaterialFlag::DepthTest);
 
 			auto shader = material->GetShader();
-			shader->SetUniformBuffer("Transform", &transform, sizeof(Mat4f));
+			shader->SetUniformBuffer("Transform", &transform, sizeof(Vec4f) * 4);
 		}
 
 		s_Data.m_FullscreenQuadVertexBuffer->Bind();
@@ -71,9 +77,11 @@ namespace Nebula{
 		// auto material = overrideMaterial ? overrideMaterial : mesh->GetMaterialInstance();
 		// auto shader = material->GetShader();
 
-			mesh->m_VertexBuffer->Bind();
-			mesh->m_Pipeline->Bind();
-			mesh->m_IndexBuffer->Bind();
+		int entityID = mesh->GetEntityID();
+
+		mesh->m_VertexBuffer->Bind();
+		mesh->m_Pipeline->Bind();
+		mesh->m_IndexBuffer->Bind();
 
 		auto& materials = mesh->GetMaterials();
 		for (Submesh& submesh : mesh->m_Submeshes)
@@ -91,6 +99,8 @@ namespace Nebula{
 					mesh->m_MeshShader->SetUniform(uniformName, mesh->m_BoneTransforms[i]);
 				}
 			}
+
+			shader->SetUniformBuffer("Entity", &entityID, sizeof(int));
 			
 			auto transformUniform = transform * submesh.Transform;
 			shader->SetUniformBuffer("Transform", &transformUniform, sizeof(Vec4f) * 4);
@@ -170,6 +180,15 @@ namespace Nebula{
 	
     void Renderer::ReloadShaders()
 	{
+		for (std::pair<std::string, Ref<Shader>> shader : s_ShaderLibrary->GetAll()) {
+			// If its a 2D shader, don't handle it here
+			if (std::find(Renderer2DShaders.begin(), Renderer2DShaders.end(), shader.first) != Renderer2DShaders.end()) {
+				continue;
+			}
+			
+			shader.second->Reload(true);
+		}
+
 		Renderer2D::ReloadShaders();
 
 		LOG_INF("Shaders Reloaded\n");

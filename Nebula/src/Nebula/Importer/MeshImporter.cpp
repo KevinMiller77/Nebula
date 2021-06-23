@@ -37,7 +37,7 @@ namespace Nebula {
                     switch (i) {
                         case('/'): {
                             if (currentOutputNumberAsStr.size() != 0) {
-                                currentOutputTokenSet.push_back(std::stoi(currentOutputNumberAsStr));
+                                currentOutputTokenSet.push_back(std::stoi(currentOutputNumberAsStr) - 1);
                                 currentOutputNumberAsStr = "";
                             }
                             break;
@@ -49,7 +49,7 @@ namespace Nebula {
                 }
                 // Wrap up the last subtoken if exists
                 if (currentOutputNumberAsStr.size()) {
-                    currentOutputTokenSet.push_back(std::stoi(currentOutputNumberAsStr));
+                    currentOutputTokenSet.push_back(std::stoi(currentOutputNumberAsStr) - 1);
                 }
 
                 tokenDst.push_back(currentOutputTokenSet);
@@ -219,73 +219,61 @@ namespace Nebula {
             std::vector<std::vector<int>> formattedFaceIndices;
             TokenizeFace(formattedFaceIndices, tokensOnLine, 1);
 
-            // v1//vn1 given
-            if (!texCoordsSkipped) {
+            int numVertices = formattedFaceIndices.size();
+            node->mNumVertices += numVertices;
+            
+            // Do the faces in batches of 3 all the time
+            bool hasTexCoord = texCoordsSkipped ? false : formattedFaceIndices[0].size() > 1;
+            bool hasNormal = texCoordsSkipped || formattedFaceIndices[0].size() == 3;
 
-                enum IndexType {
-                    VERTEX_POSITION = 1,
-                    VERTEX_NORMAL = 2,
-                    TEX_COORD = 3
-                };
+            uint32_t posIdx = 0;
+            uint32_t texIdx = 1;
+            uint32_t normalIdx = hasTexCoord ? 2 : 1;
 
-                // Check how many params there are if not special case (free form geo)
-                int numVertices = formattedFaceIndices.size();
-                node->mNumVertices += numVertices;
-                
-                // Do the faces in batches of 3 all the time
+            for (int i = 0; i < numVertices - 2; i++) {
+                Ref<iMeshFace> face = CreateRef<iMeshFace>();
+                bool generateNormals = true;
 
-                bool hasTexCoord = texCoordsSkipped ? false : formattedFaceIndices[0].size() > 1;
-                bool hasNormal = texCoordsSkipped || formattedFaceIndices[0].size() == 3;
-
-                uint32_t posIdx = 0;
-                uint32_t texIdx = 1;
-                uint32_t normalIdx = hasTexCoord ? 2 : 1;
-
-                for (int wave = 0; wave < numVertices / 3; wave++) {
-                    Ref<iMeshFace> face = CreateRef<iMeshFace>();
-
-                    bool generateNormals = true;
-                    for (int i = 0; i < 3; i++) {
-                        int curFaceInd = wave * 3 + i;
-
-                        face->mPositionIndices.push_back(formattedFaceIndices[curFaceInd][posIdx]);
-                         
-                        if (hasTexCoord) {
-                            face->mTexCoordIndices.push_back(formattedFaceIndices[curFaceInd][texIdx]);
-                        }
-                        if (hasNormal) {
-                            face->mVertexNormalIndices.push_back(formattedFaceIndices[curFaceInd][normalIdx]);
-
-                        }
-                        face->mNumIndices++;
-                    }
-
-                    // Calculate Normal, Tangent, and Bitangent here
-                    face->smoothingEnabled = smoothingEnabled;
-                    face->generatedNormals = generateNormals;
-                    outFaces.push_back(face);
+                face->mPositionIndices.push_back(formattedFaceIndices[0][posIdx]);
+                face->mPositionIndices.push_back(formattedFaceIndices[i + 1][posIdx]);
+                face->mPositionIndices.push_back(formattedFaceIndices[i + 2][posIdx]);
+                    
+                if (hasTexCoord) {
+                    face->mTexCoordIndices.push_back(formattedFaceIndices[0][texIdx]);
+                    face->mTexCoordIndices.push_back(formattedFaceIndices[i + 1][texIdx]);
+                    face->mTexCoordIndices.push_back(formattedFaceIndices[i + 2][texIdx]);
                 }
-                return outFaces;
-            }
+                if (hasNormal) {
+                    face->mVertexNormalIndices.push_back(formattedFaceIndices[0][normalIdx]);
+                    face->mVertexNormalIndices.push_back(formattedFaceIndices[i + 1][normalIdx]);
+                    face->mVertexNormalIndices.push_back(formattedFaceIndices[i + 2][normalIdx]);
+                }
+                face->mNumIndices += 3;
 
+                // Calculate Normal, Tangent, and Bitangent here
+                face->smoothingEnabled = smoothingEnabled;
+                face->generatedNormals = generateNormals;
+                outFaces.push_back(face);
+            }
+            return outFaces;
+
+            /*
             int numVertices = formattedFaceIndices.size();
             node->mNumVertices += numVertices;
             // Do the faces in batches of 3 all the time
-            for (int wave = 0; wave < numVertices / 3; wave++) {
+            for (int i = 0; i < numVertices - 2; i++) {
                 Ref<iMeshFace> face = CreateRef<iMeshFace>();
-                for (int i = 0; i < 3; i++) {
-                    face->mPositionIndices.push_back(formattedFaceIndices[i][0]);
-
-                    face->mVertexNormalIndices.push_back(formattedFaceIndices[i][1]);
-
-                    face->mNumIndices++;
-                }
+                face->mPositionIndices.push_back(formattedFaceIndices[0][0]);
+ 
+                face->mVertexNormalIndices.push_back(formattedFaceIndices[i + 1][1]);
+ 
+                face->mNumIndices++;
 
                 face->smoothingEnabled = smoothingEnabled;
                 outFaces.push_back(face);
             }
 
-            return outFaces;
+            return outFaces; */
         }
 
         Ref<iMeshScene> ImportMesh_OBJ(const std::string& filepath) {
@@ -318,15 +306,18 @@ namespace Nebula {
             bool smoothingEnabled = false;
 
             bool NodeOpen = false;
-            auto l_SubmitAndInitNewNode = [&NodeOpen, &outMeshScene, &currentSubNodeRef](const std::string& name) {
+
+            auto l_CheckAndSubmitNode = [&NodeOpen, &outMeshScene, &currentSubNodeRef]() {
                 if (NodeOpen) {
                     outMeshScene->mNumMeshes++;
                     outMeshScene->mMeshes.push_back(currentSubNodeRef);
+                    NodeOpen = false;
                 };
-
+            };
+            auto l_InitNewNode = [&NodeOpen, &outMeshScene, &currentSubNodeRef](const std::string& name) {
                 currentSubNodeRef = CreateRef<iMeshNode>();
                 currentSubNodeRef->mName = name;
-                
+
                 NodeOpen = true;
             };
 
@@ -388,7 +379,8 @@ namespace Nebula {
                 }
                 // O Means start a new mesh but sometimes doesn't exist!
                 else if (tokensOnLine[0] == "o" || tokensOnLine[0] == "g") {
-                    l_SubmitAndInitNewNode(tokensOnLine[1]);
+                    l_CheckAndSubmitNode();
+                    l_InitNewNode(tokensOnLine[1]);
                 }
                 else if (tokensOnLine[0] == "s") {
                     smoothingEnabled = tokensOnLine[1] == "1" ? true : false;
@@ -409,12 +401,9 @@ namespace Nebula {
                     }
                 }
             }
+            objFile.close();
 
-            if (NodeOpen) {
-                outMeshScene->mNumMeshes++;
-                outMeshScene->mMeshes.push_back(currentSubNodeRef);
-                NodeOpen = false;
-            } 
+            l_CheckAndSubmitNode();
 
             outMeshScene->mRootNode = rootNodeRef;
             return outMeshScene;

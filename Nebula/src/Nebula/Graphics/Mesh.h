@@ -109,11 +109,16 @@ namespace Nebula {
 		const std::vector<Ref<Texture2D>>& GetTextures() const { return m_Textures; }
 		const std::string& GetFilePath() const { return m_FilePath; }
 
+        bool IsLoaded() { return m_IsLoaded; }
+
 		const std::vector<Triangle> GetTriangleCache(uint32_t index) const { return m_TriangleCache.at(index); }
 
 		Ref<VertexBuffer> GetVertexBuffer() { return m_VertexBuffer; }
 		Ref<IndexBuffer> GetIndexBuffer() { return m_IndexBuffer; }
 		const BufferLayout& GetVertexBufferLayout() const { return m_VertexBufferLayout; }
+
+        int GetEntityID() { return m_EntityID; };
+        void SetEntityID(int id) { m_EntityID = id; }
 
     private:
         void BoneTransform(float time);
@@ -163,6 +168,8 @@ namespace Nebula {
 
         std::unordered_map<uint32_t, std::vector<Triangle>> m_TriangleCache;
 
+        bool m_IsLoaded = false;
+        int m_EntityID = -1;
         bool m_IsAnimated = false;
         float m_AnimationTime = 0.0f;
         float m_WorldTime = 0.0f;

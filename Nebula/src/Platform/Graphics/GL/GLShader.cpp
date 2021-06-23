@@ -63,10 +63,10 @@ namespace Nebula{
         glDeleteProgram(m_RendererID);
 	}
 
-    void GLShader::Reload()
+    void GLShader::Reload(bool forceRecompile)
 	{
 		std::string source = ReadShaderFromFile(m_AssetPath);
-		Load(source);
+		Load(source, forceRecompile);
 	}
 
     void GLShader::Bind()
@@ -272,7 +272,7 @@ namespace Nebula{
 		}
 	}
 
-    void GLShader::Load(const std::string& source)
+    void GLShader::Load(const std::string& source, bool forceRecompile)
 	{
 		m_ShaderSource = PreProcess(source);
 		if (!m_IsCompute)
@@ -280,8 +280,8 @@ namespace Nebula{
 			//Parse();
 
 			std::array<std::vector<uint32_t>, 2> vulkanBinaries;
-			CompileOrGetVulkanBinary(vulkanBinaries);
-			CompileOrGetOpenGLBinary(vulkanBinaries);
+			CompileOrGetVulkanBinary(vulkanBinaries, forceRecompile);
+			CompileOrGetOpenGLBinary(vulkanBinaries, forceRecompile);
 		}
 		else
 		{
@@ -311,6 +311,7 @@ namespace Nebula{
 	void GLShader::CompileOrGetVulkanBinary(std::array<std::vector<uint32_t>, 2>& outputBinary, bool forceCompile)
 	{
 		// Vertex Shader
+		if (!forceCompile)
 		{
 			std::filesystem::path p = m_AssetPath;
 			auto path = p.parent_path() / "cached" / (p.filename().string() + ".cached_vulkan.vert");
@@ -324,11 +325,12 @@ namespace Nebula{
 				fseek(f, 0, SEEK_SET);
 				outputBinary[0] = std::vector<uint32_t>(size / sizeof(uint32_t));
 				fread(outputBinary[0].data(), sizeof(uint32_t), outputBinary[0].size(), f);
-				fclose(f);
+				std::fclose(f);
 			}
 		}
 
 		// Fragment Shader
+		if (!forceCompile)
 		{
 			std::filesystem::path p = m_AssetPath;
 			auto path = p.parent_path() / "cached" / (p.filename().string() + ".cached_vulkan.frag");
@@ -342,7 +344,7 @@ namespace Nebula{
 				fseek(f, 0, SEEK_SET);
 				outputBinary[1] = std::vector<uint32_t>(size / sizeof(uint32_t));
 				fread(outputBinary[1].data(), sizeof(uint32_t), outputBinary[1].size(), f);
-				fclose(f);
+				std::fclose(f);
 			}
 		}
 
@@ -385,6 +387,9 @@ namespace Nebula{
 
 				auto path = dir / (p.filename().string() + ".cached_vulkan.vert");
 				std::string cachedFilePath = path.string();
+				if (std::filesystem::exists(cachedFilePath)) {
+					std::filesystem::remove(cachedFilePath);
+				}
 
 				FILE* f = fopen(cachedFilePath.c_str(), "wb");
 				fwrite(outputBinary[0].data(), sizeof(uint32_t), outputBinary[0].size(), f);
@@ -436,6 +441,10 @@ namespace Nebula{
 
 				auto path = p.parent_path() / "cached" / (p.filename().string() + ".cached_vulkan.frag");
 				std::string cachedFilePath = path.string();
+				
+				if (std::filesystem::exists(cachedFilePath)) {
+					std::filesystem::remove(cachedFilePath);
+				}
 
 				FILE* f = fopen(cachedFilePath.c_str(), "wb");
 				fwrite(outputBinary[1].data(), sizeof(uint32_t), outputBinary[1].size(), f);
@@ -470,6 +479,12 @@ namespace Nebula{
 			std::filesystem::path p = m_AssetPath;
 			auto path = p.parent_path() / "cached" / (p.filename().string() + ".cached_opengl.vert");
 			std::string cachedFilePath = path.string();
+
+			if (forceCompile) {
+				if (std::filesystem::exists(cachedFilePath)) {
+					std::filesystem::remove(cachedFilePath);
+				}
+			}
 
 			FILE* f = fopen(cachedFilePath.c_str(), "rb");
 			if (f)
@@ -524,6 +539,12 @@ namespace Nebula{
 			std::filesystem::path p = m_AssetPath;
 			auto path = p.parent_path() / "cached" / (p.filename().string() + ".cached_opengl.frag");
 			std::string cachedFilePath = path.string();
+
+			if (forceCompile) {
+				if (std::filesystem::exists(cachedFilePath)) {
+					std::filesystem::remove(cachedFilePath);
+				}
+			}
 
 			FILE* f = fopen(cachedFilePath.c_str(), "rb");
 			if (f)

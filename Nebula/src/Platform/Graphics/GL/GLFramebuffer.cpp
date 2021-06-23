@@ -134,6 +134,8 @@ namespace Nebula{
 
     int GLFramebuffer::ReadPixel(uint32 colorAttachmentID, int x, int y) 
     {
+        Bind();
+
         assert(colorAttachmentID < m_ColorAttachments.size());
         glReadBuffer(GL_COLOR_ATTACHMENT0 + colorAttachmentID);
         int pixel;

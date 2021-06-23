@@ -25,13 +25,6 @@ namespace Nebula {
         // Init Submeshes
         //      Init Verticies (Whether animated or not) (if animated, no AABB needed)
         //
-
-        Ref<NebulaFile> sceneFile = Importer::ImportFile(filename);
-		if (!sceneFile){
-			LOG_ERR("Failed to load meshRef file: %s\n", filename.c_str());
-			assert(false);
-		}
-
         Ref<MeshFile> sceneMeshFile = Importer::s_ImportMesh(filename);
         Ref<iMeshScene> sceneRef = sceneMeshFile->meshScene;
 		if (!sceneRef->HasMeshes()) {
@@ -71,7 +64,7 @@ namespace Nebula {
 			submesh.IndexCount = meshRef->mNumFaces * 3;
 			submesh.MeshName = meshRef->mName;
 
-			vertexCount += meshRef->mNumVertices;
+			vertexCount += meshRef->mNumFaces * 3;
 			indexCount += submesh.IndexCount;
 
 			/* Vertices
@@ -115,8 +108,8 @@ namespace Nebula {
                 
                 for (int vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
                     Vertex vertex;
-					vertex.Position = l_Positions[i_Positions[vertexIdx] - 1];
-					//vertex.Normal = l_Normals[i_Normals[vertexIdx] - 1];
+					vertex.Position = l_Positions[i_Positions[vertexIdx]];
+					//vertex.Normal = l_Normals[i_Normals[vertexIdx]];
 					aabb.Min.X = min(vertex.Position.X, aabb.Min.X);
 					aabb.Min.Y = min(vertex.Position.Y, aabb.Min.Y);
 					aabb.Min.Z = min(vertex.Position.Z, aabb.Min.Z);
@@ -126,12 +119,12 @@ namespace Nebula {
 
 					if (i_Bitangent.size())
 					{
-						vertex.Tangent = l_Tangents[i_Bitangent[vertexIdx] - 1];
-						vertex.Binormal = l_Bitangents[i_Bitangent[vertexIdx] - 1];
+						vertex.Tangent = l_Tangents[i_Bitangent[vertexIdx]];
+						vertex.Binormal = l_Bitangents[i_Bitangent[vertexIdx]];
 					}
 
 					if (i_TexCoords.size())
-						vertex.TexCoord = l_TexCoords[i_TexCoords[vertexIdx] - 1];
+						vertex.TexCoord = l_TexCoords[i_TexCoords[vertexIdx]];
 
 					m_StaticVertices.push_back(vertex);
                 }
@@ -290,6 +283,7 @@ namespace Nebula {
 				{ ShaderDataType::Int4, "a_BoneIDs" },
 				{ ShaderDataType::Float4, "a_BoneWeights" },
 			};
+			m_VertexBuffer->SetLayout(m_VertexBufferLayout);
 		}
 		else
 		{
@@ -301,12 +295,16 @@ namespace Nebula {
 				{ ShaderDataType::Float3, "a_Binormal" },
 				{ ShaderDataType::Float2, "a_TexCoord" },
 			};
+			m_VertexBuffer->SetLayout(m_VertexBufferLayout);
 		}
 		pipelineSpecification.Layout = m_VertexBufferLayout;
 				
 		m_Pipeline = Pipeline::Create(pipelineSpecification);
 
+
 		m_IndexBuffer = IndexBuffer::Create((uint32_t*)m_Indices.data(), m_Indices.size() * 3);
+
+		m_IsLoaded = true;
 	}
 
 	Mesh::~Mesh()
@@ -315,6 +313,10 @@ namespace Nebula {
 
 	void Mesh::OnUpdate(float ts)
 	{
+		if (!IsLoaded()) {
+			return;
+		}
+
 		if (m_IsAnimated)
 		{
 			if (m_AnimationPlaying)
@@ -551,6 +553,9 @@ namespace Nebula {
 
 	void Mesh::DumpVertexBuffer()
 	{
+		if(!IsLoaded()) {
+			return;
+		}
 		// TODO: Convert to ImGui
 		LOG_INF("------------------------------------------------------\n");
 		LOG_INF("Vertex Buffer Dump\n");

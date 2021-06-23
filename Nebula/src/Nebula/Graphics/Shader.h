@@ -87,8 +87,8 @@ namespace Nebula{
 		void Push(const std::string& name, const Mat4f& data)
 		{
 			Uniforms[Index++] = { UniformType::Matrix4x4, Cursor, name };
-			memcpy(Buffer + Cursor, glm::value_ptr(data), sizeof(Mat4f));
-			Cursor += sizeof(Mat4f);
+			memcpy(Buffer + Cursor, data.elements, sizeof(Vec4f) * 4);
+			Cursor += sizeof(Vec4f) * 4;
 		}
 
 	};
@@ -141,7 +141,7 @@ namespace Nebula{
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
-        virtual void Reload() = 0;
+        virtual void Reload(bool forceReload) = 0;
         
 		using ShaderReloadedCallback = std::function<void()>;
 		
@@ -176,6 +176,7 @@ namespace Nebula{
         // Ref<Shader> Load(const std::string name, const std::string& filepath);
 
         Ref<Shader> Get(const std::string& name);
+		std::unordered_map<std::string, Ref<Shader>> GetAll() { return shaders; }
 
         bool Exists(const std::string& name);
     private:

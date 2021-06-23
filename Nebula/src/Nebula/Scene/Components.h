@@ -1,6 +1,9 @@
 #pragma once
 #include <Math/math.h>
+
 #include <Graphics/Texture.h>
+#include <Graphics/Mesh.h>
+
 #include <Utils/GUID.h>
 #include "Scriptable.h"
 #include "SceneCamera.h"
@@ -94,6 +97,13 @@ namespace Nebula{
 			if (!ParentTileMap) LOG_ERR("Tilemap was invalid in Sprite Rendering Tile Load\n");
 			Texture = ParentTileMap->GetTileAt(TilePos.X, TilePos.Y, TileSize.X, TileSize.Y);
 		}
+	};
+
+	struct MeshComponent {
+		Ref<Mesh> Mesh = nullptr;
+
+		MeshComponent() = default;
+		MeshComponent(const MeshComponent&) = default;
 	};
 
 	struct CameraComponent

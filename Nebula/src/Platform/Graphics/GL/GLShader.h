@@ -23,7 +23,7 @@ namespace Nebula{
 
         virtual void Bind();
         virtual void Unbind();
-        virtual void Reload() override;
+        virtual void Reload(bool forceReload = false) override;
 		virtual void AddShaderReloadedCallback(const ShaderReloadedCallback& callback) override;
         virtual void SetUniformBuffer(const std::string& name, const void* data, uint32_t size) override;
         
@@ -53,7 +53,7 @@ namespace Nebula{
 		virtual const std::unordered_map<std::string, ShaderResourceDeclaration>& GetResources() const override { return m_Resources; }
     private:
         
-		void Load(const std::string& source);
+		void Load(const std::string& source, bool forceRecompile);
 
         std::unordered_map<GLenum, std::string> PreProcess(const std::string& src);
 

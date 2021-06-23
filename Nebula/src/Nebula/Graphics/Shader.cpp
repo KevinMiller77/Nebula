@@ -86,7 +86,6 @@ namespace Nebula{
         }
         return shaders[name];
     }
-
     bool ShaderLibrary::Exists(const std::string& name)
     {
         return shaders.find(name) != shaders.end();

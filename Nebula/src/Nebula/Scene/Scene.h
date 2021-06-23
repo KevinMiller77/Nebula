@@ -1,8 +1,13 @@
 #pragma once
 #include <entt/entt.hpp>
 #include <Graphics/EditorCamera.h>
+
+#include <Graphics/Framebuffer.h>
+#include <Graphics/RenderPass.h>
+
 #include <Core/Ref.h>
 #include <deque>
+
 
 namespace Nebula{
     class Entity;
@@ -18,7 +23,7 @@ namespace Nebula{
     class Scene
     {
     public:
-        Scene();
+        Scene(RenderPassSpecification sceneRenderSpec);
         virtual ~Scene();
 
         virtual Entity CreateEntity( const std::string& name = std::string());
@@ -37,10 +42,14 @@ namespace Nebula{
         void OnPhysicsUpdate(float ts) {}
         void EvaluateChildren();
 
-        virtual void Render(entt::entity mainCamera = entt::null);
-        virtual void Render(Camera& camera, Mat4f transform);
-        virtual void Render(Mat4f viewProj);
-        
+        void BeginScene(entt::entity mainCamera = entt::null);
+        void BeginScene(Camera& camera, Mat4f transform);
+        void BeginScene(Mat4f viewProj);
+
+        virtual void Render();
+
+        void EndScene();
+
         virtual void SubmitEntity(Entity entity, const Mat4f& modelMat = Mat4f(1.0f));
 
         struct WideRenderLayer
@@ -64,6 +73,8 @@ namespace Nebula{
         template <typename T>
         inline entt::basic_view<entt::entity, entt::exclude_t<>, T> GetView() { return Registry.view<T>(); }
 
+        Ref<Framebuffer> GetFrameBuffer() { return m_RenderPass->GetSpecification().TargetFramebuffer; }
+
     private:
         entt::registry Registry;
         std::string AssociatedFilePath = std::string();
@@ -73,6 +84,8 @@ namespace Nebula{
 
         entt::entity SceneMainCameraEntity = entt::null;
         Mat4f SceneCameraTransform = Mat4f(1.0f);
+
+        Ref<RenderPass> m_RenderPass = nullptr;
     
         friend class Entity;
         friend class SceneSerializer;
