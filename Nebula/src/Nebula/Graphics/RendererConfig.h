@@ -40,7 +40,7 @@ namespace Nebula{
             m_API->DrawIndexed(numVertices, type, depthTest);
         }
 
-        static void DrawElementsBaseVertex(uint32_t mode, uint32_t size, uint32_t type, void* indices, uint32_t base)
+        static void DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base)
         {
             m_API->DrawElementsBaseVertex(mode, size, type, indices, base);
         }

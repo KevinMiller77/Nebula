@@ -11,9 +11,8 @@ namespace Nebula{
         GraphicsContext() = default;
 
         virtual void Init() = 0;
-        virtual void SwapBuffers() = 0;
-        virtual void StartRender() = 0;
-        virtual void ClearColor(Vec4f color) = 0; 
+        virtual bool SwapBuffers() = 0; 
+        virtual void SetVSync(bool vsync) = 0;
 
         static Ref<GraphicsContext> Create(void* window);
     };

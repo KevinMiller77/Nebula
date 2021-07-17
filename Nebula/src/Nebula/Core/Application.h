@@ -44,7 +44,7 @@ namespace Nebula{
         bool OnWindowResize(WindowResizeEvent& e);
 
     public:
-        Application(Application* child, std::string mainWindowName = "Nebula Default Window");
+        Application(Application* child, WindowInfo winf);
         virtual ~Application();
 
 

@@ -1,23 +1,122 @@
 #include "WindowsWindow.h"
-#ifdef NEB_PLATFORM_WINDOWS
+#include "WindowsInput.h"
+
+#include <Windows.h>
 
 #include <stb_image/stb_image.h>
 
 #include <Core/PlatformInfo.h>
-#include <GLFW/glfw3.h>
 
 #include <Core/VFS.h>
 #include <Nebula_pch.h>
 
-
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
+
+HWND s_WindowHandle;
+
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace Nebula{
     WindowsData WindowsWindow::data = WindowsData();
+    Ref<WindowsWindow> winRef;
 
-    void GLFWErrorCallback(int error, const char* decsription)
-    {
-        LOG_ERR("GLFW ERR [%X]: %s\n", error, decsription);
+    LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+        if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+            return true;
+        switch (msg) {
+            case WM_CLOSE: {
+                WindowCloseEvent event = WindowCloseEvent();
+                winRef->data.EventCallback(event);
+                break;
+            }
+            case WM_DESTROY: {
+                PostQuitMessage(0);
+                break;
+            }
+            case WM_KEYDOWN: {
+
+                // Bool that decides if key repeat
+                bool repeat = lParam & 0xFFFF;
+
+                if (WindowsInput::KeyCodeMapWinToNeb.find(wParam) != WindowsInput::KeyCodeMapWinToNeb.end()) {
+                    if (repeat) {
+                        KeyHeldEvent event((int)WindowsInput::KeyCodeMapWinToNeb[wParam]);
+                        winRef->data.EventCallback(event);
+                    } else {
+                        Input::SetKeyPressed(WindowsInput::KeyCodeMapWinToNeb[wParam]);
+                        KeyTypedEvent event((int)WindowsInput::KeyCodeMapWinToNeb[wParam]);
+                        winRef->data.EventCallback(event);
+                    }
+                } else if (WindowsInput::MouseCodeMapWinToNeb.find(wParam) != WindowsInput::MouseCodeMapWinToNeb.end()) {
+                    MouseButtonPressedEvent event(WindowsInput::MouseCodeMapWinToNeb[wParam]);
+                    winRef->data.EventCallback(event);
+                    Input::SetMouseButtonPressed(WindowsInput::MouseCodeMapWinToNeb[wParam]);
+                }
+                break;
+            } 
+            case WM_KEYUP: {
+                if (WindowsInput::KeyCodeMapWinToNeb.find(wParam) != WindowsInput::KeyCodeMapWinToNeb.end()) {
+                    KeyReleasedEvent event((int)WindowsInput::MouseCodeMapWinToNeb[wParam]);
+                    winRef->data.EventCallback(event);
+                    Input::SetKeyReleased(WindowsInput::KeyCodeMapWinToNeb[wParam]);
+                } else if (WindowsInput::MouseCodeMapWinToNeb.find(wParam) != WindowsInput::MouseCodeMapWinToNeb.end()) {
+                    MouseButtonReleasedEvent event(WindowsInput::MouseCodeMapWinToNeb[wParam]);
+                    winRef->data.EventCallback(event);
+                    Input::SetMouseButtonReleased(WindowsInput::MouseCodeMapWinToNeb[wParam]);
+                }
+                break;
+            }
+            case WM_MOUSEWHEEL: {
+                int scrollDist = GET_WHEEL_DELTA_WPARAM(wParam);
+                MouseScrolledEvent event({0, ((float)scrollDist / (float)WHEEL_DELTA)});
+                winRef->data.EventCallback(event);
+                break;
+            }
+            case WM_MOUSEHWHEEL: {
+                int scrollDist = GET_WHEEL_DELTA_WPARAM(wParam);
+                MouseScrolledEvent event({((float)scrollDist / (float)WHEEL_DELTA), 0});
+                winRef->data.EventCallback(event);
+                break;
+            }
+            case WM_SIZE: {
+                WindowResizeEvent event({LOWORD(lParam), HIWORD(lParam)});
+                winRef->data.EventCallback(event);
+                break;
+            }
+            case WM_SIZING: {
+                RECT* rect = (RECT*)lParam;
+                uint16_t width = rect->right - rect->left;
+                uint16_t height = rect->bottom - rect->top;
+                WindowResizeEvent event({width, height});
+                winRef->data.EventCallback(event);
+                break;
+            }
+            case WM_SETFOCUS: {
+                WindowFocusEvent event = WindowFocusEvent();
+                winRef->data.EventCallback(event);
+            }
+            case WM_KILLFOCUS: {
+                WindowLostFocusEvent event = WindowLostFocusEvent();
+                winRef->data.EventCallback(event);
+            }
+            default: 
+                return DefWindowProc(hWnd, msg, wParam, lParam); 
+        }
+        return 0;
+    }
+
+    void HandleError() {
+        DWORD error = GetLastError();
+        char *message = NULL;
+        FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+            NULL,
+            error,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPSTR)&message,
+            0,
+            NULL);
+
+        LOG_ERR("[Window] %s\n", message);
     }
 
     WindowsWindow::~WindowsWindow()
@@ -25,14 +124,16 @@ namespace Nebula{
         ShutDown();
     }
 
-    void WindowsWindow::CallWindowHints()
+    void* WindowsWindow::GetNativeWindow() {
+        return s_WindowHandle;
+    }
+
+    void WindowsWindow::CallWindowHints(WindowInfo inf)
     {
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-        glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+        // // glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, inf.MousePassthrough);
+        // glfwWindowHint(GLFW_DECORATED, inf.MousePassthrough ? false : inf.Decorated);
+        // glfwWindowHint(GLFW_FLOATING, inf.Floating);
+        // glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, inf.Transparent);
     }
 
     void WindowsWindow::SwapIO(std::string in, std::string out, std::string err)
@@ -72,172 +173,157 @@ namespace Nebula{
         ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
     }
 
+
     WindowsWindow::WindowsWindow(WindowInfo inf)
-        : context(nullptr), GLFWWinCount(0)
+        : m_Context(nullptr)
     {
         NEB_PROFILE_FUNCTION();
-        info = inf;
-        data.height = info.Height; data.width = info.Width;
+        data.height = inf.Height; data.width = inf.Width;
 
         LOG_INF("Creating window\n");
 
-        if (GLFWWinCount == 0)
-        {
-            if (!glfwInit())
+        const wchar_t WNDCLASS_NAME[] = L"NebulaWindowClass";
 
-            {
-                LOG_ERR("Could not init GLFW!!\n");
-            }
-            else
-            {
-                LOG_INF("GLFW Init\n");
-            }
-            glfwSetErrorCallback(GLFWErrorCallback);
+        WNDCLASSEX wc = { sizeof(WNDCLASSEX), 
+                        CS_CLASSDC | CS_OWNDC, 
+                        WndProc, 
+                        0L, 
+                        0L, 
+                        GetModuleHandle(NULL), 
+                        NULL, 
+                        NULL, 
+                        NULL, 
+                        NULL, 
+                        WNDCLASS_NAME, 
+                        NULL };
+    
+        if(!::RegisterClassEx(&wc)) {
+            assert(1, "Could not register window class");
         }
-        CallWindowHints();
 
-        window = glfwCreateWindow((int)data.width, (int)data.height, info.Title, nullptr, nullptr);
+        s_WindowHandle = ::CreateWindow(wc.lpszClassName, 
+                                        (LPCWSTR)inf.Title, 
+                                        WS_OVERLAPPEDWINDOW, 
+                                        0, 
+                                        0, 
+                                        data.width, 
+                                        data.height, 
+                                        NULL, 
+                                        NULL, 
+                                        wc.hInstance, 
+                                        NULL);
 
-        context = GraphicsContext::Create((void*)window);
-        context->Init();
+        if (!s_WindowHandle) {
+            LOG_ERR("Could not create window\n");
+            exit(1);
+        }
 
-        glfwSetWindowUserPointer(window, &data);
+        CallWindowHints(inf);
+
+        m_Context = GraphicsContext::Create(s_WindowHandle);
+        m_Context->Init();
+
         SetVSync(true);
 
+
+
         // Set GLFW callbacks
-        glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-            data.width = width;
-            data.height = height;
+        // glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
+        // {
+        //     WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
+        //     data.width = width;
+        //     data.height = height;
 
-            WindowResizeEvent event(Vec2u(data.width, data.height));
-            data.EventCallback(event);
-        });
+        //     WindowResizeEvent event(Vec2u(data.width, data.height));
+        //     data.EventCallback(event);
+        // });
 
-        glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-            WindowCloseEvent event;
-            data.EventCallback(event);
-        });
-
-        glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            switch (action)
-            {
-                case GLFW_PRESS:
-                {
-                    KeyPressedEvent event((key), 0);
-                    data.EventCallback(event);
-                    break;
-                }
-                case GLFW_RELEASE:
-                {
-                    KeyReleasedEvent event((key));
-                    data.EventCallback(event);
-                    break;
-                }
-                case GLFW_REPEAT:
-                {
-                    KeyPressedEvent event((key), 1);
-                    data.EventCallback(event);
-                    break;
-                }
-            }
-        });
-
-        glfwSetCharCallback(window, [](GLFWwindow* window, uint32 keycode)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            KeyTypedEvent event((keycode));
-            data.EventCallback(event);
-        });
-
-        glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            switch (action)
-            {
-                case GLFW_PRESS:
-                {
-                    MouseButtonPressedEvent event((MouseCode)(button));
-                    data.EventCallback(event);
-                    break;
-                }
-                case GLFW_RELEASE:
-                {
-                    MouseButtonReleasedEvent event((MouseCode)(button));
-                    data.EventCallback(event);
-                    break;
-                }
-            }
-        });
-
-        glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            MouseScrolledEvent event((float)xOffset, (float)yOffset);
-            data.EventCallback(event);
-        });
-
-        glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPos, double yPos)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            MouseMovedEvent event(Vec2f((float)xPos, (float)yPos));
-            data.EventCallback(event);
-        });
     }
 
     void WindowsWindow::SetResizeable(bool resizeable) const
     {
-        if(resizeable)
+        data.resizable = resizeable;
+        if(data.resizable)
         {
-            glfwSetWindowSizeLimits(window, 0, 0, 0xffff, 0xffff);
+            ::SetWindowLong(s_WindowHandle, GWL_STYLE, ::GetWindowLong(s_WindowHandle, GWL_STYLE) | WS_MAXIMIZEBOX);
         }
         else {
-            int w, h;
-            glfwGetWindowSize(window, &w, &h);
-            glfwSetWindowSizeLimits(window, w, h, w, h);
+            ::SetWindowLong(s_WindowHandle, GWL_STYLE, ::GetWindowLong(s_WindowHandle, GWL_STYLE) &~ WS_MAXIMIZEBOX);
         }
     }
+
+    
+    Vec2u WindowsWindow::GetMaxWindowSize() {
+        int windowWidth = GetDeviceCaps(GetDC(s_WindowHandle), HORZRES);
+        int windowHeight = GetDeviceCaps(GetDC(s_WindowHandle), VERTRES);
+
+        return Vec2u(windowWidth, windowHeight);
+    }
+
 
     void WindowsWindow::ToggleFullscreen()
     {    
-        if (glfwGetWindowMonitor(window))
-        {
-            glfwSetWindowMonitor(window, NULL, data.windowed_x, data.windowed_y, data.w_width, data.w_height, 0);
-            data.windowed = true;
-        }
-        else
-        {
-            GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-            if (monitor)
-            {
-                const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-                glfwGetWindowPos(window, &(data.windowed_x), &(data.windowed_y));
-                glfwGetWindowSize(window, &(data.w_width), &(data.w_height));
-                glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+        if (!data.fullscreen) {
+
+            // Get window position and save it to data posX and posY
+            RECT rect;
+            GetWindowRect(s_WindowHandle, &rect);
+            data.posX = rect.left;
+            data.posY = rect.top;
+            data.width = rect.right - rect.left;
+            data.height = rect.bottom - rect.top;
+
+            // Get the current monitor size
+            POINT Point = {0};
+            HMONITOR Monitor = MonitorFromPoint(Point, MONITOR_DEFAULTTONEAREST);
+            MONITORINFO MonitorInfo = { sizeof(MonitorInfo) };
+            if (GetMonitorInfo(Monitor, &MonitorInfo)) {
+                DWORD Style = WS_POPUP | WS_VISIBLE;
+                SetWindowLongPtr(s_WindowHandle, GWL_STYLE, Style);
+
+                // Set the window to the monitor size
+                bool err = !SetWindowPos(   s_WindowHandle, 
+                                0, 
+                                MonitorInfo.rcMonitor.left, 
+                                MonitorInfo.rcMonitor.top,
+                                MonitorInfo.rcMonitor.right - MonitorInfo.rcMonitor.left, 
+                                MonitorInfo.rcMonitor.bottom - MonitorInfo.rcMonitor.top,
+                                SWP_FRAMECHANGED | SWP_SHOWWINDOW
+                            );
+
+                if (err) {
+                    HandleError();
+                    return;
+                }
+                data.fullscreen = true;
             }
-            data.windowed = false;
+        } else {
+            DWORD Style = WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN;
+
+            SetWindowLongPtr(s_WindowHandle, GWL_STYLE, Style);
+            bool err = !SetWindowPos(s_WindowHandle, HWND_TOPMOST,
+                data.posX, data.posY, data.w_width, data.w_height,
+                SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+            if (err) {
+                HandleError();
+                return;
+            }
+            data.fullscreen  = false;
         }
     }
 
+    void WindowsWindow::SetPassthrough(bool enabled) {
+        // glfwSetWindowAttrib(window, GLFW_MOUSE_PASSTHROUGH, enabled);
+    }
+
+    uint64_t lastFrameTime = 0;
     void WindowsWindow::OnUpdate()
     {
-        
-
         fflush(stdout);
         fflush(stderr);
 
         NEB_PROFILE_FUNCTION();
-        if (data.windowed)
+        if (!data.fullscreen)
         {
             data.w_width = data.width;
             data.w_height = data.height;
@@ -245,20 +331,34 @@ namespace Nebula{
         
         if (data.width == 0 || data.height == 0)
         {
-            minimized = true;
+            data.minimized = true;
         }
-        else if (minimized)
+        else if (data.minimized)
         {
-            minimized = false;
-            wasMinimized = true; 
+            data.minimized = false;
+            data.wasMinimized = true; 
         }
         else
         {
-            wasMinimized = false;
+            data.wasMinimized = false;
         }
         
-        glfwPollEvents();
-        context->SwapBuffers();
+        
+        MSG msg;
+        if (PeekMessage(&msg, s_WindowHandle, NULL, NULL, PM_REMOVE) > 0){
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+
+        m_Context->SwapBuffers();
+
+        uint64_t curTime = GetTime();
+        frameTime = ((float)(curTime - lastFrameTime)) / 1000.0f;
+    }
+
+    
+    float WindowsWindow::GetTime() {
+        return frameTime;
     }
 
     uint32 WindowsWindow::GetWidth() const
@@ -285,31 +385,44 @@ namespace Nebula{
     
     void WindowsWindow::SetWindowSize(uint32 width, uint32 height)
     {
-        if (window)
-        {
-            glfwSetWindowSize(window, width, height);
-            data.width = width;
-            data.height = height;
+        LPRECT rect = (LPRECT)malloc(sizeof(RECT));
+        if (!GetWindowRect(s_WindowHandle, rect)) {
+            HandleError();
+            return;
         }
+
+        data.posX = rect->left;
+        data.posY = rect->top;
+        
+        bool err = !SetWindowPos(s_WindowHandle, HWND_TOPMOST,
+            data.posX, data.posY, width, height,
+            SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+            
+        if (err) {
+            HandleError();
+            return;
+        }
+
+        data.width = width;
+        data.height = height;
 
     }
 
     void WindowsWindow::ShutDown()
     {
         NEB_PROFILE_FUNCTION();
-        glfwDestroyWindow(window);
-        glfwTerminate();
+        DestroyWindow(s_WindowHandle);
     }
 
     void WindowsWindow::SetVSync(bool enabled)
     {
         if (enabled)
         {
-            glfwSwapInterval(1);
+            m_Context->SetVSync(1);
         }
         else
         {
-            glfwSwapInterval(0);
+            m_Context->SetVSync(1);
         }
 
         data.VSync = enabled;
@@ -337,27 +450,79 @@ namespace Nebula{
             LOG_INF("Loaded image for icon\n");
         }
 
-        GLFWimage image;
-        image.width = width;
-        image.height = height;
-        image.pixels = data;
+        HICON icon = CreateIconFromResource(data, width * height * channels, TRUE, 0x00030000);
+        if (!icon) {
+            LOG_ERR("Failed to create icon!\n");
+            return;
+        }
+        
+        // Set the icon for the window.
+        // This is important so that the icon appears in the taskbar.
+        if (!SetClassLongPtr(s_WindowHandle, GCLP_HICON, (LONG_PTR)icon)) {
+            LOG_ERR("Failed to set class long pointer!\n");
+            return;
+        }
 
-        glfwSetWindowIcon(window, 1, &image);
+        DestroyIcon(icon);
     }
 
     void WindowsWindow::MaximizeWindow()
     {
-        glfwMaximizeWindow(window);
-        maximized = true;
+        bool err = !ShowWindow(s_WindowHandle, SW_MAXIMIZE);
+        if (err) {
+            HandleError();
+            return;
+        }
+        data.maximized = true;
     }
     void WindowsWindow::RestoreWindow()
     {
-        glfwRestoreWindow(window);
-        maximized = false;
+        bool err = !ShowWindow(s_WindowHandle, SW_RESTORE);
+        if (err) {
+            HandleError();
+            return;
+        }
+        data.maximized = false;
     }
 
     void WindowsWindow::MinimizeWindow()
     {
+        bool err = !ShowWindow(s_WindowHandle, SW_MINIMIZE);
+        if (err) {
+            HandleError();
+            return;
+        }
+        data.maximized = false;
+        data.minimized = true;
+    }
+
+    bool WindowsInput::IsKeyPressedAsyncInt(KeyCode key) 
+    {
+        return GetAsyncKeyState(KeyCodeMapNebToWin[key]) &1;
+    }
+    bool WindowsInput::IsMouseButtonPressedAsyncInt(MouseCode key) 
+    { 
+        return GetAsyncKeyState(MouseCodeMapNebToWin[key]) &1;
+    }
+
+    Vec2f WindowsInput::GetMousePosInt() 
+    { 
+        LPPOINT point = (LPPOINT)malloc(sizeof(POINT));
+        bool err = !GetCursorPos(point);
+        if (err) {
+            HandleError();
+            return Vec2f();
+        }
+
+        return Vec2f((float)point->x, (float)point->y);
+    }
+
+    void WindowsInput::SetMousePosInt(Vec2f pos)
+    {
+        bool err = !SetCursorPos(pos.X, pos.Y);
+        if (err) {
+            HandleError();
+            return;
+        }
     }
 }
-#endif

@@ -11,6 +11,14 @@
 #include <Core/NebulaCommon.h>
 
 namespace Nebula{
+
+    enum class WindowType {
+        None,
+        Windows,
+        MacOS,
+        Linux
+    };
+
 	//Information a generic window will need for construction
 	struct WindowInfo
 	{
@@ -19,9 +27,13 @@ namespace Nebula{
 		const char* Title;
 		uint32 Width;
 		uint32 Height;
+        bool Transparent;
+        bool Floating;
+        bool Decorated;
+        bool MousePassthrough;
 
-		WindowInfo(const char* title = "Nebula Editor", uint32 width = 1920, uint32 height = 1080)
-			: Title(title), Width(width), Height(height) {}
+		WindowInfo(const char* title = "Nebula Editor", uint32 width = 1920, uint32 height = 1080, bool transparent = false, bool floating = false, bool decorated = true, bool mousePassthrough = false)
+			: Title(title), Width(width), Height(height), Transparent(transparent), Floating(floating), Decorated(decorated) , MousePassthrough (mousePassthrough){}
 	};
 
 	//Platform independent window function.
@@ -37,6 +49,8 @@ namespace Nebula{
 		using EventCallbackFn = std::function<void(Event&)>;
 
 		virtual void OnUpdate() = 0;
+
+        virtual float GetTime() = 0;
 
 		virtual uint32 GetWidth() const = 0;
 		virtual uint32 GetHeight() const = 0;
@@ -75,9 +89,13 @@ namespace Nebula{
 		virtual void MinimizeWindow() = 0;
 
 		virtual void ToggleFullscreen() = 0;
-		virtual void CallWindowHints() = 0;
+
+        virtual Vec2u GetMaxWindowSize() = 0;
+
+        virtual void SetPassthrough(bool enabled) = 0;
 
 		static Ref<Window> Create(const WindowInfo& inf = WindowInfo());
+        static WindowType GetWindowType();
 	};
 }
 

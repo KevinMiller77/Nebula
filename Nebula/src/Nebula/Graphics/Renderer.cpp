@@ -118,7 +118,7 @@ namespace Nebula{
             else
                 RendererConfig::SetDepthTest(false);
 
-            RendererConfig::DrawElementsBaseVertex(GL_TRIANGLES, submesh.IndexCount, GL_UNSIGNED_INT, 0, submesh.BaseVertex);
+            RendererConfig::DrawElementsBaseVertex(PrimativeType::TRIANGLES, submesh.IndexCount, PrimativeDataType::UNSIGNED_INT, 0, submesh.BaseVertex);
 		}
 	}
 

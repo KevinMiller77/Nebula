@@ -6,7 +6,7 @@ namespace Nebula{
     Ref<Application> Application::curEngine = nullptr;
 
 
-    Application::Application(Application* child, std::string mainWindowName)
+    Application::Application(Application* child, WindowInfo winf)
         : childInstance(child)
     {
 		NEB_PROFILE_FUNCTION();
@@ -20,10 +20,12 @@ namespace Nebula{
             LOG_ERR("Engine already exists!!\n");
         }
         curEngine = Ref<Application>(this);
-        window = Window::Create(WindowInfo(mainWindowName.c_str()));
+        window = Window::Create(winf);
         window->DisableConsole();
         window->SetEventCallback(NEB_BIND_EVENT_FN(Application::OnEvent));
 
+        Input::Init();
+        
         VFS::Init();
 
         Audio::Init();
@@ -196,7 +198,7 @@ namespace Nebula{
         {
             {
                 NEB_PROFILE_SCOPE("RunLoop");
-                float time = (float)glfwGetTime();
+                float time = window->GetTime();
                 float ts = time - lastFrameTime;
                 lastFrameTime = time;
 

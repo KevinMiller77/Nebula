@@ -1,10 +1,19 @@
 #include "EditorCamera.h"
 
 #include "Nebula/Core/Input.h"
-#include <glfw/glfw3.h>
 #include <Core/Ref.h>
+#include <algorithm>
+
 
 namespace Nebula {
+    float fMin(float a, float b) {
+        return a < b ? a : b;
+    }
+
+    float fMax(float a, float b) {
+        return a > b ? a : b;
+    }
+
 
 	EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
 		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), Camera(Mat4f::perspective(fov, aspectRatio, nearClip, farClip))
@@ -42,10 +51,10 @@ namespace Nebula {
 
 	std::pair<float, float> EditorCamera::PanSpeed() const
 	{
-		float x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
+		float x = fMin(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
 		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
 
-		float y = std::min(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
+		float y = fMin(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
 		float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
 
 		return { xFactor, yFactor };
@@ -63,9 +72,9 @@ namespace Nebula {
 	float EditorCamera::ZoomSpeed() const
 	{
 		float distance = m_Distance * 0.2f;
-		distance = std::max(distance, 0.0f);
+		distance = fMax(distance, 0.0f);
 		float speed = distance * distance;
-		speed = std::min(speed, 100.0f); // max speed = 100
+		speed = fMin(speed, 100.0f); // max speed = 100
 		return speed;
 	}
 

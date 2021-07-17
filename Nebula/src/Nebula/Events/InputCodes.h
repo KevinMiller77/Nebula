@@ -140,7 +140,6 @@ namespace Nebula{
 		KPSubtract          = 333,
 		KPAdd               = 334,
 		KPEnter             = 335,
-		KPEqual             = 336,
 
 		LeftShift           = 340,
 		LeftControl         = 341,

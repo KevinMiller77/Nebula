@@ -8,6 +8,7 @@
 	/* Windows x64/x86 */
 	#ifdef _WIN64
 		/* Windows x64  */
+		#include <Windows.h>
 		#define NEB_PLATFORM_WINDOWS
 		#define NEB_PLATFORM_WIN64
 	#else

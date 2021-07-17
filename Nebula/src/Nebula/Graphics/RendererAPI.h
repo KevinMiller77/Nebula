@@ -7,9 +7,13 @@
 #include <Core/Ref.h>
 
 namespace Nebula{
-    enum PrimativeType
+    enum class PrimativeType
     {
         NONE = 0, TRIANGLES, LINES
+    };
+    enum class PrimativeDataType
+    {
+        NONE = 0, UNSIGNED_INT, UNSIGNED_BYTE, UNSIGNED_SHORT
     };
     
     class RendererAPI
@@ -33,7 +37,7 @@ namespace Nebula{
         virtual void SetMSAA(bool enabled) = 0;
 
         virtual void DrawIndexed(const int numVertices, PrimativeType type, bool depthTest) = 0;
-        virtual void DrawElementsBaseVertex(uint32_t mode, uint32_t size, uint32_t type, void* indices, uint32_t base) = 0;
+        virtual void DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base) = 0;
 
         static API GetAPI() { return NebAPI; }
         static Ref<RendererAPI> Create();

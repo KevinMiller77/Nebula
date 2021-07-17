@@ -100,12 +100,12 @@ namespace Nebula{
         
         switch(type)
         {
-            case(TRIANGLES):
+            case(PrimativeType::TRIANGLES):
             {
                 glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
                 break;
             }
-            case(LINES):
+            case(PrimativeType::LINES):
             {
                 glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_INT, nullptr);
                 break;
@@ -120,8 +120,38 @@ namespace Nebula{
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void GLRendererAPI::DrawElementsBaseVertex(uint32_t mode, uint32_t size, uint32_t type, void* indices, uint32_t base) {
-        glDrawElementsBaseVertex(mode, size, type, indices, base);
+    void GLRendererAPI::DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base) {
+        
+        GLenum drawmode;
+        switch(mode) {
+            case(PrimativeType::TRIANGLES):
+                drawmode = GL_TRIANGLES;
+                break;
+            case(PrimativeType::LINES):
+                drawmode = GL_LINES;
+                break;
+            default:
+                drawmode = GL_TRIANGLES;
+                break;
+        }
+
+        GLenum drawDataType;
+        switch(type) {
+            case(PrimativeDataType::UNSIGNED_BYTE):
+                drawDataType = GL_UNSIGNED_BYTE;
+                break;
+            case(PrimativeDataType::UNSIGNED_SHORT):
+                drawDataType = GL_UNSIGNED_SHORT;
+                break;
+            case(PrimativeDataType::UNSIGNED_INT):
+                drawDataType = GL_UNSIGNED_INT;
+                break;
+            default:
+                drawDataType = GL_UNSIGNED_BYTE;
+                break;
+        }
+
+        glDrawElementsBaseVertex(drawmode, size, drawDataType, indices, base);
     }
 
 	
