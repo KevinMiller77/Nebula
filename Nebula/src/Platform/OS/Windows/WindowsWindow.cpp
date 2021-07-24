@@ -2,6 +2,7 @@
 #include "WindowsInput.h"
 
 #include <Windows.h>
+#include <dwmapi.h>
 
 #include <stb_image/stb_image.h>
 
@@ -10,11 +11,15 @@
 #include <Core/VFS.h>
 #include <Nebula_pch.h>
 
+#include <chrono>
+
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 
 HWND s_WindowHandle;
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+const DWORD s_DefaultWindowedStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN;
+const DWORD s_DefaultFullscreenStyle = WS_POPUP | WS_VISIBLE;
 
 namespace Nebula{
     WindowsData WindowsWindow::data = WindowsData();
@@ -34,23 +39,15 @@ namespace Nebula{
                 break;
             }
             case WM_KEYDOWN: {
+                // Get repeat count
+                int hitCount = lParam & 0xffff;
+                bool repeat = hitCount > 1;
 
-                // Bool that decides if key repeat
-                bool repeat = lParam & 0xFFFF;
 
                 if (WindowsInput::KeyCodeMapWinToNeb.find(wParam) != WindowsInput::KeyCodeMapWinToNeb.end()) {
-                    if (repeat) {
-                        KeyHeldEvent event((int)WindowsInput::KeyCodeMapWinToNeb[wParam]);
-                        winRef->data.EventCallback(event);
-                    } else {
-                        Input::SetKeyPressed(WindowsInput::KeyCodeMapWinToNeb[wParam]);
-                        KeyTypedEvent event((int)WindowsInput::KeyCodeMapWinToNeb[wParam]);
-                        winRef->data.EventCallback(event);
-                    }
-                } else if (WindowsInput::MouseCodeMapWinToNeb.find(wParam) != WindowsInput::MouseCodeMapWinToNeb.end()) {
-                    MouseButtonPressedEvent event(WindowsInput::MouseCodeMapWinToNeb[wParam]);
+                    Input::SetKeyPressed(WindowsInput::KeyCodeMapWinToNeb[wParam]);
+                    KeyPressedEvent event((int)WindowsInput::KeyCodeMapWinToNeb[wParam], hitCount - 1);
                     winRef->data.EventCallback(event);
-                    Input::SetMouseButtonPressed(WindowsInput::MouseCodeMapWinToNeb[wParam]);
                 }
                 break;
             } 
@@ -59,13 +56,46 @@ namespace Nebula{
                     KeyReleasedEvent event((int)WindowsInput::MouseCodeMapWinToNeb[wParam]);
                     winRef->data.EventCallback(event);
                     Input::SetKeyReleased(WindowsInput::KeyCodeMapWinToNeb[wParam]);
-                } else if (WindowsInput::MouseCodeMapWinToNeb.find(wParam) != WindowsInput::MouseCodeMapWinToNeb.end()) {
+                }
+                break;
+            }
+            case WM_XBUTTONDOWN:
+            case WM_LBUTTONDOWN: 
+            case WM_RBUTTONDOWN:
+            case WM_MBUTTONDOWN: {
+                if (WindowsInput::MouseCodeMapWinToNeb.find(wParam) != WindowsInput::MouseCodeMapWinToNeb.end()) {
                     MouseButtonReleasedEvent event(WindowsInput::MouseCodeMapWinToNeb[wParam]);
                     winRef->data.EventCallback(event);
                     Input::SetMouseButtonReleased(WindowsInput::MouseCodeMapWinToNeb[wParam]);
                 }
                 break;
             }
+            case WM_XBUTTONUP:  {
+                MouseCode xButton = (wParam >> 16) == 0x0001 ? MouseCode::ButtonLast : MouseCode::ButtonNext;
+                MouseButtonPressedEvent event(xButton);
+                winRef->data.EventCallback(event);
+                Input::SetMouseButtonReleased(xButton);
+                break;                    
+            }
+            case WM_LBUTTONUP: {
+                MouseButtonPressedEvent event(MouseCode::ButtonLeft);
+                winRef->data.EventCallback(event);
+                Input::SetMouseButtonReleased(MouseCode::ButtonLeft);
+                break;
+            }
+            case WM_RBUTTONUP: {
+                MouseButtonPressedEvent event(MouseCode::ButtonRight);
+                winRef->data.EventCallback(event);
+                Input::SetMouseButtonReleased(MouseCode::ButtonRight);
+                break;
+            }
+            case WM_MBUTTONUP: {
+                MouseButtonPressedEvent event(MouseCode::ButtonMiddle);
+                winRef->data.EventCallback(event);
+                Input::SetMouseButtonReleased(MouseCode::ButtonMiddle);
+                break;
+            }
+            
             case WM_MOUSEWHEEL: {
                 int scrollDist = GET_WHEEL_DELTA_WPARAM(wParam);
                 MouseScrolledEvent event({0, ((float)scrollDist / (float)WHEEL_DELTA)});
@@ -91,13 +121,19 @@ namespace Nebula{
                 winRef->data.EventCallback(event);
                 break;
             }
+            case WM_MOVING: {
+                LockWindowUpdate(NULL);
+                break;
+            }
             case WM_SETFOCUS: {
                 WindowFocusEvent event = WindowFocusEvent();
                 winRef->data.EventCallback(event);
+                break;
             }
             case WM_KILLFOCUS: {
                 WindowLostFocusEvent event = WindowLostFocusEvent();
                 winRef->data.EventCallback(event);
+                break;
             }
             default: 
                 return DefWindowProc(hWnd, msg, wParam, lParam); 
@@ -105,7 +141,7 @@ namespace Nebula{
         return 0;
     }
 
-    void HandleError() {
+    void HandleError_Int() {
         DWORD error = GetLastError();
         char *message = NULL;
         FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
@@ -116,7 +152,11 @@ namespace Nebula{
             0,
             NULL);
 
-        LOG_ERR("[Window] %s\n", message);
+        LOG_ERR_TAG("[Window]", "%s\n", message);
+    }
+
+    void WindowsWindow::HandleError() {
+        HandleError_Int();
     }
 
     WindowsWindow::~WindowsWindow()
@@ -127,15 +167,6 @@ namespace Nebula{
     void* WindowsWindow::GetNativeWindow() {
         return s_WindowHandle;
     }
-
-    void WindowsWindow::CallWindowHints(WindowInfo inf)
-    {
-        // // glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, inf.MousePassthrough);
-        // glfwWindowHint(GLFW_DECORATED, inf.MousePassthrough ? false : inf.Decorated);
-        // glfwWindowHint(GLFW_FLOATING, inf.Floating);
-        // glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, inf.Transparent);
-    }
-
     void WindowsWindow::SwapIO(std::string in, std::string out, std::string err)
     {
         if (!std::filesystem::exists(in))
@@ -173,12 +204,23 @@ namespace Nebula{
         ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
     }
 
-
     WindowsWindow::WindowsWindow(WindowInfo inf)
         : m_Context(nullptr)
     {
         NEB_PROFILE_FUNCTION();
-        data.height = inf.Height; data.width = inf.Width;
+        data.height = inf.Height; 
+        data.width = inf.Width;
+        data.fullscreen = !inf.windowed;
+
+        // Hints
+        data.decorated = inf.Decorated;
+        data.floating = inf.Floating;
+        data.transparent = inf.Transparent;
+        data.mousePassthrough = inf.MousePassthrough;
+
+        UpdateWindowAttribs();
+
+        SetEventCallback(inf.EventCallback);
 
         LOG_INF("Creating window\n");
 
@@ -201,9 +243,13 @@ namespace Nebula{
             assert(1, "Could not register window class");
         }
 
+        LPWSTR windowTitle = (LPWSTR)malloc(inf.Title.size() * 2 + 2);
+        memset(windowTitle, 0, inf.Title.size() * 2 + 2);
+        MultiByteToWideChar(CP_UTF8, 0, (LPCCH)(inf.Title.c_str()), inf.Title.size(), windowTitle, inf.Title.size() * 2 + 2);
+
         s_WindowHandle = ::CreateWindow(wc.lpszClassName, 
-                                        (LPCWSTR)inf.Title, 
-                                        WS_OVERLAPPEDWINDOW, 
+                                        windowTitle, 
+                                        WS_BORDER, 
                                         0, 
                                         0, 
                                         data.width, 
@@ -218,38 +264,32 @@ namespace Nebula{
             exit(1);
         }
 
-        CallWindowHints(inf);
-
         m_Context = GraphicsContext::Create(s_WindowHandle);
         m_Context->Init();
+        
+        LockWindowUpdate(NULL);
 
+        SetWindowSize(data.width, data.height);
+
+        // Default to VSycnc on
         SetVSync(true);
-
-
-
-        // Set GLFW callbacks
-        // glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
-        // {
-        //     WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-        //     data.width = width;
-        //     data.height = height;
-
-        //     WindowResizeEvent event(Vec2u(data.width, data.height));
-        //     data.EventCallback(event);
-        // });
-
     }
 
-    void WindowsWindow::SetResizeable(bool resizeable) const
-    {
-        data.resizable = resizeable;
-        if(data.resizable)
-        {
-            ::SetWindowLong(s_WindowHandle, GWL_STYLE, ::GetWindowLong(s_WindowHandle, GWL_STYLE) | WS_MAXIMIZEBOX);
+    
+    bool WindowsWindow::SetWindowStyleVar(int style, bool enable) {
+        DWORD dwStyle = GetWindowLong(s_WindowHandle, GWL_STYLE);
+        if (enable) {
+            dwStyle |= style;
         }
         else {
-            ::SetWindowLong(s_WindowHandle, GWL_STYLE, ::GetWindowLong(s_WindowHandle, GWL_STYLE) &~ WS_MAXIMIZEBOX);
+            dwStyle &= ~style;
         }
+        return SetWindowLong(s_WindowHandle, GWL_STYLE, dwStyle) != 0;
+    }
+
+    void WindowsWindow::SetResizeable(bool resizeable)
+    {
+        SetWindowStyleVar(WS_MAXIMIZEBOX, resizeable);
     }
 
     
@@ -278,7 +318,7 @@ namespace Nebula{
             HMONITOR Monitor = MonitorFromPoint(Point, MONITOR_DEFAULTTONEAREST);
             MONITORINFO MonitorInfo = { sizeof(MonitorInfo) };
             if (GetMonitorInfo(Monitor, &MonitorInfo)) {
-                DWORD Style = WS_POPUP | WS_VISIBLE;
+                DWORD Style = s_DefaultFullscreenStyle;
                 SetWindowLongPtr(s_WindowHandle, GWL_STYLE, Style);
 
                 // Set the window to the monitor size
@@ -298,9 +338,7 @@ namespace Nebula{
                 data.fullscreen = true;
             }
         } else {
-            DWORD Style = WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN;
-
-            SetWindowLongPtr(s_WindowHandle, GWL_STYLE, Style);
+            SetWindowLongPtr(s_WindowHandle, GWL_STYLE, s_DefaultWindowedStyle);
             bool err = !SetWindowPos(s_WindowHandle, HWND_TOPMOST,
                 data.posX, data.posY, data.w_width, data.w_height,
                 SWP_FRAMECHANGED | SWP_SHOWWINDOW);
@@ -313,10 +351,94 @@ namespace Nebula{
     }
 
     void WindowsWindow::SetPassthrough(bool enabled) {
-        // glfwSetWindowAttrib(window, GLFW_MOUSE_PASSTHROUGH, enabled);
+        COLORREF key = 0;
+        BYTE alpha = 0;
+        DWORD flags = 0;
+        DWORD exStyle = GetWindowLongW(s_WindowHandle, GWL_EXSTYLE);
+
+        if (exStyle & WS_EX_LAYERED)
+            GetLayeredWindowAttributes(s_WindowHandle, &key, &alpha, &flags);
+
+        if (enabled)
+            exStyle |= (WS_EX_TRANSPARENT | WS_EX_LAYERED);
+        else
+        {
+            exStyle &= ~WS_EX_TRANSPARENT;
+            // NOTE: Window opacity also needs the layered window style so do not
+            //       remove it if the window is alpha blended
+            if (exStyle & WS_EX_LAYERED)
+            {
+                if (!(flags & LWA_ALPHA))
+                    exStyle &= ~WS_EX_LAYERED;
+            }
+        }
+
+        SetWindowLongW(s_WindowHandle, GWL_EXSTYLE, exStyle);
+
+        if (enabled)
+            SetLayeredWindowAttributes(s_WindowHandle, key, alpha, flags);
+
+        data.mousePassthrough = enabled;
     }
 
-    uint64_t lastFrameTime = 0;
+    void WindowsWindow::SetFloating(bool enabled) {
+        const HWND after = enabled ? HWND_TOPMOST : HWND_NOTOPMOST;
+        SetWindowPos(s_WindowHandle, after, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+
+        data.floating = enabled;
+    }
+
+    void WindowsWindow::SetTransparentFramebuffer(bool enabled) {
+        BOOL composition, opaque;
+        DWORD color;
+
+        if (!NEB_IsWindowsVistaOrGreater()) {
+            return;
+        }
+
+        if (FAILED(DwmIsCompositionEnabled(&composition)) || !composition) {
+            return;
+        }
+
+        if (NEB_IsWindows8OrGreater() ||
+            (SUCCEEDED(DwmGetColorizationColor(&color, &opaque)) && !opaque))
+        {
+            HRGN region = CreateRectRgn(0, 0, -1, -1);
+            DWM_BLURBEHIND bb = {0};
+            bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
+            bb.hRgnBlur = region;
+            bb.fEnable = TRUE;
+
+            DwmEnableBlurBehindWindow(s_WindowHandle, &bb);
+            DeleteObject(region);
+        }
+        else
+        {
+            // HACK: Disable framebuffer transparency on Windows 7 when the
+            //       colorization color is opaque, because otherwise the window
+            //       contents is blended additively with the previous frame instead
+            //       of replacing it
+            DWM_BLURBEHIND bb = {0};
+            bb.dwFlags = DWM_BB_ENABLE;
+            DwmEnableBlurBehindWindow(s_WindowHandle, &bb);
+        }
+
+        data.transparent = enabled;
+    }
+
+    void WindowsWindow::SetDecorated(bool enabled) {
+        if (enabled) {
+            SetWindowLong(s_WindowHandle, GWL_STYLE, data.fullscreen ? s_DefaultFullscreenStyle : s_DefaultWindowedStyle);
+        } else {
+            SetWindowLong(s_WindowHandle, GWL_STYLE, WS_VISIBLE | WS_POPUP);
+        }
+        SetWindowSize(data.width, data.height);
+
+        data.decorated = enabled;
+    }
+
+    std::chrono::steady_clock::time_point currentFrameTime;
+    std::chrono::steady_clock::time_point lastFrameTime;
     void WindowsWindow::OnUpdate()
     {
         fflush(stdout);
@@ -342,18 +464,19 @@ namespace Nebula{
         {
             data.wasMinimized = false;
         }
-        
-        
+
         MSG msg;
-        if (PeekMessage(&msg, s_WindowHandle, NULL, NULL, PM_REMOVE) > 0){
+        while (PeekMessage(&msg, s_WindowHandle, NULL, NULL, PM_REMOVE) > 0) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-
         m_Context->SwapBuffers();
 
-        uint64_t curTime = GetTime();
-        frameTime = ((float)(curTime - lastFrameTime)) / 1000.0f;
+        currentFrameTime = std::chrono::high_resolution_clock::now();
+        float diff = (float)std::chrono::duration_cast<std::chrono::milliseconds>(currentFrameTime - lastFrameTime).count();
+        lastFrameTime = currentFrameTime;
+        
+        frameTime = diff / 1000.0f;
     }
 
     
@@ -369,7 +492,6 @@ namespace Nebula{
 
     uint32 WindowsWindow::GetHeight() const
     {
-        
         return data.height;
     }
 
@@ -393,8 +515,9 @@ namespace Nebula{
 
         data.posX = rect->left;
         data.posY = rect->top;
-        
-        bool err = !SetWindowPos(s_WindowHandle, HWND_TOPMOST,
+
+        HWND windowTopOrTopmost = data.floating ? HWND_TOPMOST : HWND_TOP;
+        bool err = !SetWindowPos(s_WindowHandle,  windowTopOrTopmost,
             data.posX, data.posY, width, height,
             SWP_FRAMECHANGED | SWP_SHOWWINDOW);
             
@@ -405,8 +528,16 @@ namespace Nebula{
 
         data.width = width;
         data.height = height;
-
     }
+
+    void WindowsWindow::UpdateWindowAttribs() {
+        SetDecorated(data.decorated);
+        SetPassthrough(data.mousePassthrough);
+        SetTransparentFramebuffer(data.transparent);
+
+        // Setting win size also sets floating info
+        SetWindowSize(data.width, data.height);
+    }  
 
     void WindowsWindow::ShutDown()
     {
@@ -425,12 +556,12 @@ namespace Nebula{
             m_Context->SetVSync(1);
         }
 
-        data.VSync = enabled;
+        data.vsync = enabled;
     }
 
     bool WindowsWindow::IsVSync() const
     {
-        return data.VSync;
+        return data.vsync;
     }
 
     void WindowsWindow::SetIcon(std::string filepath)
@@ -450,20 +581,74 @@ namespace Nebula{
             LOG_INF("Loaded image for icon\n");
         }
 
-        HICON icon = CreateIconFromResource(data, width * height * channels, TRUE, 0x00030000);
-        if (!icon) {
-            LOG_ERR("Failed to create icon!\n");
-            return;
-        }
-        
-        // Set the icon for the window.
-        // This is important so that the icon appears in the taskbar.
-        if (!SetClassLongPtr(s_WindowHandle, GCLP_HICON, (LONG_PTR)icon)) {
-            LOG_ERR("Failed to set class long pointer!\n");
+        // Set win32 window icon using stbi image input
+
+        BITMAPINFO bmi;
+        memset(&bmi, 0, sizeof(bmi));
+        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        bmi.bmiHeader.biWidth = width;
+        bmi.bmiHeader.biHeight = height;
+        bmi.bmiHeader.biPlanes = 1;
+        bmi.bmiHeader.biBitCount = 32;
+        bmi.bmiHeader.biCompression = BI_RGB;
+        bmi.bmiHeader.biSizeImage = width * height * 4;
+
+        HDC hdc = GetDC(s_WindowHandle);
+        if(!hdc) {
+            LOG_ERR("Failed to get dc for icon\n");
+            HandleError();
             return;
         }
 
-        DestroyIcon(icon);
+        HBITMAP hbm = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, NULL, NULL, 0);
+        if(!hbm) {
+            LOG_ERR("Failed to create bitmap for icon\n");
+            HandleError();
+            return;
+        }
+        HDC hdcMem = CreateCompatibleDC(hdc);
+        if(!hdcMem) {
+            LOG_ERR("Failed to create compatible dc for icon\n");
+            HandleError();
+            return;
+        }
+
+        HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hbm);
+        if(!hbmOld) {
+            LOG_ERR("Failed to select object for icon\n");
+            HandleError();
+            return;
+        }
+
+        // Draw icon to hdc
+        if(!StretchDIBits(hdcMem, 0, 0, width, height, 0, 0, width, height, data, &bmi, DIB_RGB_COLORS, SRCCOPY)) {
+            LOG_ERR("Failed to draw icon to dc\n");
+            HandleError();
+            return;
+        }
+
+        // Using the BITMAPINFOHEADER to specify the icon bitmap.
+        ICONINFO iconInfo;
+        memset(&iconInfo, 0, sizeof(ICONINFO));
+        iconInfo.fIcon = TRUE;
+        iconInfo.hbmColor = hbm;
+        iconInfo.hbmMask = hbm;
+    
+        // Set icon
+        HICON hIcon = CreateIconIndirect(&iconInfo);
+        if(!hIcon) {
+            LOG_ERR("Failed to create icon\n");
+            HandleError();
+            return;
+        }
+        SetClassLongPtr(s_WindowHandle, GCLP_HICON, (LONG_PTR)hIcon);
+
+        // Cleanup
+        SelectObject(hdcMem, hbmOld);
+        DeleteObject(hbm);
+        DeleteDC(hdcMem);
+        ReleaseDC(s_WindowHandle, hdc);
+
     }
 
     void WindowsWindow::MaximizeWindow()
@@ -510,7 +695,7 @@ namespace Nebula{
         LPPOINT point = (LPPOINT)malloc(sizeof(POINT));
         bool err = !GetCursorPos(point);
         if (err) {
-            HandleError();
+            HandleError_Int();
             return Vec2f();
         }
 
@@ -521,7 +706,7 @@ namespace Nebula{
     {
         bool err = !SetCursorPos(pos.X, pos.Y);
         if (err) {
-            HandleError();
+            HandleError_Int();
             return;
         }
     }

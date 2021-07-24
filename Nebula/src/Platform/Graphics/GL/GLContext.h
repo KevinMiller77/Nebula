@@ -20,7 +20,6 @@ namespace Nebula{
 
         // These functions are defined in the platform specific file [Platform]GLContext.cpp
         bool InitContext_Int(void* window);
-        bool LoadGlad_Int();
 
         bool SwapBuffers_Int();
         void SetVSync_Int(bool vsync);

@@ -22,11 +22,6 @@ namespace Nebula{
         virtual void OnUpdate() override {}
     private:
         float time = 0.0f;
-        
-        //Dock props
-        ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-        bool DockspaceEnabled = false;
-        bool m_MenuBarEnabled = false;
     };
 }
 

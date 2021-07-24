@@ -20,9 +20,9 @@ namespace Nebula{
             LOG_ERR("Engine already exists!!\n");
         }
         curEngine = Ref<Application>(this);
+        winf.EventCallback = NEB_BIND_EVENT_FN(Application::OnEvent);
         window = Window::Create(winf);
         window->DisableConsole();
-        window->SetEventCallback(NEB_BIND_EVENT_FN(Application::OnEvent));
 
         Input::Init();
         
@@ -116,6 +116,7 @@ namespace Nebula{
 
     void Application::OnEvent(Event& e)
     {
+        OnAppEvent(e);
 
         EventDispatcher dispatch(e);
         dispatch.Dispatch<WindowCloseEvent>(NEB_BIND_EVENT_FN(Application::OnWindowClose));
@@ -138,6 +139,7 @@ namespace Nebula{
         {
             e.Handle();
         }
+
     }
 
     void Application::PushLayer(Ref<Layer> layer)
@@ -198,9 +200,7 @@ namespace Nebula{
         {
             {
                 NEB_PROFILE_SCOPE("RunLoop");
-                float time = window->GetTime();
-                float ts = time - lastFrameTime;
-                lastFrameTime = time;
+                float ts = window->GetTime();
 
                 float avg = FPSTick(ts);
                 fpsNumber = avg;

@@ -24,12 +24,9 @@ namespace Nebula{
             LOG_ERR("Could not init OpenGL context!");
             assert(false);
         }
-        if (!LoadGlad_Int()) {
-            LOG_ERR("Could not load glad for OpenGL!");
-            assert(false);
-        }
 
-        LOG_INF("OpenGL Init Success!\n\n GL Info\n");
+        LOG_INF("OpenGL Init Success!\n");
+        LOG_INF("\tGL Info\n");
         LOG_INF("\t Vendor: %s\n", glGetString(GL_VENDOR));
         LOG_INF("\t Renderer: %s\n", glGetString(GL_RENDERER));
         LOG_INF("\t Version: %s\n", glGetString(GL_VERSION));        

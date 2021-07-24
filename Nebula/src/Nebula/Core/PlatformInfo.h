@@ -9,7 +9,22 @@
 	#ifdef _WIN64
 		/* Windows x64  */
 		#include <Windows.h>
-		#define NEB_PLATFORM_WINDOWS
+        #include <VersionHelpers.h>
+
+        #define NEB_IsWindowsVistaOrGreater()                                     \
+            IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_VISTA),   \
+                                                LOBYTE(_WIN32_WINNT_VISTA), 0)
+        #define NEB_IsWindows7OrGreater()                                         \
+            IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN7),    \
+                                                LOBYTE(_WIN32_WINNT_WIN7), 0)
+        #define NEB_IsWindows8OrGreater()                                         \
+            IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN8),    \
+                                                LOBYTE(_WIN32_WINNT_WIN8), 0)
+        #define NEB_IsWindows8Point1OrGreater()                                   \
+            IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WINBLUE), \
+                                                LOBYTE(_WIN32_WINNT_WINBLUE), 0)
+		
+        #define NEB_PLATFORM_WINDOWS
 		#define NEB_PLATFORM_WIN64
 	#else
 		/* Windows x86 */

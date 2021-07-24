@@ -102,12 +102,12 @@ namespace Nebula{
         {
             case(PrimativeType::TRIANGLES):
             {
-                glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
+                //glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
                 break;
             }
             case(PrimativeType::LINES):
             {
-                glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_INT, nullptr);
+                //glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_INT, nullptr);
                 break;
             }
             default:
@@ -151,7 +151,7 @@ namespace Nebula{
                 break;
         }
 
-        glDrawElementsBaseVertex(drawmode, size, drawDataType, indices, base);
+        //glDrawElementsBaseVertex(drawmode, size, drawDataType, indices, base);
     }
 
 	

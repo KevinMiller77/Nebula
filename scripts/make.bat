@@ -23,7 +23,14 @@ IF %1==c (
 ) ELSE IF %1==cgb (
     GOTO NebCGB   
 ) ELSE IF %1==r (
-    GOTO RunDec
+    IF %2==ns ( 
+        GOTO NebRunNS
+    ) ELSE IF %2==ss (
+        GOTO NebRunSS
+    ) ELSE (
+        ECHO Error! You have not entered a known build target. Try again.
+        EXIT /B 0
+    ) 
 ) ELSE (
     ECHO Unknown Parameter
     GOTO ErroneousInput
@@ -45,21 +52,7 @@ ECHO Flags
 ECHO    -r - Run a build (Only works if a build has been done)
 ECHO.
 EXIT /B 0
-
-:RunDec
-IF [%2]==[] (
-    ECHO Error! You have not entered a known build target. Try again.
-    EXIT /B 0
-) 
-
-IF %2==ns ( 
-    GOTO NebRunNS
-) ELSE IF %2==ss (
-    GOTO NebRunSS
-) ELSE (
-    ECHO Error! You have not entered a known build target. Try again.
-    EXIT /B 0
-)   
+  
 
 REM -----------------------------------------------------------------------------
 :NebGenerate

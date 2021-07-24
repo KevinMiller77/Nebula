@@ -48,6 +48,7 @@ namespace Nebula {
 
         return p;
     }
+    HWND s_Window = nullptr;
 
     void loadWGLFunctions() {
         // Before we can load extensions, we need a dummy OpenGL context, created using a dummy window.
@@ -110,6 +111,7 @@ namespace Nebula {
         }
 
         if (!wglMakeCurrent(dummy_dc, dummy_context)) {
+            
             assert(false, "Failed to activate dummy OpenGL rendering context.");
         }
 
@@ -126,10 +128,15 @@ namespace Nebula {
         wglDeleteContext(dummy_context);
         ReleaseDC(dummy_window, dummy_dc);
         DestroyWindow(dummy_window);
-
     }
 
     bool GLContext::InitContext_Int(void* window) {
+        if (!IsWindow((HWND)window)) {
+            assert(true, "Attempted to create GL context with invalid Win32 HWND");
+        }
+
+        s_Window = (HWND)window;
+
         loadWGLFunctions();
 
         int pixel_format_attribs[] = {
@@ -176,11 +183,6 @@ namespace Nebula {
         }
 
         s_DeviceContext = real_dc;
-        return true;
-    }
-
-    bool GLContext::LoadGlad_Int() {
-        //TODO: REMOVE!
         return true;
     }
 

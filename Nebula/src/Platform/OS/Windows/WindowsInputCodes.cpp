@@ -48,6 +48,8 @@ namespace Nebula {
 		{ 0x58, KeyCode::X},
 		{ 0x59, KeyCode::Y},
 		{ 0x5A, KeyCode::Z},
+		{ VK_CONTROL, KeyCode::LeftControl},
+		{ VK_SHIFT, KeyCode::LeftShift},
 		{ VK_OEM_4, KeyCode::LeftBracket},  /* [ */
 		{ VK_OEM_5, KeyCode::Backslash},  /* \ */
 		{ VK_OEM_6, KeyCode::RightBracket},  /* ] */
@@ -188,6 +190,8 @@ namespace Nebula {
 		{ KeyCode::NumLock, VK_NUMLOCK },
 		{ KeyCode::PrintScreen, VK_SNAPSHOT },
 		{ KeyCode::Pause, VK_PAUSE },
+		{ KeyCode::LeftControl, VK_CONTROL},
+		{ KeyCode::LeftShift, VK_SHIFT},
 		{ KeyCode::F1, VK_F1 },
 		{ KeyCode::F2, VK_F2 },
 		{ KeyCode::F3, VK_F3 },
@@ -238,19 +242,19 @@ namespace Nebula {
     };
 
     std::unordered_map<MouseCode, int> WindowsInput::MouseCodeMapNebToWin = {
-        { MouseCode::ButtonNext, VK_XBUTTON1 },
-        { MouseCode::ButtonLast, VK_XBUTTON2 },
-        { MouseCode::ButtonLeft, VK_LBUTTON },
-        { MouseCode::ButtonRight, VK_RBUTTON },
-        { MouseCode::ButtonMiddle, VK_MBUTTON }
+        { MouseCode::ButtonNext,    VK_XBUTTON1 },
+        { MouseCode::ButtonLast,    VK_XBUTTON2 },
+        { MouseCode::ButtonLeft,    VK_LBUTTON },
+        { MouseCode::ButtonRight,   VK_RBUTTON },
+        { MouseCode::ButtonMiddle,  VK_MBUTTON }
     };
 
     std::unordered_map<int, MouseCode> WindowsInput::MouseCodeMapWinToNeb = {
-        { VK_XBUTTON1, MouseCode::ButtonNext },
-        { VK_XBUTTON2, MouseCode::ButtonLast },
-        { VK_LBUTTON, MouseCode::ButtonLeft },
-        { VK_RBUTTON, MouseCode::ButtonRight },
-        { VK_MBUTTON, MouseCode::ButtonMiddle }
+        { 0x0020, MouseCode::ButtonNext },
+        { 0x0040, MouseCode::ButtonLast },
+        { 0x0001 , MouseCode::ButtonLeft },
+        { 0x0002 , MouseCode::ButtonRight },
+        { 0x0010 , MouseCode::ButtonMiddle }
     };
     
 }

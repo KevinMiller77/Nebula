@@ -24,13 +24,15 @@ namespace Nebula{
 	{
 		bool windowed = true;
 
-		const char* Title;
+		std::string Title;
 		uint32 Width;
 		uint32 Height;
         bool Transparent;
         bool Floating;
         bool Decorated;
         bool MousePassthrough;
+        using EventCallbackFn = std::function<void(Event&)>;
+        EventCallbackFn EventCallback;
 
 		WindowInfo(const char* title = "Nebula Editor", uint32 width = 1920, uint32 height = 1080, bool transparent = false, bool floating = false, bool decorated = true, bool mousePassthrough = false)
 			: Title(title), Width(width), Height(height), Transparent(transparent), Floating(floating), Decorated(decorated) , MousePassthrough (mousePassthrough){}
@@ -57,7 +59,7 @@ namespace Nebula{
 
 		virtual void SetWindowSize(uint32 width, uint32 height) = 0;
 
-		virtual void SetResizeable(bool resizeable) const = 0;
+		virtual void SetResizeable(bool resizeable) = 0;
 		
 		virtual uint32* GetWidthPtr() const = 0;
 		virtual uint32* GetHeightPtr() const = 0;
@@ -93,9 +95,14 @@ namespace Nebula{
         virtual Vec2u GetMaxWindowSize() = 0;
 
         virtual void SetPassthrough(bool enabled) = 0;
+        virtual void SetFloating(bool enabled)  = 0;
+        virtual void SetTransparentFramebuffer(bool enabled) = 0;
+        virtual void SetDecorated(bool enabled) = 0;
 
 		static Ref<Window> Create(const WindowInfo& inf = WindowInfo());
         static WindowType GetWindowType();
+
+        static void HandleError();
 	};
 }
 
