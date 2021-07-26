@@ -247,7 +247,7 @@ namespace Nebula{
         s_WindowHandle = ::CreateWindowExA( inf.ShowOnTaskbar ? 0 : WS_EX_TOOLWINDOW,
                                         WNDCLASS_NAME_CSTR, 
                                         (LPCSTR)inf.Title.c_str(), 
-                                        WS_BORDER, 
+                                        inf.ShowOnTaskbar ? WS_OVERLAPPEDWINDOW : WS_BORDER, 
                                         0, 
                                         0, 
                                         data.width, 
