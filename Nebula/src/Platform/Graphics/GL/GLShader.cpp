@@ -616,8 +616,9 @@ namespace Nebula{
 		}
 
 		// Always detach shaders after a successful link.
-		for (auto id : shaderRendererIDs)
-			glDetachShader(program, id);
+        
+		// for (auto id : shaderRendererIDs)
+		// 	glDetachShader(program, id);
 
 		// Get uniform locations
 		glUseProgram(m_RendererID);
@@ -874,8 +875,8 @@ namespace Nebula{
 		}
 
 		// Always detach shaders after a successful link.
-		for (auto id : shaderRendererIDs)
-			glDetachShader(program, id);
+		// for (auto id : shaderRendererIDs)
+		// 	glDetachShader(program, id);
 
 		m_RendererID = program;
 	}
