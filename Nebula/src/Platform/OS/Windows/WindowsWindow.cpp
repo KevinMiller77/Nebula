@@ -224,6 +224,7 @@ namespace Nebula{
 
         LOG_INF("Creating window\n");
 
+        LPCSTR WNDCLASS_NAME_CSTR = "NebulaWindowClass";
         const wchar_t WNDCLASS_NAME[] = L"NebulaWindowClass";
 
         WNDCLASSEX wc = { sizeof(WNDCLASSEX), 
@@ -243,12 +244,9 @@ namespace Nebula{
             assert(1, "Could not register window class");
         }
 
-        LPWSTR windowTitle = (LPWSTR)malloc(inf.Title.size() * 2 + 2);
-        memset(windowTitle, 0, inf.Title.size() * 2 + 2);
-        MultiByteToWideChar(CP_UTF8, 0, (LPCCH)(inf.Title.c_str()), inf.Title.size(), windowTitle, inf.Title.size() * 2 + 2);
-
-        s_WindowHandle = ::CreateWindow(wc.lpszClassName, 
-                                        windowTitle, 
+        s_WindowHandle = ::CreateWindowExA( inf.ShowOnTaskbar ? 0 : WS_EX_TOOLWINDOW,
+                                        WNDCLASS_NAME_CSTR, 
+                                        (LPCSTR)inf.Title.c_str(), 
                                         WS_BORDER, 
                                         0, 
                                         0, 

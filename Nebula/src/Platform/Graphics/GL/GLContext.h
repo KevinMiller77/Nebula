@@ -15,6 +15,7 @@ namespace Nebula{
 
         virtual bool SwapBuffers() override;
         virtual void SetVSync(bool vsync) override;
+        virtual void* GetNativeHandle() override { return s_RenderingContext; }
 
     private:
 

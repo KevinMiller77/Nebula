@@ -31,11 +31,14 @@ namespace Nebula{
         bool Floating;
         bool Decorated;
         bool MousePassthrough;
+        bool ShowOnTaskbar;
+        bool ShowInTray;
+
         using EventCallbackFn = std::function<void(Event&)>;
         EventCallbackFn EventCallback;
 
-		WindowInfo(const char* title = "Nebula Editor", uint32 width = 1920, uint32 height = 1080, bool transparent = false, bool floating = false, bool decorated = true, bool mousePassthrough = false)
-			: Title(title), Width(width), Height(height), Transparent(transparent), Floating(floating), Decorated(decorated) , MousePassthrough (mousePassthrough){}
+		WindowInfo(const char* title = "Nebula Editor", uint32 width = 1920, uint32 height = 1080, bool transparent = false, bool floating = false, bool decorated = true, bool mousePassthrough = false, bool showTaskbar = true, bool showInTray = false)
+			: Title(title), Width(width), Height(height), Transparent(transparent), Floating(floating), Decorated(decorated) , MousePassthrough (mousePassthrough), ShowOnTaskbar(showTaskbar), ShowInTray(showInTray) {}
 	};
 
 	//Platform independent window function.

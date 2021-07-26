@@ -96,6 +96,7 @@ project "NebulaEngine"
         links
         {
             "opengl32",
+            "dwmapi"
         }
         files 
         {

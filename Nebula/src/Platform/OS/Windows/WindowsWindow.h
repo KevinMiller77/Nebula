@@ -31,6 +31,7 @@ namespace Nebula{
         bool floating = false;
         bool decorated = true;
         bool mousePassthrough = false;
+        bool showOnTaskbar = true;
 
         using EventCallbackFn = std::function<void(Event&)>;
         EventCallbackFn EventCallback;

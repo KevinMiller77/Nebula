@@ -33,7 +33,9 @@ namespace Nebula{
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
         io.ConfigDockingWithShift = true;
-        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+        
+        // TODO: Fix the imgui multi viewport on native Win32 and pull request 
+        //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
         // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
         //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
@@ -94,10 +96,10 @@ namespace Nebula{
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
-            // HWND backup_current_context = GetFocus();
+            //HDC backup_current_context = GetDC((HWND)app->GetWindow()->GetNativeWindow());
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
-            // SetFocus(backup_current_context);
+            //wglMakeCurrent(backup_current_context, (HGLRC)app->GetWindow()->GetContext()->GetNativeHandle());
         }
     }
 

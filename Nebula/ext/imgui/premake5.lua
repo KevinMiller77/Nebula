@@ -1,4 +1,5 @@
 project "imgui"
+    architecture "x86_64"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
