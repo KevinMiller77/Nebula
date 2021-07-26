@@ -1,28 +1,21 @@
 #include "Application.h"
+#include "Window.h"
 #include "Input.h"
 
-namespace Nebula{
-    Input* Input::s_Input = new Input;
+#include <Platform/OS/Windows/WindowsInput.h>
 
-    bool Input::IsKeyPressedInt(KeyCode key) 
-    {
-        auto win = (GLFWwindow*)(Application::Get()->GetWindow()->GetNativeWindow());
-        auto state = glfwGetKey(win, (int)key);
-        return state == GLFW_PRESS || state == GLFW_REPEAT;
+namespace Nebula {
+    
+    Ref<Input> Input::s_Input = nullptr;
 
-    }
-    bool Input::IsMouseButtonPressedInt(MouseCode key) 
-    { 
-        auto win = (GLFWwindow*)(Application::Get()->GetWindow()->GetNativeWindow());
-        auto state = glfwGetMouseButton(win, (int)key);
-        return state == GLFW_PRESS;
+    Ref<Input> CreateInput() {
+        switch (Window::GetWindowType()) {
+            case (WindowType::None) : { LOG_ERR("No OS was given! Cannot create input subsystem\n"); return nullptr; }
+            case (WindowType::Windows) : { return CreateRef<WindowsInput>(); }
+        }
     }
 
-    Vec2f Input::GetMousePosInt() 
-    { 
-        auto win = (GLFWwindow*)(Application::Get()->GetWindow()->GetNativeWindow());
-        double x, y;
-        glfwGetCursorPos(win, &x, &y);
-        return Vec2f((float)x, (float)y);
+    void Input::Init() {
+        s_Input = CreateInput();
     }
 }

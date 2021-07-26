@@ -6,7 +6,7 @@ namespace Nebula{
     Ref<Application> Application::curEngine = nullptr;
 
 
-    Application::Application(Application* child, std::string mainWindowName)
+    Application::Application(Application* child, WindowInfo winf)
         : childInstance(child)
     {
 		NEB_PROFILE_FUNCTION();
@@ -20,10 +20,12 @@ namespace Nebula{
             LOG_ERR("Engine already exists!!\n");
         }
         curEngine = Ref<Application>(this);
-        window = Window::Create(WindowInfo(mainWindowName.c_str()));
+        winf.EventCallback = NEB_BIND_EVENT_FN(Application::OnEvent);
+        window = Window::Create(winf);
         window->DisableConsole();
-        window->SetEventCallback(NEB_BIND_EVENT_FN(Application::OnEvent));
 
+        Input::Init();
+        
         VFS::Init();
 
         Audio::Init();
@@ -114,6 +116,7 @@ namespace Nebula{
 
     void Application::OnEvent(Event& e)
     {
+        OnAppEvent(e);
 
         EventDispatcher dispatch(e);
         dispatch.Dispatch<WindowCloseEvent>(NEB_BIND_EVENT_FN(Application::OnWindowClose));
@@ -136,6 +139,7 @@ namespace Nebula{
         {
             e.Handle();
         }
+
     }
 
     void Application::PushLayer(Ref<Layer> layer)
@@ -196,9 +200,7 @@ namespace Nebula{
         {
             {
                 NEB_PROFILE_SCOPE("RunLoop");
-                float time = (float)glfwGetTime();
-                float ts = time - lastFrameTime;
-                lastFrameTime = time;
+                float ts = window->GetTime();
 
                 float avg = FPSTick(ts);
                 fpsNumber = avg;

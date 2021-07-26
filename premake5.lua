@@ -15,7 +15,6 @@ workspace "Nebula"
     outputdir = "%{cfg.buildcfg}/%{cfg.system}%{cfg.architecture}"
     
     group "Dependencies"
-        include "Nebula/ext/glfw"
         include "Nebula/ext/glad"
         include "Nebula/ext/imgui"
         include "Nebula/ext/yaml-cpp"
@@ -44,8 +43,10 @@ project "NebulaEngine"
 
     files
     {
-        "Nebula/src/**.h",
-        "Nebula/src/**.cpp",
+        "Nebula/src/Nebula/**.h",
+        "Nebula/src/Nebula/**.cpp",
+        "Nebula/src/Platform/Graphics/**.h",
+        "Nebula/src/Platform/Graphics/**.cpp",
         "Nebula/ext/stb_image/**.cpp"
     }
 
@@ -64,7 +65,6 @@ project "NebulaEngine"
         "Nebula/ext",
         "Nebula/ext/imgui",
         "Nebula/ext/imguizmo",
-		"Nebula/ext/glfw/include",
         "Nebula/ext/glad/include",
         "Nebula/ext/yaml-cpp/include",
         "Nebula/ext/nativefiledialog/src/include",
@@ -83,7 +83,6 @@ project "NebulaEngine"
         "imgui",
         "imguizmo",
         "glad",
-        "glfw",
         "yaml-cpp",
         "nfd",
         "OpenAL-Soft",
@@ -97,6 +96,13 @@ project "NebulaEngine"
         links
         {
             "opengl32",
+            "dwmapi"
+        }
+        files 
+        {
+            "Nebula/src/Platform/OS/Windows/**.h",
+            "Nebula/src/Platform/OS/Windows/**.cpp",
+            "Nebula/ext/imgui/examples/imgui_impl_win32.cpp"
         }
         filter "configurations:Release"
         links {
@@ -129,6 +135,12 @@ project "NebulaEngine"
 
     filter "system:macosx"
         systemversion "latest"
+        
+        files 
+        {
+            "Nebula/src/Platform/OS/MacOS/**.h",
+            "Nebula/src/Platform/OS/MacOS/**.cpp",
+        }
         links
         {
             "IOKit.framework", 
@@ -140,9 +152,14 @@ project "NebulaEngine"
 
     filter "system:linux"
         systemversion "latest"
+        
+        files 
+        {
+            "Nebula/src/Platform/OS/Linux/**.h",
+            "Nebula/src/Platform/OS/Linux/**.cpp",
+        }
         defines
         {
-            "GLFW_SUPPLIED",
             "_LIBS_SUPPLIED"
         }
         links
@@ -234,7 +251,6 @@ project "NebulaStudio"
         systemversion "latest"
         defines
         {
-            "GLFW_SUPPLIED",
             "_LIBS_SUPPLIED"
         }
         links
@@ -246,7 +262,6 @@ project "NebulaStudio"
             "pthread",
             "imgui",
             "glad",
-            "glfw",
             "yaml-cpp",
             "nfd"
         }

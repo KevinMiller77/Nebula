@@ -12,8 +12,23 @@
 #include <Platform/OS/MacOS/MacWindow.h>
 #endif
 
+
 namespace Nebula{
-	Ref<Window> Window::Create(const WindowInfo& inf)
+
+    WindowType Window::GetWindowType()
+    {
+    #ifdef NEB_PLATFORM_WINDOWS
+        return WindowType::Windows;
+    #endif
+    #ifdef NEB_PLATFORM_LINUX
+        return WindowType::MacOS;
+    #endif
+    #ifdef NEB_PLATFORM_MACOS
+        return WindowType::Linux;
+    #endif
+    }
+
+    Ref<Window> Window::Create(const WindowInfo& inf)
 	{
 	#ifdef NEB_PLATFORM_WINDOWS
 		return CreateRef<WindowsWindow>(inf);

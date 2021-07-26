@@ -17,8 +17,6 @@ namespace Nebula{
         virtual void SetMSAA(bool enabled) override;
 
 		virtual void DrawIndexed(const int numIndices, PrimativeType type, bool depthTest) override;
-        virtual void DrawElementsBaseVertex(uint32_t mode, uint32_t size, uint32_t type, void* indices, uint32_t base) override;
-        
-        
+        virtual void DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base) override;
 	};
 }

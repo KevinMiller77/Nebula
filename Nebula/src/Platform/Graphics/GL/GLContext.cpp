@@ -1,43 +1,43 @@
 #include "GLContext.h"
 
 #include <Nebula_pch.h>
+
+#include <Core/PlatformInfo.h>
+#include <Core/Window.h>
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 namespace Nebula{
-    GLContext::GLContext(GLFWwindow* window)
+
+
+    GLContext::GLContext(void* window)
     {
-        this->window = window;
+        s_Window = window;
     }
 
     void GLContext::Init()
     {
-		NEB_PROFILE_FUNCTION();
-        glfwMakeContextCurrent(window);
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        {
-            LOG_ERR("Could not init glad!!\n");
+        NEB_PROFILE_FUNCTION();
+
+
+        if(!InitContext_Int(s_Window)) {
+            LOG_ERR("Could not init OpenGL context!");
+            assert(false);
         }
 
-        LOG_INF("OpenGL Info\n");
+        LOG_INF("OpenGL Init Success!\n");
+        LOG_INF("\tGL Info\n");
         LOG_INF("\t Vendor: %s\n", glGetString(GL_VENDOR));
         LOG_INF("\t Renderer: %s\n", glGetString(GL_RENDERER));
         LOG_INF("\t Version: %s\n", glGetString(GL_VERSION));        
     }
 
-    void GLContext::StartRender()
+    bool GLContext::SwapBuffers()
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        return SwapBuffers_Int();
     }
 
-    void GLContext::SwapBuffers()
-    {
-		NEB_PROFILE_FUNCTION();
-        glfwSwapBuffers(window);
-    }
-
-    void GLContext::ClearColor(Vec4f color)
-    {
-        glClearColor(color.X, color.Y, color.Z, color.W);
+    void GLContext::SetVSync(bool vsync) {
+        SetVSync_Int(vsync);
     }
 }

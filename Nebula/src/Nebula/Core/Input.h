@@ -4,9 +4,9 @@
 #include <Math/math.h>
 
 #include <Core/PlatformInfo.h>
-#include <Events/InputCodes.h>
+#include <Core/Ref.h>
 
-#include <GLFW/glfw3.h>
+#include <Events/InputCodes.h>
 
 namespace Nebula{
     class Input
@@ -26,6 +26,11 @@ namespace Nebula{
             }
         }
 
+        static void Init();       
+
+        inline static bool IsKeyPressedAsync(KeyCode key) {return s_Input->IsKeyPressedAsyncInt(key); }
+        inline static bool IsMouseButtonPressedAsync(MouseCode key) { return s_Input->IsMouseButtonPressedAsyncInt(key); }
+
         inline static bool IsKeyPressed(KeyCode key) {return s_Input->IsKeyPressedInt(key); }
         inline static bool IsMouseButtonPressed(MouseCode key) { return s_Input->IsMouseButtonPressedInt(key); }
 
@@ -38,16 +43,25 @@ namespace Nebula{
         inline static Vec2f GetMousePos() { return s_Input->GetMousePosInt(); }
         inline static void SetMousePos(Vec2f newPos) { s_Input->SetMousePosInt(newPos); }
 
-        bool IsKeyPressedInt(KeyCode key);
-        bool IsMouseButtonPressedInt(MouseCode key);
-        Vec2f GetMousePosInt();
 
-        void SetKeyPressedInt(KeyCode key) { keys[key] = true; }    
-        void SetKeyReleasedInt(KeyCode key) { keys[key] = false; }
-        void SetMouseButtonPressedInt(MouseCode key) { mouseButtons[key] = true; }    
-        void SetMouseButtonReleasedInt(MouseCode key) { mouseButtons[key] = false; }
-        void SetMousePosInt(Vec2f newPos) { mousePos = newPos; }
+        void SetKeyPressedInt(KeyCode key)              { keys[key] = true; }    
+        void SetKeyReleasedInt(KeyCode key)             { keys[key] = false; }
+        void SetMouseButtonPressedInt(MouseCode key)    { mouseButtons[key] = true; }    
+        void SetMouseButtonReleasedInt(MouseCode key)   { mouseButtons[key] = false; }
 
-        static Input* s_Input;
+        bool IsKeyPressedInt(KeyCode key)               { return keys[key]; }
+        bool IsMouseButtonPressedInt(MouseCode key)     { return mouseButtons[key]; }
+
+    protected:
+        virtual bool IsKeyPressedAsyncInt(KeyCode key) = 0;
+        virtual bool IsMouseButtonPressedAsyncInt(MouseCode key) = 0;
+        virtual Vec2f GetMousePosInt() = 0;
+        virtual void SetMousePosInt(Vec2f newPos) = 0;
+
+    private:
+
+
+        static Ref<Input> s_Input;
+
     };
 }
