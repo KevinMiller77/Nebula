@@ -115,11 +115,11 @@ namespace Nebula {
 		{ VK_RETURN, KeyCode::KPEnter},
 		{ VK_LSHIFT, KeyCode::LeftShift},
 		{ VK_LCONTROL, KeyCode::LeftControl},
-		{ VK_LMENU, KeyCode::LeftAlt},
+		{ VK_LMENU, KeyCode::Alt},
 		{ VK_RSHIFT, KeyCode::RightShift},
 		{ VK_RCONTROL, KeyCode::RightControl},
-		{ VK_RMENU, KeyCode::RightAlt},
-		{ VK_MENU, KeyCode::Menu}
+		{ VK_RMENU, KeyCode::Alt},
+		{ VK_MENU, KeyCode::Alt}
     };
 
     std::unordered_map<KeyCode, int> WindowsInput::KeyCodeMapNebToWin = {
@@ -234,11 +234,9 @@ namespace Nebula {
 		{ KeyCode::KPEnter, VK_RETURN },
 		{ KeyCode::LeftShift, VK_LSHIFT },
 		{ KeyCode::LeftControl, VK_LCONTROL },
-		{ KeyCode::LeftAlt, VK_LMENU },
+		{ KeyCode::Alt, VK_LMENU },
 		{ KeyCode::RightShift, VK_RSHIFT },
-		{ KeyCode::RightControl, VK_RCONTROL },
-		{ KeyCode::RightAlt, VK_RMENU },
-		{ KeyCode::Menu, VK_MENU }
+		{ KeyCode::RightControl, VK_RCONTROL }
     };
 
     std::unordered_map<MouseCode, int> WindowsInput::MouseCodeMapNebToWin = {

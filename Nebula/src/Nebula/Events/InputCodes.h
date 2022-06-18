@@ -143,13 +143,11 @@ namespace Nebula{
 
 		LeftShift           = 340,
 		LeftControl         = 341,
-		LeftAlt             = 342,
 		LeftSuper           = 343,
 		RightShift          = 344,
 		RightControl        = 345,
-		RightAlt            = 346,
 		RightSuper          = 347,
-		Menu                = 348
+		Alt             = 342
 	};
 
 	// From Windows
@@ -270,9 +268,10 @@ namespace Nebula{
 
 	#define KEY_LEFT_SHIFT      KeyCode::LeftShift
 	#define KEY_LEFT_CONTROL    KeyCode::LeftControl
-	#define KEY_LEFT_ALT        KeyCode::LeftAlt
 	#define KEY_LEFT_SUPER      KeyCode::LeftSuper
 
+	#define KEY_ALT        KeyCode::Alt
+    
 	#define MOUSE_BUTTON_0      MouseCode::Button0
 	#define MOUSE_BUTTON_1      MouseCode::Button1
 	#define MOUSE_BUTTON_2      MouseCode::Button2

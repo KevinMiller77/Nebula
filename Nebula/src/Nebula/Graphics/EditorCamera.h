@@ -35,6 +35,7 @@ namespace Nebula {
 		float GetPitch() const { return m_Pitch; }
 		float GetYaw() const { return m_Yaw; }
 	private:
+        void ResetCamera(float fov, float aspectRatio, float nearClip, float farClip);
 		void UpdateProjection();
 		void UpdateView();
 

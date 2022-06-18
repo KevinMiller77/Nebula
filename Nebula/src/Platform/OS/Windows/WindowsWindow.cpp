@@ -38,6 +38,7 @@ namespace Nebula{
                 PostQuitMessage(0);
                 break;
             }
+            case WM_SYSKEYDOWN: 
             case WM_KEYDOWN: {
                 // Get repeat count
                 int hitCount = lParam & 0xffff;
@@ -51,6 +52,7 @@ namespace Nebula{
                 }
                 break;
             } 
+            case WM_SYSKEYUP:
             case WM_KEYUP: {
                 if (WindowsInput::KeyCodeMapWinToNeb.find(wParam) != WindowsInput::KeyCodeMapWinToNeb.end()) {
                     KeyReleasedEvent event((int)WindowsInput::MouseCodeMapWinToNeb[wParam]);

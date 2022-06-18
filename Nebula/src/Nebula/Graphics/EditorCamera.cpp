@@ -21,6 +21,27 @@ namespace Nebula {
 		UpdateView();
 	}
 
+    
+    void EditorCamera::ResetCamera(float fov, float aspectRatio, float nearClip, float farClip) {
+        m_FOV = fov;
+        m_AspectRatio = aspectRatio;
+        m_NearClip = nearClip;
+        m_FarClip = farClip;
+
+        m_Projection = Mat4f::perspective(fov, aspectRatio, nearClip, farClip);
+
+        m_Position = { 0.0f, 0.0f, 0.0f };
+		m_FocalPoint = { 0.0f, 0.0f, 0.0f };
+
+		m_InitialMousePosition = { 0.0f, 0.0f };
+
+		m_Distance = 10.0f;
+		m_Pitch = 0.0f;
+        m_Yaw = 0.0f;
+
+        UpdateView();
+    }
+
 	void EditorCamera::UpdateProjection()
 	{
 		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
@@ -87,16 +108,22 @@ namespace Nebula {
         Vec2f delta = (mouse - m_InitialMousePosition) * 0.003f;
         m_InitialMousePosition = mouse;
 
-		if (Input::IsKeyPressed(KeyCode::LeftAlt))
+		if (Input::IsKeyPressed(KeyCode::Alt))
 		{
             modified = true;
 
-			if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle))
+            LOG_INF("It has happened");
+
+			if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle)) {
 				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(MouseCode::ButtonRight))
+            }
+			else if (Input::IsMouseButtonPressed(MouseCode::ButtonRight)) {
 				MouseZoom(delta.Y);
-			else if (Input::IsKeyPressed(KeyCode::R))
-				*this = EditorCamera(45.0f, m_ViewportWidth / m_ViewportHeight, 0.1f, 1000.0f);
+            }
+			else if (Input::IsKeyPressed(KeyCode::R)) {
+				ResetCamera(45.0f, m_ViewportWidth / m_ViewportHeight, 0.1f, 1000.0f);
+                return;
+            }
             else {
                 modified = false;
             }
