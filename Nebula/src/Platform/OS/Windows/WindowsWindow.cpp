@@ -61,38 +61,53 @@ namespace Nebula{
                 }
                 break;
             }
-            case WM_XBUTTONDOWN:
-            case WM_LBUTTONDOWN: 
-            case WM_RBUTTONDOWN:
-            case WM_MBUTTONDOWN: {
-                if (WindowsInput::MouseCodeMapWinToNeb.find(wParam) != WindowsInput::MouseCodeMapWinToNeb.end()) {
-                    MouseButtonReleasedEvent event(WindowsInput::MouseCodeMapWinToNeb[wParam]);
-                    winRef->data.EventCallback(event);
-                    Input::SetMouseButtonReleased(WindowsInput::MouseCodeMapWinToNeb[wParam]);
-                }
-                break;
-            }
-            case WM_XBUTTONUP:  {
+            case WM_XBUTTONDOWN: {
                 MouseCode xButton = (wParam >> 16) == 0x0001 ? MouseCode::ButtonLast : MouseCode::ButtonNext;
                 MouseButtonPressedEvent event(xButton);
+                winRef->data.EventCallback(event);
+                Input::SetMouseButtonPressed(xButton);
+                break; 
+            }
+            case WM_LBUTTONDOWN: {
+                MouseButtonPressedEvent event(MouseCode::ButtonLeft);
+                winRef->data.EventCallback(event);
+                Input::SetMouseButtonPressed(MouseCode::ButtonLeft);
+                break;
+            }
+            case WM_MBUTTONDOWN: {
+                MouseButtonPressedEvent event(MouseCode::ButtonMiddle);
+                winRef->data.EventCallback(event);
+                Input::SetMouseButtonPressed(MouseCode::ButtonMiddle);
+                break;
+            }
+            case WM_RBUTTONDOWN: {
+                MouseButtonPressedEvent event(MouseCode::ButtonRight);
+                winRef->data.EventCallback(event);
+                Input::SetMouseButtonPressed(MouseCode::ButtonRight);
+                break;
+            }
+
+            case WM_XBUTTONUP:  {
+                MouseCode xButton = (wParam >> 16) == 0x0001 ? MouseCode::ButtonLast : MouseCode::ButtonNext;
+                MouseButtonReleasedEvent event(xButton);
                 winRef->data.EventCallback(event);
                 Input::SetMouseButtonReleased(xButton);
                 break;                    
             }
             case WM_LBUTTONUP: {
-                MouseButtonPressedEvent event(MouseCode::ButtonLeft);
+                MouseButtonReleasedEvent event(MouseCode::ButtonLeft);
                 winRef->data.EventCallback(event);
                 Input::SetMouseButtonReleased(MouseCode::ButtonLeft);
                 break;
             }
             case WM_RBUTTONUP: {
-                MouseButtonPressedEvent event(MouseCode::ButtonRight);
+                MouseButtonReleasedEvent event(MouseCode::ButtonRight);
                 winRef->data.EventCallback(event);
                 Input::SetMouseButtonReleased(MouseCode::ButtonRight);
                 break;
             }
             case WM_MBUTTONUP: {
-                MouseButtonPressedEvent event(MouseCode::ButtonMiddle);
+                MouseButtonReleasedEvent event(MouseCode::ButtonMiddle);
                 winRef->data.EventCallback(event);
                 Input::SetMouseButtonReleased(MouseCode::ButtonMiddle);
                 break;

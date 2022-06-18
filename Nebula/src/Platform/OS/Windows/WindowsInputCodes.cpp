@@ -248,11 +248,11 @@ namespace Nebula {
     };
 
     std::unordered_map<int, MouseCode> WindowsInput::MouseCodeMapWinToNeb = {
-        { 0x0020, MouseCode::ButtonNext },
-        { 0x0040, MouseCode::ButtonLast },
-        { 0x0001 , MouseCode::ButtonLeft },
-        { 0x0002 , MouseCode::ButtonRight },
-        { 0x0010 , MouseCode::ButtonMiddle }
+        { VK_XBUTTON1, MouseCode::ButtonNext },
+        { VK_XBUTTON2, MouseCode::ButtonLast },
+        { VK_LBUTTON , MouseCode::ButtonLeft },
+        { VK_RBUTTON , MouseCode::ButtonRight },
+        { VK_MBUTTON , MouseCode::ButtonMiddle }
     };
     
 }

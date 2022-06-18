@@ -33,3 +33,4 @@ Nebula/ext/SPIRV-Tools/*
 Nebula/ext/glslang/*
 NebulaStudio/NebulaEditorSettings.yaml
 NebulaStudio/assets/shaders/cached/
+NebulaStudio/imgui.ini
