@@ -111,7 +111,7 @@ IF NOT EXIST ..\bin\Debug\windowsx86_64\NebulaStudio\NebulaStudio.exe (
     ECHO.
     EXIT /B 0
 )
-START /WAIT ..\bin\Debug\windowsx86_64\NebulaStudio\NebulaStudio.exe
+START CMD /C ..\bin\Debug\windowsx86_64\NebulaStudio\NebulaStudio.exe
 EXIT /B 0
 
 :NebRunSS
