@@ -112,17 +112,11 @@ namespace Nebula {
 		{
             modified = true;
 
-            LOG_INF("It has happened");
-
 			if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle)) {
 				MousePan(delta);
             }
 			else if (Input::IsMouseButtonPressed(MouseCode::ButtonRight)) {
 				MouseZoom(delta.Y);
-            }
-			else if (Input::IsKeyPressed(KeyCode::R)) {
-				ResetCamera(45.0f, m_ViewportWidth / m_ViewportHeight, 0.1f, 1000.0f);
-                return;
             }
             else {
                 modified = false;
@@ -171,9 +165,9 @@ namespace Nebula {
 
 	void EditorCamera::OnEvent(Event& e)
 	{
-
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(NEB_BIND_EVENT_FN(EditorCamera::OnMouseScroll));
+        dispatcher.Dispatch<KeyPressedEvent>(NEB_BIND_EVENT_FN(EditorCamera::OnKeyPressed));
 	}
 
 	bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
@@ -183,6 +177,19 @@ namespace Nebula {
 		UpdateView();
 		return false;
 	}
+
+    
+	bool EditorCamera::OnKeyPressed(KeyPressedEvent& e) {
+        KeyCode key = KeyCode(e.GetKeyCode());
+
+        if (Input::IsKeyPressed(KeyCode::Alt) && key != KeyCode::Alt) {
+            if (key == KeyCode::C) {
+				ResetCamera(45.0f, m_ViewportWidth / m_ViewportHeight, 0.1f, 1000.0f);
+            }
+        }
+
+        return false;
+    }
 
 	void EditorCamera::MousePan(const Vec2f& delta)
 	{

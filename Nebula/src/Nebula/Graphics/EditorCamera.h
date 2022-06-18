@@ -4,6 +4,7 @@
 
 #include "Camera.h"
 #include <Events/Event.h>
+#include <Events/KeyEvent.h>
 #include <Events/MouseEvent.h>
 
 namespace Nebula {
@@ -40,6 +41,7 @@ namespace Nebula {
 		void UpdateView();
 
 		bool OnMouseScroll(MouseScrolledEvent& e);
+		bool OnKeyPressed(KeyPressedEvent& e);
 
 		void MousePan(const Vec2f& delta);
 		void MouseRotate(const Vec2f& delta);
