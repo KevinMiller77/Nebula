@@ -28,7 +28,8 @@ Debug/*
 Release/*
 ext/freetype/bin
 .vs/
-*/Makefile
+Makefile
+Nebula/ext/lib
 Nebula/ext/SPIRV-Tools/*
 Nebula/ext/glslang/*
 NebulaStudio/NebulaEditorSettings.yaml

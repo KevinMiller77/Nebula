@@ -87,5 +87,6 @@
         "clocale": "cpp",
         "stop_token": "cpp",
         "bitset": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": true
 }
