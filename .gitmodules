@@ -1,6 +1,3 @@
-[submodule "Nebula/ext/glad"]
-	path = Nebula/ext/glad
-	url = git@github.com:Dav1dde/glad.git
 [submodule "Nebula/ext/glslang"]
 	path = Nebula/ext/glslang
 	url = git@github.com:KhronosGroup/glslang.git
