@@ -1,0 +1,36 @@
+[submodule "Nebula/ext/glad"]
+	path = Nebula/ext/glad
+	url = git@github.com:Dav1dde/glad.git
+[submodule "Nebula/ext/glslang"]
+	path = Nebula/ext/glslang
+	url = git@github.com:KhronosGroup/glslang.git
+[submodule "Nebula/ext/imgui"]
+	path = Nebula/ext/imgui
+	url = git@github.com:ocornut/imgui.git
+[submodule "Nebula/ext/ImGuizmo"]
+	path = Nebula/ext/ImGuizmo
+	url = git@github.com:CedricGuillemet/ImGuizmo.git
+[submodule "Nebula/ext/libogg"]
+	path = Nebula/ext/libogg
+	url = git@github.com:gcp/libogg.git
+[submodule "Nebula/ext/nativefiledialog"]
+	path = Nebula/ext/nativefiledialog
+	url = git@github.com:mlabbe/nativefiledialog.git
+[submodule "Nebula/ext/openal-soft"]
+	path = Nebula/ext/openal-soft
+	url = git@github.com:kcat/openal-soft.git
+[submodule "Nebula/ext/shaderc"]
+	path = Nebula/ext/shaderc
+	url = git@github.com:google/shaderc.git
+[submodule "Nebula/ext/SPIRV-Cross"]
+	path = Nebula/ext/SPIRV-Cross
+	url = git@github.com:KhronosGroup/SPIRV-Cross.git
+[submodule "Nebula/ext/SPIRV-Tools"]
+	path = Nebula/ext/SPIRV-Tools
+	url = git@github.com:KhronosGroup/SPIRV-Tools.git
+[submodule "Nebula/ext/Vorbis"]
+	path = Nebula/ext/Vorbis
+	url = git@github.com:xiph/vorbis.git
+[submodule "Nebula/ext/yaml-cpp"]
+	path = Nebula/ext/yaml-cpp
+	url = git@github.com:jbeder/yaml-cpp.git

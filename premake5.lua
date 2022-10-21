@@ -56,7 +56,7 @@ project "NebulaEngine"
         "AL_LIBTYPE_STATIC"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "Nebula/",
         "Nebula/src",
@@ -207,7 +207,7 @@ project "NebulaStudio"
         "FT2_BUILD_LIBRARY"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "NebulaStudio/src",
         "NebulaStudio/src/Nebula",
