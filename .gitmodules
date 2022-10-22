@@ -4,6 +4,7 @@
 [submodule "Nebula/ext/imgui"]
 	path = Nebula/ext/imgui
 	url = git@github.com:ocornut/imgui.git
+    branch = docking
 [submodule "Nebula/ext/ImGuizmo"]
 	path = Nebula/ext/ImGuizmo
 	url = git@github.com:CedricGuillemet/ImGuizmo.git

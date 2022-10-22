@@ -3,10 +3,10 @@
 
 // TODO: Guard this behind the possibility of GL being used
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
-#include <examples/imgui_impl_opengl3.cpp>
+#include <backends/imgui_impl_opengl3.cpp>
 
 #include <imgui.h>
-#include <examples/imgui_impl_opengl3.h>
+#include <backends/imgui_impl_opengl3.h>
 
 namespace Nebula{
 

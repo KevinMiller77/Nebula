@@ -9,7 +9,6 @@
 
 #include "AL/al.h"
 #include "AL/alext.h"
-#include "alc/alcmain.h"
 #include "alhelpers.h"
 
 #define MINIMP3_IMPLEMENTATION
@@ -190,12 +189,12 @@ namespace Nebula {
 	{
 		if (s_DebugLog)
 		{
-			NAUD_LOG("Audio Device Info:");
-			NAUD_LOG("  Name: " << s_AudioDevice->DeviceName);
-			NAUD_LOG("  Sample Rate: " << s_AudioDevice->Frequency);
-			NAUD_LOG("  Max Sources: " << s_AudioDevice->SourcesMax);
-			NAUD_LOG("    Mono: " << s_AudioDevice->NumMonoSources);
-			NAUD_LOG("    Stereo: " << s_AudioDevice->NumStereoSources);
+			// NAUD_LOG("Audio Device Info:");
+			// NAUD_LOG("  Name: " << s_AudioDevice->DeviceName);
+			// NAUD_LOG("  Sample Rate: " << s_AudioDevice->Frequency);
+			// NAUD_LOG("  Max Sources: " << s_AudioDevice->SourcesMax);
+			// NAUD_LOG("    Mono: " << s_AudioDevice->NumMonoSources);
+			// NAUD_LOG("    Stereo: " << s_AudioDevice->NumStereoSources);
 		}
 	}
 

@@ -60,12 +60,12 @@ int InitAL(ALCdevice*& device, char ***argv, int *argc)
         return 1;
     }
 
-    ctx = alcCreateContext(device, NULL);
+    ctx = alcCreateContext((ALCdevice*)device, NULL);
     if(ctx == NULL || alcMakeContextCurrent(ctx) == ALC_FALSE)
    {
         if(ctx != NULL)
             alcDestroyContext(ctx);
-        alcCloseDevice(device);
+        alcCloseDevice((ALCdevice*)device);
         fprintf(stderr, "Could not set a context!\n");
         return 1;
     }

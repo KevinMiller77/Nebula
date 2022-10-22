@@ -7,7 +7,6 @@ project "imgui"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
 
     cmake_level = "Release"
     filter "configurations:Debug"
@@ -24,10 +23,19 @@ project "imgui"
         src_dir .. "/*.cpp"
     }
 
+    sysincludedirs {
+        src_dir
+    }
+
     filter "system:macosx"
         buildoptions
         {
             "-x objective-c++"
+        }
+    filter "system:windows"
+        files {
+            src_dir .. "/backends/imgui_impl_win32.cpp",
+            src_dir .. "/backends/imgui_impl_opengl3.cpp",
         }
 
     filter "configurations:Debug"

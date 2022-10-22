@@ -4,7 +4,7 @@ build_dir = proj_dir .. "/build"
 target_dir = "../lib/"
 
 
-project "shaderc"
+project "shaderc_util"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
@@ -31,13 +31,22 @@ project "shaderc"
 
 	files
 	{
-		proj_dir .. "/libshaderc/src/shaderc.cc"
+        proj_dir .. "/libshaderc_util/src/args.cc",
+        proj_dir .. "/libshaderc_util/src/compiler.cc",
+        proj_dir .. "/libshaderc_util/src/file_finder.cc",
+        proj_dir .. "/libshaderc_util/src/io_shaderc.cc",
+        proj_dir .. "/libshaderc_util/src/message.cc",
+        proj_dir .. "/libshaderc_util/src/resources.cc",
+        proj_dir .. "/libshaderc_util/src/shader_stage.cc",
+        proj_dir .. "/libshaderc_util/src/spirv_tools_wrapper.cc",
+        proj_dir .. "/libshaderc_util/src/version_profile.cc"
 	}
 
-	defines
-	{
-		"LIBOGG_EXPORTS"
-	}   
+    filter "system:windows"
+        defines
+        {
+            "ENABLE_HLSL"
+        }   
 
 	filter "configurations:Debug"
 		runtime "Debug"

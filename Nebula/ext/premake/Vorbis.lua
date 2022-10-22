@@ -8,7 +8,6 @@ out_dir = "../lib/"
 project "Vorbis"
     kind "StaticLib"
     language "C"
-    staticruntime "on"
 
     cmake_level = "Release"
     filter "configurations:Debug"

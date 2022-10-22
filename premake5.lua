@@ -23,24 +23,20 @@ workspace "Nebula"
         include "Nebula/ext/premake/nativefiledialog"
         include "Nebula/ext/premake/openal-soft"
         include "Nebula/ext/premake/shaderc"
+        include "Nebula/ext/premake/shaderc_util"
         include "Nebula/ext/premake/SPIRV-Cross"
-        include "Nebula/ext/premake/Vorbis"
         include "Nebula/ext/premake/yaml-cpp"
+        include "Nebula/ext/premake/Vorbis"
         group ""
         
 project "NebulaEngine"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
     
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
     location ("build")
-
-    libdirs {
-        "Nebula/ext/lib/%{cfg.buildcfg}"
-    }
 
     files
     {
@@ -71,40 +67,45 @@ project "NebulaEngine"
 		"Nebula/ext/libogg/include",
 		"Nebula/ext/minimp3/include",
         "Nebula/ext/nativefiledialog/src/include",
+        "Nebula/ext/openal-soft/alc",
         "Nebula/ext/openal-soft/include",
-        "Nebula/ext/shaderc/include",
+        "Nebula/ext/shaderc/libshaderc/include",
         "Nebula/ext/SPIRV-Cross/",
 		"Nebula/ext/Vorbis/include",
         "Nebula/ext/yaml-cpp/include"
     }
 
-    links
-    {
-        -- Provided by shaderc
-        "libshaderc",
-        "libshaderc_util",
-
-        -- Provided by glslang
-        "GenericCodeGend",
-        "glslangd",
-        "MachineIndependentd",
-        "OGLCompilerd",
-        "OSDependentd",
-        "SPIRVd",
-        "SPIRV-Tools",
-        "SPIRV-Tools-opt",
-        
-        -- Not provided by gslang. Why? I don't really know. We should tell them to just build this for our sake. Yeah, we'll do that.
-        "SPIRV-Cross",
-
-        "imgui",
-        "imguizmo",
-        "nfd",
-        "glad",
-        "openal",
-		"Vorbis",
-        "yaml-cpp"
+    links {
+        "Nebula/ext/lib/%{cfg.buildcfg}/*.lib"
     }
+
+    -- links
+    -- {
+    --     -- Provided by shaderc
+    --     "shaderc.lib",
+    --     "shaderc_util.lib",
+
+    --     -- Provided by glslang
+    --     "GenericCodeGend",
+    --     "glslangd",
+    --     "MachineIndependentd",
+    --     "OGLCompilerd",
+    --     "OSDependentd",
+    --     "SPIRVd",
+    --     "SPIRV-Toolsd",
+    --     "SPIRV-Tools-optd",
+        
+    --     -- Not provided by gslang. Why? I don't really know. We should tell them to just build this for our sake. Yeah, we'll do that.
+    --     "SPIRV-Cross",
+
+    --     "imgui",
+    --     "imguizmo",
+    --     "nfd",
+    --     "glad",
+    --     "OpenAL32",
+	-- 	"Vorbis",
+    --     "yaml-cppd"
+    -- }
 
     filter "system:windows"
         systemversion "latest"
@@ -116,8 +117,7 @@ project "NebulaEngine"
         files 
         {
             "Nebula/src/Platform/OS/Windows/**.h",
-            "Nebula/src/Platform/OS/Windows/**.cpp",
-            "Nebula/ext/imgui/examples/imgui_impl_win32.cpp"
+            "Nebula/src/Platform/OS/Windows/**.cpp"
         }
 
 
@@ -166,98 +166,106 @@ project "NebulaEngine"
         runtime "Release"
         optimize "on"
 
--- project "NebulaStudio"
---     kind "ConsoleApp"
---     language "C++"
---     cppdialect "C++17"
---     staticruntime "on"  
+project "NebulaStudio"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
     
     
---     targetname("NebulaStudio")
---     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
---     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
---     location ("build")
+    targetname("NebulaStudio")
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    location ("build")
 
---     debugdir("./NebulaStudio")
+    debugdir("./NebulaStudio")
     
 
---     files
---     {
---         "NebulaStudio/src/**.h",
---         "NebulaStudio/src/**.cpp"
---     }
+    files
+    {
+        "test.cpp"
+        -- "NebulaStudio/src/**.h",
+        -- "NebulaStudio/src/**.cpp"
+    }
 
---     defines
---     {
---         "_CRT_SECURE_NO_WARNINGS",
---         "FT2_BUILD_LIBRARY"
---     }
+    defines
+    {
+        "_CRT_SECURE_NO_WARNINGS",
+        "FT2_BUILD_LIBRARY"
+    }
 
---     externalincludedirs
---     {
---         "NebulaStudio/src",
---         "NebulaStudio/src/Nebula",
---         "NebulaStudio/include",
---         "Nebula",
+    externalincludedirs
+    {
+        "NebulaStudio/src",
+        "NebulaStudio/src/Nebula",
+        "NebulaStudio/include",
 
---         "Nebula/ext/imgui",
---         "Nebula/ext/imguizmo",
---         "Nebula/ext/yaml-cpp/include",
---         "Nebula/include",
---         "Nebula/src/Nebula"
---     }
+        "Nebula/",
+        "Nebula/src",
+        "Nebula/src/Nebula",
 
---     links
---     {
---         "NebulaEngine"
---     }
+        "Nebula/include",
+        
+        "Nebula/ext",
+        "Nebula/ext/imgui",
+        "Nebula/ext/ImGuizmo",
+		"Nebula/ext/libogg/include",
+		"Nebula/ext/minimp3/include",
+        "Nebula/ext/nativefiledialog/src/include",
+        "Nebula/ext/openal-soft/alc",
+        "Nebula/ext/openal-soft/include",
+        "Nebula/ext/shaderc/libshaderc/include",
+        "Nebula/ext/SPIRV-Cross/",
+		"Nebula/ext/Vorbis/include",
+        "Nebula/ext/yaml-cpp/include"
+    }
 
---     filter "system:windows"
---         systemversion "latest"
---         ignoredefaultlibraries
---         {
---             "user32", 
---             "gdi32", 
---             "shell32",
---             "msvcrtd"
---         }
+    links
+    {
+        "NebulaEngine"
+    }
 
---     filter "system:macosx"
---         systemversion "latest"
---         links
---         {
---             "IOKit.framework", 
---             "OpenGL.framework",
---             "Cocoa.framework",
---             "CoreVideo.framework"
---         }
+    filter "system:windows"
+        systemversion "latest"
+        ignoredefaultlibraries
+        {
+            "user32", 
+            "gdi32", 
+            "shell32",
+            "msvcrtd"
+        }
+
+    filter "system:macosx"
+        systemversion "latest"
+        links
+        {
+            "IOKit.framework", 
+            "OpenGL.framework",
+            "Cocoa.framework",
+            "CoreVideo.framework"
+        }
 
 
---     filter "system:linux"
---         systemversion "latest"
---         defines
---         {
---             "_LIBS_SUPPLIED"
---         }
---         links
---         {
---             "X11",
---             "GL",
---             "GLU",
---             "dl",
---             "pthread",
---             "imgui",
---             "glad",
---             "yaml-cpp",
---             "nfd"
---         }
+    filter "system:linux"
+        systemversion "latest"
+        defines
+        {
+            "_LIBS_SUPPLIED"
+        }
+        links
+        {
+            "X11",
+            "GL",
+            "GLU",
+            "dl",
+            "pthread"
+        }
 
---     filter "configurations:Debug"
---         defines "NEB_DEBUG"
---         runtime "Debug"
---         symbols "on"
+    filter "configurations:Debug"
+        defines "NEB_DEBUG"
+        runtime "Debug"
+        symbols "on"
 
---     filter "configurations:Release"
---         defines "NEB_RELEASE"
---         runtime "Release"
---         optimize "on"
+    filter "configurations:Release"
+        defines "NEB_RELEASE"
+        runtime "Release"
+        optimize "on"
