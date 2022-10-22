@@ -4,9 +4,8 @@ build_dir = src_dir .. "/build"
 lib_dir = "build/lib"
 out_dir = "../lib/"
 
-
 project "yaml-cpp"
-	kind "StaticLib"
+	kind "Makefile"
 	language "C++"
 	cppdialect "C++17"
 
@@ -18,21 +17,17 @@ project "yaml-cpp"
     targetdir("../lib/" .. cmake_level)
     location(build_dir)
 
-	files
-	{
-		src_dir .. "/src/**.h",
-		src_dir .. "/src/**.cpp"
-	}
+    library_ext = ".a"
+    filter "system:windows"
+        library_ext = ".lib"
 
-	includedirs
-	{
-		src_dir .. "/include"
-	}
-
-	filter "configurations:Debug"
-		runtime "Debug"
-		symbols "on"
-
-	filter "configurations:Release"
-		runtime "Release"
-		optimize "on"
+	buildcommands {
+        "{ECHO} Running CMake on yaml-cpp",
+        "{MKDIR} " .. build_dir,
+        "{ECHO} Bootstrapping CMake build on yaml-cpp",
+        "cmake -S " .. src_dir .. " -B " .. build_dir .. " " .. cmake_opts .. " -DCMAKE_BUILD_TYPE=" .. cmake_level .. " ..",
+        "{ECHO} Building yaml-cpp",
+        "cmake --build " .. build_dir .. " --config " .. cmake_level .. " -j 6",
+        "{MKDIR} " .. out_dir .. cmake_level,
+        "{COPYFILE} " .. build_dir .. "/*" .. library_ext .. " " .. out_dir .. cmake_level
+    }

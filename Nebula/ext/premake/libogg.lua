@@ -18,6 +18,8 @@ project "libogg"
     objdir (build_dir)
     location(build_dir)
 
+    
+
 	includedirs
 	{
 		proj_dir .. "/include"
@@ -32,7 +34,7 @@ project "libogg"
 	defines
 	{
 		"LIBOGG_EXPORTS"
-	}
+	}   
 	
 	filter "system:windows"
 		systemversion "latest"

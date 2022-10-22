@@ -1,7 +1,6 @@
 src_dir = "../openal-soft"
 build_dir = src_dir .. "/build"
 
-lib_dir = "build/lib"
 out_dir = "../lib/"
 
 
@@ -18,13 +17,23 @@ kind "Makefile"
     targetdir("../lib/" .. cmake_level)
     location(build_dir)
     
-    filter "not system:windows"
-        buildcommands(
-            "echo Running CMake on openal-soft && " ..
-            "mkdir -p " .. build_dir .. " && " ..
-            "cmake -S " .. src_dir .. " -B " .. build_dir .. " " .. cmake_opts .. " -DCMAKE_BUILD_TYPE=" .. cmake_level .. " .." .. " && " ..
-            "make -j4 install -C " .. build_dir .. " && " ..
-            "mkdir -p " .. out_dir .. cmake_level .. " && " ..
-            "cp " .. lib_dir .. "/*.a " .. out_dir .. cmake_level .. "&&" ..
-            "rm -rf build"
-        )
+    intermidiate_dir = build_dir .. "/" .. cmake_level
+
+    library_ext = ".a"
+    filter "system:windows"
+        library_ext = ".lib"
+
+    buildcommands{
+        "{ECHO} Running CMake on openal-soft",
+        "{MKDIR} " .. build_dir,
+        "{ECHO} Bootstrapping CMake build on openal-soft",
+        "cmake -S " .. src_dir .. " -B " .. build_dir .. " " .. cmake_opts .. " -DCMAKE_BUILD_TYPE=" .. cmake_level .. " ..",
+        "{ECHO} Building openal-soft",
+        "cmake --build " .. build_dir .. " --config " .. cmake_level .. " -j 6",
+        "{MKDIR} " .. out_dir .. cmake_level,
+        "{COPYFILE} " .. intermidiate_dir .. "/*" .. library_ext .. " " .. out_dir .. cmake_level
+    }
+
+    rebuildcommands {
+        "{ECHO} No need to rebuild if platform has not changed"
+    }

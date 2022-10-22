@@ -27,7 +27,7 @@ project "SPIRV-Cross"
     }
 
     postbuildcommands {
-        "rm -rf SPIRV-Cross"
+        "{RMDIR} SPIRV-Cross"
     }
 
     filter "system:windows"

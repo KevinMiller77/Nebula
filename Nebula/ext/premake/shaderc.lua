@@ -17,15 +17,19 @@ kind "Makefile"
     targetdir("../lib/" .. cmake_level)
     location(build_dir)
     
-    filter "not system:windows"
-        buildcommands(
-            "echo Running CMake on shaderc && " ..
-            "mkdir -p " .. build_dir .. " && " ..
-            "cmake -S " .. src_dir .. " -B " .. build_dir .. " " .. cmake_opts .. " -DCMAKE_BUILD_TYPE=" .. cmake_level .. " .." .. " && " ..
-            "ninja libshaderc_util.a -j4 -C " .. build_dir .. " && " ..
-            "ninja libshaderc.a -j4 -C " .. build_dir .. " && " ..
-            "mkdir -p " .. out_dir .. cmake_level .. " && " ..
-            "cp " .. build_dir .. "/libshaderc_util/*.a " .. out_dir .. cmake_level .. "&&" ..
-            "cp " .. build_dir .. "/libshaderc/*.a " .. out_dir .. cmake_level .. "&&" ..
-            "rm -rf build"
-        )
+    library_ext = ".a"
+    filter "system:windows"
+        library_ext = ".lib"
+
+    buildcommands{
+        "{ECHO} Running CMake on shaderc", 
+        "{MKDIR} " .. build_dir,
+        "python " .. src_dir .. "/utils/git-sync-deps",
+        "cmake -GNinja -S " .. src_dir .. " -B " .. build_dir .. " " .. cmake_opts .. " -DCMAKE_BUILD_TYPE=" .. cmake_level .. " ..",
+        "ninja shaderc_util -j4 -C " .. build_dir,
+        "ninja shaderc -j4 -C " .. build_dir,
+        "{MKDIR} " .. out_dir .. cmake_level,
+        "{COPYFILE} " .. build_dir .. "/libshaderc_util/*" .. library_ext .. " " .. out_dir .. cmake_level,
+        "{COPYFILE} " .. build_dir .. "/libshaderc/*" .. library_ext .. " " .. out_dir .. cmake_level,
+        "{RMDIR} build"
+    }
