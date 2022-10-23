@@ -2,17 +2,27 @@
 
 #ifdef NEB_PLATFORM_LINUX
 #include <stb_image/stb_image.h>
-#include <GLFW/glfw3.h>
 
 #include <Core/VFS.h>
 #include <Nebula_pch.h>
 
-namespace Nebula{
-    WindowsData LinuxWindow::data = WindowsData();
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/keysymdef.h>
 
-    void GLFWErrorCallback(int error, const char* decsription)
-    {
-        LOG_ERR("GLFW ERR [%X]: %s\n", error, decsription);
+#include <GL/gl.h>
+#include <GL/glx.h>
+
+#include <chrono>
+
+Window* s_WindowHandle;
+
+namespace Nebula{
+
+    WindowData LinuxWindow::data = WindowData();
+
+    void LinuxWindow::HandleError() {
+        // TODO: Parse and log errors
     }
 
     LinuxWindow::~LinuxWindow()
@@ -20,21 +30,27 @@ namespace Nebula{
         ShutDown();
     }
 
-    void LinuxWindow::CallWindowHints()
-    {
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-        glfwWindowHint(GLFW_DECORATED, true);
+    void* LinuxWindow::GetNativeWindow() {
+        return s_WindowHandle;
     }
-
     void LinuxWindow::SwapIO(std::string in, std::string out, std::string err)
     {
-        freopen(in.c_str(), "r+", stdin);
-        freopen(out.c_str(), "w", stdout);
-        freopen(err.c_str(), "w", stderr);
+        if (!std::filesystem::exists(in))
+        {
+            fclose(fopen(in.c_str(), "w"));
+        }
+        if (!freopen(in.c_str(), "r+", stdin))
+        {
+            LOG_ERR("Could not open stdin\n");
+        }
+        if (!freopen(out.c_str(), "w", stdout))
+        {
+            LOG_ERR("Could not open stdout\n");
+        }
+        if (!freopen(err.c_str(), "w", stderr))
+        {
+            LOG_ERR("Could not open stderr\n");
+        }
 
         std::ifstream t("tmpout.txt");
         if (t.is_open())
@@ -42,177 +58,140 @@ namespace Nebula{
             std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
             printf("%s", str.c_str());
         }
-
     }
 
     void LinuxWindow::EnableConsole()
     {
-        // ::ShowWindow(::GetConsoleWindow(), SW_SHOW);
+        // Todo: enable a secondary console
     }
 
     void LinuxWindow::DisableConsole()
     {
-        // ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+        // Todo: disable secondary console
     }
 
     LinuxWindow::LinuxWindow(WindowInfo inf)
-        : context(nullptr), GLFWWinCount(0)
+        : m_Context(nullptr)
     {
         NEB_PROFILE_FUNCTION();
-        info = inf;
-        data.height = info.Height; data.width = info.Width;
+        data.height = inf.Height; 
+        data.width = inf.Width;
+        data.fullscreen = !inf.windowed;
+
+        // Hints
+        data.decorated = inf.Decorated;
+        data.floating = inf.Floating;
+        data.transparent = inf.Transparent;
+        data.mousePassthrough = inf.MousePassthrough;
+
+
+        SetEventCallback(inf.EventCallback);
 
         LOG_INF("Creating window\n");
 
-        if (GLFWWinCount == 0)
-        {
-            if (!glfwInit())
 
-            {
-                LOG_ERR("Could not init GLFW!!\n");
-            }
-            else
-            {
-                LOG_INF("GLFW Init\n");
-            }
-            glfwSetErrorCallback(GLFWErrorCallback);
+        s_WindowHandle = nullptr; // TODO: Make the window
+
+        if (!s_WindowHandle) {
+            LOG_ERR("Could not create window\n");
+            exit(1);
         }
-        CallWindowHints();
 
-        window = glfwCreateWindow((int)data.width, (int)data.height, info.Title, nullptr, nullptr);
 
-        context = GraphicsContext::Create((void*)window);
-        context->Init();
+        // This errors because no window is actually made
+        m_Context = GraphicsContext::Create(s_WindowHandle);
+        m_Context->Init();
+        
+        UpdateWindowAttribs();
 
-        glfwSetWindowUserPointer(window, &data);
+        SetWindowSize(data.width, data.height);
+
+        // Default to VSycnc on
         SetVSync(true);
+    }
 
-        // Set GLFW callbacks
-        glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-            data.width = width;
-            data.height = height;
+    
+    bool LinuxWindow::SetWindowStyleVar(int style, bool enable) {
+        return true;
+    }
 
-            WindowResizeEvent event(Vec2u(data.width, data.height));
-            data.EventCallback(event);
-        });
+    void LinuxWindow::SetResizeable(bool resizeable)
+    {
 
-        glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-            WindowCloseEvent event;
-            data.EventCallback(event);
-        });
+    }
 
-        glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            switch (action)
-            {
-                case GLFW_PRESS:
-                {
-                    KeyPressedEvent event((key), 0);
-                    data.EventCallback(event);
-                    break;
-                }
-                case GLFW_RELEASE:
-                {
-                    KeyReleasedEvent event((key));
-                    data.EventCallback(event);
-                    break;
-                }
-                case GLFW_REPEAT:
-                {
-                    KeyPressedEvent event((key), 1);
-                    data.EventCallback(event);
-                    break;
-                }
-            }
-        });
-
-        glfwSetCharCallback(window, [](GLFWwindow* window, uint32 keycode)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            KeyTypedEvent event((keycode));
-            data.EventCallback(event);
-        });
-
-        glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            switch (action)
-            {
-                case GLFW_PRESS:
-                {
-                    MouseButtonPressedEvent event((MouseCode)(button));
-                    data.EventCallback(event);
-                    break;
-                }
-                case GLFW_RELEASE:
-                {
-                    MouseButtonReleasedEvent event((MouseCode)(button));
-                    data.EventCallback(event);
-                    break;
-                }
-            }
-        });
-
-        glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            MouseScrolledEvent event((float)xOffset, (float)yOffset);
-            data.EventCallback(event);
-        });
-
-        glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPos, double yPos)
-        {
-            WindowsData& data = *(WindowsData*)glfwGetWindowUserPointer(window);
-
-            MouseMovedEvent event(Vec2f((float)xPos, (float)yPos));
-            data.EventCallback(event);
-        });
+    
+    Vec2u LinuxWindow::GetMaxWindowSize() {
+        return Vec2u(data.width, data.height);
     }
 
 
     void LinuxWindow::ToggleFullscreen()
     {    
-        if (glfwGetWindowMonitor(window))
-        {
-            glfwSetWindowMonitor(window, NULL, data.windowed_x, data.windowed_y, data.w_width, data.w_height, 0);
-            data.windowed = true;
-        }
-        else
-        {
-            GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-            if (monitor)
-            {
-                const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-                glfwGetWindowPos(window, &(data.windowed_x), &(data.windowed_y));
-                glfwGetWindowSize(window, &(data.w_width), &(data.w_height));
-                glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-            }
-            data.windowed = false;
-        }
+
     }
 
+    void LinuxWindow::SetPassthrough(bool enabled) {
+        data.mousePassthrough = enabled;
+    }
+
+    void LinuxWindow::SetFloating(bool enabled) {
+        data.floating = enabled;
+    }
+
+    void LinuxWindow::SetTransparentFramebuffer(bool enabled) {
+        data.transparent = enabled;
+    }
+
+    void LinuxWindow::SetDecorated(bool enabled) {
+        data.decorated = enabled;
+    }
+
+    std::chrono::system_clock::time_point currentFrameTime;
+    std::chrono::system_clock::time_point lastFrameTime;
     void LinuxWindow::OnUpdate()
     {
         fflush(stdout);
         fflush(stderr);
 
         NEB_PROFILE_FUNCTION();
-        if (data.windowed)
+        if (!data.fullscreen)
         {
             data.w_width = data.width;
             data.w_height = data.height;
         }
-        glfwPollEvents();
-        context->SwapBuffers();
+        
+        if (data.width == 0 || data.height == 0)
+        {
+            data.minimized = true;
+        }
+        else if (data.minimized)
+        {
+            data.minimized = false;
+            data.wasMinimized = true; 
+        }
+        else
+        {
+            data.wasMinimized = false;
+        }
+
+        // MSG msg;
+        // while (PeekMessage(&msg, s_WindowHandle, NULL, NULL, PM_REMOVE) > 0) {
+        //     TranslateMessage(&msg);
+        //     DispatchMessage(&msg);
+        // }
+        m_Context->SwapBuffers();
+
+        currentFrameTime = std::chrono::high_resolution_clock::now();
+        float diff = (float)std::chrono::duration_cast<std::chrono::milliseconds>(currentFrameTime - lastFrameTime).count();
+        lastFrameTime = currentFrameTime;
+        
+        frameTime = diff / 1000.0f;
+    }
+
+    
+    float LinuxWindow::GetTime() {
+        return frameTime;
     }
 
     uint32 LinuxWindow::GetWidth() const
@@ -223,7 +202,6 @@ namespace Nebula{
 
     uint32 LinuxWindow::GetHeight() const
     {
-        
         return data.height;
     }
 
@@ -239,39 +217,61 @@ namespace Nebula{
     
     void LinuxWindow::SetWindowSize(uint32 width, uint32 height)
     {
-        if (window)
-        {
-            glfwSetWindowSize(window, width, height);
-            data.width = width;
-            data.height = height;
-        }
+        // LPRECT rect = (LPRECT)malloc(sizeof(RECT));
+        // if (!GetWindowRect(s_WindowHandle, rect)) {
+        //     HandleError();
+        //     return;
+        // }
 
+        // data.posX = rect->left;
+        // data.posY = rect->top;
+
+        // HWND windowTopOrTopmost = data.floating ? HWND_TOPMOST : HWND_TOP;
+        // bool err = !SetWindowPos(s_WindowHandle,  windowTopOrTopmost,
+        //     data.posX, data.posY, width, height,
+        //     SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+            
+        // if (err) {
+        //     HandleError();
+        //     return;
+        // }
+
+        data.width = width;
+        data.height = height;
     }
+
+    void LinuxWindow::UpdateWindowAttribs() {
+        SetDecorated(data.decorated);
+        SetPassthrough(data.mousePassthrough);
+        SetTransparentFramebuffer(data.transparent);
+
+        // Setting win size also sets floating info
+        SetWindowSize(data.width, data.height);
+    }  
 
     void LinuxWindow::ShutDown()
     {
         NEB_PROFILE_FUNCTION();
-        glfwDestroyWindow(window);
-        glfwTerminate();
+        // TODO: X11 shutdown
     }
 
     void LinuxWindow::SetVSync(bool enabled)
     {
         if (enabled)
         {
-            glfwSwapInterval(1);
+            m_Context->SetVSync(1);
         }
         else
         {
-            glfwSwapInterval(0);
+            m_Context->SetVSync(1);
         }
 
-        data.VSync = enabled;
+        data.vsync = enabled;
     }
 
     bool LinuxWindow::IsVSync() const
     {
-        return data.VSync;
+        return data.vsync;
     }
 
     void LinuxWindow::SetIcon(std::string filepath)
@@ -291,32 +291,37 @@ namespace Nebula{
             LOG_INF("Loaded image for icon\n");
         }
 
-        GLFWimage image;
-        image.width = width;
-        image.height = height;
-        image.pixels = data;
-
-        glfwSetWindowIcon(window, 1, &image);
-    }
-
-    bool LinuxWindow::IsMaximized()
-    {
-        return maximized;
+        // Set the icon of the application in X11
     }
 
     void LinuxWindow::MaximizeWindow()
     {
-        glfwMaximizeWindow(window);
-        maximized = true;
+        // bool err = !ShowWindow(s_WindowHandle, SW_MAXIMIZE);
+        // if (err) {
+        //     HandleError();
+        //     return;
+        // }
+        data.maximized = true;
     }
     void LinuxWindow::RestoreWindow()
     {
-        glfwRestoreWindow(window);
-        maximized = false;
+        // bool err = !ShowWindow(s_WindowHandle, SW_RESTORE);
+        // if (err) {
+        //     HandleError();
+        //     return;
+        // }
+        data.maximized = false;
     }
 
     void LinuxWindow::MinimizeWindow()
     {
+        // bool err = !ShowWindow(s_WindowHandle, SW_MINIMIZE);
+        // if (err) {
+        //     HandleError();
+        //     return;
+        // }
+        data.maximized = false;
+        data.minimized = true;
     }
 }
 #endif

@@ -75,7 +75,7 @@ namespace Nebula{
                 case (FramebufferTextureFormat::RED_INT):   return GL_RED_INTEGER;
             }
 
-            assert(false);
+            assert((false));
             return 0;
         }
     }
@@ -136,7 +136,7 @@ namespace Nebula{
     {
         Bind();
 
-        assert(colorAttachmentID < m_ColorAttachments.size());
+        assert((colorAttachmentID < m_ColorAttachments.size()));
         glReadBuffer(GL_COLOR_ATTACHMENT0 + colorAttachmentID);
         int pixel;
         glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixel);
@@ -202,7 +202,7 @@ namespace Nebula{
         }
 
         if (m_ColorAttachments.size() > 1) {
-            assert(m_ColorAttachments.size() <= 4);
+            assert((m_ColorAttachments.size() <= 4));
             GLenum buffers[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
             glDrawBuffers(m_ColorAttachments.size(), buffers);
         }
@@ -210,7 +210,7 @@ namespace Nebula{
             glDrawBuffer(GL_NONE);
         }
 
-        assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+        assert((glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE));
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }

@@ -22,7 +22,7 @@ namespace Nebula{
 
         if(!InitContext_Int(s_Window)) {
             LOG_ERR("Could not init OpenGL context!");
-            assert(false);
+            assert((false));
         }
 
         LOG_INF("OpenGL Init Success!\n");

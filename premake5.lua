@@ -54,8 +54,8 @@ project "NebulaEngine"
     {
         "Nebula/src/Nebula/**.h",
         "Nebula/src/Nebula/**.cpp",
-        "Nebula/src/Platform/Graphics/**.h",
-        "Nebula/src/Platform/Graphics/**.cpp",
+        "Nebula/src/Platform/**.h",
+        "Nebula/src/Platform/**.cpp",
         "Nebula/ext/stb_image/**.cpp"
     }
 
@@ -113,19 +113,11 @@ project "NebulaEngine"
         }
         files 
         {
-            "Nebula/src/Platform/OS/Windows/**.h",
-            "Nebula/src/Platform/OS/Windows/**.cpp",
             "Nebula/ext/imgui/examples/imgui_impl_win32.cpp"
         }
 
     filter "system:macosx"
         systemversion "latest"
-        
-        files 
-        {
-            "Nebula/src/Platform/OS/MacOS/**.h",
-            "Nebula/src/Platform/OS/MacOS/**.cpp",
-        }
         links
         {
             "IOKit.framework", 
@@ -138,11 +130,6 @@ project "NebulaEngine"
     filter "system:linux"
         systemversion "latest"
         
-        files 
-        {
-            "Nebula/src/Platform/OS/Linux/**.h",
-            "Nebula/src/Platform/OS/Linux/**.cpp",
-        }
         defines
         {
             "_LIBS_SUPPLIED"
@@ -240,6 +227,7 @@ project "NebulaStudio"
         {
             "_LIBS_SUPPLIED"
         }
+        
         links
         {
             "X11",
@@ -248,9 +236,23 @@ project "NebulaStudio"
             "dl",
             "pthread",
             "imgui",
+            "imguizmo",
             "glad",
             "yaml-cpp",
-            "nfd"
+            "nfd",
+            "SPIRV-Cross",
+            "GenericCodeGen",
+            "OGLCompiler",
+            "OSDependent",
+            "MachineIndependent",
+            "SPIRV",
+            "SPVRemapper",
+            "glslang",
+            "glslang-default-resource-limits",
+            "SPIRV-Tools",
+            "SPIRV-Tools-opt",
+            "shaderc_util",
+            "shaderc",
         }
 
     filter "configurations:Debug"

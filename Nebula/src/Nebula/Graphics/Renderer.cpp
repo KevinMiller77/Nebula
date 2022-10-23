@@ -83,8 +83,8 @@ namespace Nebula{
 		mesh->m_Pipeline->Bind();
 		mesh->m_IndexBuffer->Bind();
 
-		auto& materials = mesh->GetMaterials();
-		for (Submesh& submesh : mesh->m_Submeshes)
+		auto materials = mesh->GetMaterials();
+		for (Submesh submesh : mesh->m_Submeshes)
 		{
 			// Material
 			Ref<MaterialInstance> material;
@@ -180,7 +180,7 @@ namespace Nebula{
 
     void Renderer::EndRenderPass()
 	{
-		assert(s_Data.m_ActiveRenderPass, "No active render pass! Have you called Renderer::EndRenderPass twice?");
+		assert((s_Data.m_ActiveRenderPass, "No active render pass! Have you called Renderer::EndRenderPass twice?"));
 		s_Data.m_ActiveRenderPass->GetSpecification().TargetFramebuffer->Unbind();
 		s_Data.m_ActiveRenderPass = nullptr;
 	}

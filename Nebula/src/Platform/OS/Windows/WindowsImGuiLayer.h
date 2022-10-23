@@ -1,7 +1,5 @@
 #pragma once
 #include <Core/PlatformInfo.h>
-#ifdef NEB_PLATFORM_WINDOWS
-
 #include <ImGui/ImGuiLayer.h>
 
 namespace Nebula{
@@ -24,5 +22,3 @@ namespace Nebula{
         float time = 0.0f;
     };
 }
-
-#endif

@@ -1,5 +1,6 @@
 #include "GLShader.h"
 
+#include <assert.h>
 #include <fstream>
 #include <glad/glad.h>
 #include <shaderc/shaderc.hpp>
@@ -175,7 +176,7 @@ namespace Nebula{
 			if (type.columns == 4)            return ShaderUniformType::Mat4;
 			break;
 		}
-		assert(false, "Unknown type!");
+		assert((false, "Unknown type!"));
 		return ShaderUniformType::None;
 	}
 
@@ -265,7 +266,7 @@ namespace Nebula{
 
 			GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 			if (location == -1) {
-				//assert(false);
+				//assert((false));
 			}
 			m_Resources[name] = ShaderResourceDeclaration(name, binding, 1);
 			glUniform1i(location, binding);
@@ -367,7 +368,7 @@ namespace Nebula{
 				{
 					std::string err = module.GetErrorMessage();
 					LOG_ERR("%s\n", err.c_str());
-					assert(false);
+					assert((false));
 				}
 
 				const uint8_t* begin = (const uint8_t*)module.cbegin();
@@ -421,7 +422,7 @@ namespace Nebula{
 						errs.push_back(err);
 					}
 					LOG_ERR("%s\n", errs[0].c_str());
-					assert(false);
+					assert((false));
 				}
 
 				const uint8_t* begin = (const uint8_t*)module.cbegin();
@@ -509,7 +510,7 @@ namespace Nebula{
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					LOG_ERR("%s\n", module.GetErrorMessage().c_str());
-					assert(false);
+					assert((false));
 				}
 
 				shaderData[0] = std::vector<uint32_t>(module.cbegin(), module.cend());
@@ -568,7 +569,7 @@ namespace Nebula{
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					LOG_ERR("%s\n", module.GetErrorMessage().c_str());
-					assert(false);
+					assert((false));
 				}
 
 				shaderData[1] = std::vector<uint32_t>(module.cbegin(), module.cend());
@@ -657,7 +658,7 @@ namespace Nebula{
 		}
 		else
 		{
-			assert(false, "Could not load shader!");
+			assert((false, "Could not load shader!"));
 		}
 		in.close();
 		return result;
@@ -673,10 +674,10 @@ namespace Nebula{
 		while (pos != std::string::npos)
 		{
 			size_t eol = source.find_first_of("\r\n", pos);
-			assert(eol != std::string::npos, "Syntax error");
+			assert((eol != std::string::npos, "Syntax error"));
 			size_t begin = pos + typeTokenLength + 1;
 			std::string type = source.substr(begin, eol - begin);
-			assert(type == "vertex" || type == "fragment" || type == "pixel" || type == "compute", "Invalid shader type specified");
+			assert((type == "vertex" || type == "fragment" || type == "pixel" || type == "compute", "Invalid shader type specified"));
 
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol);
 			pos = source.find(typeToken, nextLinePos);
@@ -844,7 +845,7 @@ namespace Nebula{
 				// We don't need the shader anymore.
 				glDeleteShader(shaderRendererID);
 
-				assert(false, "Failed");
+				assert((false, "Failed"));
 			}
 
 			shaderRendererIDs.push_back(shaderRendererID);
@@ -898,8 +899,8 @@ namespace Nebula{
 				}
 			}
 
-			assert(uniformBuffer);
-			assert(uniformBuffer->Size >= size);
+			assert((uniformBuffer));
+			assert((uniformBuffer->Size >= size));
 			glNamedBufferSubData(uniformBuffer->RendererID, 0, size, buffer);
 
 			delete[] buffer;

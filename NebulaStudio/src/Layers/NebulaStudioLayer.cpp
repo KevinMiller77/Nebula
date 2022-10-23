@@ -255,7 +255,7 @@ namespace Nebula
         // Only draw if entity has sprite component AND is not hidden
         if (shouldDrawImGuizmo) {
             bool shouldDrawSprite = selectedEntity.HasComponent<SpriteRendererComponent>() ? !selectedEntity.GetComponent<SpriteRendererComponent>().Hidden : false;
-            bool shouldDrawMesh = selectedEntity.HasComponent<MeshComponent>() ? selectedEntity.GetComponent<MeshComponent>().Mesh && selectedEntity.GetComponent<MeshComponent>().Mesh->IsLoaded() : false;
+            bool shouldDrawMesh = selectedEntity.HasComponent<MeshComponent>() ? selectedEntity.GetComponent<MeshComponent>().m_Mesh && selectedEntity.GetComponent<MeshComponent>().m_Mesh->IsLoaded() : false;
             shouldDrawImGuizmo = shouldDrawImGuizmo && (shouldDrawMesh || shouldDrawSprite);
         }
 

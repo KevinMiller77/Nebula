@@ -550,7 +550,7 @@ namespace Nebula {
 
             if (ImGui::TreeNodeEx((void*)typeid(MeshComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Mesh" )) {
 				auto& mc = entity.GetComponent<MeshComponent>();
-				Ref<Mesh> mesh = mc.Mesh;
+				Ref<Mesh> mesh = mc.m_Mesh;
 
                 bool deleteMesh = false;
                 ImGui::SameLine(ImGui::GetWindowWidth()-30);
@@ -590,7 +590,7 @@ namespace Nebula {
                         // mesh->Invalidate();
                         mesh = CreateRef<Mesh>(NewPath);
 						mesh->m_EntityID = entity.GetID();
-						mc.Mesh = mesh;
+						mc.m_Mesh = mesh;
                     }
 				}
 

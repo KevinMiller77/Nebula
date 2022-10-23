@@ -100,7 +100,7 @@ namespace Nebula{
 	};
 
 	struct MeshComponent {
-		Ref<Mesh> Mesh = nullptr;
+		Ref<Mesh> m_Mesh = nullptr;
 
 		MeshComponent() = default;
 		MeshComponent(const MeshComponent&) = default;

@@ -84,7 +84,7 @@ namespace Nebula{
 			samplers[i] = i;
 
 		s_2DData.TextureShader = Renderer::GetShaderLibrary()->Get("TexQuad");
-		assert(s_2DData.TextureShader);
+		assert((s_2DData.TextureShader));
 
 		s_2DData.TextureShader->Bind();
 		s_2DData.TextureShader->SetUniform("u_Textures", samplers, s_2DData.MaxTextureSlots);

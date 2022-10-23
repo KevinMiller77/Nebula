@@ -29,7 +29,7 @@ namespace Nebula{
         { 
             float dot = Dot(other);
             float mag = Magnitude() * Magnitude(other);
-            assert(mag != 0.0f);
+            assert((mag != 0.0f));
             return (float)acos(dot / mag); 
         }
         //  Return vlaue is in radians
@@ -40,7 +40,7 @@ namespace Nebula{
         Vec4<T> Normalize()    
         { 
             float mag = Magnitude();
-            assert(mag != 0); 
+            assert((mag != 0)); 
             X /= mag;
             Y /= mag;
             Z /= mag;
@@ -64,7 +64,7 @@ namespace Nebula{
         friend Vec4<T> operator+(Vec4<T> left, Vec4<T> right)   { return Vec4<T>(left.X + right.X, left.Y + right.Y, left.Z + right.Z, left.W + right.W); }
         friend Vec4<T> operator-(Vec4<T> left, Vec4<T> right)   { return Vec4<T>(left.X - right.X, left.Y - right.Y, left.Z - right.Z, left.W - right.W); }
         friend Vec4<T> operator*(Vec4<T> left, Vec4<T> right)   { return Vec4<T>(left.X * right.X, left.Y * right.Y, left.Z * right.Z, left.W * right.W); }
-        friend Vec4<T> operator/(Vec4<T> left, Vec4<T> right)   { assert((right.X != (T)(0) && right.Y != (T)(0)) && (right.Z != (T)(0) && right.W != (T)(0)));   // Divide by 0
+        friend Vec4<T> operator/(Vec4<T> left, Vec4<T> right)   { assert(((right.X != (T)(0) && right.Y != (T)(0)) && (right.Z != (T)(0) && right.W != (T)(0))));   // Divide by 0
                                                                      return Vec4<T>(left.X / right.X, left.Y / right.Y, left.Z / right.Z, left.W / right.W); }
 
         private:
@@ -92,7 +92,7 @@ namespace Nebula{
             void divide(const Vec4<T>& other)
             {
                 // Divide by 0
-                assert((other.X != (T)(0) && other.Y != (T)(0)) && (other.Z != (T)(0) && other.W != (T)(0)));
+                assert(((other.X != (T)(0) && other.Y != (T)(0)) && (other.Z != (T)(0) && other.W != (T)(0))));
                 X /= other.X;
                 Y /= other.Y;
                 Z /= other.Z;

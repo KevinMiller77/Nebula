@@ -179,6 +179,7 @@ namespace Nebula {
             case(iMeshMaterialFlags::AlphaMap) :        {return iMeshTextureType::ALPHA             ;}
             case(iMeshMaterialFlags::BumpMap) :         {return iMeshTextureType::BUMP              ;}
             case(iMeshMaterialFlags::DisplacementMap) : {return iMeshTextureType::DISPLACEMENT      ;}
+            default : { LOG_ERR("[Importer][Mesh] Invalid mesh texture type"); return iMeshTextureType::DISPLACEMENT; }
         }
     }
 

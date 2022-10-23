@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <Core/PlatformInfo.h>
 
+#ifdef NEB_PLATFORM_WINDOWS
+
 // See https://www.opengl.org/registry/specs/ARB/wgl_create_context.txt for all values
 #define WGL_CONTEXT_MAJOR_VERSION_ARB             0x2091
 #define WGL_CONTEXT_MINOR_VERSION_ARB             0x2092
@@ -23,8 +25,11 @@
 #define WGL_FULL_ACCELERATION_ARB                 0x2027
 #define WGL_TYPE_RGBA_ARB                         0x202B
 
+#endif
+
 namespace Nebula {
 
+#ifdef NEB_PLATFORM_WINDOWS
     typedef HGLRC WINAPI wglCreateContextAttribsARB_type(HDC hdc, HGLRC hShareContext,
         const int *attribList);
     wglCreateContextAttribsARB_type *wglCreateContextAttribsARB = nullptr;
@@ -63,7 +68,7 @@ namespace Nebula {
         window_class.lpszClassName = "Dummy_WGL_djuasiodwa";
 
         if (!RegisterClassA(&window_class)) {
-            assert(false, "Failed to register dummy OpenGL window.");
+            assert((false, "Failed to register dummy OpenGL window."));
         }
 
         HWND dummy_window = CreateWindowExA(
@@ -81,7 +86,7 @@ namespace Nebula {
             0);
 
         if (!dummy_window) {
-            assert(false, "Failed to create dummy OpenGL window.");
+            assert((false, "Failed to create dummy OpenGL window."));
         }
 
         HDC dummy_dc = GetDC(dummy_window);
@@ -99,25 +104,25 @@ namespace Nebula {
 
         int pixel_format = ChoosePixelFormat(dummy_dc, &pfd);
         if (!pixel_format) {
-            assert(false, "Failed to find a suitable pixel format.");
+            assert((false, "Failed to find a suitable pixel format."));
         }
         if (!SetPixelFormat(dummy_dc, pixel_format, &pfd)) {
-            assert(false, "Failed to set the pixel format.");
+            assert((false, "Failed to set the pixel format."));
         }
 
         HGLRC dummy_context = wglCreateContext(dummy_dc);
         if (!dummy_context) {
-            assert(false, "Failed to create a dummy OpenGL rendering context.");
+            assert((false, "Failed to create a dummy OpenGL rendering context."));
         }
 
         if (!wglMakeCurrent(dummy_dc, dummy_context)) {
             
-            assert(false, "Failed to activate dummy OpenGL rendering context.");
+            assert((false, "Failed to activate dummy OpenGL rendering context."));
         }
 
         // init glad
         if (!gladLoadGLLoader((GLADloadproc)GetAnyGLFuncAddress)) {
-            assert(false, "Could not load glad!");
+            assert((false, "Could not load glad!"));
         }
 
         wglCreateContextAttribsARB = (wglCreateContextAttribsARB_type*)wglGetProcAddress("wglCreateContextAttribsARB");
@@ -132,7 +137,7 @@ namespace Nebula {
 
     bool GLContext::InitContext_Int(void* window) {
         if (!IsWindow((HWND)window)) {
-            assert(true, "Attempted to create GL context with invalid Win32 HWND");
+            assert((true, "Attempted to create GL context with invalid Win32 HWND"));
         }
 
         s_Window = (HWND)window;
@@ -156,13 +161,13 @@ namespace Nebula {
         HDC real_dc = GetDC((HWND)window);
         wglChoosePixelFormatARB(real_dc, pixel_format_attribs, 0, 1, &pixel_format, &num_formats);
         if (!num_formats) {
-            assert(true, "Failed to set the OpenGL 4.6 pixel format.");
+            assert((true, "Failed to set the OpenGL 4.6 pixel format."));
         }
 
         PIXELFORMATDESCRIPTOR pfd;
         DescribePixelFormat(real_dc, pixel_format, sizeof(pfd), &pfd);
         if (!SetPixelFormat(real_dc, pixel_format, &pfd)) {
-            assert(true, "Failed to set the OpenGL 4.6 pixel format.");
+            assert((true, "Failed to set the OpenGL 4.6 pixel format."));
         }
 
         // Specify that we want to create an OpenGL 4.6 core profile context
@@ -175,11 +180,11 @@ namespace Nebula {
 
         HGLRC gl46_context = wglCreateContextAttribsARB(real_dc, 0, gl46_attribs);
         if (!gl46_context) {
-            assert(true, "Failed to create OpenGL 4.6 context.");
+            assert((true, "Failed to create OpenGL 4.6 context."));
         }
 
         if (!wglMakeCurrent(real_dc, gl46_context)) {
-            assert(true, "Failed to activate OpenGL 4.6 rendering context.");
+            assert((true, "Failed to activate OpenGL 4.6 rendering context."));
         }
 
         s_DeviceContext = real_dc;
@@ -191,7 +196,7 @@ namespace Nebula {
     }
 
     void GLContext::SetVSync_Int(bool vsync) {
-        assert(wglSwapIntervalEXT != NULL);
+        assert((wglSwapIntervalEXT != NULL));
 
         if (vsync) {
             if (wglSwapIntervalEXT) {
@@ -203,4 +208,5 @@ namespace Nebula {
             }
         }
     }
+#endif
 }

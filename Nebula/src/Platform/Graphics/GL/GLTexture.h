@@ -18,7 +18,7 @@ namespace Nebula {
 		virtual Mat42f GetTexCoords() const override { return m_TextureCoords; }
         
         // TODO: Implement SetData
-		virtual void SetData(void* data, uint32_t size) override { LOG_ERR("Cannot set data of a texture cube!!\n"); assert(false); };
+		virtual void SetData(void* data, uint32_t size) override { LOG_ERR("Cannot set data of a texture cube!!\n"); assert((false)); };
 		// This function currently returns the expected number of mips based on image size,
 		// not present mips in data
 		virtual uint32_t GetMipLevelCount() const override;

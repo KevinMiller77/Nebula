@@ -29,7 +29,7 @@ namespace Nebula {
         Ref<iMeshScene> sceneRef = sceneMeshFile->meshScene;
 		if (!sceneRef->HasMeshes()) {
 			LOG_ERR("Failed to load meshRef file: %s\n", filename.c_str());
-			assert(false);
+			assert((false));
 		}
 
 		m_Scene = sceneRef;
@@ -40,8 +40,8 @@ namespace Nebula {
 
         Ref<iMeshRoot> rootRef = m_Scene->mRootNode;
 
-        assert(rootRef->HasPositions(), "Meshes require positions.");
-        //assert(rootRef->HasNormals(), "Meshes require normals.");
+        assert((rootRef->HasPositions(), "Meshes require positions."));
+        //assert((rootRef->HasNormals(), "Meshes require normals."));
 
         std::vector<Vec3f> l_Positions = rootRef->mPositions;
         std::vector<Vec3f> l_Normals = rootRef->mNormals;
@@ -144,7 +144,7 @@ namespace Nebula {
 
 		PipelineSpecification pipelineSpecification;
 		auto shader = m_MeshShader;
-		pipelineSpecification.Shader = shader;
+		pipelineSpecification.m_Shader = shader;
 
 		// Bones
 		// if (m_IsAnimated)
@@ -297,7 +297,7 @@ namespace Nebula {
 			};
 			m_VertexBuffer->SetLayout(m_VertexBufferLayout);
 		}
-		pipelineSpecification.Layout = m_VertexBufferLayout;
+		pipelineSpecification.m_Layout = m_VertexBufferLayout;
 				
 		m_Pipeline = Pipeline::Create(pipelineSpecification);
 
@@ -373,7 +373,7 @@ namespace Nebula {
 
 	uint32_t Mesh::FindPosition(float AnimationTime, const iNodeAnimation& pNodeAnim)
 	{
-		assert(pNodeAnim.mPositionKeys.size() > 0);
+		assert((pNodeAnim.mPositionKeys.size() > 0));
 		for (uint32_t i = 0; i < pNodeAnim.mPositionKeys.size() - 1; i++)
 		{
 			if (AnimationTime < (float)pNodeAnim.mPositionKeys[i + 1].mKeyTime)
@@ -386,7 +386,7 @@ namespace Nebula {
 
 	uint32_t Mesh::FindRotation(float AnimationTime, const iNodeAnimation& pNodeAnim)
 	{
-		assert(pNodeAnim.mRotationKeys.size() > 0);
+		assert((pNodeAnim.mRotationKeys.size() > 0));
 
 		for (uint32_t i = 0; i < pNodeAnim.mRotationKeys.size() - 1; i++)
 		{
@@ -400,7 +400,7 @@ namespace Nebula {
 
 	uint32_t Mesh::FindScaling(float AnimationTime, const iNodeAnimation& pNodeAnim)
 	{
-		assert(pNodeAnim.mScaleKeys.size() > 0);
+		assert((pNodeAnim.mScaleKeys.size() > 0));
 
 		for (uint32_t i = 0; i < pNodeAnim.mScaleKeys.size() - 1; i++)
 		{
@@ -428,7 +428,7 @@ namespace Nebula {
         float DeltaTime = (float)(nodeAnim.mPositionKeys[NextPositionIndex].mKeyTime - nodeAnim.mPositionKeys[PositionIndex].mKeyTime);
 		
         float Factor = (animationTime - (float)nodeAnim.mPositionKeys[PositionIndex].mKeyTime) / DeltaTime;
-		assert(Factor <= 1.0f, "Factor must be below 1.0f");
+		assert((Factor <= 1.0f, "Factor must be below 1.0f"));
 		Factor = clamp(Factor, 0.0f, 1.0f);
 		
         const Vec3f& Start = nodeAnim.mPositionKeys[PositionIndex].mPosition;
@@ -450,12 +450,12 @@ namespace Nebula {
 
 		uint32_t RotationIndex = FindRotation(animationTime, nodeAnim);
 		uint32_t NextRotationIndex = (RotationIndex + 1);
-		assert(NextRotationIndex < nodeAnim.mRotationKeys.size());
+		assert((NextRotationIndex < nodeAnim.mRotationKeys.size()));
 		
         float DeltaTime = (float)(nodeAnim.mPositionKeys[NextRotationIndex].mKeyTime - nodeAnim.mRotationKeys[RotationIndex].mKeyTime);
 		
         float Factor = (animationTime - (float)nodeAnim.mRotationKeys[RotationIndex].mKeyTime) / DeltaTime;
-		assert(Factor <= 1.0f, "Factor must be below 1.0f");
+		assert((Factor <= 1.0f, "Factor must be below 1.0f"));
 		Factor = clamp(Factor, 0.0f, 1.0f);
 		
         const Vec3f& Start = nodeAnim.mRotationKeys[RotationIndex].mRotation;
@@ -477,11 +477,11 @@ namespace Nebula {
 		uint32_t index = FindScaling(animationTime, nodeAnim);
 		uint32_t nextIndex = (index + 1);
 		
-        assert(nextIndex < nodeAnim.mScaleKeys.size());
+        assert((nextIndex < nodeAnim.mScaleKeys.size()));
 		float deltaTime = (float)(nodeAnim.mScaleKeys[nextIndex].mKeyTime - nodeAnim.mScaleKeys[index].mKeyTime);
 		float factor = (animationTime - (float)nodeAnim.mScaleKeys[index].mKeyTime) / deltaTime;
 		
-        assert(factor <= 1.0f, "Factor must be below 1.0f");
+        assert((factor <= 1.0f, "Factor must be below 1.0f"));
 		
         factor = clamp(factor, 0.0f, 1.0f);
 		const auto& start = nodeAnim.mScaleKeys[index].mScale;
@@ -536,9 +536,13 @@ namespace Nebula {
 	{
 		for (uint32_t i = 0; i < animation.mNumChannels; i++)
 		{
-			const iNodeAnimation nodeAnim = animation.mChannels[i];
-			if (nodeAnim.mName == nodeName)
-				return &nodeAnim;
+			iNodeAnimation* nodeAnim = new iNodeAnimation();
+            *nodeAnim = animation.mChannels[i];
+			if (nodeAnim->mName == nodeName) {
+				return nodeAnim;
+            }
+            
+            delete nodeAnim;
 		}
 		return nullptr;
 	} 

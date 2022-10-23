@@ -29,7 +29,7 @@ namespace Nebula{
         { 
             float dot = Dot(other);
             float mag = Magnitude() * Magnitude(other);
-            assert(mag != 0.0f);
+            assert((mag != 0.0f));
             return (float)acos(dot / mag); 
         }
         //  Return vlaue is in radians
@@ -40,7 +40,7 @@ namespace Nebula{
         Vec2<T> Normalize()    
         { 
             float mag = Magnitude();
-            assert(mag != 0); 
+            assert((mag != 0)); 
             X /= mag;
             Y /= mag;
             return Vec2<T>(X, Y);
@@ -62,7 +62,7 @@ namespace Nebula{
         friend Vec2<T> operator+(Vec2<T> left, Vec2<T> right)   { return Vec2<T>(left.X + right.X, left.Y + right.Y); }
         friend Vec2<T> operator-(Vec2<T> left, Vec2<T> right)   { return Vec2<T>(left.X - right.X, left.Y - right.Y); }
         friend Vec2<T> operator*(Vec2<T> left, Vec2<T> right)   { return Vec2<T>(left.X * right.X, left.Y * right.Y); }
-        friend Vec2<T> operator/(Vec2<T> left, Vec2<T> right)   { assert(right.X != (T)(0) && right.Y != (T)(0));   // Divide by 0
+        friend Vec2<T> operator/(Vec2<T> left, Vec2<T> right)   { assert((right.X != (T)(0) && right.Y != (T)(0)));   // Divide by 0
                                                                      return Vec2<T>(left.X / right.X, left.Y / right.Y); }
 
         private:
@@ -84,7 +84,7 @@ namespace Nebula{
             void divide(const Vec2<T>& other)
             {
                 // Divide by 0
-                assert(other.Y != (T)(0) && other.X != (T)(0));
+                assert((other.Y != (T)(0) && other.X != (T)(0)));
                 X /= other.X;
                 Y /= other.Y;
             }

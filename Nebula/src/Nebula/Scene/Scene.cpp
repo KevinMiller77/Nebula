@@ -197,7 +197,7 @@ namespace Nebula{
 		}
 
 		if(entity.HasComponent<MeshComponent>()) {
-			Ref<Mesh> mesh = entity.GetComponent<MeshComponent>().Mesh;
+			Ref<Mesh> mesh = entity.GetComponent<MeshComponent>().m_Mesh;
 			if (mesh) {
 				Renderer::SubmitMesh(mesh, transform.GetTransformation());
 			}
@@ -350,7 +350,9 @@ namespace Nebula{
 		{
 			for (auto entity : view)
 			{
-				auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+				auto& transform = view.get<TransformComponent>(entity);
+                auto& camera = view.get<CameraComponent>(entity);
+
 				camera.Camera.WantsMainCamera(false);
 				camera.Camera.RecalculateProjection();
 				SceneMainCameraEntity = entity;
@@ -363,7 +365,8 @@ namespace Nebula{
         // Get Main Camera information for renderer
 		for (auto entity : view)
 		{
-			auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+			auto& transform = view.get<TransformComponent>(entity);
+            auto& camera = view.get<CameraComponent>(entity);
 			
 			if (camera.Camera.WantsMainCamera())
 			{

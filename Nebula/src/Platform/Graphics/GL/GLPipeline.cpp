@@ -20,7 +20,7 @@ namespace Nebula {
 			case ShaderDataType::Bool:     return GL_BOOL;
 		}
 
-		assert(false);
+		assert((false));
 		return 0;
 	}
 
@@ -35,7 +35,7 @@ namespace Nebula {
 	}
 
     void GLPipeline::Invalidate() {
-        assert(m_Specification.Layout.GetElements().size());
+        assert((m_Specification.m_Layout.GetElements().size()));
 
         if (m_VertexArrayRendererID)
             glDeleteVertexArrays(1, &m_VertexArrayRendererID);
@@ -46,7 +46,7 @@ namespace Nebula {
     void GLPipeline::Bind() {
         glBindVertexArray(m_VertexArrayRendererID);
 
-        const BufferLayout& layout = m_Specification.Layout;
+        const BufferLayout& layout = m_Specification.m_Layout;
         uint32_t attribIndex = 0;
         for (const BufferElement& element : layout)
         {

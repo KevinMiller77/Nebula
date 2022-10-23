@@ -1,17 +1,21 @@
 #include "WindowsWindow.h"
 #include "WindowsInput.h"
 
+#include <Core/PlatformInfo.h>
+
+#ifdef NEB_PLATFORM_WINDOWS
+
 #include <Windows.h>
 #include <dwmapi.h>
 
 #include <stb_image/stb_image.h>
 
-#include <Core/PlatformInfo.h>
 
 #include <Core/VFS.h>
 #include <Nebula_pch.h>
 
 #include <chrono>
+
 
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 
@@ -21,7 +25,10 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam
 const DWORD s_DefaultWindowedStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN;
 const DWORD s_DefaultFullscreenStyle = WS_POPUP | WS_VISIBLE;
 
+#endif
+
 namespace Nebula{
+    #ifdef NEB_PLATFORM_WINDOWS
     WindowsData WindowsWindow::data = WindowsData();
     Ref<WindowsWindow> winRef;
 
@@ -257,7 +264,7 @@ namespace Nebula{
                         NULL };
     
         if(!::RegisterClassEx(&wc)) {
-            assert(1, "Could not register window class");
+            assert((1, "Could not register window class"));
         }
 
         s_WindowHandle = ::CreateWindowExA( inf.ShowOnTaskbar ? 0 : WS_EX_TOOLWINDOW,
@@ -726,4 +733,44 @@ namespace Nebula{
             return;
         }
     }
+#else
+    WindowsData WindowsWindow::data = WindowsData();
+    
+    void WindowsWindow::ToggleFullscreen() {}
+    WindowsWindow::WindowsWindow(WindowInfo inf) {}
+    WindowsWindow::~WindowsWindow() {}
+    void WindowsWindow::HandleError() {}
+    void WindowsWindow::OnUpdate() {} 
+    float WindowsWindow::GetTime() { return 0; }
+    uint32 WindowsWindow::GetWidth() const { return 0; }
+    uint32 WindowsWindow::GetHeight() const { return 0; }
+    void WindowsWindow::SetWindowSize(uint32 width, uint32 height) {}
+    void WindowsWindow::SetResizeable(bool resizeable) {};
+    uint32* WindowsWindow::GetWidthPtr() const { return nullptr; }
+    uint32* WindowsWindow::GetHeightPtr() const { return nullptr; }
+    void WindowsWindow::SetIcon(std::string filepath) {}
+    void WindowsWindow::MaximizeWindow() {}
+    void WindowsWindow::RestoreWindow()  {} 
+    void WindowsWindow::MinimizeWindow() {}
+    Vec2u WindowsWindow::GetMaxWindowSize() { return Vec2u(0, 0); }
+    void WindowsWindow::SetPassthrough(bool enabled) {}
+    void WindowsWindow::SetFloating(bool enabled) {}
+    void WindowsWindow::SetTransparentFramebuffer(bool enabled) {}
+    void WindowsWindow::SetDecorated(bool enabled) {}
+    void WindowsWindow::SetVSync(bool enabled) {}
+    bool WindowsWindow::IsVSync() const { return true; }
+    void* WindowsWindow::GetNativeWindow() { return nullptr; }
+    void WindowsWindow::SwapIO(std::string in, std::string out, std::string err) {}
+    void WindowsWindow::EnableConsole()  {}
+    void WindowsWindow::DisableConsole() {}
+    void WindowsWindow::ShutDown() {}
+    bool WindowsWindow::SetWindowStyleVar(int style, bool enable) { return true; }
+    void WindowsWindow::UpdateWindowAttribs() {}
+
+    bool WindowsInput::IsKeyPressedAsyncInt(KeyCode key) { return true; }
+    bool WindowsInput::IsMouseButtonPressedAsyncInt(MouseCode key) { return true;}
+    Vec2f WindowsInput::GetMousePosInt() { return Vec2f(0.0f, 0.0f); }
+    void WindowsInput:: SetMousePosInt(Vec2f newPos) {}
+
+#endif
 }

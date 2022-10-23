@@ -86,6 +86,16 @@
         "bit": "cpp",
         "clocale": "cpp",
         "stop_token": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "cassert": "cpp",
+        "*.inc": "cpp",
+        "*.tcc": "cpp",
+        "codecvt": "cpp",
+        "cwctype": "cpp",
+        "memory_resource": "cpp",
+        "string_view": "cpp",
+        "numbers": "cpp",
+        "ranges": "cpp",
+        "semaphore": "cpp"
     }
 }

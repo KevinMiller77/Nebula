@@ -11,6 +11,10 @@ project "shaderc"
     dependson {
         "shaderc_util"
     }
+    
+    links {
+        "shaderc_util"
+    }
 
 	files
 	{
@@ -19,6 +23,7 @@ project "shaderc"
         "shaderc/libshaderc/src/shaderc.cc",
         "shaderc/libshaderc/src/shaderc_private.h",
 	}
+
 
     includedirs {
         "shaderc/libshaderc/include",

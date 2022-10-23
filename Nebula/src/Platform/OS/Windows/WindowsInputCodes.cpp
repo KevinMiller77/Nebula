@@ -3,6 +3,7 @@
 #include <Core/PlatformInfo.h>
 
 namespace Nebula {
+    #ifdef NEB_PLATFORM_WINDOWS
     std::unordered_map<int, KeyCode> WindowsInput::KeyCodeMapWinToNeb = {
         { VK_SPACE, KeyCode::Space},
 		{ VK_OEM_7, KeyCode::Apostrophe}, /* ' */
@@ -254,5 +255,11 @@ namespace Nebula {
         { VK_RBUTTON , MouseCode::ButtonRight },
         { VK_MBUTTON , MouseCode::ButtonMiddle }
     };
-    
+    #else
+    std::unordered_map<int, KeyCode> WindowsInput::KeyCodeMapWinToNeb = std::unordered_map<int, KeyCode>();
+    std::unordered_map<KeyCode, int> WindowsInput::KeyCodeMapNebToWin = std::unordered_map<KeyCode, int>();
+
+    std::unordered_map<int, MouseCode> WindowsInput::MouseCodeMapWinToNeb = std::unordered_map<int, MouseCode>();
+    std::unordered_map<MouseCode, int> WindowsInput::MouseCodeMapNebToWin = std::unordered_map<MouseCode, int>();
+    #endif
 }
