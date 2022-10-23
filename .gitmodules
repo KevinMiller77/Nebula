@@ -1,0 +1,15 @@
+[submodule "Nebula/ext/shaderc"]
+	path = Nebula/ext/shaderc
+	url = https://github.com/google/shaderc.git
+[submodule "Nebula/ext/glslang"]
+	path = Nebula/ext/glslang
+	url = https://github.com/KhronosGroup/glslang.git
+[submodule "Nebula/ext/SPIRV-Headers"]
+	path = Nebula/ext/SPIRV-Headers
+	url = https://github.com/KhronosGroup/SPIRV-Headers.git
+[submodule "SPIRV-Tools"]
+	path = SPIRV-Tools
+	url = https://github.com/KhronosGroup/SPIRV-Tools.git
+[submodule "Nebula/ext/SPIRV-Tools"]
+	path = Nebula/ext/SPIRV-Tools
+	url = https://github.com/KhronosGroup/SPIRV-Tools.git

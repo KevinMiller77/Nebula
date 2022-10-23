@@ -311,37 +311,37 @@ namespace Nebula{
 			});
 		}
 
-        //Update Sound Info
-        {
+        // //Update Sound Info
+        // {
 
-            auto alcView = Registry.view<TransformComponent, AudioListenerComponent>();
+        //     auto alcView = Registry.view<TransformComponent, AudioListenerComponent>();
                     
-            bool hadListener = false;
-            for (auto entity : alcView) {
-                auto& [transform, audio] = alcView.get<TransformComponent, AudioListenerComponent>(entity);
-                if (!audio.IsActiveListener) {
-                    continue;
-                }
-                Audio::SetListenerPos(transform.Translation);
+        //     bool hadListener = false;
+        //     for (auto entity : alcView) {
+        //         auto& [transform, audio] = alcView.get<TransformComponent, AudioListenerComponent>(entity);
+        //         if (!audio.IsActiveListener) {
+        //             continue;
+        //         }
+        //         Audio::SetListenerPos(transform.Translation);
 
-                Quat viewing = Quat(transform.Rotation);
-                Audio::SetListenerOrientation(viewing.GetForwardVec(), viewing.GetUpVec());
+        //         Quat viewing = Quat(transform.Rotation);
+        //         Audio::SetListenerOrientation(viewing.GetForwardVec(), viewing.GetUpVec());
 
-                //TODO: When physics system exists, use it
-                // Audio::SetListenerVelocity();
+        //         //TODO: When physics system exists, use it
+        //         // Audio::SetListenerVelocity();
 
-                hadListener = true;
-            }
-            auto ascView = Registry.view<TransformComponent, AudioSourceComponent>();
-            for (auto entity : ascView) {
-                auto& [transform, audio] = ascView.get<TransformComponent, AudioSourceComponent>(entity);
-                audio.Source->SetPosition(transform.Translation);
-                if (!hadListener && audio.Source->IsPlaying()) {
-                    audio.Source->Stop();
-                }
-            }
+        //         hadListener = true;
+        //     }
+        //     auto ascView = Registry.view<TransformComponent, AudioSourceComponent>();
+        //     for (auto entity : ascView) {
+        //         auto& [transform, audio] = ascView.get<TransformComponent, AudioSourceComponent>(entity);
+        //         audio.Source->SetPosition(transform.Translation);
+        //         if (!hadListener && audio.Source->IsPlaying()) {
+        //             audio.Source->Stop();
+        //         }
+        //     }
 
-        }
+        // }
 	
 		// Check for a new main camera in the scene
 		auto view = Registry.view<TransformComponent, CameraComponent>();

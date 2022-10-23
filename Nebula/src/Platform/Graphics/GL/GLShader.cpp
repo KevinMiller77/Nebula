@@ -467,7 +467,7 @@ namespace Nebula{
 
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
-		options.SetTargetEnvironment(shaderc_target_env_opengl_compat, shaderc_env_version_opengl_4_5);
+		options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
 
 		std::array<GLuint, 2> shaderRendererIDs = { 0, 0 };
 		std::vector<uint32_t> shaderData[2]; // vertex + fragment for now

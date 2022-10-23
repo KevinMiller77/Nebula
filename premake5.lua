@@ -19,11 +19,20 @@ workspace "Nebula"
         include "Nebula/ext/imgui"
         include "Nebula/ext/yaml-cpp"
         include "Nebula/ext/nativefiledialog"
-        include "Nebula/ext/libogg"
-        include "Nebula/ext/Vorbis"
-        include "Nebula/ext/OpenAL-Soft"
         include "Nebula/ext/imguizmo"
         include "Nebula/ext/SPIRV-Cross"
+        include "Nebula/ext/GenericCodeGen"
+        include "Nebula/ext/OGLCompiler"
+        include "Nebula/ext/OSDependent"
+        include "Nebula/ext/MachineIndependent"
+        include "Nebula/ext/SPIRV"
+        include "Nebula/ext/SPVRemapper"
+        include "Nebula/ext/glslang"
+        include "Nebula/ext/glslang-default-resource-limits"
+        include "Nebula/ext/SPIRV-Tools"
+        include "Nebula/ext/SPIRV-Tools-opt"
+        include "Nebula/ext/shaderc_util"
+        include "Nebula/ext/shaderc"
         -- include "Nebula/ext/freetype"
         group ""
         
@@ -68,14 +77,9 @@ project "NebulaEngine"
         "Nebula/ext/glad/include",
         "Nebula/ext/yaml-cpp/include",
         "Nebula/ext/nativefiledialog/src/include",
-        "Nebula/ext/OpenAL-Soft/include",
-		"Nebula/ext/OpenAL-Soft/src",
-		"Nebula/ext/OpenAL-Soft/src/common",
-		"Nebula/ext/libogg/include",
-		"Nebula/ext/Vorbis/include",
-		"Nebula/ext/minimp3",
         "Nebula/ext/SPIRV-Cross/",
-        "Nebula/ext/shaderc/include"
+        "Nebula/ext/shaderc/libshaderc/include",
+        "Nebula/ext/shaderc/libshaderc_util/include",
     }
 
     links
@@ -85,10 +89,19 @@ project "NebulaEngine"
         "glad",
         "yaml-cpp",
         "nfd",
-        "OpenAL-Soft",
-		"Vorbis",
         "SPIRV-Cross",
-        -- "freetype"
+        "GenericCodeGen",
+        "OGLCompiler",
+        "OSDependent",
+        "MachineIndependent",
+        "SPIRV",
+        "SPVRemapper",
+        "glslang",
+        "glslang-default-resource-limits",
+        "SPIRV-Tools",
+        "SPIRV-Tools-opt",
+        "shaderc_util",
+        "shaderc"
     }
 
     filter "system:windows"
@@ -104,34 +117,6 @@ project "NebulaEngine"
             "Nebula/src/Platform/OS/Windows/**.cpp",
             "Nebula/ext/imgui/examples/imgui_impl_win32.cpp"
         }
-        filter "configurations:Release"
-        links {
-                "Nebula/ext/shaderc/lib/Release/shaderc.lib",
-                "Nebula/ext/shaderc/lib/Release/shaderc_util.lib",
-                "Nebula/ext/glslang/lib/Release/GenericCodeGen.lib",
-                "Nebula/ext/glslang/lib/Release/glslang.lib",
-                "Nebula/ext/glslang/lib/Release/MachineIndependent.lib",
-                "Nebula/ext/glslang/lib/Release/OGLCompiler.lib",
-                "Nebula/ext/glslang/lib/Release/OSDependent.lib",
-                "Nebula/ext/glslang/lib/Release/SPIRV.lib",
-                "Nebula/ext/SPIRV-Tools/lib/Release/SPIRV-Tools.lib",
-                "Nebula/ext/SPIRV-Tools/lib/Release/SPIRV-Tools-opt.lib",
-            }
-        filter "configurations:Debug"
-            links 
-            {
-                "Nebula/ext/shaderc/lib/Debug/shaderc.lib",
-                "Nebula/ext/shaderc/lib/Debug/shaderc_util.lib",
-                "Nebula/ext/glslang/lib/Debug/GenericCodeGend.lib",
-                "Nebula/ext/glslang/lib/Debug/glslangd.lib",
-                "Nebula/ext/glslang/lib/Debug/MachineIndependentd.lib",
-                "Nebula/ext/glslang/lib/Debug/OGLCompilerd.lib",
-                "Nebula/ext/glslang/lib/Debug/OSDependentd.lib",
-                "Nebula/ext/glslang/lib/Debug/SPIRVd.lib",
-                "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools.lib",
-                "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools-opt.lib",
-            }
-
 
     filter "system:macosx"
         systemversion "latest"
@@ -217,6 +202,8 @@ project "NebulaStudio"
         "Nebula/ext/imgui",
         "Nebula/ext/imguizmo",
         "Nebula/ext/yaml-cpp/include",
+        -- "Nebula/ext/libshaderc-util/include",
+
         "Nebula/include",
         "Nebula/src/Nebula"
     }

@@ -105,7 +105,7 @@ layout (binding = 2) uniform sampler2D u_AlbedoTexture;
 // BRDF LUT
 //layout (binding = 8) uniform sampler2D u_BRDFLUTTexture;
 
-layout (push_constant) uniform Material
+layout (binding = 9) uniform Material
 {
 	layout (offset = 64) vec3 AlbedoColor;
 	float Metalness;

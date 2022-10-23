@@ -235,7 +235,6 @@ namespace Nebula{
         data.transparent = inf.Transparent;
         data.mousePassthrough = inf.MousePassthrough;
 
-        UpdateWindowAttribs();
 
         SetEventCallback(inf.EventCallback);
 
@@ -281,6 +280,8 @@ namespace Nebula{
 
         m_Context = GraphicsContext::Create(s_WindowHandle);
         m_Context->Init();
+        
+        UpdateWindowAttribs();
         
         LockWindowUpdate(NULL);
 

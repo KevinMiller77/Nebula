@@ -9,50 +9,36 @@ ifndef verbose
 endif
 
 ifeq ($(config),debug)
-  glfw_config = debug
   glad_config = debug
   imgui_config = debug
   yaml_cpp_config = debug
   nfd_config = debug
-  libogg_config = debug
-  Vorbis_config = debug
-  OpenAL_Soft_config = debug
   imguizmo_config = debug
+  SPIRV_Cross_config = debug
   NebulaEngine_config = debug
-  SpaceSim_config = debug
   NebulaStudio_config = debug
 
 else ifeq ($(config),release)
-  glfw_config = release
   glad_config = release
   imgui_config = release
   yaml_cpp_config = release
   nfd_config = release
-  libogg_config = release
-  Vorbis_config = release
-  OpenAL_Soft_config = release
   imguizmo_config = release
+  SPIRV_Cross_config = release
   NebulaEngine_config = release
-  SpaceSim_config = release
   NebulaStudio_config = release
 
 else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := glfw glad imgui yaml-cpp nfd libogg Vorbis OpenAL-Soft imguizmo NebulaEngine SpaceSim NebulaStudio
+PROJECTS := glad imgui yaml-cpp nfd imguizmo SPIRV-Cross NebulaEngine NebulaStudio
 
 .PHONY: all clean help $(PROJECTS) Dependencies
 
 all: $(PROJECTS)
 
-Dependencies: OpenAL-Soft Vorbis glad glfw imgui imguizmo libogg nfd yaml-cpp
-
-glfw:
-ifneq (,$(glfw_config))
-	@echo "==== Building glfw ($(glfw_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/glfw -f Makefile config=$(glfw_config)
-endif
+Dependencies: SPIRV-Cross glad imgui imguizmo nfd yaml-cpp
 
 glad:
 ifneq (,$(glad_config))
@@ -78,60 +64,38 @@ ifneq (,$(nfd_config))
 	@${MAKE} --no-print-directory -C Nebula/ext/nativefiledialog -f Makefile config=$(nfd_config)
 endif
 
-libogg:
-ifneq (,$(libogg_config))
-	@echo "==== Building libogg ($(libogg_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/libogg -f Makefile config=$(libogg_config)
-endif
-
-Vorbis: libogg
-ifneq (,$(Vorbis_config))
-	@echo "==== Building Vorbis ($(Vorbis_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/Vorbis -f Makefile config=$(Vorbis_config)
-endif
-
-OpenAL-Soft:
-ifneq (,$(OpenAL_Soft_config))
-	@echo "==== Building OpenAL-Soft ($(OpenAL_Soft_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/OpenAL-Soft -f Makefile config=$(OpenAL_Soft_config)
-endif
-
 imguizmo:
 ifneq (,$(imguizmo_config))
 	@echo "==== Building imguizmo ($(imguizmo_config)) ===="
 	@${MAKE} --no-print-directory -C Nebula/ext/imguizmo -f Makefile config=$(imguizmo_config)
 endif
 
-NebulaEngine: imgui imguizmo glad glfw yaml-cpp nfd OpenAL-Soft Vorbis
+SPIRV-Cross:
+ifneq (,$(SPIRV_Cross_config))
+	@echo "==== Building SPIRV-Cross ($(SPIRV_Cross_config)) ===="
+	@${MAKE} --no-print-directory -C Nebula/ext/SPIRV-Cross/SPIRV-Cross -f Makefile config=$(SPIRV_Cross_config)
+endif
+
+NebulaEngine: imgui imguizmo glad yaml-cpp nfd SPIRV-Cross
 ifneq (,$(NebulaEngine_config))
 	@echo "==== Building NebulaEngine ($(NebulaEngine_config)) ===="
 	@${MAKE} --no-print-directory -C build -f NebulaEngine.make config=$(NebulaEngine_config)
 endif
 
-SpaceSim: NebulaEngine imgui glad glfw yaml-cpp nfd
-ifneq (,$(SpaceSim_config))
-	@echo "==== Building SpaceSim ($(SpaceSim_config)) ===="
-	@${MAKE} --no-print-directory -C build -f SpaceSim.make config=$(SpaceSim_config)
-endif
-
-NebulaStudio: NebulaEngine imgui glad glfw yaml-cpp nfd
+NebulaStudio: NebulaEngine imgui glad yaml-cpp nfd
 ifneq (,$(NebulaStudio_config))
 	@echo "==== Building NebulaStudio ($(NebulaStudio_config)) ===="
 	@${MAKE} --no-print-directory -C build -f NebulaStudio.make config=$(NebulaStudio_config)
 endif
 
 clean:
-	@${MAKE} --no-print-directory -C Nebula/ext/glfw -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/glad -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/imgui -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/yaml-cpp -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/nativefiledialog -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/libogg -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/Vorbis -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/OpenAL-Soft -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/imguizmo -f Makefile clean
+	@${MAKE} --no-print-directory -C Nebula/ext/SPIRV-Cross/SPIRV-Cross -f Makefile clean
 	@${MAKE} --no-print-directory -C build -f NebulaEngine.make clean
-	@${MAKE} --no-print-directory -C build -f SpaceSim.make clean
 	@${MAKE} --no-print-directory -C build -f NebulaStudio.make clean
 
 help:
@@ -144,17 +108,13 @@ help:
 	@echo "TARGETS:"
 	@echo "   all (default)"
 	@echo "   clean"
-	@echo "   glfw"
 	@echo "   glad"
 	@echo "   imgui"
 	@echo "   yaml-cpp"
 	@echo "   nfd"
-	@echo "   libogg"
-	@echo "   Vorbis"
-	@echo "   OpenAL-Soft"
 	@echo "   imguizmo"
+	@echo "   SPIRV-Cross"
 	@echo "   NebulaEngine"
-	@echo "   SpaceSim"
 	@echo "   NebulaStudio"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

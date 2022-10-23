@@ -150,25 +150,25 @@ namespace Nebula{
 	};
 
 
-    struct AudioSourceComponent
-    {
-        Ref<AudioSource> Source = CreateRef<AudioSource>();
+    // struct AudioSourceComponent
+    // {
+    //     Ref<AudioSource> Source = CreateRef<AudioSource>();
 
-        AudioSourceComponent() = default;
-        AudioSourceComponent(const AudioSourceComponent&) = default;
+    //     AudioSourceComponent() = default;
+    //     AudioSourceComponent(const AudioSourceComponent&) = default;
 
-        AudioSourceComponent(std::string& source, bool spatial) 
-        : Source(AudioSource::LoadFromFile(source, spatial)) {}
-        AudioSourceComponent(std::string& source, bool spatial, bool loop, float gain, float pitch) 
-        : Source(AudioSource::LoadFromFile(source, spatial, loop, gain, pitch)) {}
-    };
-    struct AudioListenerComponent
-    {
-        bool IsActiveListener = false;
+    //     AudioSourceComponent(std::string& source, bool spatial) 
+    //     : Source(AudioSource::LoadFromFile(source, spatial)) {}
+    //     AudioSourceComponent(std::string& source, bool spatial, bool loop, float gain, float pitch) 
+    //     : Source(AudioSource::LoadFromFile(source, spatial, loop, gain, pitch)) {}
+    // };
+    // struct AudioListenerComponent
+    // {
+    //     bool IsActiveListener = false;
 
-        AudioListenerComponent() = default;
-        AudioListenerComponent(const AudioListenerComponent&) = default;
-    };
+    //     AudioListenerComponent() = default;
+    //     AudioListenerComponent(const AudioListenerComponent&) = default;
+    // };
 
 
 }
