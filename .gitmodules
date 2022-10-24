@@ -16,3 +16,7 @@
 [submodule "Nebula/ext/nfd"]
 	path = Nebula/ext/nfd
 	url = https://github.com/mlabbe/nativefiledialog.git
+[submodule "Nebula/ext/imgui"]
+	path = Nebula/ext/imgui
+	url = https://github.com/ocornut/imgui.git
+	branch = origin/docking

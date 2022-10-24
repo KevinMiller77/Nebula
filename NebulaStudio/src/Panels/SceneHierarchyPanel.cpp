@@ -40,7 +40,7 @@ namespace Nebula {
 			ImGui::PopID();
 		}
 
-		if (ImGui::BeginPopupContextWindow("##entity_context_add", 1, false))
+		if (ImGui::BeginPopupContextWindow("##entity_context_add", 1))
 		{
 			if (ImGui::MenuItem("Add Entity"))
 			{
@@ -210,7 +210,7 @@ namespace Nebula {
 		{
 			SelectionContext = entity;
 		}
-		if (ImGui::BeginPopupContextWindow(tag.c_str(), 1, true))
+		if (ImGui::BeginPopupContextWindow(tag.c_str(), 1))
 		{
 			if (ImGui::MenuItem("Add Child"))
 			{

@@ -4,7 +4,7 @@
 #include <Utils/Logging.h>
 #include <glad/glad.h>
 
-#include <ext/imgui/examples/imgui_impl_opengl3.h>
+#include <ext/imgui/backends/imgui_impl_opengl3.h>
 namespace Nebula{
     static const uint32 C_MaxFrameBufferSize = 8192;
 

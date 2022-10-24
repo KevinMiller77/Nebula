@@ -113,7 +113,7 @@ project "NebulaEngine"
         }
         files 
         {
-            "Nebula/ext/imgui/examples/imgui_impl_win32.cpp"
+            "Nebula/ext/imgui/backends/imgui_impl_win32.cpp"
         }
 
     filter "system:macosx"
