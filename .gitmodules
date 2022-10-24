@@ -13,3 +13,6 @@
 [submodule "Nebula/ext/SPIRV-Tools"]
 	path = Nebula/ext/SPIRV-Tools
 	url = https://github.com/KhronosGroup/SPIRV-Tools.git
+[submodule "Nebula/ext/nfd"]
+	path = Nebula/ext/nfd
+	url = https://github.com/mlabbe/nativefiledialog.git

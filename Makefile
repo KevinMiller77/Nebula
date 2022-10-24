@@ -85,7 +85,7 @@ endif
 nfd:
 ifneq (,$(nfd_config))
 	@echo "==== Building nfd ($(nfd_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/nativefiledialog -f Makefile config=$(nfd_config)
+	@${MAKE} --no-print-directory -C Nebula/ext -f Makefile config=$(nfd_config)
 endif
 
 imguizmo:
@@ -188,7 +188,7 @@ clean:
 	@${MAKE} --no-print-directory -C Nebula/ext/glad -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/imgui -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/yaml-cpp -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/nativefiledialog -f Makefile clean
+	@${MAKE} --no-print-directory -C Nebula/ext -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/imguizmo -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/SPIRV-Cross/SPIRV-Cross -f Makefile clean
 	@${MAKE} --no-print-directory -C Nebula/ext/build/GenericCodeGen -f Makefile clean

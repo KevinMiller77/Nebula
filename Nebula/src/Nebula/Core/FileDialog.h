@@ -1,6 +1,6 @@
 #include <string>
 #include <Core/VFS.h>
-#include <ext/nativefiledialog/src/include/nfd.h>
+#include "nfd.h"
 
 namespace Nebula{
     class FileDialogs

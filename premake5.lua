@@ -18,7 +18,7 @@ workspace "Nebula"
         include "Nebula/ext/glad"
         include "Nebula/ext/imgui"
         include "Nebula/ext/yaml-cpp"
-        include "Nebula/ext/nativefiledialog"
+        include "Nebula/ext/nfd"
         include "Nebula/ext/imguizmo"
         include "Nebula/ext/SPIRV-Cross"
         include "Nebula/ext/GenericCodeGen"
@@ -76,7 +76,7 @@ project "NebulaEngine"
         "Nebula/ext/imguizmo",
         "Nebula/ext/glad/include",
         "Nebula/ext/yaml-cpp/include",
-        "Nebula/ext/nativefiledialog/src/include",
+        "Nebula/ext/nfd/src/include",
         "Nebula/ext/SPIRV-Cross/",
         "Nebula/ext/shaderc/libshaderc/include",
         "Nebula/ext/shaderc/libshaderc_util/include",
@@ -188,6 +188,7 @@ project "NebulaStudio"
         "Nebula/ext/imgui",
         "Nebula/ext/imguizmo",
         "Nebula/ext/yaml-cpp/include",
+        "Nebula/ext/nfd/src/include",
         -- "Nebula/ext/libshaderc-util/include",
 
         "Nebula/include",
@@ -213,6 +214,7 @@ project "NebulaStudio"
         buildoptions {
             "-stdlib=libc++"
         }
+        
         links
         {
             "c++",
