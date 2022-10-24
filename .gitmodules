@@ -29,3 +29,6 @@
 [submodule "Nebula/ext/stb_image"]
 	path = Nebula/ext/stb_image
 	url = https://github.com/nothings/stb.git
+[submodule "Nebula/ext/yaml-cpp"]
+	path = Nebula/ext/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
