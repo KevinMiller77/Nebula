@@ -73,6 +73,7 @@ namespace Nebula{
             switch(format) {
                 case (FramebufferTextureFormat::RGBA8):     return GL_RGBA8;
                 case (FramebufferTextureFormat::RED_INT):   return GL_RED_INTEGER;
+                default: {}
             }
 
             assert((false));
@@ -198,6 +199,7 @@ namespace Nebula{
                 case(FramebufferTextureFormat::DEPTH24STENCIL8): {
                     Utils::AttachDepthTexture(m_DepthAttachment, Spec.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, Spec.Width, Spec.Height);
                 }
+                default: {}
             }
         }
 

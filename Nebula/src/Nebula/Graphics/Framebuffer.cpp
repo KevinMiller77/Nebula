@@ -10,6 +10,7 @@ namespace Nebula{
         {
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLFramebuffer>(spec);
+            default: { LOG_ERR("RendererAPI::None is currently not supported!"); return nullptr; }
 		}
 
         LOG_ERR("No rendering API selected!\n");

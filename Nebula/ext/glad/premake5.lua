@@ -14,13 +14,13 @@ project "glad"
         "src/glad.c"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "../../include"
     }
     
     filter "system:windows"
-        systemversion "latest"
+        
 
     filter "configurations:Debug"
         runtime "Debug"

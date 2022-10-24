@@ -175,8 +175,9 @@ namespace Nebula{
 			if (type.columns == 3)            return ShaderUniformType::Mat3;
 			if (type.columns == 4)            return ShaderUniformType::Mat4;
 			break;
+		default: {}
 		}
-		assert((false, "Unknown type!"));
+		assert(("Unknown type!"));
 		return ShaderUniformType::None;
 	}
 
@@ -213,8 +214,8 @@ namespace Nebula{
 		spirv_cross::ShaderResources res = comp.get_shader_resources();
 
 		LOG_DBG("GLShader::Reflect - %s\n", m_AssetPath.c_str());
-		LOG_DBG("   %d Uniform Buffers\n", res.uniform_buffers.size());
-		LOG_DBG("   %d Resources\n", res.sampled_images.size());
+		LOG_DBG("   %d Uniform Buffers\n", (uint32)res.uniform_buffers.size());
+		LOG_DBG("   %d Resources\n", (uint32)res.sampled_images.size());
 
 		glUseProgram(m_RendererID);
 
@@ -658,7 +659,7 @@ namespace Nebula{
 		}
 		else
 		{
-			assert((false, "Could not load shader!"));
+			assert(("Could not load shader!"));
 		}
 		in.close();
 		return result;
@@ -674,10 +675,12 @@ namespace Nebula{
 		while (pos != std::string::npos)
 		{
 			size_t eol = source.find_first_of("\r\n", pos);
-			assert((eol != std::string::npos, "Syntax error"));
+			assert((eol |= std::string::npos, "Syntax error"));
 			size_t begin = pos + typeTokenLength + 1;
 			std::string type = source.substr(begin, eol - begin);
-			assert((type == "vertex" || type == "fragment" || type == "pixel" || type == "compute", "Invalid shader type specified"));
+			if (!(type == "vertex" || type == "fragment" || type == "pixel" || type == "compute")) {
+				assert("Invalid shader type specified");
+			}
 
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol);
 			pos = source.find(typeToken, nextLinePos);
@@ -699,7 +702,7 @@ namespace Nebula{
 	const char* FindToken(const char* str, const std::string& token)
 	{
 		const char* t = str;
-		while (t = strstr(t, token.c_str()))
+		while ((t = strstr(t, token.c_str())))
 		{
 			bool left = str == t || isspace(t[-1]);
 			bool right = !t[token.size()] || isspace(t[token.size()]);
@@ -845,7 +848,7 @@ namespace Nebula{
 				// We don't need the shader anymore.
 				glDeleteShader(shaderRendererID);
 
-				assert((false, "Failed"));
+				assert(("Failed"));
 			}
 
 			shaderRendererIDs.push_back(shaderRendererID);

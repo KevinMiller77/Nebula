@@ -6,7 +6,7 @@ project "freetype-gl"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    sysincludedirs
+    externalincludedirs
     {
         "include",
         "../freetype/include",
@@ -21,10 +21,10 @@ project "freetype-gl"
     }
     
     filter "system:windows"
-        systemversion "latest"
+        
 
     filter "system:linux"
-        systemversion "latest"
+        
 
     filter "configurations:Debug"
         runtime "Debug"

@@ -67,7 +67,7 @@ namespace Nebula
         {
             if (!std::filesystem::exists(out.recentProjectLocations[i]))
             {
-                LOG_INF("Project file %s not found. Removing from recents.\n", out.recentProjectLocations[i]);
+                LOG_INF("Project file %s not found. Removing from recents.\n", out.recentProjectLocations[i].c_str());
                 out.recentProjectLocations.erase(out.recentProjectLocations.begin() + i);
             }
         }

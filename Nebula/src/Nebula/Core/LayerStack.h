@@ -1,6 +1,9 @@
 #pragma once
+#include <vector>
+
 #include <Core/Layer.h>
 #include <Core/Ref.h>
+
 
 namespace Nebula{
     class LayerStack

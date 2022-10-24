@@ -13,14 +13,14 @@ project "imguizmo"
         "./*.h"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "./",
         "../imgui/"
     }
     
     filter "system:windows"
-        systemversion "latest"
+        
 
     filter "configurations:Debug"
         runtime "Debug"

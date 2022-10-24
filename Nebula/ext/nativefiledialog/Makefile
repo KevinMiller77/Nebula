@@ -18,13 +18,22 @@ endif
 # Configurations
 # #############################################
 
-RESCOMP = windres
+ifeq ($(origin CC), default)
+  CC = clang
+endif
+ifeq ($(origin CXX), default)
+  CXX = clang++
+endif
+ifeq ($(origin AR), default)
+  AR = ar
+endif
 INCLUDES += -Isrc/include
 FORCE_INCLUDE +=
-ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
+ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
 LIBS +=
 LDDEPS +=
+ALL_LDFLAGS += $(LDFLAGS) -m64
 LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 define PREBUILDCMDS
 endef
@@ -34,22 +43,20 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/linuxx86_64/nfd
+TARGETDIR = bin/Debug/macosxx86_64/nfd
 TARGET = $(TARGETDIR)/libnfd_d.a
-OBJDIR = bin-int/Debug/linuxx86_64/nfd
+OBJDIR = bin-int/Debug/macosxx86_64/nfd
 DEFINES += -DDEBUG
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
-ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/linuxx86_64/nfd
+TARGETDIR = bin/Release/macosxx86_64/nfd
 TARGET = $(TARGETDIR)/libnfd.a
-OBJDIR = bin-int/Release/linuxx86_64/nfd
+OBJDIR = bin-int/Release/macosxx86_64/nfd
 DEFINES += -DNDEBUG
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2
-ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 
 endif
 
@@ -63,10 +70,10 @@ endif
 GENERATED :=
 OBJECTS :=
 
+GENERATED += $(OBJDIR)/nfd_cocoa.o
 GENERATED += $(OBJDIR)/nfd_common.o
-GENERATED += $(OBJDIR)/nfd_zenity.o
+OBJECTS += $(OBJDIR)/nfd_cocoa.o
 OBJECTS += $(OBJDIR)/nfd_common.o
-OBJECTS += $(OBJDIR)/nfd_zenity.o
 
 # Rules
 # #############################################
@@ -104,7 +111,7 @@ ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -rf $(OBJDIR)
 else
 	$(SILENT) if exist $(subst /,\\,$(TARGET)) del $(subst /,\\,$(TARGET))
-	$(SILENT) if exist $(subst /,\\,$(GENERATED)) rmdir /s /q $(subst /,\\,$(GENERATED))
+	$(SILENT) if exist $(subst /,\\,$(GENERATED)) del /s /q $(subst /,\\,$(GENERATED))
 	$(SILENT) if exist $(subst /,\\,$(OBJDIR)) rmdir /s /q $(subst /,\\,$(OBJDIR))
 endif
 
@@ -130,11 +137,11 @@ endif
 # File Rules
 # #############################################
 
-$(OBJDIR)/nfd_common.o: src/nfd_common.c
-	@echo $(notdir $<)
+$(OBJDIR)/nfd_cocoa.o: src/nfd_cocoa.m
+	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/nfd_zenity.o: src/nfd_zenity.c
-	@echo $(notdir $<)
+$(OBJDIR)/nfd_common.o: src/nfd_common.c
+	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 -include $(OBJECTS:%.o=%.d)

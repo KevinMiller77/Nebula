@@ -178,7 +178,7 @@ ifneq (,$(NebulaEngine_config))
 	@${MAKE} --no-print-directory -C build -f NebulaEngine.make config=$(NebulaEngine_config)
 endif
 
-NebulaStudio: NebulaEngine imgui imguizmo glad yaml-cpp nfd SPIRV-Cross
+NebulaStudio: NebulaEngine imgui imguizmo glad yaml-cpp nfd SPIRV-Cross GenericCodeGen OGLCompiler OSDependent MachineIndependent SPIRV SPVRemapper glslang glslang-default-resource-limits spirv-tools spirv-tools-opt shaderc_util shaderc
 ifneq (,$(NebulaStudio_config))
 	@echo "==== Building NebulaStudio ($(NebulaStudio_config)) ===="
 	@${MAKE} --no-print-directory -C build -f NebulaStudio.make config=$(NebulaStudio_config)

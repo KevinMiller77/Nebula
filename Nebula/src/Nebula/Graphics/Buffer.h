@@ -109,9 +109,11 @@ namespace Nebula{
 			case ShaderDataType::Int3:     return 4 * 3;
 			case ShaderDataType::Int4:     return 4 * 4;
 			case ShaderDataType::Bool:     return 1;
+			default: {
+				LOG_ERR("Unknown ShaderDataType!\n");
+			}
 		}
 
-		LOG_ERR("Unknown ShaderDataType!\n");
 		return 0;
 	}
 
@@ -145,9 +147,11 @@ namespace Nebula{
 				case ShaderDataType::Int3:    return 3;
 				case ShaderDataType::Int4:    return 4;
 				case ShaderDataType::Bool:    return 1;
+				default: {
+					LOG_ERR("Unknown ShaderDataType!");
+				}
 			}
 
-			LOG_ERR("Unknown ShaderDataType!");
 			return 0;
 		}
 	};

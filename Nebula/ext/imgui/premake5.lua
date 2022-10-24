@@ -1,5 +1,4 @@
 project "imgui"
-    architecture "x86_64"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
@@ -15,18 +14,18 @@ project "imgui"
         "imgui_draw.cpp",
         "imgui_widgets.cpp"
     }
-    sysincludedirs
+    externalincludedirs
     {
         "./",
         "../../include"
     }
     
     filter "system:windows"
-        systemversion "latest"
+        
     filter "system:linux"
-        systemversion "latest"
+        
     filter "system:macosx"
-        systemversion "latest"
+        
         buildoptions
         {
             "-x objective-c++"

@@ -1,6 +1,6 @@
 workspace "Nebula"
     architecture "x86_64"
-    startproject "SpaceSim"
+    startproject "NebulaStudio"
     configurations 
     { 
         "Debug",
@@ -65,7 +65,7 @@ project "NebulaEngine"
         "AL_LIBTYPE_STATIC"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "Nebula/",
         "Nebula/src",
@@ -105,7 +105,7 @@ project "NebulaEngine"
     }
 
     filter "system:windows"
-        systemversion "latest"
+        
         links
         {
             "opengl32",
@@ -117,7 +117,6 @@ project "NebulaEngine"
         }
 
     filter "system:macosx"
-        systemversion "latest"
         links
         {
             "IOKit.framework", 
@@ -128,7 +127,7 @@ project "NebulaEngine"
 
 
     filter "system:linux"
-        systemversion "latest"
+        
         
         defines
         {
@@ -179,7 +178,7 @@ project "NebulaStudio"
         "FT2_BUILD_LIBRARY"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "NebulaStudio/src",
         "NebulaStudio/src/Nebula",
@@ -201,7 +200,7 @@ project "NebulaStudio"
     }
 
     filter "system:windows"
-        systemversion "latest"
+        
         ignoredefaultlibraries
         {
             "user32", 
@@ -211,18 +210,40 @@ project "NebulaStudio"
         }
 
     filter "system:macosx"
-        systemversion "latest"
+        buildoptions {
+            "-stdlib=libc++"
+        }
         links
         {
+            "c++",
             "IOKit.framework", 
             "OpenGL.framework",
             "Cocoa.framework",
-            "CoreVideo.framework"
+            "CoreVideo.framework",
+            "pthread",
+            "imgui",
+            "imguizmo",
+            "glad",
+            "yaml-cpp",
+            "nfd",
+            "SPIRV-Cross",
+            "GenericCodeGen",
+            "OGLCompiler",
+            "OSDependent",
+            "MachineIndependent",
+            "SPIRV",
+            "SPVRemapper",
+            "glslang",
+            "glslang-default-resource-limits",
+            "SPIRV-Tools",
+            "SPIRV-Tools-opt",
+            "shaderc_util",
+            "shaderc",
         }
 
 
     filter "system:linux"
-        systemversion "latest"
+        
         defines
         {
             "_LIBS_SUPPLIED"

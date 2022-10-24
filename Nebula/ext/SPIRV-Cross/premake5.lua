@@ -40,7 +40,7 @@ project "SPIRV-Cross"
     }
 
     filter "system:windows"
-        systemversion "latest"
+        
 
     filter "configurations:Debug"
         runtime "Debug"

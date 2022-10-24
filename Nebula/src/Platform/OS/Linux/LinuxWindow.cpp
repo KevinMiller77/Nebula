@@ -1,21 +1,27 @@
 #include "LinuxWindow.h"
 
+#ifdef NEB_PLATFORM_MACOS
+#define NEB_PLATFORM_LINUX 
+#endif
+
 #ifdef NEB_PLATFORM_LINUX
 #include <stb_image/stb_image.h>
 
 #include <Core/VFS.h>
 #include <Nebula_pch.h>
 
+#ifndef NEB_PLATFORM_MACOS
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysymdef.h>
 
 #include <GL/gl.h>
 #include <GL/glx.h>
+#endif
 
 #include <chrono>
 
-Window* s_WindowHandle;
+void* s_WindowHandle;
 
 namespace Nebula{
 
@@ -147,8 +153,8 @@ namespace Nebula{
         data.decorated = enabled;
     }
 
-    std::chrono::system_clock::time_point currentFrameTime;
-    std::chrono::system_clock::time_point lastFrameTime;
+    std::chrono::steady_clock::time_point currentFrameTime;
+    std::chrono::steady_clock::time_point lastFrameTime;
     void LinuxWindow::OnUpdate()
     {
         fflush(stdout);
@@ -324,4 +330,8 @@ namespace Nebula{
         data.minimized = true;
     }
 }
+#endif
+
+#ifdef NEB_PLATFORM_MACOS
+#undef NEB_PLATFORM_LINUX 
 #endif

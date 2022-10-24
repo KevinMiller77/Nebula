@@ -17,6 +17,10 @@
 
 namespace Nebula{
 
+#ifdef NEB_PLATFORM_MACOS
+#define NEB_PLATFORM_LINUX 
+#endif
+
 #ifdef NEB_PLATFORM_LINUX
     void LinuxImGuiLayer::OnAttach()
     {
@@ -152,11 +156,15 @@ namespace Nebula{
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
     }
+
 #else 
     void LinuxImGuiLayer::OnAttach() {}
     void LinuxImGuiLayer::OnDetach() {}
     void LinuxImGuiLayer::Begin() {}
     void LinuxImGuiLayer::End() {}
     void LinuxImGuiLayer::ShowDockSpace() {}
+#endif
+#ifdef NEB_PLATFORM_MACOS
+#undef NEB_PLATFORM_LINUX 
 #endif
 }

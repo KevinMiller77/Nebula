@@ -1,8 +1,6 @@
 #pragma once
 #include <Core/PlatformInfo.h>
 
-#ifdef NEB_PLATFORM_LINUX
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -13,8 +11,6 @@
 #include <Graphics/GraphicsContext.h>
 #include <Core/NebulaCommon.h>
 
-
-struct GLFWwindow;
 
 namespace Nebula{
 
@@ -108,4 +104,3 @@ namespace Nebula{
         float frameTime = 0.0f;
     };
 }
-#endif

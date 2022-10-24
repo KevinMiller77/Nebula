@@ -12,6 +12,7 @@ namespace Nebula{
 		{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLVertexBuffer>(size);
+			default: { LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr; }
 		}
 
 		LOG_ERR("Unknown RendererAPI!\n");
@@ -24,6 +25,7 @@ namespace Nebula{
 		{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLVertexBuffer>(vertices, size);
+			default: { LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr; }
 		}
 
 		LOG_ERR("Unknown RendererAPI!\n");
@@ -36,6 +38,7 @@ namespace Nebula{
 		{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLIndexBuffer>(indices, size);
+			default: { LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr; }
 		}
 
 		LOG_ERR("Unknown RendererAPI!\n");

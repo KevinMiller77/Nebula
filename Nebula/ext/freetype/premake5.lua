@@ -31,13 +31,13 @@ project "freetype"
         "_LIBS_SUPPLIED"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "include"
     }
     
     filter "system:windows"
-        systemversion "latest"
+        
 
     filter "configurations:Debug"
         runtime "Debug"
