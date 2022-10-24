@@ -33,7 +33,6 @@ workspace "Nebula"
         include "Nebula/ext/SPIRV-Tools-opt"
         include "Nebula/ext/shaderc_util"
         include "Nebula/ext/shaderc"
-        -- include "Nebula/ext/freetype"
         group ""
         
 project "NebulaEngine"
@@ -189,7 +188,6 @@ project "NebulaStudio"
         "Nebula/ext/imguizmo",
         "Nebula/ext/yaml-cpp/include",
         "Nebula/ext/nfd/src/include",
-        -- "Nebula/ext/libshaderc-util/include",
 
         "Nebula/include",
         "Nebula/src/Nebula"

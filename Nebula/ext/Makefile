@@ -27,7 +27,8 @@ endif
 ifeq ($(origin AR), default)
   AR = ar
 endif
-INCLUDES += -Infd/src/include
+DEFINES +=
+INCLUDES += -isystem imgui -isystem ../include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
@@ -43,20 +44,18 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/macosxx86_64/nfd
-TARGET = $(TARGETDIR)/libnfd_d.a
-OBJDIR = bin-int/Debug/macosxx86_64/nfd
-DEFINES += -DDEBUG
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
+TARGETDIR = bin/Debug/macosxx86_64/imgui
+TARGET = $(TARGETDIR)/libimgui.a
+OBJDIR = bin-int/Debug/macosxx86_64/imgui
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g -x objective-c++
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++17 -x objective-c++
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/macosxx86_64/nfd
-TARGET = $(TARGETDIR)/libnfd.a
-OBJDIR = bin-int/Release/macosxx86_64/nfd
-DEFINES += -DNDEBUG
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2
+TARGETDIR = bin/Release/macosxx86_64/imgui
+TARGET = $(TARGETDIR)/libimgui.a
+OBJDIR = bin-int/Release/macosxx86_64/imgui
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -x objective-c++
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17 -x objective-c++
 
 endif
 
@@ -70,10 +69,16 @@ endif
 GENERATED :=
 OBJECTS :=
 
-GENERATED += $(OBJDIR)/nfd_cocoa.o
-GENERATED += $(OBJDIR)/nfd_common.o
-OBJECTS += $(OBJDIR)/nfd_cocoa.o
-OBJECTS += $(OBJDIR)/nfd_common.o
+GENERATED += $(OBJDIR)/imgui.o
+GENERATED += $(OBJDIR)/imgui_demo.o
+GENERATED += $(OBJDIR)/imgui_draw.o
+GENERATED += $(OBJDIR)/imgui_tables.o
+GENERATED += $(OBJDIR)/imgui_widgets.o
+OBJECTS += $(OBJDIR)/imgui.o
+OBJECTS += $(OBJDIR)/imgui_demo.o
+OBJECTS += $(OBJDIR)/imgui_draw.o
+OBJECTS += $(OBJDIR)/imgui_tables.o
+OBJECTS += $(OBJDIR)/imgui_widgets.o
 
 # Rules
 # #############################################
@@ -83,7 +88,7 @@ all: $(TARGET)
 
 $(TARGET): $(GENERATED) $(OBJECTS) $(LDDEPS) | $(TARGETDIR)
 	$(PRELINKCMDS)
-	@echo Linking nfd
+	@echo Linking imgui
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -104,7 +109,7 @@ else
 endif
 
 clean:
-	@echo Cleaning nfd
+	@echo Cleaning imgui
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(GENERATED)
@@ -122,7 +127,7 @@ ifneq (,$(PCH))
 $(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)
 $(GCH): $(PCH) | prebuild
 	@echo $(notdir $<)
-	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
+	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) touch "$@"
@@ -137,12 +142,21 @@ endif
 # File Rules
 # #############################################
 
-$(OBJDIR)/nfd_cocoa.o: nfd/src/nfd_cocoa.m
+$(OBJDIR)/imgui.o: imgui/imgui.cpp
 	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/nfd_common.o: nfd/src/nfd_common.c
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/imgui_demo.o: imgui/imgui_demo.cpp
 	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/imgui_draw.o: imgui/imgui_draw.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/imgui_tables.o: imgui/imgui_tables.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/imgui_widgets.o: imgui/imgui_widgets.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 -include $(OBJECTS:%.o=%.d)
 ifneq (,$(PCH))

@@ -20,3 +20,6 @@
 	path = Nebula/ext/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = origin/docking
+[submodule "Nebula/ext/imguizmo"]
+	path = Nebula/ext/imguizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

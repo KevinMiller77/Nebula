@@ -4,23 +4,22 @@ project "imguizmo"
     cppdialect "C++17"
     staticruntime "on"
     
+
+    location("build/%{prj.name}")
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
     files
     {
-        "./*.cpp",
-        "./*.h"
+        "imguizmo/*.cpp",
+        "imguizmo/*.h"
     }
 
     externalincludedirs
     {
-        "./",
-        "../imgui/"
+        "imguizmo",
+        "imgui/"
     }
-    
-    filter "system:windows"
-        
 
     filter "configurations:Debug"
         runtime "Debug"

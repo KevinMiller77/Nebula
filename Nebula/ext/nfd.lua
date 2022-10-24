@@ -3,6 +3,8 @@ project "nfd"
   
   outputdir = "%{cfg.buildcfg}/%{cfg.system}%{cfg.architecture}"
   
+
+  location("build/%{prj.name}")
   targetdir ("bin/" .. outputdir .. "/%{prj.name}")
   objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
   
