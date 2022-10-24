@@ -26,3 +26,6 @@
 [submodule "Nebula/ext/SPIRV-Cross"]
 	path = Nebula/ext/SPIRV-Cross
 	url = https://github.com/KhronosGroup/SPIRV-Cross.git
+[submodule "Nebula/ext/stb_image"]
+	path = Nebula/ext/stb_image
+	url = https://github.com/nothings/stb.git

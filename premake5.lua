@@ -54,8 +54,7 @@ project "NebulaEngine"
         "Nebula/src/Nebula/**.h",
         "Nebula/src/Nebula/**.cpp",
         "Nebula/src/Platform/**.h",
-        "Nebula/src/Platform/**.cpp",
-        "Nebula/ext/stb_image/**.cpp"
+        "Nebula/src/Platform/**.cpp"
     }
 
     defines
@@ -70,7 +69,7 @@ project "NebulaEngine"
         "Nebula/src",
         "Nebula/src/Nebula",
         "Nebula/include",
-        "Nebula/ext",
+        "Nebula/ext/stb_image/",
         "Nebula/ext/imgui",
         "Nebula/ext/imguizmo",
         "Nebula/ext/glad/include",
@@ -186,6 +185,7 @@ project "NebulaStudio"
 
         "Nebula/ext/imgui",
         "Nebula/ext/imguizmo",
+        "Nebula/ext/stb_image/",
         "Nebula/ext/yaml-cpp/include",
         "Nebula/ext/nfd/src/include",
 
