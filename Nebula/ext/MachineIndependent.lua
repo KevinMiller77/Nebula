@@ -4,9 +4,9 @@ project "MachineIndependent"
 	cppdialect "C++17"
     staticruntime("On")
 
-    location("build/%{prj.name}")
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    location("../../build/%{prj.name}")
+	targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
 
     dependson {
         "GenericCodeGen",
@@ -14,9 +14,11 @@ project "MachineIndependent"
         "OSDependent",
     }
 
+    p = path.getabsolute(".")
+
     prebuildcommands {
-        "{MKDIR} %{prj.location}/../../glslang/build",
-        "cmake -D SKIP_GLSLANG_INSTALL=ON -S %{prj.location}/../../glslang -B %{prj.location}/../../glslang/build"
+        "{MKDIR} " .. p .. "/glslang/build",
+        "cmake -D SKIP_GLSLANG_INSTALL=ON -S " .. p .. "/glslang -B " .. p .. "/glslang/build"
     }
 
 	files

@@ -4,9 +4,9 @@ project "spirv-tools"
 	cppdialect "C++17"
     staticruntime("On")
 
-    location("build/%{prj.name}")
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    location("../../build/%{prj.name}")
+    targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
 
 	files
 	{
@@ -133,12 +133,15 @@ project "spirv-tools"
 		"SPIRV-Headers/include",
 	}
     
+
+    p = path.getabsolute(".")
+
     filter "system:windows"
         prebuildcommands { 
-            "xcopy /Q /E /Y /I \"../../SPIRV-Headers\" \"../../SPIRV-Tools/external/SPIRV-Headers\"",
-            "{MKDIR} ../../SPIRV-Tools/build",
-            "cmake -D SKIP_SPIRV_TOOLS_INSTALL=ON -S ../../SPIRV-Tools -B ../../SPIRV-Tools/build",
-            "cmake --build ../../SPIRV-Tools/build --target SPIRV-Tools-static -j6"
+            "xcopy /Q /E /Y /I \"" .. p .. "/SPIRV-Headers\" \"" .. p .. "/SPIRV-Tools/external/SPIRV-Headers\"",
+            "{MKDIR} ".. p .. "/SPIRV-Tools/build",
+            "cmake -D SKIP_SPIRV_TOOLS_INSTALL=ON -S " .. p .. "/SPIRV-Tools -B " .. p .. "/SPIRV-Tools/build",
+            "cmake --build " .. p .. "/SPIRV-Tools/build --target SPIRV-Tools-static -j6"
         }
 
         defines {
@@ -153,11 +156,11 @@ project "spirv-tools"
 
     filter "not system:windows"
         prebuildcommands { 
-            "{RMDIR} %{prj.location}/../../SPIRV-Tools/external/SPIRV-Headers",
-            "ln -s -f %{prj.location}/../../SPIRV-Headers %{prj.location}/../../SPIRV-Tools/external/SPIRV-Headers",
-            "{MKDIR} %{prj.location}/../../SPIRV-Tools/build",
-            "cmake -D SKIP_SPIRV_TOOLS_INSTALL=ON -S %{prj.location}/../../SPIRV-Tools -B %{prj.location}/../../SPIRV-Tools/build",
-            "cmake --build %{prj.location}/../../SPIRV-Tools/build --target SPIRV-Tools-static -j6"
+            "{RMDIR} " .. p .. "/SPIRV-Tools/external/SPIRV-Headers",
+            "ln -s -f " .. p .. "/SPIRV-Headers " .. p .. "/SPIRV-Tools/external/SPIRV-Headers",
+            "{MKDIR} " .. p .. "/SPIRV-Tools/build",
+            "cmake -D SKIP_SPIRV_TOOLS_INSTALL=ON -S " .. p .. "/SPIRV-Tools -B " .. p .. "/SPIRV-Tools/build",
+            "cmake --build " .. p .. "/SPIRV-Tools/build --target SPIRV-Tools-static -j6"
         }
         
 	filter "system:linux"

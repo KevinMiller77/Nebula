@@ -4,9 +4,9 @@ project "shaderc"
 	cppdialect "C++17"
     staticruntime("On")
 
-    location("build/%{prj.name}")
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    location("../../build/%{prj.name}")
+	targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
 
     dependson {
         "shaderc_util"

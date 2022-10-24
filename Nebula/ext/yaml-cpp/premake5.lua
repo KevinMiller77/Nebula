@@ -3,8 +3,9 @@ project "yaml-cpp"
 	language "C++"
 	cppdialect "C++17"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    location("../../../build/%{prj.name}")
+	targetdir ("../../../bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("../../../bin-int/" .. outputdir .. "/%{prj.name}")
 
 	files
 	{

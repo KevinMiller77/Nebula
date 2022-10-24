@@ -4,9 +4,9 @@ project "shaderc_util"
 	cppdialect "C++17"
     staticruntime("On")
 
-    location("build/%{prj.name}")
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    location("../../build/%{prj.name}")
+	targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
 
     dependson {
         "GenericCodeGen",
@@ -62,12 +62,14 @@ project "shaderc_util"
         "ENABLE_HLSL"
     }
 
+    p = path.getabsolute(".")
+
     filter "system:windows"
     
         prebuildcommands {
-            "xcopy /Q /E /Y /I \"../../SPIRV-Headers\" \"../../shaderc/third_party/SPIRV-Tools\"",
-            "xcopy /Q /E /Y /I \"../../SPIRV-Headers\" \"../../shaderc/third_party/SPIRV-Headers\"",
-            "xcopy /Q /E /Y /I \"../../glslang\" \"../../shaderc/third_party/glslang\""
+            "xcopy /Q /E /Y /I \"" .. p .. "/SPIRV-Headers\" \"" .. p .. "/shaderc/third_party/SPIRV-Tools\"",
+            "xcopy /Q /E /Y /I \"" .. p .. "/SPIRV-Headers\" \"" .. p .. "/shaderc/third_party/SPIRV-Headers\"",
+            "xcopy /Q /E /Y /I \"" .. p .. "/glslang\"       \"" .. p .. "/shaderc/third_party/glslang\""
         }
 
         defines {
@@ -77,12 +79,12 @@ project "shaderc_util"
 
     filter "not system:windows"
         prebuildcommands {
-            "rm -rf %{prj.location}/../../shaderc/third_party/SPIRV-Tools",
-            "ln -s -f %{prj.location}/../../SPIRV-Headers %{prj.location}/../../shaderc/third_party/SPIRV-Tools",
-            "rm -rf %{prj.location}/../../shaderc/third_party/SPIRV-Headers",
-            "ln -s -f %{prj.location}/../../SPIRV-Headers %{prj.location}/../../shaderc/third_party/SPIRV-Headers",
-            "rm -rf %{prj.location}/../../shaderc/third_party/glslang",
-            "ln -s -f %{prj.location}/../../glslang %{prj.location}/../../shaderc/third_party/glslang"
+            "rm -rf   " .. p .. "/shaderc/third_party/SPIRV-Tools",
+            "ln -s -f " .. p .. "/SPIRV-Headers " .. p .. "/shaderc/third_party/SPIRV-Tools",
+            "rm -rf   " .. p .. "/shaderc/third_party/SPIRV-Headers",
+            "ln -s -f " .. p .. "/SPIRV-Headers " .. p .. "/shaderc/third_party/SPIRV-Headers",
+            "rm -rf   " .. p .. "/shaderc/third_party/glslang",
+            "ln -s -f " .. p .. "/glslang " .. p .. "/shaderc/third_party/glslang"
         }
 
 	filter "system:linux"

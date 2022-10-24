@@ -41,8 +41,8 @@ project "NebulaEngine"
         cppdialect "C++17"
         staticruntime "on"
         
-        targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-        objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+        targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
+        objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
         location ("build")
 
 
@@ -158,8 +158,8 @@ project "NebulaStudio"
     
     
     targetname("NebulaStudio")
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
     location ("build")
 
     debugdir("./NebulaStudio")

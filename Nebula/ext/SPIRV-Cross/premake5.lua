@@ -5,8 +5,9 @@ project "SPIRV-Cross"
 	cppdialect "C++17"
 	staticruntime "on"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    location("../../../build/%{prj.name}")
+	targetdir ("../../../bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("../../../bin-int/" .. outputdir .. "/%{prj.name}")
 
     files
     {

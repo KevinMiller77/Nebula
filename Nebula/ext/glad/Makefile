@@ -44,16 +44,16 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-TARGETDIR = bin/Debug/macosxx86_64/glad
+TARGETDIR = ../../bin/Debug/macosxx86_64/glad
 TARGET = $(TARGETDIR)/libglad.a
-OBJDIR = bin-int/Debug/macosxx86_64/glad
+OBJDIR = ../../bin-int/Debug/macosxx86_64/glad
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++17
 
 else ifeq ($(config),release)
-TARGETDIR = bin/Release/macosxx86_64/glad
+TARGETDIR = ../../bin/Release/macosxx86_64/glad
 TARGET = $(TARGETDIR)/libglad.a
-OBJDIR = bin-int/Release/macosxx86_64/glad
+OBJDIR = ../../bin-int/Release/macosxx86_64/glad
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17
 
