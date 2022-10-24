@@ -69,6 +69,7 @@ project "NebulaEngine"
         "Nebula/src",
         "Nebula/src/Nebula",
         "Nebula/include",
+        "Nebula/ext",
         "Nebula/ext/stb_image/",
         "Nebula/ext/imgui",
         "Nebula/ext/imguizmo",
@@ -183,6 +184,7 @@ project "NebulaStudio"
         "NebulaStudio/include",
         "Nebula",
 
+        "Nebula/ext",
         "Nebula/ext/imgui",
         "Nebula/ext/imguizmo",
         "Nebula/ext/stb_image/",
@@ -212,14 +214,25 @@ project "NebulaStudio"
         buildoptions {
             "-stdlib=libc++"
         }
+
+        
+        externalincludedirs
+        {
+            "NebulaStudio/src/Platform/MacOS",
+        }
         
         links
         {
             "c++",
             "IOKit.framework", 
             "OpenGL.framework",
+            "Metal.framework",
+            "QuartzCore.framework",
+            "Foundation.framework",
+            "AppKit.framework",
             "Cocoa.framework",
-            "CoreVideo.framework",
+            "CoreGraphics.framework",
+            "MetalKit.framework", 
             "pthread",
             "imgui",
             "imguizmo",

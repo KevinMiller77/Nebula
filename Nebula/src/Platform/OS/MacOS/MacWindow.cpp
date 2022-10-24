@@ -1,40 +1,40 @@
-#include "LinuxWindow.h"
+#include "MacWindow.h"
 
 
-#ifdef NEB_PLATFORM_LINUX
 #include <stb_image/stb_image.h>
 
 #include <Core/VFS.h>
 #include <Nebula_pch.h>
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysymdef.h>
-
-#include <GL/gl.h>
-#include <GL/glx.h>
-
+#ifdef NEB_PLATFORM_MACOS
 #include <chrono>
+
+#define NS_PRIVATE_IMPLEMENTATION
+#define MTL_PRIVATE_IMPLEMENTATION
+#define MTK_PRIVATE_IMPLEMENTATION
+#define CA_PRIVATE_IMPLEMENTATION
+#include <AppKit/AppKit.hpp>
+#include <MetalKit/MetalKit.hpp>
 
 void* s_WindowHandle;
 
 namespace Nebula{
 
-    WindowData LinuxWindow::data = WindowData();
+    WindowData MacWindow::data = WindowData();
 
-    void LinuxWindow::HandleError() {
+    void MacWindow::HandleError() {
         // TODO: Parse and log errors
     }
 
-    LinuxWindow::~LinuxWindow()
+    MacWindow::~MacWindow()
     {
         ShutDown();
     }
 
-    void* LinuxWindow::GetNativeWindow() {
+    void* MacWindow::GetNativeWindow() {
         return s_WindowHandle;
     }
-    void LinuxWindow::SwapIO(std::string in, std::string out, std::string err)
+    void MacWindow::SwapIO(std::string in, std::string out, std::string err)
     {
         if (!std::filesystem::exists(in))
         {
@@ -61,17 +61,17 @@ namespace Nebula{
         }
     }
 
-    void LinuxWindow::EnableConsole()
+    void MacWindow::EnableConsole()
     {
         // Todo: enable a secondary console
     }
 
-    void LinuxWindow::DisableConsole()
+    void MacWindow::DisableConsole()
     {
         // Todo: disable secondary console
     }
 
-    LinuxWindow::LinuxWindow(WindowInfo inf)
+    MacWindow::MacWindow(WindowInfo inf)
         : m_Context(nullptr)
     {
         NEB_PROFILE_FUNCTION();
@@ -112,45 +112,45 @@ namespace Nebula{
     }
 
     
-    bool LinuxWindow::SetWindowStyleVar(int style, bool enable) {
+    bool MacWindow::SetWindowStyleVar(int style, bool enable) {
         return true;
     }
 
-    void LinuxWindow::SetResizeable(bool resizeable)
+    void MacWindow::SetResizeable(bool resizeable)
     {
 
     }
 
     
-    Vec2u LinuxWindow::GetMaxWindowSize() {
+    Vec2u MacWindow::GetMaxWindowSize() {
         return Vec2u(data.width, data.height);
     }
 
 
-    void LinuxWindow::ToggleFullscreen()
+    void MacWindow::ToggleFullscreen()
     {    
 
     }
 
-    void LinuxWindow::SetPassthrough(bool enabled) {
+    void MacWindow::SetPassthrough(bool enabled) {
         data.mousePassthrough = enabled;
     }
 
-    void LinuxWindow::SetFloating(bool enabled) {
+    void MacWindow::SetFloating(bool enabled) {
         data.floating = enabled;
     }
 
-    void LinuxWindow::SetTransparentFramebuffer(bool enabled) {
+    void MacWindow::SetTransparentFramebuffer(bool enabled) {
         data.transparent = enabled;
     }
 
-    void LinuxWindow::SetDecorated(bool enabled) {
+    void MacWindow::SetDecorated(bool enabled) {
         data.decorated = enabled;
     }
 
     std::chrono::steady_clock::time_point currentFrameTime;
     std::chrono::steady_clock::time_point lastFrameTime;
-    void LinuxWindow::OnUpdate()
+    void MacWindow::OnUpdate()
     {
         fflush(stdout);
         fflush(stderr);
@@ -191,32 +191,32 @@ namespace Nebula{
     }
 
     
-    float LinuxWindow::GetTime() {
+    float MacWindow::GetTime() {
         return frameTime;
     }
 
-    uint32 LinuxWindow::GetWidth() const
+    uint32 MacWindow::GetWidth() const
     {
         return data.width;
     }
 
 
-    uint32 LinuxWindow::GetHeight() const
+    uint32 MacWindow::GetHeight() const
     {
         return data.height;
     }
 
-    uint32* LinuxWindow::GetWidthPtr() const 
+    uint32* MacWindow::GetWidthPtr() const 
     {
         return &(data.width);
     }
-    uint32* LinuxWindow::GetHeightPtr() const
+    uint32* MacWindow::GetHeightPtr() const
     {
         return &(data.height);
     }
 
     
-    void LinuxWindow::SetWindowSize(uint32 width, uint32 height)
+    void MacWindow::SetWindowSize(uint32 width, uint32 height)
     {
         // LPRECT rect = (LPRECT)malloc(sizeof(RECT));
         // if (!GetWindowRect(s_WindowHandle, rect)) {
@@ -241,7 +241,7 @@ namespace Nebula{
         data.height = height;
     }
 
-    void LinuxWindow::UpdateWindowAttribs() {
+    void MacWindow::UpdateWindowAttribs() {
         SetDecorated(data.decorated);
         SetPassthrough(data.mousePassthrough);
         SetTransparentFramebuffer(data.transparent);
@@ -250,13 +250,13 @@ namespace Nebula{
         SetWindowSize(data.width, data.height);
     }  
 
-    void LinuxWindow::ShutDown()
+    void MacWindow::ShutDown()
     {
         NEB_PROFILE_FUNCTION();
         // TODO: X11 shutdown
     }
 
-    void LinuxWindow::SetVSync(bool enabled)
+    void MacWindow::SetVSync(bool enabled)
     {
         if (enabled)
         {
@@ -270,12 +270,12 @@ namespace Nebula{
         data.vsync = enabled;
     }
 
-    bool LinuxWindow::IsVSync() const
+    bool MacWindow::IsVSync() const
     {
         return data.vsync;
     }
 
-    void LinuxWindow::SetIcon(std::string filepath)
+    void MacWindow::SetIcon(std::string filepath)
     {
         int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
@@ -295,7 +295,7 @@ namespace Nebula{
         // Set the icon of the application in X11
     }
 
-    void LinuxWindow::MaximizeWindow()
+    void MacWindow::MaximizeWindow()
     {
         // bool err = !ShowWindow(s_WindowHandle, SW_MAXIMIZE);
         // if (err) {
@@ -304,7 +304,7 @@ namespace Nebula{
         // }
         data.maximized = true;
     }
-    void LinuxWindow::RestoreWindow()
+    void MacWindow::RestoreWindow()
     {
         // bool err = !ShowWindow(s_WindowHandle, SW_RESTORE);
         // if (err) {
@@ -314,7 +314,7 @@ namespace Nebula{
         data.maximized = false;
     }
 
-    void LinuxWindow::MinimizeWindow()
+    void MacWindow::MinimizeWindow()
     {
         // bool err = !ShowWindow(s_WindowHandle, SW_MINIMIZE);
         // if (err) {
@@ -324,5 +324,5 @@ namespace Nebula{
         data.maximized = false;
         data.minimized = true;
     }
-}
+} 
 #endif

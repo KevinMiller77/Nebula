@@ -1,10 +1,9 @@
-#include "LinuxImGuiLayer.h"
+#include "MacImGuiLayer.h"
 
 // Include example cpp to built imgui for Win32 
 #include <Core/PlatformInfo.h>
-#include <imgui.h>
+#include <imgui/imgui.h>
 
-#include <imgui.h>
 #include <ImGui/Styles/ImGuiStyles.h>
 
 #include <backends/imgui_impl_opengl3.h>
@@ -16,9 +15,9 @@
 #include <Nebula_pch.h>
 
 namespace Nebula{
+#ifdef NEB_PLATFORM_MACOS 
 
-#ifdef NEB_PLATFORM_LINUX
-    void LinuxImGuiLayer::OnAttach()
+    void MacImGuiLayer::OnAttach()
     {
 		NEB_PROFILE_FUNCTION();
         // Setup Dear ImGui context
@@ -58,7 +57,7 @@ namespace Nebula{
         m_Renderer->Init();
     }
 
-    void LinuxImGuiLayer::OnDetach()
+    void MacImGuiLayer::OnDetach()
     {
 		NEB_PROFILE_FUNCTION();
         m_Renderer->Shutdown();
@@ -66,7 +65,7 @@ namespace Nebula{
         ImGui::DestroyContext();
     }
 
-    void LinuxImGuiLayer::Begin()
+    void MacImGuiLayer::Begin()
     {
 		NEB_PROFILE_FUNCTION();
         m_Renderer->NewFrame();
@@ -78,7 +77,7 @@ namespace Nebula{
         ShowDockSpace();
     }
 
-    void LinuxImGuiLayer::End()
+    void MacImGuiLayer::End()
     {
         ImGui::End();
 		NEB_PROFILE_FUNCTION();
@@ -100,7 +99,7 @@ namespace Nebula{
     }
 
 
-    void LinuxImGuiLayer::ShowDockSpace()
+    void MacImGuiLayer::ShowDockSpace()
     {
         static bool opt_fullscreen_persistant = true;
         bool opt_fullscreen = opt_fullscreen_persistant;
@@ -154,10 +153,10 @@ namespace Nebula{
     }
 
 #else 
-    void LinuxImGuiLayer::OnAttach() {}
-    void LinuxImGuiLayer::OnDetach() {}
-    void LinuxImGuiLayer::Begin() {}
-    void LinuxImGuiLayer::End() {}
-    void LinuxImGuiLayer::ShowDockSpace() {}
+    void MacImGuiLayer::OnAttach() {}
+    void MacImGuiLayer::OnDetach() {}
+    void MacImGuiLayer::Begin() {}
+    void MacImGuiLayer::End() {}
+    void MacImGuiLayer::ShowDockSpace() {}
 #endif
 }

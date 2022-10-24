@@ -4,8 +4,7 @@
 #include <Core/PlatformInfo.h>
 
 namespace Nebula {
-
-#ifdef NEB_PLATFORM_LINUX
+#ifdef NEB_PLATFORM_MACOS
 
     bool GLContext::InitContext_Int(void* window) {
         return true;

@@ -9,7 +9,7 @@
 #include <Platform/OS/Linux/LinuxWindow.h>
 #endif
 #ifdef NEB_PLATFORM_MACOS
-#include <Platform/OS/Linux/LinuxWindow.h>
+#include <Platform/OS/MacOS/MacWindow.h>
 #endif
 
 
@@ -24,8 +24,7 @@ namespace Nebula{
         return WindowType::Linux;
     #endif
     #ifdef NEB_PLATFORM_MACOS
-        return WindowType::Linux;
-        // return WindowType::MacOS;
+        return WindowType::MacOS;
     #endif
     }
 
@@ -38,7 +37,7 @@ namespace Nebula{
 		return CreateRef<LinuxWindow>(inf);
 	#endif
 	#ifdef NEB_PLATFORM_MACOS
-		return CreateRef<LinuxWindow>(inf);
+		return CreateRef<MacWindow>(inf);
 	#endif
 	}
 
