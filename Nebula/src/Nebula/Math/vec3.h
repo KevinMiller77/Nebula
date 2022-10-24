@@ -38,7 +38,7 @@ namespace Nebula{
         { 
             float dot = Dot(other);
             float mag = Magnitude() * Magnitude(other);
-            assert(mag != 0.0f);
+            assert((mag != 0.0f));
             return (float)acos(dot / mag); 
         }
         //  Return vlaue is in radians
@@ -59,7 +59,7 @@ namespace Nebula{
         Vec3<T> Normalize()    
         { 
             float mag = Magnitude();
-            assert(mag != 0); 
+            assert((mag != 0)); 
             X /= mag;
             Y /= mag;
             Z /= mag;
@@ -78,7 +78,7 @@ namespace Nebula{
         friend Vec3<T> operator+(Vec3<T> left, Vec3<T> right)   { return Vec3<T>(left.X + right.X, left.Y + right.Y, left.Z + right.Z); }
         friend Vec3<T> operator-(Vec3<T> left, Vec3<T> right)   { return Vec3<T>(left.X - right.X, left.Y - right.Y, left.Z - right.Z); }
         friend Vec3<T> operator*(Vec3<T> left, Vec3<T> right)   { return Vec3<T>(left.X * right.X, left.Y * right.Y, left.Z * right.Z); }
-        friend Vec3<T> operator/(Vec3<T> left, Vec3<T> right)   { assert((right.X != (T)(0) && right.Y != (T)(0)) && right.Z != (T)(0));   // Divide by 0
+        friend Vec3<T> operator/(Vec3<T> left, Vec3<T> right)   { assert(((right.X != (T)(0) && right.Y != (T)(0)) && right.Z != (T)(0)));   // Divide by 0
                                                                      return Vec3<T>(left.X / right.X, left.Y / right.Y, left.Z / right.Z); }
 
         private:
@@ -103,7 +103,7 @@ namespace Nebula{
             void divide(const Vec3<T>& other)
             {
                 // Divide by 0
-                assert((other.Y != (T)(0) && other.X != (T)(0)) && other.Z != (T)(0));
+                assert(((other.Y != (T)(0) && other.X != (T)(0)) && other.Z != (T)(0)));
                 X /= other.X;
                 Y /= other.Y;
                 Z /= other.Z;

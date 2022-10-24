@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 //Common type defs
 typedef char                int8;
 typedef short               int16;

@@ -1,6 +1,6 @@
 workspace "Nebula"
     architecture "x86_64"
-    startproject "SpaceSim"
+    startproject "NebulaStudio"
     configurations 
     { 
         "Debug",
@@ -18,13 +18,21 @@ workspace "Nebula"
         include "Nebula/ext/glad"
         include "Nebula/ext/imgui"
         include "Nebula/ext/yaml-cpp"
-        include "Nebula/ext/nativefiledialog"
-        include "Nebula/ext/libogg"
-        include "Nebula/ext/Vorbis"
-        include "Nebula/ext/OpenAL-Soft"
+        include "Nebula/ext/nfd"
         include "Nebula/ext/imguizmo"
         include "Nebula/ext/SPIRV-Cross"
-        -- include "Nebula/ext/freetype"
+        include "Nebula/ext/GenericCodeGen"
+        include "Nebula/ext/OGLCompiler"
+        include "Nebula/ext/OSDependent"
+        include "Nebula/ext/MachineIndependent"
+        include "Nebula/ext/SPIRV"
+        include "Nebula/ext/SPVRemapper"
+        include "Nebula/ext/glslang"
+        include "Nebula/ext/glslang-default-resource-limits"
+        include "Nebula/ext/SPIRV-Tools"
+        include "Nebula/ext/SPIRV-Tools-opt"
+        include "Nebula/ext/shaderc_util"
+        include "Nebula/ext/shaderc"
         group ""
         
 project "NebulaEngine"
@@ -33,8 +41,8 @@ project "NebulaEngine"
         cppdialect "C++17"
         staticruntime "on"
         
-        targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-        objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+        targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
+        objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
         location ("build")
 
 
@@ -45,9 +53,8 @@ project "NebulaEngine"
     {
         "Nebula/src/Nebula/**.h",
         "Nebula/src/Nebula/**.cpp",
-        "Nebula/src/Platform/Graphics/**.h",
-        "Nebula/src/Platform/Graphics/**.cpp",
-        "Nebula/ext/stb_image/**.cpp"
+        "Nebula/src/Platform/**.h",
+        "Nebula/src/Platform/**.cpp"
     }
 
     defines
@@ -56,26 +63,21 @@ project "NebulaEngine"
         "AL_LIBTYPE_STATIC"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "Nebula/",
         "Nebula/src",
         "Nebula/src/Nebula",
         "Nebula/include",
-        "Nebula/ext",
+        "Nebula/ext/stb_image/",
         "Nebula/ext/imgui",
         "Nebula/ext/imguizmo",
         "Nebula/ext/glad/include",
         "Nebula/ext/yaml-cpp/include",
-        "Nebula/ext/nativefiledialog/src/include",
-        "Nebula/ext/OpenAL-Soft/include",
-		"Nebula/ext/OpenAL-Soft/src",
-		"Nebula/ext/OpenAL-Soft/src/common",
-		"Nebula/ext/libogg/include",
-		"Nebula/ext/Vorbis/include",
-		"Nebula/ext/minimp3",
+        "Nebula/ext/nfd/src/include",
         "Nebula/ext/SPIRV-Cross/",
-        "Nebula/ext/shaderc/include"
+        "Nebula/ext/shaderc/libshaderc/include",
+        "Nebula/ext/shaderc/libshaderc_util/include",
     }
 
     links
@@ -85,14 +87,23 @@ project "NebulaEngine"
         "glad",
         "yaml-cpp",
         "nfd",
-        "OpenAL-Soft",
-		"Vorbis",
         "SPIRV-Cross",
-        -- "freetype"
+        "GenericCodeGen",
+        "OGLCompiler",
+        "OSDependent",
+        "MachineIndependent",
+        "SPIRV",
+        "SPVRemapper",
+        "glslang",
+        "glslang-default-resource-limits",
+        "SPIRV-Tools",
+        "SPIRV-Tools-opt",
+        "shaderc_util",
+        "shaderc"
     }
 
     filter "system:windows"
-        systemversion "latest"
+        
         links
         {
             "opengl32",
@@ -100,47 +111,10 @@ project "NebulaEngine"
         }
         files 
         {
-            "Nebula/src/Platform/OS/Windows/**.h",
-            "Nebula/src/Platform/OS/Windows/**.cpp",
-            "Nebula/ext/imgui/examples/imgui_impl_win32.cpp"
+            "Nebula/ext/imgui/backends/imgui_impl_win32.cpp"
         }
-        filter "configurations:Release"
-        links {
-                "Nebula/ext/shaderc/lib/Release/shaderc.lib",
-                "Nebula/ext/shaderc/lib/Release/shaderc_util.lib",
-                "Nebula/ext/glslang/lib/Release/GenericCodeGen.lib",
-                "Nebula/ext/glslang/lib/Release/glslang.lib",
-                "Nebula/ext/glslang/lib/Release/MachineIndependent.lib",
-                "Nebula/ext/glslang/lib/Release/OGLCompiler.lib",
-                "Nebula/ext/glslang/lib/Release/OSDependent.lib",
-                "Nebula/ext/glslang/lib/Release/SPIRV.lib",
-                "Nebula/ext/SPIRV-Tools/lib/Release/SPIRV-Tools.lib",
-                "Nebula/ext/SPIRV-Tools/lib/Release/SPIRV-Tools-opt.lib",
-            }
-        filter "configurations:Debug"
-            links 
-            {
-                "Nebula/ext/shaderc/lib/Debug/shaderc.lib",
-                "Nebula/ext/shaderc/lib/Debug/shaderc_util.lib",
-                "Nebula/ext/glslang/lib/Debug/GenericCodeGend.lib",
-                "Nebula/ext/glslang/lib/Debug/glslangd.lib",
-                "Nebula/ext/glslang/lib/Debug/MachineIndependentd.lib",
-                "Nebula/ext/glslang/lib/Debug/OGLCompilerd.lib",
-                "Nebula/ext/glslang/lib/Debug/OSDependentd.lib",
-                "Nebula/ext/glslang/lib/Debug/SPIRVd.lib",
-                "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools.lib",
-                "Nebula/ext/SPIRV-Tools/lib/Debug/SPIRV-Tools-opt.lib",
-            }
-
 
     filter "system:macosx"
-        systemversion "latest"
-        
-        files 
-        {
-            "Nebula/src/Platform/OS/MacOS/**.h",
-            "Nebula/src/Platform/OS/MacOS/**.cpp",
-        }
         links
         {
             "IOKit.framework", 
@@ -151,13 +125,8 @@ project "NebulaEngine"
 
 
     filter "system:linux"
-        systemversion "latest"
         
-        files 
-        {
-            "Nebula/src/Platform/OS/Linux/**.h",
-            "Nebula/src/Platform/OS/Linux/**.cpp",
-        }
+        
         defines
         {
             "_LIBS_SUPPLIED"
@@ -188,8 +157,8 @@ project "NebulaStudio"
     
     
     targetname("NebulaStudio")
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
     location ("build")
 
     debugdir("./NebulaStudio")
@@ -207,7 +176,7 @@ project "NebulaStudio"
         "FT2_BUILD_LIBRARY"
     }
 
-    sysincludedirs
+    externalincludedirs
     {
         "NebulaStudio/src",
         "NebulaStudio/src/Nebula",
@@ -216,7 +185,10 @@ project "NebulaStudio"
 
         "Nebula/ext/imgui",
         "Nebula/ext/imguizmo",
+        "Nebula/ext/stb_image/",
         "Nebula/ext/yaml-cpp/include",
+        "Nebula/ext/nfd/src/include",
+
         "Nebula/include",
         "Nebula/src/Nebula"
     }
@@ -227,7 +199,7 @@ project "NebulaStudio"
     }
 
     filter "system:windows"
-        systemversion "latest"
+        
         ignoredefaultlibraries
         {
             "user32", 
@@ -237,22 +209,46 @@ project "NebulaStudio"
         }
 
     filter "system:macosx"
-        systemversion "latest"
+        buildoptions {
+            "-stdlib=libc++"
+        }
+        
         links
         {
+            "c++",
             "IOKit.framework", 
             "OpenGL.framework",
             "Cocoa.framework",
-            "CoreVideo.framework"
+            "CoreVideo.framework",
+            "pthread",
+            "imgui",
+            "imguizmo",
+            "glad",
+            "yaml-cpp",
+            "nfd",
+            "SPIRV-Cross",
+            "GenericCodeGen",
+            "OGLCompiler",
+            "OSDependent",
+            "MachineIndependent",
+            "SPIRV",
+            "SPVRemapper",
+            "glslang",
+            "glslang-default-resource-limits",
+            "SPIRV-Tools",
+            "SPIRV-Tools-opt",
+            "shaderc_util",
+            "shaderc",
         }
 
 
     filter "system:linux"
-        systemversion "latest"
+        
         defines
         {
             "_LIBS_SUPPLIED"
         }
+        
         links
         {
             "X11",
@@ -261,9 +257,23 @@ project "NebulaStudio"
             "dl",
             "pthread",
             "imgui",
+            "imguizmo",
             "glad",
             "yaml-cpp",
-            "nfd"
+            "nfd",
+            "SPIRV-Cross",
+            "GenericCodeGen",
+            "OGLCompiler",
+            "OSDependent",
+            "MachineIndependent",
+            "SPIRV",
+            "SPVRemapper",
+            "glslang",
+            "glslang-default-resource-limits",
+            "SPIRV-Tools",
+            "SPIRV-Tools-opt",
+            "shaderc_util",
+            "shaderc",
         }
 
     filter "configurations:Debug"

@@ -58,40 +58,41 @@ namespace Nebula{
 
 		template<typename T>
 		void Push(const std::string& name, const T& data) {}
+        
+        template<typename T = float>
+        void Push(const std::string& name, const float& data)
+        {
+            Uniforms[Index++] = { UniformType::Float, Cursor, name };
+            memcpy(Buffer + Cursor, &data, sizeof(float));
+            Cursor += sizeof(float);
+        }
 
-		template<>
-		void Push(const std::string& name, const float& data)
-		{
-			Uniforms[Index++] = { UniformType::Float, Cursor, name };
-			memcpy(Buffer + Cursor, &data, sizeof(float));
-			Cursor += sizeof(float);
-		}
+        template<typename T = Vec3f>
+        void Push(const std::string& name, const Vec3f& data)
+        {
+            Uniforms[Index++] = { UniformType::Float3, Cursor, name };
+            memcpy(Buffer + Cursor, data.elements, sizeof(Vec3f));
+            Cursor += sizeof(Vec3f);
+        }
 
-		template<>
-		void Push(const std::string& name, const Vec3f& data)
-		{
-			Uniforms[Index++] = { UniformType::Float3, Cursor, name };
-			memcpy(Buffer + Cursor, glm::value_ptr(data), sizeof(Vec3f));
-			Cursor += sizeof(Vec3f);
-		}
+        template<typename T = Vec4f>
+        void Push(const std::string& name, const Vec4f& data)
+        {
+            Uniforms[Index++] = { UniformType::Float4, Cursor, name };
+            memcpy(Buffer + Cursor, data.elements, sizeof(Vec4f));
+            Cursor += sizeof(Vec4f);
+        }
 
-		template<>
-		void Push(const std::string& name, const Vec4f& data)
-		{
-			Uniforms[Index++] = { UniformType::Float4, Cursor, name };
-			memcpy(Buffer + Cursor, glm::value_ptr(data), sizeof(Vec4f));
-			Cursor += sizeof(Vec4f);
-		}
-
-		template<>
-		void Push(const std::string& name, const Mat4f& data)
-		{
-			Uniforms[Index++] = { UniformType::Matrix4x4, Cursor, name };
-			memcpy(Buffer + Cursor, data.elements, sizeof(Vec4f) * 4);
-			Cursor += sizeof(Vec4f) * 4;
-		}
-
+        template<typename T = Mat4f>
+        void Push(const std::string& name, const Mat4f& data)
+        {
+            Uniforms[Index++] = { UniformType::Matrix4x4, Cursor, name };
+            memcpy(Buffer + Cursor, data.elements, sizeof(Vec4f) * 4);
+            Cursor += sizeof(Vec4f) * 4;
+        }
 	};
+
+
 
     enum class ShaderUniformType
 	{

@@ -11,8 +11,8 @@
 #include <imgui.h>
 #include <ImGui/Styles/ImGuiStyles.h>
 
-#include <examples/imgui_impl_win32.h>
-#include <examples/imgui_impl_opengl3.h>
+#include <backends/imgui_impl_win32.h>
+#include <backends/imgui_impl_opengl3.h>
 
 #include <ImGuizmo.h>
 
@@ -22,6 +22,7 @@
 
 namespace Nebula{
 
+#ifdef NEB_PLATFORM_WINDOWS
     void WindowsImGuiLayer::OnAttach()
     {
 		NEB_PROFILE_FUNCTION();
@@ -156,4 +157,11 @@ namespace Nebula{
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
     }
+#else 
+    void WindowsImGuiLayer::OnAttach() {}
+    void WindowsImGuiLayer::OnDetach() {}
+    void WindowsImGuiLayer::Begin() {}
+    void WindowsImGuiLayer::End() {}
+    void WindowsImGuiLayer::ShowDockSpace() {}
+#endif
 }

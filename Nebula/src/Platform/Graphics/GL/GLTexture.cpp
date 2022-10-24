@@ -15,6 +15,7 @@ namespace Nebula {
 			case TextureFormat::RGB:     return GL_RGB;
 			case TextureFormat::RGBA:    return GL_RGBA;
 			case TextureFormat::Float16: return GL_RGBA16F;
+			default: {}
 		}
 		LOG_ERR("Unknown texture format!\n");
 		return 0;

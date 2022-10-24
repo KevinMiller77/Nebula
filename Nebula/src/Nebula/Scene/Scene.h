@@ -1,4 +1,7 @@
 #pragma once
+
+#include <string>
+
 #include <entt/entt.hpp>
 #include <Graphics/EditorCamera.h>
 

@@ -197,7 +197,7 @@ namespace Nebula{
 		}
 
 		if(entity.HasComponent<MeshComponent>()) {
-			Ref<Mesh> mesh = entity.GetComponent<MeshComponent>().Mesh;
+			Ref<Mesh> mesh = entity.GetComponent<MeshComponent>().m_Mesh;
 			if (mesh) {
 				Renderer::SubmitMesh(mesh, transform.GetTransformation());
 			}
@@ -311,37 +311,37 @@ namespace Nebula{
 			});
 		}
 
-        //Update Sound Info
-        {
+        // //Update Sound Info
+        // {
 
-            auto alcView = Registry.view<TransformComponent, AudioListenerComponent>();
+        //     auto alcView = Registry.view<TransformComponent, AudioListenerComponent>();
                     
-            bool hadListener = false;
-            for (auto entity : alcView) {
-                auto& [transform, audio] = alcView.get<TransformComponent, AudioListenerComponent>(entity);
-                if (!audio.IsActiveListener) {
-                    continue;
-                }
-                Audio::SetListenerPos(transform.Translation);
+        //     bool hadListener = false;
+        //     for (auto entity : alcView) {
+        //         auto& [transform, audio] = alcView.get<TransformComponent, AudioListenerComponent>(entity);
+        //         if (!audio.IsActiveListener) {
+        //             continue;
+        //         }
+        //         Audio::SetListenerPos(transform.Translation);
 
-                Quat viewing = Quat(transform.Rotation);
-                Audio::SetListenerOrientation(viewing.GetForwardVec(), viewing.GetUpVec());
+        //         Quat viewing = Quat(transform.Rotation);
+        //         Audio::SetListenerOrientation(viewing.GetForwardVec(), viewing.GetUpVec());
 
-                //TODO: When physics system exists, use it
-                // Audio::SetListenerVelocity();
+        //         //TODO: When physics system exists, use it
+        //         // Audio::SetListenerVelocity();
 
-                hadListener = true;
-            }
-            auto ascView = Registry.view<TransformComponent, AudioSourceComponent>();
-            for (auto entity : ascView) {
-                auto& [transform, audio] = ascView.get<TransformComponent, AudioSourceComponent>(entity);
-                audio.Source->SetPosition(transform.Translation);
-                if (!hadListener && audio.Source->IsPlaying()) {
-                    audio.Source->Stop();
-                }
-            }
+        //         hadListener = true;
+        //     }
+        //     auto ascView = Registry.view<TransformComponent, AudioSourceComponent>();
+        //     for (auto entity : ascView) {
+        //         auto& [transform, audio] = ascView.get<TransformComponent, AudioSourceComponent>(entity);
+        //         audio.Source->SetPosition(transform.Translation);
+        //         if (!hadListener && audio.Source->IsPlaying()) {
+        //             audio.Source->Stop();
+        //         }
+        //     }
 
-        }
+        // }
 	
 		// Check for a new main camera in the scene
 		auto view = Registry.view<TransformComponent, CameraComponent>();
@@ -350,7 +350,9 @@ namespace Nebula{
 		{
 			for (auto entity : view)
 			{
-				auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+				auto& transform = view.get<TransformComponent>(entity);
+                auto& camera = view.get<CameraComponent>(entity);
+
 				camera.Camera.WantsMainCamera(false);
 				camera.Camera.RecalculateProjection();
 				SceneMainCameraEntity = entity;
@@ -363,7 +365,8 @@ namespace Nebula{
         // Get Main Camera information for renderer
 		for (auto entity : view)
 		{
-			auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+			auto& transform = view.get<TransformComponent>(entity);
+            auto& camera = view.get<CameraComponent>(entity);
 			
 			if (camera.Camera.WantsMainCamera())
 			{

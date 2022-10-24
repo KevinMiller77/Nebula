@@ -191,7 +191,7 @@ namespace Nebula{
         }
 
         Quat operator=(const Quat& n)
-            { this->S = n.S; this->V = n.V; }
+            { this->S = n.S; this->V = n.V; return *this; }
         
         Quat operator*(const Quat& n)
             { return multiply(n); }

@@ -6,7 +6,7 @@
 #include <string>
 #include <thread>
 #include <filesystem>
-
+/*
 #include "AL/al.h"
 #include "AL/alext.h"
 #include "alc/alcmain.h"
@@ -395,3 +395,4 @@ namespace Nebula {
 	}
 
 }
+*/

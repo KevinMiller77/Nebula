@@ -60,15 +60,15 @@ namespace Nebula
 
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
-            auto v = ActiveScene->GetView<AudioSourceComponent>();
-            for (auto entityHandle : v) {
-                Entity e = { entityHandle, ActiveScene.get() };
-                auto& asc = e.GetComponent<AudioSourceComponent>();
+            // auto v = ActiveScene->GetView<AudioSourceComponent>();
+            // for (auto entityHandle : v) {
+            //     Entity e = { entityHandle, ActiveScene.get() };
+            //     auto& asc = e.GetComponent<AudioSourceComponent>();
 
-                if (asc.Source->IsPlaying()) {
-                    asc.Source->Stop();
-                }
-            }
+            //     if (asc.Source->IsPlaying()) {
+            //         asc.Source->Stop();
+            //     }
+            // }
 
             m_RenderPassSpec.TargetFramebuffer->ClearTextureAttachment(1, -1);
 
@@ -255,7 +255,7 @@ namespace Nebula
         // Only draw if entity has sprite component AND is not hidden
         if (shouldDrawImGuizmo) {
             bool shouldDrawSprite = selectedEntity.HasComponent<SpriteRendererComponent>() ? !selectedEntity.GetComponent<SpriteRendererComponent>().Hidden : false;
-            bool shouldDrawMesh = selectedEntity.HasComponent<MeshComponent>() ? selectedEntity.GetComponent<MeshComponent>().Mesh && selectedEntity.GetComponent<MeshComponent>().Mesh->IsLoaded() : false;
+            bool shouldDrawMesh = selectedEntity.HasComponent<MeshComponent>() ? selectedEntity.GetComponent<MeshComponent>().m_Mesh && selectedEntity.GetComponent<MeshComponent>().m_Mesh->IsLoaded() : false;
             shouldDrawImGuizmo = shouldDrawImGuizmo && (shouldDrawMesh || shouldDrawSprite);
         }
 
@@ -847,18 +847,18 @@ namespace Nebula
             auto& pecNew = newEntity.AddComponent<ParentEntityComponent>(pec);
             pecNew = ParentEntityComponent(pec);
         }
-        if (Clipboard.HasComponent<AudioListenerComponent>())
-        {
-            auto pec = Clipboard.GetComponent<AudioListenerComponent>();
-            auto& pecNew = newEntity.AddComponent<AudioListenerComponent>(pec);
-            pecNew = AudioListenerComponent(pec);
-        }
-        if (Clipboard.HasComponent<AudioSourceComponent>())
-        {
-            auto pec = Clipboard.GetComponent<AudioSourceComponent>();
-            auto& pecNew = newEntity.AddComponent<AudioSourceComponent>(pec);
-            pecNew.Source = AudioSource::LoadFromFile(pec.Source->GetFilePath(), false);
-        }
+        // if (Clipboard.HasComponent<AudioListenerComponent>())
+        // {
+        //     auto pec = Clipboard.GetComponent<AudioListenerComponent>();
+        //     auto& pecNew = newEntity.AddComponent<AudioListenerComponent>(pec);
+        //     pecNew = AudioListenerComponent(pec);
+        // }
+        // if (Clipboard.HasComponent<AudioSourceComponent>())
+        // {
+        //     auto pec = Clipboard.GetComponent<AudioSourceComponent>();
+        //     auto& pecNew = newEntity.AddComponent<AudioSourceComponent>(pec);
+        //     pecNew.Source = AudioSource::LoadFromFile(pec.Source->GetFilePath(), false);
+        // }
 
         bool pastingAsChild = SceneHierarchy.GetSelection().IsValid(); 
         if (pastingAsChild)

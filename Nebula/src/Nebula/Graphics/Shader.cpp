@@ -36,20 +36,24 @@ namespace Nebula{
 
     const std::string& ShaderUniform::UniformTypeToString(ShaderUniformType type)
 	{
-		if (type == ShaderUniformType::Bool)
-		{
-			return "Boolean";
-		}
-		else if (type == ShaderUniformType::Int)
-		{
-			return "Int";
-		}
-		else if (type == ShaderUniformType::Float)
-		{
-			return "Float";
-		}
+        std::string* out = new std::string("None");
 
-		return "None";
+        switch(type) {
+            case(ShaderUniformType::Bool): {
+    			*out = "Boolean";            
+                break;
+            }
+            case(ShaderUniformType::Int): {
+    			*out = "Int";            
+                break;
+            }
+            case(ShaderUniformType::Float): {
+    			*out = "Float";            
+                break;
+            }
+        }
+
+		return *out;
 	}
 
     void ShaderLibrary::Add(Ref<Shader> shader)

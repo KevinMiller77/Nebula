@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <string>
 
 #include <Events/Event.h>
 #include <Events/KeyEvent.h>
@@ -24,7 +25,7 @@ namespace Nebula{
 	{
 		bool windowed = true;
 
-		std::string Title;
+		std::string Title = std::string();
 		uint32 Width;
 		uint32 Height;
         bool Transparent;

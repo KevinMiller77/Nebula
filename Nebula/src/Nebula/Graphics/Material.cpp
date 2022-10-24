@@ -310,4 +310,80 @@ namespace Nebula {
 		}
 	}
 
+
+
+		template <typename T>
+		void MaterialInstance::Set(const std::string& name, const T& value)
+		{
+			auto decl = m_Material->FindUniformDeclaration(name);
+			assert((decl, "Could not find uniform!"));
+			if (!decl)
+				return;
+
+			auto& buffer = m_UniformStorageBuffer;
+			buffer.Write((uint8_t*)& value, decl->GetSize(), decl->GetOffset());
+
+			m_OverriddenValues.insert(name);
+		}
+
+		void MaterialInstance::Set(const std::string& name, const Ref<Texture>& texture)
+		{
+			auto decl = m_Material->FindResourceDeclaration(name);
+			assert((decl, "Could not find uniform!"));
+
+			uint32_t slot = decl->GetRegister();
+			if (m_Textures.size() <= slot)
+				m_Textures.resize((size_t)slot + 1);
+			m_Textures[slot] = texture;
+		}
+
+		void MaterialInstance::Set(const std::string& name, const Ref<Texture2D>& texture)
+		{
+			Set(name, (const Ref<Texture>&)texture);
+		}
+
+		void MaterialInstance::Set(const std::string& name, const Ref<TextureCube>& texture)
+		{
+			Set(name, (const Ref<Texture>&)texture);
+		}
+
+		template<typename T>
+		T& MaterialInstance::Get(const std::string& name)
+		{
+			auto decl = m_Material->FindUniformDeclaration(name);
+			assert((decl, "Could not find uniform with name 'x'"));
+			auto& buffer = m_UniformStorageBuffer;
+			return buffer.Read<T>(decl->GetOffset());
+		}
+
+		template<typename T>
+		Ref<T> MaterialInstance::GetResource(const std::string& name)
+		{
+			auto decl = m_Material->FindResourceDeclaration(name);
+			assert((decl, "Could not find uniform with name 'x'"));
+			uint32_t slot = decl->GetRegister();
+			assert((slot < m_Textures.size(), "Texture slot is invalid!"));
+			return Ref<T>(m_Textures[slot]);
+		}
+
+		template<typename T>
+		Ref<T> MaterialInstance::TryGetResource(const std::string& name)
+		{
+			auto decl = m_Material->FindResourceDeclaration(name);
+			if (!decl)
+				return nullptr;
+
+			uint32_t slot = decl->GetRegister();
+			if (slot >= m_Textures.size())
+				return nullptr;
+
+			return Ref<T>(m_Textures[slot]);
+		}
+
+		uint32_t MaterialInstance::GetFlags() const { return m_Material->m_MaterialFlags; }
+		bool MaterialInstance::GetFlag(MaterialFlag flag) const { return (uint32_t)flag & m_Material->m_MaterialFlags; }
+
+		Ref<Shader> MaterialInstance::GetShader() { return m_Material->m_Shader; }
+
+		const std::string& MaterialInstance::GetName() const { return m_Name; }
 }

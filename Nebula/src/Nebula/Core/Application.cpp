@@ -28,7 +28,7 @@ namespace Nebula{
         
         VFS::Init();
 
-        Audio::Init();
+        // Audio::Init();
 
         Renderer::Init();
 

@@ -1,4 +1,7 @@
 #pragma once
+
+#include <vector>
+
 #include <Core/NebulaCommon.h>
 #include <Core/Ref.h>
 #include <Math/math.h>

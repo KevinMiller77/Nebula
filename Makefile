@@ -9,129 +9,201 @@ ifndef verbose
 endif
 
 ifeq ($(config),debug)
-  glfw_config = debug
   glad_config = debug
   imgui_config = debug
   yaml_cpp_config = debug
   nfd_config = debug
-  libogg_config = debug
-  Vorbis_config = debug
-  OpenAL_Soft_config = debug
   imguizmo_config = debug
+  SPIRV_Cross_config = debug
+  GenericCodeGen_config = debug
+  OGLCompiler_config = debug
+  OSDependent_config = debug
+  MachineIndependent_config = debug
+  SPIRV_config = debug
+  SPVRemapper_config = debug
+  glslang_config = debug
+  glslang_default_resource_limits_config = debug
+  spirv_tools_config = debug
+  spirv_tools_opt_config = debug
+  shaderc_util_config = debug
+  shaderc_config = debug
   NebulaEngine_config = debug
-  SpaceSim_config = debug
   NebulaStudio_config = debug
 
 else ifeq ($(config),release)
-  glfw_config = release
   glad_config = release
   imgui_config = release
   yaml_cpp_config = release
   nfd_config = release
-  libogg_config = release
-  Vorbis_config = release
-  OpenAL_Soft_config = release
   imguizmo_config = release
+  SPIRV_Cross_config = release
+  GenericCodeGen_config = release
+  OGLCompiler_config = release
+  OSDependent_config = release
+  MachineIndependent_config = release
+  SPIRV_config = release
+  SPVRemapper_config = release
+  glslang_config = release
+  glslang_default_resource_limits_config = release
+  spirv_tools_config = release
+  spirv_tools_opt_config = release
+  shaderc_util_config = release
+  shaderc_config = release
   NebulaEngine_config = release
-  SpaceSim_config = release
   NebulaStudio_config = release
 
 else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := glfw glad imgui yaml-cpp nfd libogg Vorbis OpenAL-Soft imguizmo NebulaEngine SpaceSim NebulaStudio
+PROJECTS := glad imgui yaml-cpp nfd imguizmo SPIRV-Cross GenericCodeGen OGLCompiler OSDependent MachineIndependent SPIRV SPVRemapper glslang glslang-default-resource-limits spirv-tools spirv-tools-opt shaderc_util shaderc NebulaEngine NebulaStudio
 
 .PHONY: all clean help $(PROJECTS) Dependencies
 
 all: $(PROJECTS)
 
-Dependencies: OpenAL-Soft Vorbis glad glfw imgui imguizmo libogg nfd yaml-cpp
-
-glfw:
-ifneq (,$(glfw_config))
-	@echo "==== Building glfw ($(glfw_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/glfw -f Makefile config=$(glfw_config)
-endif
+Dependencies: GenericCodeGen MachineIndependent OGLCompiler OSDependent SPIRV SPIRV-Cross SPVRemapper glad glslang glslang-default-resource-limits imgui imguizmo nfd shaderc shaderc_util spirv-tools spirv-tools-opt yaml-cpp
 
 glad:
 ifneq (,$(glad_config))
 	@echo "==== Building glad ($(glad_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/glad -f Makefile config=$(glad_config)
+	@${MAKE} --no-print-directory -C build/glad -f Makefile config=$(glad_config)
 endif
 
 imgui:
 ifneq (,$(imgui_config))
 	@echo "==== Building imgui ($(imgui_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/imgui -f Makefile config=$(imgui_config)
+	@${MAKE} --no-print-directory -C build/imgui -f Makefile config=$(imgui_config)
 endif
 
 yaml-cpp:
 ifneq (,$(yaml_cpp_config))
 	@echo "==== Building yaml-cpp ($(yaml_cpp_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/yaml-cpp -f Makefile config=$(yaml_cpp_config)
+	@${MAKE} --no-print-directory -C build/yaml-cpp -f Makefile config=$(yaml_cpp_config)
 endif
 
 nfd:
 ifneq (,$(nfd_config))
 	@echo "==== Building nfd ($(nfd_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/nativefiledialog -f Makefile config=$(nfd_config)
-endif
-
-libogg:
-ifneq (,$(libogg_config))
-	@echo "==== Building libogg ($(libogg_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/libogg -f Makefile config=$(libogg_config)
-endif
-
-Vorbis: libogg
-ifneq (,$(Vorbis_config))
-	@echo "==== Building Vorbis ($(Vorbis_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/Vorbis -f Makefile config=$(Vorbis_config)
-endif
-
-OpenAL-Soft:
-ifneq (,$(OpenAL_Soft_config))
-	@echo "==== Building OpenAL-Soft ($(OpenAL_Soft_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/OpenAL-Soft -f Makefile config=$(OpenAL_Soft_config)
+	@${MAKE} --no-print-directory -C build/nfd -f Makefile config=$(nfd_config)
 endif
 
 imguizmo:
 ifneq (,$(imguizmo_config))
 	@echo "==== Building imguizmo ($(imguizmo_config)) ===="
-	@${MAKE} --no-print-directory -C Nebula/ext/imguizmo -f Makefile config=$(imguizmo_config)
+	@${MAKE} --no-print-directory -C build/imguizmo -f Makefile config=$(imguizmo_config)
 endif
 
-NebulaEngine: imgui imguizmo glad glfw yaml-cpp nfd OpenAL-Soft Vorbis
+SPIRV-Cross:
+ifneq (,$(SPIRV_Cross_config))
+	@echo "==== Building SPIRV-Cross ($(SPIRV_Cross_config)) ===="
+	@${MAKE} --no-print-directory -C build/SPIRV-Cross -f Makefile config=$(SPIRV_Cross_config)
+endif
+
+GenericCodeGen:
+ifneq (,$(GenericCodeGen_config))
+	@echo "==== Building GenericCodeGen ($(GenericCodeGen_config)) ===="
+	@${MAKE} --no-print-directory -C build/GenericCodeGen -f Makefile config=$(GenericCodeGen_config)
+endif
+
+OGLCompiler:
+ifneq (,$(OGLCompiler_config))
+	@echo "==== Building OGLCompiler ($(OGLCompiler_config)) ===="
+	@${MAKE} --no-print-directory -C build/OGLCompiler -f Makefile config=$(OGLCompiler_config)
+endif
+
+OSDependent:
+ifneq (,$(OSDependent_config))
+	@echo "==== Building OSDependent ($(OSDependent_config)) ===="
+	@${MAKE} --no-print-directory -C build/OSDependent -f Makefile config=$(OSDependent_config)
+endif
+
+MachineIndependent: GenericCodeGen OGLCompiler OSDependent
+ifneq (,$(MachineIndependent_config))
+	@echo "==== Building MachineIndependent ($(MachineIndependent_config)) ===="
+	@${MAKE} --no-print-directory -C build/MachineIndependent -f Makefile config=$(MachineIndependent_config)
+endif
+
+SPIRV: GenericCodeGen OGLCompiler OSDependent MachineIndependent
+ifneq (,$(SPIRV_config))
+	@echo "==== Building SPIRV ($(SPIRV_config)) ===="
+	@${MAKE} --no-print-directory -C build/SPIRV -f Makefile config=$(SPIRV_config)
+endif
+
+SPVRemapper:
+ifneq (,$(SPVRemapper_config))
+	@echo "==== Building SPVRemapper ($(SPVRemapper_config)) ===="
+	@${MAKE} --no-print-directory -C build/SPVRemapper -f Makefile config=$(SPVRemapper_config)
+endif
+
+glslang:
+ifneq (,$(glslang_config))
+	@echo "==== Building glslang ($(glslang_config)) ===="
+	@${MAKE} --no-print-directory -C build/glslang -f Makefile config=$(glslang_config)
+endif
+
+glslang-default-resource-limits:
+ifneq (,$(glslang_default_resource_limits_config))
+	@echo "==== Building glslang-default-resource-limits ($(glslang_default_resource_limits_config)) ===="
+	@${MAKE} --no-print-directory -C build/glslang-default-resource-limits -f Makefile config=$(glslang_default_resource_limits_config)
+endif
+
+spirv-tools:
+ifneq (,$(spirv_tools_config))
+	@echo "==== Building spirv-tools ($(spirv_tools_config)) ===="
+	@${MAKE} --no-print-directory -C build/spirv-tools -f Makefile config=$(spirv_tools_config)
+endif
+
+spirv-tools-opt: spirv-tools
+ifneq (,$(spirv_tools_opt_config))
+	@echo "==== Building spirv-tools-opt ($(spirv_tools_opt_config)) ===="
+	@${MAKE} --no-print-directory -C build/spirv-tools-opt -f Makefile config=$(spirv_tools_opt_config)
+endif
+
+shaderc_util: GenericCodeGen OGLCompiler OSDependent MachineIndependent SPIRV SPVRemapper glslang glslang-default-resource-limits spirv-tools spirv-tools-opt
+ifneq (,$(shaderc_util_config))
+	@echo "==== Building shaderc_util ($(shaderc_util_config)) ===="
+	@${MAKE} --no-print-directory -C build/shaderc_util -f Makefile config=$(shaderc_util_config)
+endif
+
+shaderc: shaderc_util
+ifneq (,$(shaderc_config))
+	@echo "==== Building shaderc ($(shaderc_config)) ===="
+	@${MAKE} --no-print-directory -C build/shaderc -f Makefile config=$(shaderc_config)
+endif
+
+NebulaEngine: imgui imguizmo glad yaml-cpp nfd SPIRV-Cross GenericCodeGen OGLCompiler OSDependent MachineIndependent SPIRV SPVRemapper glslang glslang-default-resource-limits spirv-tools spirv-tools-opt shaderc_util shaderc
 ifneq (,$(NebulaEngine_config))
 	@echo "==== Building NebulaEngine ($(NebulaEngine_config)) ===="
 	@${MAKE} --no-print-directory -C build -f NebulaEngine.make config=$(NebulaEngine_config)
 endif
 
-SpaceSim: NebulaEngine imgui glad glfw yaml-cpp nfd
-ifneq (,$(SpaceSim_config))
-	@echo "==== Building SpaceSim ($(SpaceSim_config)) ===="
-	@${MAKE} --no-print-directory -C build -f SpaceSim.make config=$(SpaceSim_config)
-endif
-
-NebulaStudio: NebulaEngine imgui glad glfw yaml-cpp nfd
+NebulaStudio: NebulaEngine imgui imguizmo glad yaml-cpp nfd SPIRV-Cross GenericCodeGen OGLCompiler OSDependent MachineIndependent SPIRV SPVRemapper glslang glslang-default-resource-limits spirv-tools spirv-tools-opt shaderc_util shaderc
 ifneq (,$(NebulaStudio_config))
 	@echo "==== Building NebulaStudio ($(NebulaStudio_config)) ===="
 	@${MAKE} --no-print-directory -C build -f NebulaStudio.make config=$(NebulaStudio_config)
 endif
 
 clean:
-	@${MAKE} --no-print-directory -C Nebula/ext/glfw -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/glad -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/imgui -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/yaml-cpp -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/nativefiledialog -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/libogg -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/Vorbis -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/OpenAL-Soft -f Makefile clean
-	@${MAKE} --no-print-directory -C Nebula/ext/imguizmo -f Makefile clean
+	@${MAKE} --no-print-directory -C build/glad -f Makefile clean
+	@${MAKE} --no-print-directory -C build/imgui -f Makefile clean
+	@${MAKE} --no-print-directory -C build/yaml-cpp -f Makefile clean
+	@${MAKE} --no-print-directory -C build/nfd -f Makefile clean
+	@${MAKE} --no-print-directory -C build/imguizmo -f Makefile clean
+	@${MAKE} --no-print-directory -C build/SPIRV-Cross -f Makefile clean
+	@${MAKE} --no-print-directory -C build/GenericCodeGen -f Makefile clean
+	@${MAKE} --no-print-directory -C build/OGLCompiler -f Makefile clean
+	@${MAKE} --no-print-directory -C build/OSDependent -f Makefile clean
+	@${MAKE} --no-print-directory -C build/MachineIndependent -f Makefile clean
+	@${MAKE} --no-print-directory -C build/SPIRV -f Makefile clean
+	@${MAKE} --no-print-directory -C build/SPVRemapper -f Makefile clean
+	@${MAKE} --no-print-directory -C build/glslang -f Makefile clean
+	@${MAKE} --no-print-directory -C build/glslang-default-resource-limits -f Makefile clean
+	@${MAKE} --no-print-directory -C build/spirv-tools -f Makefile clean
+	@${MAKE} --no-print-directory -C build/spirv-tools-opt -f Makefile clean
+	@${MAKE} --no-print-directory -C build/shaderc_util -f Makefile clean
+	@${MAKE} --no-print-directory -C build/shaderc -f Makefile clean
 	@${MAKE} --no-print-directory -C build -f NebulaEngine.make clean
-	@${MAKE} --no-print-directory -C build -f SpaceSim.make clean
 	@${MAKE} --no-print-directory -C build -f NebulaStudio.make clean
 
 help:
@@ -144,17 +216,25 @@ help:
 	@echo "TARGETS:"
 	@echo "   all (default)"
 	@echo "   clean"
-	@echo "   glfw"
 	@echo "   glad"
 	@echo "   imgui"
 	@echo "   yaml-cpp"
 	@echo "   nfd"
-	@echo "   libogg"
-	@echo "   Vorbis"
-	@echo "   OpenAL-Soft"
 	@echo "   imguizmo"
+	@echo "   SPIRV-Cross"
+	@echo "   GenericCodeGen"
+	@echo "   OGLCompiler"
+	@echo "   OSDependent"
+	@echo "   MachineIndependent"
+	@echo "   SPIRV"
+	@echo "   SPVRemapper"
+	@echo "   glslang"
+	@echo "   glslang-default-resource-limits"
+	@echo "   spirv-tools"
+	@echo "   spirv-tools-opt"
+	@echo "   shaderc_util"
+	@echo "   shaderc"
 	@echo "   NebulaEngine"
-	@echo "   SpaceSim"
 	@echo "   NebulaStudio"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

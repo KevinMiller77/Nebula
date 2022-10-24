@@ -227,30 +227,30 @@ namespace Nebula{
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
-        if (entity.HasComponent<AudioListenerComponent>())
-		{
-			out << YAML::Key << "AudioListenerComponent";
-			out << YAML::Value;
-			    out << YAML::BeginMap;
-			    out << YAML::Key << "Main Listener" << YAML::Value << entity.GetComponent<AudioListenerComponent>().IsActiveListener;
-                out << YAML::EndMap;
-		}
+        // if (entity.HasComponent<AudioListenerComponent>())
+		// {
+		// 	out << YAML::Key << "AudioListenerComponent";
+		// 	out << YAML::Value;
+		// 	    out << YAML::BeginMap;
+		// 	    out << YAML::Key << "Main Listener" << YAML::Value << entity.GetComponent<AudioListenerComponent>().IsActiveListener;
+        //         out << YAML::EndMap;
+		// }
 
-        if (entity.HasComponent<AudioSourceComponent>())
-		{
-			out << YAML::Key << "AudioSourceComponent";
-			out << YAML::Value;
-            {
+        // if (entity.HasComponent<AudioSourceComponent>())
+		// {
+		// 	out << YAML::Key << "AudioSourceComponent";
+		// 	out << YAML::Value;
+        //     {
 
-                out << YAML::BeginMap;
-                out << YAML::Key << "Path" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetFilePath();
-                out << YAML::Key << "Loop" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetLoop();
-                out << YAML::Key << "Spatial" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetSpatial();
-                out << YAML::Key << "Gain" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetGain();
-                out << YAML::Key << "Pitch" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetPitch();
-                out << YAML::EndMap;
-            }
-		}
+        //         out << YAML::BeginMap;
+        //         out << YAML::Key << "Path" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetFilePath();
+        //         out << YAML::Key << "Loop" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetLoop();
+        //         out << YAML::Key << "Spatial" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetSpatial();
+        //         out << YAML::Key << "Gain" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetGain();
+        //         out << YAML::Key << "Pitch" << YAML::Value << entity.GetComponent<AudioSourceComponent>().Source->GetPitch();
+        //         out << YAML::EndMap;
+        //     }
+		// }
 
 		if (entity.HasComponent<RootEntityComponent>())
 		{
@@ -444,22 +444,22 @@ namespace Nebula{
 			}
 		}
 
-        auto audioListenerComponent = entity["AudioListenerComponent"];
-        if (audioListenerComponent) {
-            auto& listenerComp = deserializedEntity.AddComponent<AudioListenerComponent>();
-            listenerComp.IsActiveListener = audioListenerComponent["Main Listener"].as<bool>();
-        }
+        // auto audioListenerComponent = entity["AudioListenerComponent"];
+        // if (audioListenerComponent) {
+        //     auto& listenerComp = deserializedEntity.AddComponent<AudioListenerComponent>();
+        //     listenerComp.IsActiveListener = audioListenerComponent["Main Listener"].as<bool>();
+        // }
 
-        auto audioSourceComponent = entity["AudioSourceComponent"];
-        if (audioSourceComponent) {
-            std::string path = audioSourceComponent["Path"].as<std::string>();
-            bool spatial = audioSourceComponent["Spatial"].as<bool>();
-            bool loop = audioSourceComponent["Loop"].as<bool>();
-            float gain = audioSourceComponent["Gain"].as<float>();
-            float pitch = audioSourceComponent["Pitch"].as<float>();
+        // auto audioSourceComponent = entity["AudioSourceComponent"];
+        // if (audioSourceComponent) {
+        //     std::string path = audioSourceComponent["Path"].as<std::string>();
+        //     bool spatial = audioSourceComponent["Spatial"].as<bool>();
+        //     bool loop = audioSourceComponent["Loop"].as<bool>();
+        //     float gain = audioSourceComponent["Gain"].as<float>();
+        //     float pitch = audioSourceComponent["Pitch"].as<float>();
 
-            auto& sourceComp = deserializedEntity.AddComponent<AudioSourceComponent>(path, spatial, loop, gain, pitch);
-        }
+        //     auto& sourceComp = deserializedEntity.AddComponent<AudioSourceComponent>(path, spatial, loop, gain, pitch);
+        // }
 
 		auto rootEntityComponent = entity["RootEntityComponent"];
 		if (rootEntityComponent)

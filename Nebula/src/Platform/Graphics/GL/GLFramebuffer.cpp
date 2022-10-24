@@ -4,7 +4,7 @@
 #include <Utils/Logging.h>
 #include <glad/glad.h>
 
-#include <ext/imgui/examples/imgui_impl_opengl3.h>
+#include <ext/imgui/backends/imgui_impl_opengl3.h>
 namespace Nebula{
     static const uint32 C_MaxFrameBufferSize = 8192;
 
@@ -73,9 +73,10 @@ namespace Nebula{
             switch(format) {
                 case (FramebufferTextureFormat::RGBA8):     return GL_RGBA8;
                 case (FramebufferTextureFormat::RED_INT):   return GL_RED_INTEGER;
+                default: {}
             }
 
-            assert(false);
+            assert((false));
             return 0;
         }
     }
@@ -136,7 +137,7 @@ namespace Nebula{
     {
         Bind();
 
-        assert(colorAttachmentID < m_ColorAttachments.size());
+        assert((colorAttachmentID < m_ColorAttachments.size()));
         glReadBuffer(GL_COLOR_ATTACHMENT0 + colorAttachmentID);
         int pixel;
         glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixel);
@@ -198,11 +199,12 @@ namespace Nebula{
                 case(FramebufferTextureFormat::DEPTH24STENCIL8): {
                     Utils::AttachDepthTexture(m_DepthAttachment, Spec.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, Spec.Width, Spec.Height);
                 }
+                default: {}
             }
         }
 
         if (m_ColorAttachments.size() > 1) {
-            assert(m_ColorAttachments.size() <= 4);
+            assert((m_ColorAttachments.size() <= 4));
             GLenum buffers[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
             glDrawBuffers(m_ColorAttachments.size(), buffers);
         }
@@ -210,7 +212,7 @@ namespace Nebula{
             glDrawBuffer(GL_NONE);
         }
 
-        assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+        assert((glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE));
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }

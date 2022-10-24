@@ -49,7 +49,7 @@ namespace Nebula
     {
         EditorConfig out;
 
-        auto& in = std::ifstream(EDITOR_CONFIG_PATH);
+        auto in = std::ifstream(EDITOR_CONFIG_PATH);
         std::stringstream strStream;
         strStream << in.rdbuf();
 
@@ -67,7 +67,7 @@ namespace Nebula
         {
             if (!std::filesystem::exists(out.recentProjectLocations[i]))
             {
-                LOG_INF("Project file %s not found. Removing from recents.\n", out.recentProjectLocations[i]);
+                LOG_INF("Project file %s not found. Removing from recents.\n", out.recentProjectLocations[i].c_str());
                 out.recentProjectLocations.erase(out.recentProjectLocations.begin() + i);
             }
         }
@@ -97,7 +97,7 @@ namespace Nebula
         }
         out << YAML::EndMap;
 
-        auto& outFile = std::ofstream(EDITOR_CONFIG_PATH);    
+        auto outFile = std::ofstream(EDITOR_CONFIG_PATH);    
         outFile << out.c_str();
         outFile.close();
     }

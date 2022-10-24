@@ -9,9 +9,9 @@
 namespace Nebula{
     struct PipelineSpecification
     {
-        Ref<Shader>     Shader;
-        BufferLayout    Layout;
-        Ref<RenderPass> RenderPass;
+        Ref<Shader>     m_Shader;
+        BufferLayout    m_Layout;
+        Ref<RenderPass> m_RenderPass;
     };
 
     class Pipeline

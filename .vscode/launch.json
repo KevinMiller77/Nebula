@@ -8,12 +8,36 @@
             "name": "(Windows) Launch",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "enter program name, for example ${workspaceFolder}/a.exe",
+            "program": "${workspaceFolder}/bin/Debug/windowsx86_64/NebulaStudio/NebulaStudio.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/NebulaStudio",
             "environment": [],
             "externalConsole": false
+        },
+        {
+            "name": "(Linux) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/Debug/linuxx86_64/NebulaStudio/NebulaStudio",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/NebulaStudio",
+            "environment": [],
+            "externalConsole": false
+        },
+        {
+            "name": "(Mac) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/Debug/macosxx86_64/NebulaStudio/NebulaStudio",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/NebulaStudio",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
         }
+        
     ]
 }

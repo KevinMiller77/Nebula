@@ -25,8 +25,8 @@
 
 //Error Log
 #if DEBUG_LEVEL > 0
-#define LOG_ERR(...) printf("[Nebula] E: " __VA_ARGS__)
-#define LOG_ERR_TAG(tag,...) printf("[Nebula]" tag " E: " __VA_ARGS__)
+#define LOG_ERR(...) printf("[Nebula] E: " __VA_ARGS__); fflush(stdout);
+#define LOG_ERR_TAG(tag,...) printf("[Nebula]" tag " E: " __VA_ARGS__); fflush(stdout);
 #else
 #define LOG_ERR(...)
 #endif

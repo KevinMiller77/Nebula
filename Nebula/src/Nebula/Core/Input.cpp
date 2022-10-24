@@ -12,6 +12,7 @@ namespace Nebula {
         switch (Window::GetWindowType()) {
             case (WindowType::None) : { LOG_ERR("No OS was given! Cannot create input subsystem\n"); return nullptr; }
             case (WindowType::Windows) : { return CreateRef<WindowsInput>(); }
+            default: { LOG_ERR("No OS was given! Cannot create input subsystem\n"); return nullptr; }
         }
     }
 

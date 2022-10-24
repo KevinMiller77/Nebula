@@ -1,0 +1,34 @@
+[submodule "Nebula/ext/shaderc"]
+	path = Nebula/ext/shaderc
+	url = https://github.com/google/shaderc.git
+[submodule "Nebula/ext/glslang"]
+	path = Nebula/ext/glslang
+	url = https://github.com/KhronosGroup/glslang.git
+[submodule "Nebula/ext/SPIRV-Headers"]
+	path = Nebula/ext/SPIRV-Headers
+	url = https://github.com/KhronosGroup/SPIRV-Headers.git
+[submodule "SPIRV-Tools"]
+	path = SPIRV-Tools
+	url = https://github.com/KhronosGroup/SPIRV-Tools.git
+[submodule "Nebula/ext/SPIRV-Tools"]
+	path = Nebula/ext/SPIRV-Tools
+	url = https://github.com/KhronosGroup/SPIRV-Tools.git
+[submodule "Nebula/ext/nfd"]
+	path = Nebula/ext/nfd
+	url = https://github.com/mlabbe/nativefiledialog.git
+[submodule "Nebula/ext/imgui"]
+	path = Nebula/ext/imgui
+	url = https://github.com/ocornut/imgui.git
+	branch = origin/docking
+[submodule "Nebula/ext/imguizmo"]
+	path = Nebula/ext/imguizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git
+[submodule "Nebula/ext/SPIRV-Cross"]
+	path = Nebula/ext/SPIRV-Cross
+	url = https://github.com/KhronosGroup/SPIRV-Cross.git
+[submodule "Nebula/ext/stb_image"]
+	path = Nebula/ext/stb_image
+	url = https://github.com/nothings/stb.git
+[submodule "Nebula/ext/yaml-cpp"]
+	path = Nebula/ext/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git

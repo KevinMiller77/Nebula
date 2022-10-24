@@ -40,7 +40,7 @@ namespace Nebula {
 			ImGui::PopID();
 		}
 
-		if (ImGui::BeginPopupContextWindow("##entity_context_add", 1, false))
+		if (ImGui::BeginPopupContextWindow("##entity_context_add", 1))
 		{
 			if (ImGui::MenuItem("Add Entity"))
 			{
@@ -210,7 +210,7 @@ namespace Nebula {
 		{
 			SelectionContext = entity;
 		}
-		if (ImGui::BeginPopupContextWindow(tag.c_str(), 1, true))
+		if (ImGui::BeginPopupContextWindow(tag.c_str(), 1))
 		{
 			if (ImGui::MenuItem("Add Child"))
 			{
@@ -548,9 +548,9 @@ namespace Nebula {
 		if (entity.HasComponent<MeshComponent>() ) {
 			ImGui::Separator();
 
-            if (ImGui::TreeNodeEx((void*)typeid(AudioSourceComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Mesh" )) {
+            if (ImGui::TreeNodeEx((void*)typeid(MeshComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Mesh" )) {
 				auto& mc = entity.GetComponent<MeshComponent>();
-				Ref<Mesh> mesh = mc.Mesh;
+				Ref<Mesh> mesh = mc.m_Mesh;
 
                 bool deleteMesh = false;
                 ImGui::SameLine(ImGui::GetWindowWidth()-30);
@@ -590,7 +590,7 @@ namespace Nebula {
                         // mesh->Invalidate();
                         mesh = CreateRef<Mesh>(NewPath);
 						mesh->m_EntityID = entity.GetID();
-						mc.Mesh = mesh;
+						mc.m_Mesh = mesh;
                     }
 				}
 
@@ -603,147 +603,147 @@ namespace Nebula {
             }
 		}
 
-        if (entity.HasComponent<AudioSourceComponent>()) {
-            ImGui::Separator();
+        // if (entity.HasComponent<AudioSourceComponent>()) {
+        //     ImGui::Separator();
 
-            if (ImGui::TreeNodeEx((void*)typeid(AudioSourceComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Audio Source" )) {
-                auto& audioSrc = entity.GetComponent<AudioSourceComponent>();
+        //     if (ImGui::TreeNodeEx((void*)typeid(AudioSourceComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Audio Source" )) {
+        //         auto& audioSrc = entity.GetComponent<AudioSourceComponent>();
 
-                bool deleteAudioSource = false;
-                ImGui::SameLine(ImGui::GetWindowWidth()-30);
-				if (ImGui::Button("..."))
-				{
-					ImGui::OpenPopup("edit_cam_comp");
-				}
+        //         bool deleteAudioSource = false;
+        //         ImGui::SameLine(ImGui::GetWindowWidth()-30);
+		// 		if (ImGui::Button("..."))
+		// 		{
+		// 			ImGui::OpenPopup("edit_cam_comp");
+		// 		}
 
-				if (ImGui::BeginPopup("edit_cam_comp"))
-				{
-					if (ImGui::MenuItem("Delete Component"))
-					{
-                        deleteAudioSource = true;
-    				}
-					ImGui::EndPopup();
-				}
+		// 		if (ImGui::BeginPopup("edit_cam_comp"))
+		// 		{
+		// 			if (ImGui::MenuItem("Delete Component"))
+		// 			{
+        //                 deleteAudioSource = true;
+    	// 			}
+		// 			ImGui::EndPopup();
+		// 		}
                 
 
-                ImGui::Text("Audio File : "); ImGui::SameLine();
+        //         ImGui::Text("Audio File : "); ImGui::SameLine();
 
                 
-                bool hasAudioFile = audioSrc.Source->IsLoaded() && audioSrc.Source->GetFilePath() != "";
-                bool currentlyLoading = audioSrc.Source->GetFilePath() != "" && !audioSrc.Source->IsLoaded();
+        //         bool hasAudioFile = audioSrc.Source->IsLoaded() && audioSrc.Source->GetFilePath() != "";
+        //         bool currentlyLoading = audioSrc.Source->GetFilePath() != "" && !audioSrc.Source->IsLoaded();
 
-				std::string currentPath = VFS::Path(audioSrc.Source->GetFilePath());
-				ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth()  * 0.5f);
-				ImGui::InputText("", currentPath.data(), currentPath.size() + 1);
+		// 		std::string currentPath = VFS::Path(audioSrc.Source->GetFilePath());
+		// 		ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth()  * 0.5f);
+		// 		ImGui::InputText("", currentPath.data(), currentPath.size() + 1);
 
-                ImGui::SameLine();
-                if (ImGui::Button(" Set... "))
-				{
-                    std::string NewPath = FileDialogs::OpenFile("ogg,mp3");
-                    if (VFS::Exists(NewPath, true))
-                    {
-                        audioSrc.Source->Invalidate();
-                        audioSrc.Source = AudioSource::LoadFromFile(NewPath, audioSrc.Source->GetSpatial());
-                    }
-				}
+        //         ImGui::SameLine();
+        //         if (ImGui::Button(" Set... "))
+		// 		{
+        //             std::string NewPath = FileDialogs::OpenFile("ogg,mp3");
+        //             if (VFS::Exists(NewPath, true))
+        //             {
+        //                 audioSrc.Source->Invalidate();
+        //                 audioSrc.Source = AudioSource::LoadFromFile(NewPath, audioSrc.Source->GetSpatial());
+        //             }
+		// 		}
 
-                if (currentlyLoading) {
-                    ImGui::NewLine(); 
-                    ImGui::Text("    AUDIO FILE LOADING...   ");
-                    ImGui::NewLine();
-                }
+        //         if (currentlyLoading) {
+        //             ImGui::NewLine(); 
+        //             ImGui::Text("    AUDIO FILE LOADING...   ");
+        //             ImGui::NewLine();
+        //         }
 
-                if (hasAudioFile) {
-                    std::pair<uint32_t, uint32_t> duration = audioSrc.Source->GetLengthMinutesAndSeconds();
-                    ImGui::Text("Duration   : %d:%02d", duration.first, duration.second);
-                    ImGui::NewLine();
+        //         if (hasAudioFile) {
+        //             std::pair<uint32_t, uint32_t> duration = audioSrc.Source->GetLengthMinutesAndSeconds();
+        //             ImGui::Text("Duration   : %d:%02d", duration.first, duration.second);
+        //             ImGui::NewLine();
 
-                    bool modifyingB = audioSrc.Source->GetLoop();
-                    ImGui::Text("Loop?      : "); ImGui::SameLine();
-                    ImGui::PushID(duration.first + 0);
-                    if(ImGui::Checkbox("", &modifyingB)) {
-                        audioSrc.Source->SetLoop(modifyingB);
-                    }
-                    ImGui::PopID();
+        //             bool modifyingB = audioSrc.Source->GetLoop();
+        //             ImGui::Text("Loop?      : "); ImGui::SameLine();
+        //             ImGui::PushID(duration.first + 0);
+        //             if(ImGui::Checkbox("", &modifyingB)) {
+        //                 audioSrc.Source->SetLoop(modifyingB);
+        //             }
+        //             ImGui::PopID();
                     
-                    modifyingB = audioSrc.Source->GetSpatial();
-                    ImGui::PushID(duration.first + 1);
-                    ImGui::Text("Spatial?   : "); ImGui::SameLine();
-                    if(ImGui::Checkbox("", &modifyingB)) {
-                        audioSrc.Source->SetSpatial(modifyingB);
-                    }
-                    ImGui::PopID();
+        //             modifyingB = audioSrc.Source->GetSpatial();
+        //             ImGui::PushID(duration.first + 1);
+        //             ImGui::Text("Spatial?   : "); ImGui::SameLine();
+        //             if(ImGui::Checkbox("", &modifyingB)) {
+        //                 audioSrc.Source->SetSpatial(modifyingB);
+        //             }
+        //             ImGui::PopID();
                     
 
-                    float modifyingF = audioSrc.Source->GetGain();
-                    ImGui::Text("Gain       : "); ImGui::SameLine();
-                    ImGui::PushID(duration.first + 2);
-                    if(ImGui::DragFloat("", &modifyingF, 0.005f, 0.0f, 1.0f)) {
-                        audioSrc.Source->SetGain(modifyingF);
-                    }
-                    ImGui::PopID();
+        //             float modifyingF = audioSrc.Source->GetGain();
+        //             ImGui::Text("Gain       : "); ImGui::SameLine();
+        //             ImGui::PushID(duration.first + 2);
+        //             if(ImGui::DragFloat("", &modifyingF, 0.005f, 0.0f, 1.0f)) {
+        //                 audioSrc.Source->SetGain(modifyingF);
+        //             }
+        //             ImGui::PopID();
 
 
-                    modifyingF = audioSrc.Source->GetPitch();
-                    ImGui::Text("Pitch      : "); ImGui::SameLine();
-                    ImGui::PushID(duration.first + 3);
-                    if(ImGui::DragFloat("", &modifyingF, 0.02f, 0.0f, 10.0f)) {
-                        audioSrc.Source->SetPitch(modifyingF);
-                    }
-                    ImGui::PopID();
-                }
+        //             modifyingF = audioSrc.Source->GetPitch();
+        //             ImGui::Text("Pitch      : "); ImGui::SameLine();
+        //             ImGui::PushID(duration.first + 3);
+        //             if(ImGui::DragFloat("", &modifyingF, 0.02f, 0.0f, 10.0f)) {
+        //                 audioSrc.Source->SetPitch(modifyingF);
+        //             }
+        //             ImGui::PopID();
+        //         }
                 
-                ImGui::TreePop();
+        //         ImGui::TreePop();
 
-                if (deleteAudioSource) {
-                    audioSrc.Source->Invalidate();        
-                    entity.RemoveComponent<AudioSourceComponent>();
-                }
+        //         if (deleteAudioSource) {
+        //             audioSrc.Source->Invalidate();        
+        //             entity.RemoveComponent<AudioSourceComponent>();
+        //         }
 
-            }
-        }
+        //     }
+        // }
 
-        if (entity.HasComponent<AudioListenerComponent>()) {
-            ImGui::Separator();
+        // if (entity.HasComponent<AudioListenerComponent>()) {
+        //     ImGui::Separator();
 
-            if (ImGui::TreeNodeEx((void*)typeid(AudioListenerComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Audio Listener")) {
-                auto& audioListener = entity.GetComponent<AudioListenerComponent>();
-                bool deleteAudioListener = false;
+        //     if (ImGui::TreeNodeEx((void*)typeid(AudioListenerComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Audio Listener")) {
+        //         auto& audioListener = entity.GetComponent<AudioListenerComponent>();
+        //         bool deleteAudioListener = false;
 
-                ImGui::Text("Active Listener? :"); ImGui::SameLine();
-                if(ImGui::Checkbox(" ", &audioListener.IsActiveListener)) {
-                    auto& view = Context->GetView<AudioListenerComponent>();
-                    for (auto entityID : view) {
-                        if (entity == entityID) {
-                            continue;
-                        }
-                        auto& e = view.get(entityID);
-                        e.IsActiveListener = false;
-                    }
-                }
+        //         ImGui::Text("Active Listener? :"); ImGui::SameLine();
+        //         if(ImGui::Checkbox(" ", &audioListener.IsActiveListener)) {
+        //             auto& view = Context->GetView<AudioListenerComponent>();
+        //             for (auto entityID : view) {
+        //                 if (entity == entityID) {
+        //                     continue;
+        //                 }
+        //                 auto& e = view.get(entityID);
+        //                 e.IsActiveListener = false;
+        //             }
+        //         }
 
-                ImGui::SameLine(ImGui::GetWindowWidth()-30);
-				if (ImGui::Button("..."))
-				{
-					ImGui::OpenPopup("edit_cam_comp");
-				}
+        //         ImGui::SameLine(ImGui::GetWindowWidth()-30);
+		// 		if (ImGui::Button("..."))
+		// 		{
+		// 			ImGui::OpenPopup("edit_cam_comp");
+		// 		}
 
-				if (ImGui::BeginPopup("edit_cam_comp"))
-				{
-					if (ImGui::MenuItem("Delete Entity"))
-					{
-                        deleteAudioListener = true;
-    				}
-					ImGui::EndPopup();
-				}
+		// 		if (ImGui::BeginPopup("edit_cam_comp"))
+		// 		{
+		// 			if (ImGui::MenuItem("Delete Entity"))
+		// 			{
+        //                 deleteAudioListener = true;
+    	// 			}
+		// 			ImGui::EndPopup();
+		// 		}
 
-                ImGui::TreePop();
+        //         ImGui::TreePop();
 
-                if (deleteAudioListener) {        
-                    entity.RemoveComponent<AudioSourceComponent>();
-                }
-            }
-        }
+        //         if (deleteAudioListener) {        
+        //             entity.RemoveComponent<AudioSourceComponent>();
+        //         }
+        //     }
+        // }
 
 
 		ImGui::Separator();
@@ -773,22 +773,22 @@ namespace Nebula {
 				}
 				popupUsed = true;
 			}
-            if(ImGui::Button("Audio Source Component"))
-			{	
-				if(!entity.HasComponent<AudioSourceComponent>())
-				{
-					entity.AddComponent<AudioSourceComponent>();
-				}
-				popupUsed = true;
-			}
-            if(ImGui::Button("Audio Listener Component"))
-			{	
-				if(!entity.HasComponent<AudioListenerComponent>())
-				{
-					entity.AddComponent<AudioListenerComponent>();
-				}
-				popupUsed = true;
-			}
+            // if(ImGui::Button("Audio Source Component"))
+			// {	
+			// 	if(!entity.HasComponent<AudioSourceComponent>())
+			// 	{
+			// 		entity.AddComponent<AudioSourceComponent>();
+			// 	}
+			// 	popupUsed = true;
+			// }
+            // if(ImGui::Button("Audio Listener Component"))
+			// {	
+			// 	if(!entity.HasComponent<AudioListenerComponent>())
+			// 	{
+			// 		entity.AddComponent<AudioListenerComponent>();
+			// 	}
+			// 	popupUsed = true;
+			// }
 			if(ImGui::Button("Mesh Component"))
 			{	
 				if(!entity.HasComponent<MeshComponent>())

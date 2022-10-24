@@ -5,9 +5,14 @@
 #include <Core/Window.h>
 
 #include <Platform/Graphics/GL/ImGui/GLImGuiRenderer.h>
-#include <Platform/OS/Windows/WindowsImGuiLayer.h>
 
+class WindowsImGuiLayer;
+class LinuxImGuiLayer;
+
+#include <Platform/OS/Windows/WindowsImGuiLayer.h>
+#include <Platform/OS/Linux/LinuxImGuiLayer.h>
 #include <Nebula_pch.h>
+
 namespace Nebula{
 
     Ref<ImGuiRenderer> ImGuiLayer::m_Renderer = nullptr;
@@ -17,6 +22,7 @@ namespace Nebula{
             
             case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr; 
             case RendererAPI::API::OpenGL:  return CreateRef<GLImGuiRenderer>();
+            default: LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr; 
         }
     }
 
@@ -29,6 +35,8 @@ namespace Nebula{
 		{
 			case WindowType::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case WindowType::Windows:  return CreateRef<WindowsImGuiLayer>();
+			case WindowType::Linux:    return CreateRef<LinuxImGuiLayer>();
+            default: LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr; 
 		}
     }
 }

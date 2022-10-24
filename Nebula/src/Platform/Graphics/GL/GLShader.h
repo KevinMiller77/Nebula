@@ -21,22 +21,22 @@ namespace Nebula{
         // GLShader(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
         virtual ~GLShader() override;
 
-        virtual void Bind();
-        virtual void Unbind();
+        virtual void Bind() override;
+        virtual void Unbind() override;
         virtual void Reload(bool forceReload = false) override;
 		virtual void AddShaderReloadedCallback(const ShaderReloadedCallback& callback) override;
         virtual void SetUniformBuffer(const std::string& name, const void* data, uint32_t size) override;
         
-        virtual void SetUniform(const std::string name, const int& value);
-        virtual void SetUniform(const std::string name, int* values, int count);
-        virtual void SetUniform(const std::string name, const float& value);
-        virtual void SetUniform(const std::string name, const Vec2f& value);
-        virtual void SetUniform(const std::string name, const Vec3f& value);
-        virtual void SetUniform(const std::string name, const Vec4f& value);
-        virtual void SetUniform(const std::string name, const Mat3f& value);
-        virtual void SetUniform(const std::string name, const Mat4f& value);
+        virtual void SetUniform(const std::string name, const int& value) override;
+        virtual void SetUniform(const std::string name, int* values, int count) override;
+        virtual void SetUniform(const std::string name, const float& value) override;
+        virtual void SetUniform(const std::string name, const Vec2f& value) override;
+        virtual void SetUniform(const std::string name, const Vec3f& value) override;
+        virtual void SetUniform(const std::string name, const Vec4f& value) override;
+        virtual void SetUniform(const std::string name, const Mat3f& value) override;
+        virtual void SetUniform(const std::string name, const Mat4f& value) override;
 
-        virtual const std::string& GetName() const;
+        virtual const std::string& GetName() const override;
 
         void UploadUniformInt(const std::string& name, int value);
 		void UploadUniformIntArray(const std::string& name, int* values, uint32_t count);

@@ -60,7 +60,7 @@ namespace Nebula
         ImGui::Begin("Project Selection");
 
         // Put exit button in the top right
-        ImGui::Dummy({ ImGui::GetContentRegionAvailWidth() - cancelButtonWidth - ImGui::GetStyle().ItemSpacing.x, 0.0f }); ImGui::SameLine();
+        ImGui::Dummy(ImVec2(ImGui::GetContentRegionAvail().x - cancelButtonWidth - ImGui::GetStyle().ItemSpacing.x, 0.0f )); ImGui::SameLine();
 
         Neb_PushButtonStyle();
         if (ImGui::ImageButton((void*)Tex_Cancel->GetRendererID(), {32, 32}))
@@ -158,14 +158,14 @@ namespace Nebula
         }
 
         ImGui::SameLine();
-        float x_off = ImGui::GetContentRegionAvailWidth() - submitButtonWidth - ImGui::GetStyle().ItemSpacing.x;
+        float x_off = ImGui::GetContentRegionAvail().x - submitButtonWidth - ImGui::GetStyle().ItemSpacing.x;
         x_pos += openProjButtonWidth + itemSpacing * 2 + x_off;
         y_pos = ImGui::GetCursorPosY() + (openProjButtonHeight / 2.0f) - 18;
         ImGui::SetCursorPos( { x_pos, y_pos } );
 
 
         Neb_PushButtonStyle();
-        if (ImGui::ImageButton((void*)Tex_Continue->GetRendererID(), {48, 36}))
+        if (ImGui::ImageButton((ImTextureID)Tex_Continue->GetRendererID(), ImVec2(48, 36)))
         {
             State = DONE;
         }
