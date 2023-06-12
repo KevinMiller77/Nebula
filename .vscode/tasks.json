@@ -1,0 +1,43 @@
+// Create a basic build task
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "scripts/premake5-macos gmake2 && make -j16",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "make clean",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        // Task to start debug
+        {
+            "label": "debug",
+            "type": "shell",
+            "command": "lldb bin/Debug/macosxARM64/NebulaStudio/NebulaStudio",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "run",
+            "type": "shell",
+            "command": "bin/Debug/macosxARM64/NebulaStudio/NebulaStudio",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+    ]
+}

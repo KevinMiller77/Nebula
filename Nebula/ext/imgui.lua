@@ -28,7 +28,6 @@ project "imgui"
     filter "system:linux"
         
     filter "system:macosx"
-        
         buildoptions
         {
             "-x objective-c++"

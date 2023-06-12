@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include <Math/math.h>
+#include <Math/Math.h>
 
 #include <Core/PlatformInfo.h>
 #include <Core/Ref.h>

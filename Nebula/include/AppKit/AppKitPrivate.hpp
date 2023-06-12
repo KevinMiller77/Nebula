@@ -32,6 +32,15 @@
 #define _APPKIT_PRIVATE_CLS( symbol )				   ( Private::Class::s_k ## symbol )
 #define _APPKIT_PRIVATE_SEL( accessor )				 ( Private::Selector::s_k ## accessor )
 
+#define _OBJ_C_ALLOC_NAME( type, symbol )	Object::alloc<type>( _APPKIT_PRIVATE_CLS( symbol ))
+// Referencing self, with or without variables
+#define _OBJ_C_SEND( ret, symbol, accessor) Object::sendMessage<ret>(symbol, _APPKIT_PRIVATE_SEL(accessor) )
+#define _OBJ_C_SEND_V( ret, symbol, accessor, ...) Object::sendMessage<ret>(symbol, _APPKIT_PRIVATE_SEL(accessor), __VA_ARGS__ )
+
+// Referencing a static class, with or without variables
+#define _OBJ_C_SEND_S( ret, symbol, accessor) Object::sendMessage<ret>(_APPKIT_PRIVATE_CLS(symbol), _APPKIT_PRIVATE_SEL(accessor) )
+#define _OBJ_C_SEND_S_V( ret, symbol, accessor, ...) Object::sendMessage<ret>(_APPKIT_PRIVATE_CLS(symbol), _APPKIT_PRIVATE_SEL(accessor), __VA_ARGS__ )
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #if defined( NS_PRIVATE_IMPLEMENTATION )
@@ -57,102 +66,6 @@
 #define _APPKIT_PRIVATE_DEF_SEL( accessor, symbol )	 extern SEL			  s_k ## accessor;
 #define _APPKIT_PRIVATE_DEF_CONST( type, symbol )
 
-
 #endif // NS_PRIVATE_IMPLEMENTATION
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-namespace NS::Private::Class {
-
-_APPKIT_PRIVATE_DEF_CLS( NSApplication );
-_APPKIT_PRIVATE_DEF_CLS( NSRunningApplication );
-_APPKIT_PRIVATE_DEF_CLS( NSView );
-_APPKIT_PRIVATE_DEF_CLS( NSWindow );
-_APPKIT_PRIVATE_DEF_CLS( NSMenu );
-_APPKIT_PRIVATE_DEF_CLS( NSMenuItem );
-
-} // Class
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-namespace NS::Private::Selector
-{
-
-_APPKIT_PRIVATE_DEF_SEL( addItem_,
-						"addItem:" );
-
-_APPKIT_PRIVATE_DEF_SEL( addItemWithTitle_action_keyEquivalent_,
-						"addItemWithTitle:action:keyEquivalent:" );
-
-_APPKIT_PRIVATE_DEF_SEL( applicationDidFinishLaunching_,
-						"applicationDidFinishLaunching:" );
-
-_APPKIT_PRIVATE_DEF_SEL( applicationShouldTerminateAfterLastWindowClosed_,
-						"applicationShouldTerminateAfterLastWindowClosed:" );
-
-_APPKIT_PRIVATE_DEF_SEL( applicationWillFinishLaunching_,
-						"applicationWillFinishLaunching:" );
-
-_APPKIT_PRIVATE_DEF_SEL( close,
-						"close" );
-
-_APPKIT_PRIVATE_DEF_SEL( currentApplication,
-						"currentApplication" );
-
-_APPKIT_PRIVATE_DEF_SEL( keyEquivalentModifierMask,
- 						"keyEquivalentModifierMask" );
-
-_APPKIT_PRIVATE_DEF_SEL( localizedName,
-						"localizedName" );
-
-_APPKIT_PRIVATE_DEF_SEL( sharedApplication,
-						"sharedApplication" );
-
-_APPKIT_PRIVATE_DEF_SEL( setDelegate_,
-						"setDelegate:" );
-
-_APPKIT_PRIVATE_DEF_SEL( setActivationPolicy_,
-						"setActivationPolicy:" );
-
-_APPKIT_PRIVATE_DEF_SEL( activateIgnoringOtherApps_,
-						"activateIgnoringOtherApps:" );
-
-_APPKIT_PRIVATE_DEF_SEL( run,
-						"run" );
-
-_APPKIT_PRIVATE_DEF_SEL( terminate_,
-						"terminate:" );
-
-_APPKIT_PRIVATE_DEF_SEL( initWithContentRect_styleMask_backing_defer_,
-						"initWithContentRect:styleMask:backing:defer:" );
-
-_APPKIT_PRIVATE_DEF_SEL( initWithFrame_,
-						"initWithFrame:" );
-
-_APPKIT_PRIVATE_DEF_SEL( initWithTitle_,
-						"initWithTitle:" );
-
-_APPKIT_PRIVATE_DEF_SEL( setContentView_,
-						"setContentView:" );
-
-_APPKIT_PRIVATE_DEF_SEL( makeKeyAndOrderFront_,
-						"makeKeyAndOrderFront:" );
-
-_APPKIT_PRIVATE_DEF_SEL( setKeyEquivalentModifierMask_,
-						"setKeyEquivalentModifierMask:" );
-
-_APPKIT_PRIVATE_DEF_SEL( setMainMenu_,
-						"setMainMenu:" );
-
-_APPKIT_PRIVATE_DEF_SEL( setSubmenu_,
-						"setSubmenu:" );
-
-_APPKIT_PRIVATE_DEF_SEL( setTitle_,
-						"setTitle:" );
-
-_APPKIT_PRIVATE_DEF_SEL( windows,
-						"windows" );
-
-}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------

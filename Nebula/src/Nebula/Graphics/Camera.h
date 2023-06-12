@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Math/math.h>
+#include <Math/Math.h>
 
 namespace Nebula{
     class Camera

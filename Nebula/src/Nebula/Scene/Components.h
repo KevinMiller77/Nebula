@@ -1,5 +1,5 @@
 #pragma once
-#include <Math/math.h>
+#include <Math/Math.h>
 
 #include <Graphics/Texture.h>
 #include <Graphics/Mesh.h>

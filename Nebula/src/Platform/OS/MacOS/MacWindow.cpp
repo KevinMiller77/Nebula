@@ -1,328 +1,267 @@
-#include "MacWindow.h"
-
-
-#include <stb_image/stb_image.h>
-
-#include <Core/VFS.h>
-#include <Nebula_pch.h>
-
-#ifdef NEB_PLATFORM_MACOS
-#include <chrono>
-
 #define NS_PRIVATE_IMPLEMENTATION
 #define MTL_PRIVATE_IMPLEMENTATION
 #define MTK_PRIVATE_IMPLEMENTATION
 #define CA_PRIVATE_IMPLEMENTATION
-#include <AppKit/AppKit.hpp>
+
+#include "MacWindow.h"
+
+#include "../../Graphics/Metal/MetalContext.h"
+#include <Metal/Metal.hpp>
 #include <MetalKit/MetalKit.hpp>
+#include <AppKit/AppKit.hpp>
 
-void* s_WindowHandle;
+namespace Nebula {
 
-namespace Nebula{
+    // Instantiate static data
+    MacData MacWindow::m_Data;
 
-    WindowData MacWindow::data = WindowData();
+    /* Mac Metal Context Internal below */
+    void MetalContext::SetVSync_Int(bool vsync) {}
+    bool MetalContext::SwapBuffers_Int() { return false; }
+    bool MetalContext::InitContext_Int(void* window) { return false; }
+   /* End Mac Metal Context Internal */
+
+    /* Begin App Delegate Internal */
+    NS::Menu* MacWindow::CreateMenuBar() { return nullptr; };
+
+    void MacWindow::applicationWillFinishLaunching( NS::Notification* pNotification ) {};
+    bool MacWindow::applicationShouldTerminateAfterLastWindowClosed( NS::Application* pSender ) { 
+        LOG_INF("Terminate\n");
+        return true; 
+    };
+    
+    void MacWindow::applicationDidFinishLaunching( NS::Notification* pNotification ) {
+        LOG_INF("[MacOS] Creating window inside delegate\n");
+        CreateWindow_Int();
+
+        // Stop the application so we can do our own polling; Apple ate our run loop :( 
+        m_Application->activateIgnoringOtherApps(true);
+        m_Application->stop(pNotification->object());
+
+        LOG_INF("[MacOS] Stopped Mac App Delegate\n");
+    };
+    /* End App Delegate Internal */
+
+    NS::Event* MacWindow::HandleEvent_Int(NS::Event* event) {
+        NS::EventType type = event->type();
+        // If event is a close event, close the window
+        switch (type) {
+            case(NS::EventTypeApplicationDefined):
+            case(NS::EventTypeSystemDefined):
+            case(NS::EventTypeAppKitDefined):
+            case(NS::EventTypePeriodic): 
+            {
+                NS::EventSubtype subtype = event->subtype();
+                if (subtype & NS::EventSubtypeApplicationDeactivated) {
+                    // WindowCloseEvent event = WindowCloseEvent();
+                    // m_Data.EventCallback(event);
+                }
+                break;
+            }
+            default:
+                // LOG_INF("Event type=%d\n", type);
+                break;
+
+        }
+
+        return event;
+    }
+
+    void MacWindow::CreateWindow_Int() {
+        CGRect frame = (CGRect){ 
+            {(double)m_Data.posX,  (double)m_Data.posY}, 
+            {(double)m_Data.width, (double)m_Data.height} 
+        };
+        m_Window = NS::Window::alloc()->init(
+            frame,      // Size
+            NS::WindowStyleMaskClosable|NS::WindowStyleMaskTitled|NS::WindowStyleMaskResizable, // Flags
+            NS::BackingStoreBuffered, // (Only option): The window renders all drawing into a display buffer and then flushes it to the screen.
+            false ); // Do not defer creation
+
+        m_Context = CreateRef<MetalContext>(m_Window);
+        // m_Context->Init();
+
+        MTL::Device* _pDevice = MTL::CreateSystemDefaultDevice();
+
+        // Create a view from the device to draw to
+        m_ContentView = MTK::View::alloc()->init( frame, _pDevice );
+
+        // Create and set custome view delegate which holds our renderer
+        m_ViewDelegate = new NebulaViewDelegate();
+        m_ContentView->setDelegate( m_ViewDelegate );
+
+        // Set the view as the main window content
+        m_Window->setContentView( m_ContentView );
+
+        // Do all window metadata setup here - there is probably more than title
+        m_Window->setTitle( NS::String::string( m_Data.title.c_str(), NS::StringEncoding::UTF8StringEncoding ) );
+
+        // Show the window as the applications main screen
+        m_Window->makeKeyAndOrderFront( nullptr );
+    }
+
+    MacWindow::MacWindow(WindowInfo info) {
+        m_Data = {
+            200, 200,
+            100, 100,
+            info.Width, info.Height,
+            100, 100
+        };
+        m_Data.title = info.Title;
+        SetEventCallback(info.EventCallback);
+
+        // Begin MacOS Application (Pass to Mac then await it coming back to us)
+        m_Pool = NS::AutoreleasePool::alloc()->init();
+
+        m_Application = NS::Application::sharedApplication();
+        m_Application->setDelegate(this);
+
+        LOG_INF("[MacOS] Started Mac Application delegate\n");
+        m_Application->run();
+
+        m_Application->setActivationPolicy(NS::ActivationPolicyRegular);
+    }
+
+    void MacWindow::WindowDidCreateCB (NS::Window* window) {
+        m_Window = window;
+    }
+
+    MacWindow::~MacWindow() {
+        m_Pool->release();
+    }
 
     void MacWindow::HandleError() {
-        // TODO: Parse and log errors
+        // Fill in with your error handling code
     }
 
-    MacWindow::~MacWindow()
-    {
-        ShutDown();
-    }
+    void MacWindow::OnUpdate() {
+        // Poll MacOSX Events (To be moved)
+        for (;;) {
+            NS::Event* evt = m_Application->nextEventMatchingMask( NS::EventMaskAny, nullptr, NS::String::string( "NSDefaultRunLoopMode", NS::StringEncoding::UTF8StringEncoding ), true );
+            if (evt == nullptr){
+                break;
+            }
 
-    void* MacWindow::GetNativeWindow() {
-        return s_WindowHandle;
-    }
-    void MacWindow::SwapIO(std::string in, std::string out, std::string err)
-    {
-        if (!std::filesystem::exists(in))
-        {
-            fclose(fopen(in.c_str(), "w"));
-        }
-        if (!freopen(in.c_str(), "r+", stdin))
-        {
-            LOG_ERR("Could not open stdin\n");
-        }
-        if (!freopen(out.c_str(), "w", stdout))
-        {
-            LOG_ERR("Could not open stdout\n");
-        }
-        if (!freopen(err.c_str(), "w", stderr))
-        {
-            LOG_ERR("Could not open stderr\n");
+            // Handle event in Nebula, if return is null do not pass back to Apple
+            if (HandleEvent_Int(evt) == nullptr) {
+                continue;
+            }
+            m_Application->sendEvent( evt );
         }
 
-        std::ifstream t("tmpout.txt");
-        if (t.is_open())
-        {
-            std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-            printf("%s", str.c_str());
-        }
+        // Fill in with your window update code
+        m_Context->SwapBuffers();
     }
 
-    void MacWindow::EnableConsole()
-    {
-        // Todo: enable a secondary console
+    float MacWindow::GetTime() {
+        // Fill in with your time getting code
+        return 0.0f;
     }
 
-    void MacWindow::DisableConsole()
-    {
-        // Todo: disable secondary console
+    uint32 MacWindow::GetWidth() const {
+        return m_Data.width;
     }
 
-    MacWindow::MacWindow(WindowInfo inf)
-        : m_Context(nullptr)
-    {
-        NEB_PROFILE_FUNCTION();
-        data.height = inf.Height; 
-        data.width = inf.Width;
-        data.fullscreen = !inf.windowed;
-
-        // Hints
-        data.decorated = inf.Decorated;
-        data.floating = inf.Floating;
-        data.transparent = inf.Transparent;
-        data.mousePassthrough = inf.MousePassthrough;
-
-
-        SetEventCallback(inf.EventCallback);
-
-        LOG_INF("Creating window\n");
-
-
-        s_WindowHandle = nullptr; // TODO: Make the window
-
-        if (!s_WindowHandle) {
-            LOG_ERR("Could not create window\n");
-            exit(1);
-        }
-
-
-        // This errors because no window is actually made
-        m_Context = GraphicsContext::Create(s_WindowHandle);
-        m_Context->Init();
-        
-        UpdateWindowAttribs();
-
-        SetWindowSize(data.width, data.height);
-
-        // Default to VSycnc on
-        SetVSync(true);
+    uint32 MacWindow::GetHeight() const {
+        return m_Data.height;
     }
 
-    
-    bool MacWindow::SetWindowStyleVar(int style, bool enable) {
-        return true;
+    void MacWindow::SetWindowSize(uint32 width, uint32 height) {
+        m_Data.width = width;
+        m_Data.height = height;
+        // Also update the actual window size
     }
 
-    void MacWindow::SetResizeable(bool resizeable)
-    {
-
+    void MacWindow::SetResizeable(bool resizeable) {
+        m_Data.resizable = resizeable;
+        // Also update the actual window property
     }
 
-    
+    void MacWindow::SetIcon(std::string filepath) {
+        // Fill in with your window icon setting code
+    }
+
+    void MacWindow::MaximizeWindow() {
+        m_Data.maximized = true;
+        // Also update the actual window state
+    }
+
+    void MacWindow::RestoreWindow() {
+        m_Data.maximized = false;
+        m_Data.minimized = false;
+        // Also update the actual window state
+    }
+
+    void MacWindow::MinimizeWindow() {
+        m_Data.minimized = true;
+        // Also update the actual window state
+    }
+
     Vec2u MacWindow::GetMaxWindowSize() {
-        return Vec2u(data.width, data.height);
-    }
-
-
-    void MacWindow::ToggleFullscreen()
-    {    
-
+        // Fill in with your maximum window size calculation
+        return Vec2u();
     }
 
     void MacWindow::SetPassthrough(bool enabled) {
-        data.mousePassthrough = enabled;
+        m_Data.mousePassthrough = enabled;
+        // Also update the actual window property
     }
 
     void MacWindow::SetFloating(bool enabled) {
-        data.floating = enabled;
+        m_Data.floating = enabled;
+        // Also update the actual window property
     }
 
     void MacWindow::SetTransparentFramebuffer(bool enabled) {
-        data.transparent = enabled;
+        m_Data.transparent = enabled;
+        // Also update the actual window property
     }
 
     void MacWindow::SetDecorated(bool enabled) {
-        data.decorated = enabled;
+        m_Data.decorated = enabled;
+        // Also update the actual window property
     }
 
-    std::chrono::steady_clock::time_point currentFrameTime;
-    std::chrono::steady_clock::time_point lastFrameTime;
-    void MacWindow::OnUpdate()
-    {
-        fflush(stdout);
-        fflush(stderr);
-
-        NEB_PROFILE_FUNCTION();
-        if (!data.fullscreen)
-        {
-            data.w_width = data.width;
-            data.w_height = data.height;
-        }
-        
-        if (data.width == 0 || data.height == 0)
-        {
-            data.minimized = true;
-        }
-        else if (data.minimized)
-        {
-            data.minimized = false;
-            data.wasMinimized = true; 
-        }
-        else
-        {
-            data.wasMinimized = false;
-        }
-
-        // MSG msg;
-        // while (PeekMessage(&msg, s_WindowHandle, NULL, NULL, PM_REMOVE) > 0) {
-        //     TranslateMessage(&msg);
-        //     DispatchMessage(&msg);
-        // }
-        m_Context->SwapBuffers();
-
-        currentFrameTime = std::chrono::high_resolution_clock::now();
-        float diff = (float)std::chrono::duration_cast<std::chrono::milliseconds>(currentFrameTime - lastFrameTime).count();
-        lastFrameTime = currentFrameTime;
-        
-        frameTime = diff / 1000.0f;
+    void MacWindow::SetVSync(bool enabled) {
+        m_Data.vsync = enabled;
+        // Also update the actual window property
     }
 
-    
-    float MacWindow::GetTime() {
-        return frameTime;
+    bool MacWindow::IsVSync() const {
+        return m_Data.vsync;
     }
 
-    uint32 MacWindow::GetWidth() const
-    {
-        return data.width;
+    void* MacWindow::GetNativeWindow() {
+        return m_Window;
     }
 
-
-    uint32 MacWindow::GetHeight() const
-    {
-        return data.height;
+    void MacWindow::SwapIO(std::string in, std::string out, std::string err) {
+        // Fill in with your IO swapping code
     }
 
-    uint32* MacWindow::GetWidthPtr() const 
-    {
-        return &(data.width);
-    }
-    uint32* MacWindow::GetHeightPtr() const
-    {
-        return &(data.height);
+    void MacWindow::EnableConsole() {
+        // Fill in with your console enabling code
     }
 
-    
-    void MacWindow::SetWindowSize(uint32 width, uint32 height)
-    {
-        // LPRECT rect = (LPRECT)malloc(sizeof(RECT));
-        // if (!GetWindowRect(s_WindowHandle, rect)) {
-        //     HandleError();
-        //     return;
-        // }
-
-        // data.posX = rect->left;
-        // data.posY = rect->top;
-
-        // HWND windowTopOrTopmost = data.floating ? HWND_TOPMOST : HWND_TOP;
-        // bool err = !SetWindowPos(s_WindowHandle,  windowTopOrTopmost,
-        //     data.posX, data.posY, width, height,
-        //     SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-            
-        // if (err) {
-        //     HandleError();
-        //     return;
-        // }
-
-        data.width = width;
-        data.height = height;
+    void MacWindow::DisableConsole() {
+        // Fill in with your console disabling code
     }
 
-    void MacWindow::UpdateWindowAttribs() {
-        SetDecorated(data.decorated);
-        SetPassthrough(data.mousePassthrough);
-        SetTransparentFramebuffer(data.transparent);
-
-        // Setting win size also sets floating info
-        SetWindowSize(data.width, data.height);
-    }  
-
-    void MacWindow::ShutDown()
-    {
-        NEB_PROFILE_FUNCTION();
-        // TODO: X11 shutdown
+    void MacWindow::ShutDown() {
+        // Fill in with your shutdown code
     }
 
-    void MacWindow::SetVSync(bool enabled)
-    {
-        if (enabled)
-        {
-            m_Context->SetVSync(1);
-        }
-        else
-        {
-            m_Context->SetVSync(1);
-        }
-
-        data.vsync = enabled;
+    void MacWindow::ToggleFullscreen() {
+        m_Data.fullscreen = !m_Data.fullscreen;
+        // Also update the actual window state
     }
 
-    bool MacWindow::IsVSync() const
-    {
-        return data.vsync;
+    uint32* MacWindow::GetWidthPtr() const {
+        return &m_Data.width;
     }
 
-    void MacWindow::SetIcon(std::string filepath)
-    {
-        int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
-		stbi_uc* data = nullptr;
-		{
-			data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
-		}
-        if(!data) 
-        {
-            LOG_ERR("Failed to load image for icon!\n");
-        }
-        else
-        {
-            LOG_INF("Loaded image for icon\n");
-        }
-
-        // Set the icon of the application in X11
+    uint32* MacWindow::GetHeightPtr() const {
+        return &m_Data.height;
     }
 
-    void MacWindow::MaximizeWindow()
-    {
-        // bool err = !ShowWindow(s_WindowHandle, SW_MAXIMIZE);
-        // if (err) {
-        //     HandleError();
-        //     return;
-        // }
-        data.maximized = true;
-    }
-    void MacWindow::RestoreWindow()
-    {
-        // bool err = !ShowWindow(s_WindowHandle, SW_RESTORE);
-        // if (err) {
-        //     HandleError();
-        //     return;
-        // }
-        data.maximized = false;
-    }
-
-    void MacWindow::MinimizeWindow()
-    {
-        // bool err = !ShowWindow(s_WindowHandle, SW_MINIMIZE);
-        // if (err) {
-        //     HandleError();
-        //     return;
-        // }
-        data.maximized = false;
-        data.minimized = true;
-    }
-} 
-#endif
+} // namespace Nebula

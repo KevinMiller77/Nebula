@@ -5,7 +5,7 @@
 //Ex. KEY_D0
 
 #include <Core/PlatformInfo.h>
-#include <Math/math.h>
+#include <Math/Math.h>
 #include <Utils/Logging.h>
 #include "InputCodes.h"
 

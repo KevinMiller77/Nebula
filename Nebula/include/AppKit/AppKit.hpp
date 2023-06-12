@@ -27,6 +27,7 @@
 
 #include <Foundation/Foundation.hpp>
 #include "AppKitPrivate.hpp"
+#include "NSEvent.hpp"
 #include "NSApplication.hpp"
 #include "NSRunningApplication.hpp"
 #include "NSWindow.hpp"

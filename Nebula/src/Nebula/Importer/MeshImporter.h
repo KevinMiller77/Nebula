@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <string>
-#include <Math/math.h>
+#include <Math/Math.h>
 #include <Core/VFS.h>
 #include <Core/Files.h>
 #include <Core/Ref.h>

@@ -1,5 +1,5 @@
 workspace "Nebula"
-    architecture "x86_64"
+    architecture "arm64"
     startproject "NebulaStudio"
     configurations 
     { 
@@ -36,18 +36,18 @@ workspace "Nebula"
         group ""
         
 project "NebulaEngine"
-        kind "StaticLib"
-        language "C++"
-        cppdialect "C++17"
-        staticruntime "on"
-        
-        targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
-        objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
-        location ("build")
+    kind "StaticLib"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
+    
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    location ("build")
 
 
-        -- pchheader("Nebula/Nebula_pch.h")
-        -- pchsource("Nebula/src/Nebula_pch.h")
+    -- pchheader("Nebula/Nebula_pch.h")
+    -- pchsource("Nebula/src/Nebula_pch.h")
 
     files
     {
@@ -104,7 +104,6 @@ project "NebulaEngine"
     }
 
     filter "system:windows"
-        
         links
         {
             "opengl32",
@@ -115,19 +114,7 @@ project "NebulaEngine"
             "Nebula/ext/imgui/backends/imgui_impl_win32.cpp"
         }
 
-    filter "system:macosx"
-        links
-        {
-            "IOKit.framework", 
-            "OpenGL.framework",
-            "Cocoa.framework",
-            "CoreVideo.framework"
-        }
-
-
     filter "system:linux"
-        
-        
         defines
         {
             "_LIBS_SUPPLIED"
@@ -158,12 +145,11 @@ project "NebulaStudio"
     
     
     targetname("NebulaStudio")
-    targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
     location ("build")
 
     debugdir("./NebulaStudio")
-    
 
     files
     {
@@ -212,27 +198,33 @@ project "NebulaStudio"
 
     filter "system:macosx"
         buildoptions {
-            "-stdlib=libc++"
+            "-stdlib=libc++",
+            "-F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/",
         }
 
-        
+        linkoptions {
+            "-F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/"
+        }
+
         externalincludedirs
         {
             "NebulaStudio/src/Platform/MacOS",
         }
         
+        defines
+        {
+            "_LIBS_SUPPLIED"
+        }
+        
         links
         {
-            "c++",
-            "IOKit.framework", 
-            "OpenGL.framework",
+            "Foundation.framework",
             "Metal.framework",
+            "MetalKit.framework", 
+            "AppKit.framework",
             "QuartzCore.framework",
             "Foundation.framework",
-            "AppKit.framework",
-            "Cocoa.framework",
             "CoreGraphics.framework",
-            "MetalKit.framework", 
             "pthread",
             "imgui",
             "imguizmo",
@@ -256,7 +248,6 @@ project "NebulaStudio"
 
 
     filter "system:linux"
-        
         defines
         {
             "_LIBS_SUPPLIED"

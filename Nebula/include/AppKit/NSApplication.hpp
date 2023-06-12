@@ -29,32 +29,86 @@
 #include <Foundation/Foundation.hpp>
 #include "AppKitPrivate.hpp"
 
+// Objective-C Binding classes and selectors
+namespace NS::Private::Class {
+	_APPKIT_PRIVATE_DEF_CLS( NSApplication );
+}
+
+namespace NS::Private::Selector {
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_applicationDidFinishLaunching_,
+		"applicationDidFinishLaunching:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_applicationShouldTerminateAfterLastWindowClosed_,
+		"applicationShouldTerminateAfterLastWindowClosed:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_applicationWillFinishLaunching_,
+		"applicationWillFinishLaunching:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_sharedApplication_,
+		"sharedApplication" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_setDelegate_,
+		"setDelegate:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_setActivationPolicy_,
+		"setActivationPolicy:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_activateIgnoringOtherApps_,
+		"activateIgnoringOtherApps:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_setMainMenu_,
+		"setMainMenu:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_windows_,
+		"windows" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_run_,
+		"run" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_terminate_,
+		"terminate:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_stop_,
+		"stop:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_nextEventMatchingMask_,
+		"nextEventMatchingMask:untilDate:inMode:dequeue:"
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_sendEvent_,
+		"sendEvent:" 
+	);
+}
+
 namespace NS
 {
-	_NS_OPTIONS( NS::UInteger, WindowStyleMask )
-	{
-		WindowStyleMaskBorderless	   = 0,
-		WindowStyleMaskTitled		   = ( 1 << 0 ),
-		WindowStyleMaskClosable		 = ( 1 << 1 ),
-		WindowStyleMaskMiniaturizable   = ( 1 << 2 ),
-		WindowStyleMaskResizable		= ( 1 << 3 ),
-		WindowStyleMaskTexturedBackground = ( 1 << 8 ),
-		WindowStyleMaskUnifiedTitleAndToolbar = ( 1 << 12 ),
-		WindowStyleMaskFullScreen	   = ( 1 << 14 ),
-		WindowStyleMaskFullSizeContentView = ( 1 << 15 ),
-		WindowStyleMaskUtilityWindow	= ( 1 << 4 ),
-		WindowStyleMaskDocModalWindow   = ( 1 << 6 ),
-		WindowStyleMaskNonactivatingPanel   = ( 1 << 7 ),
-		WindowStyleMaskHUDWindow		= ( 1 << 13 )
-	};
-
-	_NS_ENUM( NS::UInteger, BackingStoreType )
-	{
-		BackingStoreRetained = 0,
-		BackingStoreNonretained = 1,
-		BackingStoreBuffered = 2
-	};
-
+	/* Enums and Objects */
 	_NS_ENUM( NS::UInteger, ActivationPolicy )
 	{
 		ActivationPolicyRegular,
@@ -62,6 +116,7 @@ namespace NS
 		ActivationPolicyProhibited
 	};
 
+	/* Classes */
 	class ApplicationDelegate
 	{
 		public:
@@ -76,26 +131,29 @@ namespace NS
 		public:
 			static Application*		sharedApplication();
 
-			void 					setDelegate( const ApplicationDelegate* pDelegate );
+			void 		setDelegate( const ApplicationDelegate* pDelegate );
 
-			bool					setActivationPolicy( ActivationPolicy activationPolicy );
-
-			void					activateIgnoringOtherApps( bool ignoreOtherApps );
-
-			void					setMainMenu( const class Menu* pMenu );
-
-			NS::Array*				windows() const;
-
-			void					run();
-
-			void					terminate( const Object* pSender );
+			bool		setActivationPolicy( ActivationPolicy activationPolicy );
+			
+			void		activateIgnoringOtherApps( bool ignoreOtherApps );
+			
+			void		setMainMenu( const class Menu* pMenu );
+			
+			NS::Array*	windows() const;
+			
+			void		run();
+			void		stop( const Object* pSender );
+			void		terminate( const Object* pSender );
+			
+			NS::Event*	nextEventMatchingMask( NS::UInteger mask, NS::Date* pUntilDate, const NS::String* pInMode, bool deqFlag );
+			void 		sendEvent( const NS::Event* pEvent );
 	};
 
 }
 
 _NS_INLINE NS::Application* NS::Application::sharedApplication()
 {
-	return Object::sendMessage< Application* >( _APPKIT_PRIVATE_CLS( NSApplication ), _APPKIT_PRIVATE_SEL( sharedApplication ) );
+	return _OBJ_C_SEND_S(Application*, NSApplication, ns_application_sharedApplication_);
 }
 
 _NS_INLINE void NS::Application::setDelegate( const ApplicationDelegate* pAppDelegate )
@@ -121,39 +179,55 @@ _NS_INLINE void NS::Application::setDelegate( const ApplicationDelegate* pAppDel
 		pDel->applicationShouldTerminateAfterLastWindowClosed( (NS::Application *)pApplication );
 	};
 
-	class_addMethod( (Class)_NS_PRIVATE_CLS( NSValue ), _APPKIT_PRIVATE_SEL( applicationWillFinishLaunching_ ), (IMP)willFinishLaunching, "v@:@" );
-	class_addMethod( (Class)_NS_PRIVATE_CLS( NSValue ), _APPKIT_PRIVATE_SEL( applicationDidFinishLaunching_ ), (IMP)didFinishLaunching, "v@:@" );
-	class_addMethod( (Class)_NS_PRIVATE_CLS( NSValue ), _APPKIT_PRIVATE_SEL( applicationShouldTerminateAfterLastWindowClosed_), (IMP)shouldTerminateAfterLastWindowClosed, "B@:@" );
+	class_addMethod( (Class)_APPKIT_PRIVATE_CLS( NSValue ), _APPKIT_PRIVATE_SEL( ns_application_applicationWillFinishLaunching_ ), (IMP)willFinishLaunching, "v@:@" );
+	class_addMethod( (Class)_APPKIT_PRIVATE_CLS( NSValue ), _APPKIT_PRIVATE_SEL( ns_application_applicationDidFinishLaunching_ ), (IMP)didFinishLaunching, "v@:@" );
+	class_addMethod( (Class)_APPKIT_PRIVATE_CLS( NSValue ), _APPKIT_PRIVATE_SEL( ns_application_applicationShouldTerminateAfterLastWindowClosed_), (IMP)shouldTerminateAfterLastWindowClosed, "B@:@" );
 
-	Object::sendMessage< void >( this, _APPKIT_PRIVATE_SEL( setDelegate_ ), pWrapper );
+	_OBJ_C_SEND_V( void, this, ns_application_setDelegate_, pWrapper);
 }
 
 _NS_INLINE bool NS::Application::setActivationPolicy( ActivationPolicy activationPolicy )
 {
-	return NS::Object::sendMessage< bool >( this, _APPKIT_PRIVATE_SEL( setActivationPolicy_ ), activationPolicy );
+	return _OBJ_C_SEND_V( bool, this, ns_application_setActivationPolicy_, activationPolicy );
 }
 
 _NS_INLINE void NS::Application::activateIgnoringOtherApps( bool ignoreOtherApps )
 {
-	Object::sendMessage< void >( this, _APPKIT_PRIVATE_SEL( activateIgnoringOtherApps_ ), (ignoreOtherApps ? YES : NO) );
+	_OBJ_C_SEND_V( void, this, ns_application_activateIgnoringOtherApps_, (ignoreOtherApps ? YES : NO) );
 }
 
 _NS_INLINE void NS::Application::setMainMenu( const class Menu* pMenu )
 {
-	Object::sendMessage< void >( this, _APPKIT_PRIVATE_SEL( setMainMenu_ ), pMenu );
+	_OBJ_C_SEND_V(void, this, ns_application_setMainMenu_, pMenu);
 }
 
 _NS_INLINE NS::Array* NS::Application::windows() const
 {
-	return Object::sendMessage< NS::Array* >( this, _APPKIT_PRIVATE_SEL( windows ) );
+	return _OBJ_C_SEND( NS::Array*, this, ns_application_windows_ );
 }
 
 _NS_INLINE void NS::Application::run()
 {
-	Object::sendMessage< void >( this, _APPKIT_PRIVATE_SEL( run ) );
+	_OBJ_C_SEND( void, this, ns_application_run_ );
 }
+
 
 _NS_INLINE void NS::Application::terminate( const Object* pSender )
 {
-	Object::sendMessage< void >( this, _APPKIT_PRIVATE_SEL( terminate_ ), pSender );
+	_OBJ_C_SEND_V( void, this, ns_application_terminate_, pSender );
+}
+
+_NS_INLINE void NS::Application::stop(const Object* pSender)
+{
+	_OBJ_C_SEND_V( void, this, ns_application_stop_, pSender );
+}
+
+_NS_INLINE NS::Event* NS::Application::nextEventMatchingMask( NS::UInteger mask, NS::Date* pUntilDate, const NS::String* pInMode, bool deqFlag )
+{
+	return _OBJ_C_SEND_V( NS::Event*, this, ns_application_nextEventMatchingMask_, mask, pUntilDate, pInMode, (deqFlag ? YES : NO) );
+}
+
+_NS_INLINE void NS::Application::sendEvent( const NS::Event* pEvent )
+{
+	_OBJ_C_SEND_V( void, this, ns_application_sendEvent_, pEvent );
 }

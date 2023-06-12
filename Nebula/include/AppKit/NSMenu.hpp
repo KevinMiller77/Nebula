@@ -29,6 +29,39 @@
 #include <Foundation/NSPrivate.hpp>
 #include "AppKitPrivate.hpp"
 
+namespace NS::Private::Class {
+	_APPKIT_PRIVATE_DEF_CLS( NSMenu );
+}
+
+namespace NS::Private::Selector {
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_menu_init_,
+		"init" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_menu_initWithTitle_,
+		"initWithTitle:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_menu_addItemWithTitle_,
+		"addItemWithTitle:action:keyEquivalent:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_menu_addItem_,
+		"addItem:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_menu_setAutoenablesItems_,
+		"setAutoenablesItems:" 
+	);
+
+
+}
+
 namespace NS
 {
 	class MenuItem;
@@ -38,35 +71,36 @@ namespace NS
 		public:
 			static Menu*	alloc();
 			Menu*			init();
-			Menu*			init( const String* pTitle );
+			Menu*			initWithTitle( const String* pTitle );
 
-			MenuItem*		addItem( const String* pTitle, SEL pSelector, const String* pKeyEquivalent );
 			void			addItem( const MenuItem* pItem );
+			MenuItem*		addItemWithTitle( const String* pTitle, SEL pSelector, const String* pKeyEquivalent );
 	};
 }
 
 
 _NS_INLINE NS::Menu* NS::Menu::alloc()
 {
-	return Object::alloc< Menu >( _NS_PRIVATE_CLS( NSMenu ) );
+	return _OBJ_C_ALLOC_NAME( NS::Menu, NSMenu );
 }
 
 _NS_INLINE NS::Menu* NS::Menu::init()
 {
-	return Object::sendMessage< Menu* >( this, _NS_PRIVATE_SEL( init ) );
+	return _OBJ_C_SEND( NS::Menu*, this, ns_menu_init_ );
 }
 
-_NS_INLINE NS::Menu* NS::Menu::init( const String* pTitle )
+_NS_INLINE NS::Menu* NS::Menu::initWithTitle( const String* pTitle )
 {
-	return Object::sendMessage< Menu* >( this, _NS_PRIVATE_SEL( initWithTitle_ ), pTitle );
-}
-
-_NS_INLINE NS::MenuItem* NS::Menu::addItem( const String* pTitle, SEL pSelector, const String* pKeyEquivalent )
-{
-	return Object::sendMessage< MenuItem* >( this, _NS_PRIVATE_SEL( addItemWithTitle_action_keyEquivalent_ ), pTitle, pSelector, pKeyEquivalent );
+	return _OBJ_C_SEND_V( NS::Menu*, this, ns_menu_initWithTitle_, pTitle );
 }
 
 _NS_INLINE void NS::Menu::addItem( const MenuItem* pItem )
 {
-	Object::sendMessage< void >( this, _NS_PRIVATE_SEL( addItem_ ), pItem );
+	_OBJ_C_SEND_V( void, this, ns_menu_addItem_, pItem );
 }
+
+_NS_INLINE NS::MenuItem* NS::Menu::addItemWithTitle( const String* pTitle, SEL pSelector, const String* pKeyEquivalent )
+{
+	return _OBJ_C_SEND_V( NS::MenuItem*, this, ns_menu_addItemWithTitle_, pTitle, pSelector, pKeyEquivalent );
+}
+

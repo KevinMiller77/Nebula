@@ -5,6 +5,7 @@
 #include "VertexArray.h"
 #include <Core/NebulaCommon.h>
 #include <Core/Ref.h>
+#include <Graphics/GraphicsContext.h>
 
 namespace Nebula{
     enum class PrimativeType
@@ -26,7 +27,7 @@ namespace Nebula{
 
         virtual ~RendererAPI() = default;
 
-        virtual void Init() = 0;
+        virtual void Init(Ref<GraphicsContext>) = 0;
         virtual void SetViewport(uint32 x, uint32 y, uint32 width, uint32 height) = 0;
         virtual void SetClearColor(const Vec4f& color) = 0;
         virtual void Clear() = 0;
@@ -41,8 +42,8 @@ namespace Nebula{
 
         static API GetAPI() { return NebAPI; }
         static Ref<RendererAPI> Create();
+        
     private:
         static API NebAPI;
-
     };
 }

@@ -27,10 +27,24 @@
             "externalConsole": false
         },
         {
+            "name": "(Mac) Build",
+            "type": "",
+            "request": "launch",
+            "program": "/bin/sh",
+            "args": [
+                "${workspaceFolder}/srcipts/premake5-macos gmake2 && make -C ${workspaceFolder}",
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/NebulaStudio",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+        },
+        {
             "name": "(Mac) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/Debug/macosxx86_64/NebulaStudio/NebulaStudio",
+            "program": "${workspaceFolder}/bin/Debug/macosxARM64/NebulaStudio/NebulaStudio",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/NebulaStudio",

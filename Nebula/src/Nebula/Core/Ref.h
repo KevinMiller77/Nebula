@@ -19,3 +19,8 @@ template<typename T, typename ... Args>
 constexpr Ref<T> CreateRef(Args&& ... args){
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }
+
+template<typename T, typename ... Args>
+constexpr Ref<T> CastRef(Args&& ... args) {
+	return std::static_pointer_cast<T>(std::forward<Args>(args)...);
+}

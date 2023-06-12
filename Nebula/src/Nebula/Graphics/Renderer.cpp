@@ -18,9 +18,9 @@ namespace Nebula{
 	static RendererData s_Data;
 
 	std::vector<std::string> Renderer2DShaders = {"TexQuad", "Line"};
-    void Renderer::Init()
+    void Renderer::Init(Ref<GraphicsContext> context)
 	{
-        RendererConfig::Init();
+        RendererConfig::Init(context);
 
         s_ShaderLibrary = CreateRef<ShaderLibrary>();
 

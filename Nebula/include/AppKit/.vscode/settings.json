@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.carbon": "carbon",
+        "locale": "cpp"
+    }
+}

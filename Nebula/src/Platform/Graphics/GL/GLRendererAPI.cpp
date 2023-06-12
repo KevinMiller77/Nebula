@@ -25,8 +25,12 @@ namespace Nebula{
 	}
 
 
-    void GLRendererAPI::Init() 
+    Ref<GLContext> GLRendererAPI::s_Context = nullptr;
+
+    void GLRendererAPI::Init(Ref<GraphicsContext> context) 
     {
+        s_Context = CastRef<GLContext>(context);
+
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(GLMessageCallback, nullptr);        

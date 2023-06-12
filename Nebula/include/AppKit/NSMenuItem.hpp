@@ -28,23 +28,34 @@
 #include <Foundation/NSPrivate.hpp>
 #include "AppKitPrivate.hpp"
 #include <string>
+namespace NS::Private::Class {
+	_APPKIT_PRIVATE_DEF_CLS( NSMenuItem );
+}
+
+namespace NS::Private::Selector {
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_menuItem_init_,
+		"init" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_menuItem_keyEquivalentModifierMask_,
+		"keyEquivalentModifierMask" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_menuItem_setKeyEquivalentModifierMask_,
+		"setKeyEquivalentModifierMask:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_menuItem__setSubmenu_,
+		"setSubmenu:" 
+	);
+}
 
 namespace NS
 {
-	_NS_OPTIONS( NS::UInteger, KeyEquivalentModifierMask )
-	{
-		EventModifierFlagCapsLock			= 1 << 16, // Set if Caps Lock key is pressed.
-		EventModifierFlagShift				= 1 << 17, // Set if Shift key is pressed.
-		EventModifierFlagControl			= 1 << 18, // Set if Control key is pressed.
-		EventModifierFlagOption				= 1 << 19, // Set if Option or Alternate key is pressed.
-		EventModifierFlagCommand			= 1 << 20, // Set if Command key is pressed.
-		EventModifierFlagNumericPad			= 1 << 21, // Set if any key in the numeric keypad is pressed.
-		EventModifierFlagHelp				= 1 << 22, // Set if the Help key is pressed.
-		EventModifierFlagFunction			= 1 << 23, // Set if any function key is pressed.
-		
-		// Used to retrieve only the device-independent modifier flags, allowing applications to mask off the device-dependent modifier flags, including event coalescing information.
-		EventModifierFlagDeviceIndependentFlagsMask	= 0xffff0000UL
-	};
 
 	typedef void (*MenuItemCallback)( void* unused, SEL name, const NS::Object* pSender );
 
@@ -55,8 +66,8 @@ namespace NS
 			static MenuItem*				alloc();
 			MenuItem*						init();
 
-			void							setKeyEquivalentModifierMask( NS::KeyEquivalentModifierMask modifierMask );
-			NS::KeyEquivalentModifierMask	KeyEquivalentModifierMask() const;
+			void							setKeyEquivalentModifierMask( NS::EventModifierFlags modifierMask );
+			NS::EventModifierFlags			keyEquivalentModifierMask() const;
 			void							setSubmenu( const class Menu* pSubmenu );
 	};
 }
@@ -81,32 +92,32 @@ _NS_INLINE SEL NS::MenuItem::registerActionCallback( const char* name, NS::MenuI
 
 	if ( callback )
 	{
-		class_addMethod( (Class)_NS_PRIVATE_CLS( NSObject ), sel, (IMP)callback, "v@:@" );
+		class_addMethod( (Class)_APPKIT_PRIVATE_CLS( NSObject ), sel, (IMP)callback, "v@:@" );
 	}
 	return sel;
 }
 
 _NS_INLINE NS::MenuItem* NS::MenuItem::alloc()
 {
-	return Object::alloc< NS::MenuItem >( _NS_PRIVATE_CLS( NSMenuItem ) );
+	return _OBJ_C_ALLOC_NAME( NS::MenuItem, NSMenuItem );
 }
 
 _NS_INLINE NS::MenuItem* NS::MenuItem::init()
 {
-	return Object::sendMessage< NS::MenuItem* >( this, _NS_PRIVATE_SEL( init ) );
+	return _OBJ_C_SEND( NS::MenuItem*, this, ns_menuItem_init_ );
 }
 
-_NS_INLINE void NS::MenuItem::setKeyEquivalentModifierMask( NS::KeyEquivalentModifierMask modifierMask )
+_NS_INLINE void NS::MenuItem::setKeyEquivalentModifierMask( NS::EventModifierFlags modifierMask )
 {
-	return Object::sendMessage< void >( this, _NS_PRIVATE_SEL( setKeyEquivalentModifierMask_ ), modifierMask );
+	_OBJ_C_SEND_V( void, this, ns_menuItem_setKeyEquivalentModifierMask_, modifierMask );
 }
 
-_NS_INLINE NS::KeyEquivalentModifierMask NS::MenuItem::KeyEquivalentModifierMask() const
+_NS_INLINE NS::EventModifierFlags NS::MenuItem::keyEquivalentModifierMask() const
 {
-	return Object::sendMessage< NS::KeyEquivalentModifierMask >( this, _NS_PRIVATE_SEL( keyEquivalentModifierMask ) );
+	return _OBJ_C_SEND( NS::EventModifierFlags, this, ns_menuItem_keyEquivalentModifierMask_ );
 }
 
 _NS_INLINE void NS::MenuItem::setSubmenu( const class NS::Menu* pSubmenu )
 {
-	Object::sendMessage< void >( this, _NS_PRIVATE_SEL( setSubmenu_ ), pSubmenu );
+	_OBJ_C_SEND_V( void, this, ns_menuItem__setSubmenu_, pSubmenu );
 }

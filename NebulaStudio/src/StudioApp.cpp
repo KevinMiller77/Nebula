@@ -32,14 +32,14 @@ namespace Nebula
             createNewProject = CreateRef<bool>();
             *createNewProject = true;
 
-            RendererConfig::SetAlphaBlend(true);
-            RendererConfig::SetMSAA(MSAA);
+            // RendererConfig::SetAlphaBlend(true);
+            // RendererConfig::SetMSAA(MSAA);
 
-            window->SetVSync(true);
+            // window->SetVSync(true);
 
             // Set the size of the welcome screen
-            window->SetWindowSize(550, 270);
-            window->SetResizeable(false);
+            // window->SetWindowSize(550, 270);
+            // window->SetResizeable(false);
 
             LOG_INF("Application created\n");
         }

@@ -15,7 +15,6 @@ namespace Nebula{
 
         virtual bool SwapBuffers() override;
         virtual void SetVSync(bool vsync) override;
-        virtual void* GetNativeHandle() override { return s_RenderingContext; }
 
     private:
 
@@ -27,7 +26,6 @@ namespace Nebula{
         /////////////////////////////////////////////////////////////////////////////////////
 
         void* s_DeviceContext = nullptr;
-        void* s_RenderingContext = nullptr;
 
         void* s_Window = nullptr;
     };

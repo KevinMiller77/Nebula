@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-#include <Math/math.h>
+#include <Math/Math.h>
 
 #include "imgui/imgui.h"
 

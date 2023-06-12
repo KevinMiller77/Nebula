@@ -4,7 +4,7 @@
 
 #include <Core/NebulaCommon.h>
 #include <Core/Ref.h>
-#include <Math/math.h>
+#include <Math/Math.h>
 
 namespace Nebula{
     enum class FramebufferTextureFormat 

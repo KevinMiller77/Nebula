@@ -2,7 +2,7 @@
 
 #include <string>
 #include <unordered_map>
-#include <Math/math.h>
+#include <Math/Math.h>
 #include <Utils/Logging.h>
 #include <Core/Ref.h>
 #include <Graphics/ShaderUniform.h>

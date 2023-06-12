@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <Graphics/Camera.h>
-#include <Math/math.h>
+#include <Math/Math.h>
 #include <Utils/Logging.h>
 
 namespace Nebula {

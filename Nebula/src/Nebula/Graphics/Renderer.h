@@ -21,7 +21,7 @@ namespace Nebula{
     class Renderer
     {
     public:
-        static void Init();
+        static void Init(Ref<GraphicsContext>);
         static void Shutdown();
 
         static void OnWindowResize(uint32 w, uint32 h);

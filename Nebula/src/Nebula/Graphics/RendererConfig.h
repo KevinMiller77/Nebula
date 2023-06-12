@@ -10,9 +10,9 @@ namespace Nebula{
     public:
         virtual ~RendererConfig() = default;
 
-        static void Init()
+        static void Init(Ref<GraphicsContext> context)
         {
-            m_API->Init();
+            m_API->Init(context);
         }
         
         static void SetViewport(uint32 x, uint32 y, uint32 width, uint32 height)

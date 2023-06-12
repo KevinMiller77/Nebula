@@ -1,6 +1,6 @@
 #pragma once
 
-#include <functional>
+// #include <functional>
 #include <string>
 
 #include <Events/Event.h>
@@ -77,6 +77,7 @@ namespace Nebula{
 
 		virtual void* GetNativeWindow() = 0;
 		virtual Ref<GraphicsContext> GetContext() = 0;
+		
 
 		virtual void SwapIO(std::string in, std::string out, std::string err) = 0;
 

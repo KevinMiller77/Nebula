@@ -11,7 +11,7 @@ namespace Nebula{
     {
 		NEB_PROFILE_FUNCTION();
 
-#if 1
+#if 0
         freopen("tmpout.txt", "w", stdout);
 #endif
         LOG_INF("Making engine instance\n");
@@ -24,16 +24,16 @@ namespace Nebula{
         window = Window::Create(winf);
         window->DisableConsole();
 
-        Input::Init();
+        // Input::Init();
         
         VFS::Init();
 
         // Audio::Init();
 
-        Renderer::Init();
+        // Renderer::Init(window->GetContext());
 
-        imGuiLayer = ImGuiLayer::Create();
-        PushOverlay(imGuiLayer);
+        // imGuiLayer = ImGuiLayer::Create();
+        // PushOverlay(imGuiLayer);
         
         //Frame and update counters
         fps.Start();
@@ -206,17 +206,17 @@ namespace Nebula{
                 fpsNumber = avg;
                 upsNumber = avg;
 
-                if (!window->IsMinimized())
-                {
-                    {
-                        NEB_PROFILE_SCOPE("Update");
-                        OnUpdate(ts);
-                    }
-                    {
-                        NEB_PROFILE_SCOPE("ImGui Render");
-                        OnImGuiRender();
-                    }
-                }
+                // if (!window->IsMinimized())
+                // {
+                //     {
+                //         NEB_PROFILE_SCOPE("Update");
+                //         OnUpdate(ts);
+                //     }
+                //     {
+                //         NEB_PROFILE_SCOPE("ImGui Render");
+                //         OnImGuiRender();
+                //     }
+                // }
 
                 {
                     NEB_PROFILE_SCOPE("Window update");

@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <string>
-#include <Math/math.h>
+#include <Math/Math.h>
 #include <Core/Ref.h>
 
 #include <thread>

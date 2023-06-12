@@ -28,6 +28,20 @@
 #include "AppKitPrivate.hpp"
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
+namespace NS::Private::Class {
+	_APPKIT_PRIVATE_DEF_CLS( NSRunningApplication );
+}
+
+namespace NS::Private::Selector {
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_runningApplication_currentApplication_,
+		"currentApplication" 
+	);
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_runningApplication_localizedName_,
+		"localizedName" 
+	);
+}
 
 namespace NS
 {
@@ -42,10 +56,10 @@ namespace NS
 
 _NS_INLINE NS::RunningApplication* NS::RunningApplication::currentApplication()
 {
-	return Object::sendMessage< NS::RunningApplication* >( _APPKIT_PRIVATE_CLS( NSRunningApplication ), _APPKIT_PRIVATE_SEL( currentApplication ) );
+	return _OBJ_C_SEND_S( NS::RunningApplication*, NSRunningApplication, ns_runningApplication_currentApplication_ );
 }
 
 _NS_INLINE NS::String* NS::RunningApplication::localizedName() const
 {
-	return Object::sendMessage< NS::String* >( this, _APPKIT_PRIVATE_SEL( localizedName ) );
+	return _OBJ_C_SEND( NS::String*, this, ns_runningApplication_localizedName_ );
 }

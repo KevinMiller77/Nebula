@@ -1,6 +1,7 @@
 #include "Window.h"
 
 #include <Core/Input.h>
+#include <Core/PlatformInfo.h>
 
 #ifdef NEB_PLATFORM_WINDOWS
 #include <Platform/OS/Windows/WindowsWindow.h>

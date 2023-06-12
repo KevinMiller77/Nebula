@@ -26,20 +26,32 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #include "AppKitPrivate.hpp"
-#include <Foundation/NSObject.hpp>
+#include <Foundation/Foundation.hpp>
 #include <CoreGraphics/CGGeometry.h>
 
+namespace NS::Private::Class {
+	_APPKIT_PRIVATE_DEF_CLS( NSView );
+}
+
+namespace NS::Private::Selector {
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_view_initWithFrame_,
+		"initWithFrame:" 
+	);
+}
 namespace NS
 {
+
 	class View : public NS::Referencing< View >
 	{
 		public:
-			View*		init( CGRect frame );
+			View* 	initWithFrame( CGRect frame );
 	};
 }
 
 
-_NS_INLINE NS::View* NS::View::init( CGRect frame )
+_NS_INLINE NS::View* NS::View::initWithFrame( CGRect frame )
 {
-	return Object::sendMessage< View* >( _APPKIT_PRIVATE_CLS( NSView ), _APPKIT_PRIVATE_SEL( initWithFrame_ ), frame );
+	return _OBJ_C_SEND_S_V( View*, NSView, ns_view_initWithFrame_, frame );
 }
