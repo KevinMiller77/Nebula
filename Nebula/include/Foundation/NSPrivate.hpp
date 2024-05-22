@@ -80,6 +80,8 @@ namespace Private
         _NS_PRIVATE_DEF_CLS(NSString);
         _NS_PRIVATE_DEF_CLS(NSURL);
         _NS_PRIVATE_DEF_CLS(NSValue);
+        _NS_PRIVATE_DEF_CLS(NSNotification);
+        _NS_PRIVATE_DEF_CLS(NSNotificationCenter);
 
     } // Class
 } // Private
@@ -481,6 +483,18 @@ namespace Private
             "wait");
         _NS_PRIVATE_DEF_SEL(waitUntilDate_,
             "waitUntilDate:");
+        _NS_PRIVATE_DEF_SEL(_ns_notification_center_defaultCenter,
+            "defaultCenter");
+        _NS_PRIVATE_DEF_SEL(addObserverSelector_,
+            "addObserver:selector:name:object:");
+        _NS_PRIVATE_DEF_SEL(removeObserverSelector_,
+            "removeObserver:name:object:");
+        _NS_PRIVATE_DEF_SEL(postNotificationSelector_,
+            "postNotificationName:object:userInfo:");
+        _NS_PRIVATE_DEF_SEL(_ns_notification_handler_handleNotification_,
+            "handleNotification:");
+        _NS_PRIVATE_DEF_SEL(setSuspendedSelector_, 
+            "setSuspended:");
     } // Class
 } // Private
 } // MTL

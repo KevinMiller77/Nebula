@@ -9,6 +9,8 @@
 #include <Metal/Metal.hpp>
 #include <MetalKit/MetalKit.hpp>
 #include <AppKit/AppKit.hpp>
+#include <Foundation/NSNotification.hpp>
+#include <Foundation/NSNotificationCenter.hpp>
 
 namespace Nebula {
 
@@ -24,25 +26,36 @@ namespace Nebula {
     /* Begin App Delegate Internal */
     NS::Menu* MacWindow::CreateMenuBar() { return nullptr; };
 
-    void MacWindow::applicationWillFinishLaunching( NS::Notification* pNotification ) {};
-    bool MacWindow::applicationShouldTerminateAfterLastWindowClosed( NS::Application* pSender ) { 
-        LOG_INF("Terminate\n");
-        return true; 
-    };
-    
-    void MacWindow::applicationDidFinishLaunching( NS::Notification* pNotification ) {
-        LOG_INF("[MacOS] Creating window inside delegate\n");
-        CreateWindow_Int();
+    void MacWindow::handleNotification(NS::Notification* pNotification) {
+        if (pNotification == nullptr) {
+            return;
+        }
 
-        // Stop the application so we can do our own polling; Apple ate our run loop :( 
-        m_Application->activateIgnoringOtherApps(true);
-        m_Application->stop(pNotification->object());
+        // Application launched, lets try to create a window
+        if (std::string(pNotification->name()->utf8String()) == "NSApplicationDidFinishLaunchingNotification") {
+            LOG_INF("[MacOS] App launched, creating window\n");
+            CreateWindow_Int();
+        }
 
-        LOG_INF("[MacOS] Stopped Mac App Delegate\n");
-    };
+        // Window closed, we should likely terminate.
+        if (std::string(pNotification->name()->utf8String()) == "NSWindowDidCloseNotification") {
+            LOG_INF("[MacOS] App terminating\n");
+            
+            // Window closed, we should likely close the app
+            WindowCloseEvent event = WindowCloseEvent();
+            m_Data.EventCallback(event);
+        }
+
+        // TODO (Kevin): Support more notification types
+        LOG_INF("[MacOS] Notification: %s\n", pNotification->name()->utf8String());
+    }
+
     /* End App Delegate Internal */
-
     NS::Event* MacWindow::HandleEvent_Int(NS::Event* event) {
+        if (event == nullptr) {
+            return nullptr;
+        }
+
         NS::EventType type = event->type();
         // If event is a close event, close the window
         switch (type) {
@@ -52,16 +65,12 @@ namespace Nebula {
             case(NS::EventTypePeriodic): 
             {
                 NS::EventSubtype subtype = event->subtype();
-                if (subtype & NS::EventSubtypeApplicationDeactivated) {
-                    // WindowCloseEvent event = WindowCloseEvent();
-                    // m_Data.EventCallback(event);
-                }
                 break;
             }
-            default:
-                // LOG_INF("Event type=%d\n", type);
+            default: {
+                LOG_INF("Unknown event\n");
                 break;
-
+            }
         }
 
         return event;
@@ -110,16 +119,22 @@ namespace Nebula {
         m_Data.title = info.Title;
         SetEventCallback(info.EventCallback);
 
-        // Begin MacOS Application (Pass to Mac then await it coming back to us)
+        // Create the autorelease pool
         m_Pool = NS::AutoreleasePool::alloc()->init();
 
+        // Create the application
         m_Application = NS::Application::sharedApplication();
-        m_Application->setDelegate(this);
 
-        LOG_INF("[MacOS] Started Mac Application delegate\n");
-        m_Application->run();
+        // Set this as the main notification center observer
+        this->m_pNotificationCenter = NS::NotificationCenter::defaultCenter();
+        this->m_pNotificationCenter->addObserver(this, nullptr, nullptr);
 
+        // Setup some application parameters
         m_Application->setActivationPolicy(NS::ActivationPolicyRegular);
+        m_Application->activateIgnoringOtherApps(true);
+
+        // Manully trigger a finish launch
+        m_Application->finishLaunching();
     }
 
     void MacWindow::WindowDidCreateCB (NS::Window* window) {
@@ -147,6 +162,7 @@ namespace Nebula {
                 continue;
             }
             m_Application->sendEvent( evt );
+            m_Application->updateWindows();
         }
 
         // Fill in with your window update code

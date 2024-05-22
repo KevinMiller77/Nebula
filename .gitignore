@@ -16,6 +16,8 @@
 *.yaml
 *.frag
 *.vert
+compile_commands.json
+premake5
 
 console.txt
 *.xcodeproj/
@@ -28,6 +30,7 @@ Debug/*
 Release/*
 ext/freetype/bin
 .vs/
+.cache/
 */Makefile
 Nebula/ext/SPIRV-Tools/*
 Nebula/ext/glslang/*

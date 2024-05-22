@@ -28,6 +28,7 @@
 
 #include <Foundation/Foundation.hpp>
 #include "AppKitPrivate.hpp"
+#include "NSEvent.hpp"
 
 // Objective-C Binding classes and selectors
 namespace NS::Private::Class {
@@ -85,6 +86,12 @@ namespace NS::Private::Selector {
 		"run" 
 	);
 
+
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_application_finish_launching_,
+		"finishLaunching" 
+	);
+
 	_APPKIT_PRIVATE_DEF_SEL( 
 		ns_application_terminate_,
 		"terminate:" 
@@ -103,6 +110,11 @@ namespace NS::Private::Selector {
 	_APPKIT_PRIVATE_DEF_SEL( 
 		ns_application_sendEvent_,
 		"sendEvent:" 
+	);
+
+	_APPKIT_PRIVATE_DEF_SEL(
+		ns_application_update_windows_, 
+		"updateWindows"
 	);
 }
 
@@ -138,8 +150,11 @@ namespace NS
 			void		activateIgnoringOtherApps( bool ignoreOtherApps );
 			
 			void		setMainMenu( const class Menu* pMenu );
+
+			void 		finishLaunching();
 			
 			NS::Array*	windows() const;
+			void 		updateWindows();
 			
 			void		run();
 			void		stop( const Object* pSender );
@@ -211,6 +226,10 @@ _NS_INLINE void NS::Application::run()
 	_OBJ_C_SEND( void, this, ns_application_run_ );
 }
 
+_NS_INLINE void NS::Application::finishLaunching()
+{
+	_OBJ_C_SEND( void, this, ns_application_run_ );
+}
 
 _NS_INLINE void NS::Application::terminate( const Object* pSender )
 {
@@ -230,4 +249,9 @@ _NS_INLINE NS::Event* NS::Application::nextEventMatchingMask( NS::UInteger mask,
 _NS_INLINE void NS::Application::sendEvent( const NS::Event* pEvent )
 {
 	_OBJ_C_SEND_V( void, this, ns_application_sendEvent_, pEvent );
+}
+
+_NS_INLINE void NS::Application::updateWindows()
+{
+	_OBJ_C_SEND(void, this, ns_application_update_windows_);
 }

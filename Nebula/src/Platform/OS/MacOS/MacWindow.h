@@ -13,6 +13,7 @@
 
 #include <MetalKit/MetalKit.hpp>
 #include <AppKit/AppKit.hpp>
+#include <Foundation/NSNotificationCenter.hpp>
 
 namespace Nebula{
 
@@ -49,7 +50,7 @@ namespace Nebula{
         virtual void drawInMTKView( MTK::View* pView ) override {};
     };
 
-    class MacWindow : public Window, public NS::ApplicationDelegate
+    class MacWindow : public Window, public NS::NotificationObserver
     {
     public:
         inline bool IsWindowed() override { return !m_Data.fullscreen; }
@@ -113,9 +114,7 @@ namespace Nebula{
         */
 
     private:
-        void applicationWillFinishLaunching( NS::Notification* pNotification ) override;
-        void applicationDidFinishLaunching( NS::Notification* pNotification ) override;
-        bool applicationShouldTerminateAfterLastWindowClosed( NS::Application* pSender ) override;
+        void handleNotification(NS::Notification* pNotification) override;
 
         NS::Event* HandleEvent_Int(NS::Event* event);
         void CreateWindow_Int();
