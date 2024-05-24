@@ -139,7 +139,7 @@ namespace Nebula
 
 }
 
-Ref<Nebula::Application> CreateApplication()
+Nebula::Application* CreateApplication()
 {
-    return CreateRef<Nebula::Studio>();
+    return new Nebula::Studio();
 }

@@ -3,7 +3,7 @@
 #include <Nebula.h>
 
 namespace Nebula{
-    Ref<Application> Application::curEngine = nullptr;
+    Application* Application::curEngine = nullptr;
 
 
     Application::Application(Application* child, WindowInfo winf)
@@ -19,7 +19,7 @@ namespace Nebula{
         {
             LOG_ERR("Engine already exists!!\n");
         }
-        curEngine = Ref<Application>(this);
+        curEngine = this;
         winf.EventCallback = NEB_BIND_EVENT_FN(Application::OnEvent);
         window = Window::Create(winf);
         window->DisableConsole();
@@ -50,6 +50,9 @@ namespace Nebula{
     void Application::Close()
     {
         running = false;
+        if (curEngine) {
+            delete curEngine;
+        }
     }
 
     void Application::EngineSwap()

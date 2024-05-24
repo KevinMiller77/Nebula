@@ -52,7 +52,7 @@ namespace Nebula{
 
         void Close();
 
-        inline static Ref<Application> Get() { return curEngine; }
+        inline static Application* Get() { return curEngine; }
         inline Ref<ImGuiLayer> GetImGuiLayer() { return Get()->imGuiLayer; }
         inline Ref<Window> GetWindow() { return window; }
 
@@ -84,7 +84,7 @@ namespace Nebula{
         virtual void ResetEngine() { EngineSwap(); };
 
     private:
-        static Ref<Application> curEngine;
+        static Application* curEngine;
         static std::thread* thr_EngineThreadProc;
 
         static void EngineSwap();

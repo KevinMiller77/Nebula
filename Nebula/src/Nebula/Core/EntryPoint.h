@@ -5,7 +5,7 @@
 #include <Core/Ref.h>
 // #include <Nebula_pch.h>
 
-extern Ref<Nebula::Application> CreateApplication();
+extern Nebula::Application* CreateApplication();
 
 int main(int argv, char** argc){
     NEB_PROFILE_BEGIN_SESSION("Start App", "Nebula-Startup.json");
