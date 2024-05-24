@@ -27,9 +27,12 @@
 
 #include "AppKitPrivate.hpp"
 #include "NSView.hpp"
+#include <AppKit/NSEvent.hpp>
 #include <Foundation/NSObject.hpp>
 
 #include <CoreGraphics/CGGeometry.h>
+#include <objc/runtime.h>
+#include <iostream>
 
 namespace NS::Private::Class {
 	_APPKIT_PRIVATE_DEF_CLS( NSWindow );
@@ -48,9 +51,17 @@ namespace NS::Private::Selector {
 		ns_window_makeKeyAndOrderFront_,
 		"makeKeyAndOrderFront:" 
 	);
+	_APPKIT_PRIVATE_DEF_SEL(
+		ns_window_orderFrontRegardless_,
+		"orderFrontRegardless"
+	);
 	_APPKIT_PRIVATE_DEF_SEL( 
 		ns_window_setTitle_,
 		"setTitle:" 
+	);
+	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_window_makeKeyWindow,
+		"makeKeyWindow" 
 	);
 	_APPKIT_PRIVATE_DEF_SEL( 
 		ns_window_close_,
@@ -60,6 +71,26 @@ namespace NS::Private::Selector {
 		ns_window_alloc_,
 		"alloc"
 	);
+	_APPKIT_PRIVATE_DEF_SEL(
+		ns_window_acceptsFirstResponder_,
+		"acceptsFirstResponder"
+	)
+	_APPKIT_PRIVATE_DEF_SEL(
+		ns_window_canBecomeKeyWindow_,
+		"canBecomeKeyWindow"
+	)
+	_APPKIT_PRIVATE_DEF_SEL(
+		ns_window_canBecomeMainWindow_,
+		"canBecomeMainWindow"
+	)
+	_APPKIT_PRIVATE_DEF_SEL(
+		ns_window_keyDown_,
+		"keyDown:"
+	)	
+	_APPKIT_PRIVATE_DEF_SEL(
+		ns_window_keyUp_,
+		"keyUp:"
+	)		
 }
 namespace NS
 {
@@ -95,6 +126,8 @@ namespace NS
 
 			void				setContentView( const View* pContentView );
 			void				makeKeyAndOrderFront( const Object* pSender );
+			void 				makeKey();
+			void 				orderFrontRegardless();
 			void				setTitle( const String* pTitle );
 
 			void				close();
@@ -102,9 +135,42 @@ namespace NS
 
 }
 
+// Custom getter functions that always return YES
+inline BOOL getCanBecomeKeyWindow(id self, SEL _cmd) {
+    return YES;
+}
+
+inline BOOL getCanBecomeMainWindow(id self, SEL _cmd) {
+    return YES;
+}
+
+inline BOOL acceptsFirstResponder(id self, SEL _cmd) {
+	return YES;
+}
+
+inline void customKeyDown(id self, SEL _cmd, id theEvent) {
+    std::cout << "Key down event received." << std::endl;
+}
+
+inline void customKeyUp(id self, SEL _cmd, id theEvent) {
+    std::cout << "Key up event received." << std::endl;
+}
 
 _NS_INLINE NS::Window* NS::Window::alloc()
 {
+    Class nsWindowClass = objc_getClass("NSWindow");
+
+    // Define the attributes for the new properties
+    objc_property_attribute_t type = { "T", "B" }; // BOOL type
+    objc_property_attribute_t ownership = { "N", "" }; // nonatomic
+    objc_property_attribute_t attrs[] = { type, ownership };
+
+    IMP pre = class_replaceMethod(nsWindowClass, _APPKIT_PRIVATE_SEL(ns_window_canBecomeKeyWindow_), (IMP)getCanBecomeKeyWindow, "B@:");
+    pre = class_replaceMethod(nsWindowClass, _APPKIT_PRIVATE_SEL(ns_window_canBecomeMainWindow_), (IMP)getCanBecomeMainWindow, "B@:");
+    pre = class_replaceMethod(nsWindowClass, _APPKIT_PRIVATE_SEL(ns_window_acceptsFirstResponder_), (IMP)acceptsFirstResponder, "B@:");
+	pre = class_replaceMethod(nsWindowClass, _APPKIT_PRIVATE_SEL(ns_window_keyDown_), (IMP)customKeyDown, "v@:@");
+	pre = class_replaceMethod(nsWindowClass, _APPKIT_PRIVATE_SEL(ns_window_keyUp_), (IMP)customKeyUp, "v@:@");
+
 	return _OBJ_C_SEND_S( NS::Window*, NSWindow, ns_window_alloc_);
 }
 
@@ -121,6 +187,16 @@ _NS_INLINE void NS::Window::setContentView( const NS::View* pContentView )
 _NS_INLINE void NS::Window::makeKeyAndOrderFront( const Object* pSender )
 {
 	_OBJ_C_SEND_V( void, this, ns_window_makeKeyAndOrderFront_, pSender );
+}
+
+_NS_INLINE void NS::Window::makeKey()
+{
+	_OBJ_C_SEND( void, this, ns_window_makeKeyWindow );
+}
+
+_NS_INLINE void NS::Window::orderFrontRegardless() 
+{
+	_OBJ_C_SEND( void, this, ns_window_orderFrontRegardless_ );
 }
 
 _NS_INLINE void NS::Window::setTitle( const String* pTitle )

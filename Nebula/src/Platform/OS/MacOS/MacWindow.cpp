@@ -4,11 +4,14 @@
 #define CA_PRIVATE_IMPLEMENTATION
 
 #include "MacWindow.h"
+#include <Utils/Logging.h>
 
 #include "../../Graphics/Metal/MetalContext.h"
 #include <Metal/Metal.hpp>
 #include <MetalKit/MetalKit.hpp>
 #include <AppKit/AppKit.hpp>
+#include <AppKit/NSEvent.hpp>
+#include <Foundation/NSString.hpp>
 #include <Foundation/NSNotification.hpp>
 #include <Foundation/NSNotificationCenter.hpp>
 
@@ -31,16 +34,20 @@ namespace Nebula {
             return;
         }
 
+        void* object = pNotification->object();
+        if (object != m_Application && object != m_Window) {
+            return;
+        }
+
         // Application launched, lets try to create a window
         if (std::string(pNotification->name()->utf8String()) == "NSApplicationDidFinishLaunchingNotification") {
-            LOG_INF("[MacOS] App launched, creating window\n");
-            CreateWindow_Int();
+            LOG_INF("[MacOS] App launched. Stopping the app to take control of main event loop.\n");
+            m_Application->stop(nullptr);
         }
 
         // Window closed, we should likely terminate.
         if (std::string(pNotification->name()->utf8String()) == "NSWindowDidCloseNotification") {
             LOG_INF("[MacOS] App terminating\n");
-            
             // Window closed, we should likely close the app
             WindowCloseEvent event = WindowCloseEvent();
             m_Data.EventCallback(event);
@@ -68,11 +75,9 @@ namespace Nebula {
                 break;
             }
             default: {
-                LOG_INF("Unknown event\n");
                 break;
             }
         }
-
         return event;
     }
 
@@ -86,6 +91,11 @@ namespace Nebula {
             NS::WindowStyleMaskClosable|NS::WindowStyleMaskTitled|NS::WindowStyleMaskResizable, // Flags
             NS::BackingStoreBuffered, // (Only option): The window renders all drawing into a display buffer and then flushes it to the screen.
             false ); // Do not defer creation
+
+        if (m_Window == nullptr) {
+            LOG_ERR("Could not create window!\n");
+            return;
+        }
 
         m_Context = CreateRef<MetalContext>(m_Window);
         // m_Context->Init();
@@ -106,7 +116,8 @@ namespace Nebula {
         m_Window->setTitle( NS::String::string( m_Data.title.c_str(), NS::StringEncoding::UTF8StringEncoding ) );
 
         // Show the window as the applications main screen
-        m_Window->makeKeyAndOrderFront( nullptr );
+        m_Window->makeKey();
+        m_Window->orderFrontRegardless();
     }
 
     MacWindow::MacWindow(WindowInfo info) {
@@ -120,7 +131,10 @@ namespace Nebula {
         SetEventCallback(info.EventCallback);
 
         // Create the autorelease pool
-        m_Pool = NS::AutoreleasePool::alloc()->init();
+        m_Pool = m_Pool ? m_Pool : NS::AutoreleasePool::alloc()->init();
+        if (m_Pool == nullptr) {
+            LOG_ERR("Could not create autorelease pool!\n");
+        }
 
         // Create the application
         m_Application = NS::Application::sharedApplication();
@@ -133,8 +147,12 @@ namespace Nebula {
         m_Application->setActivationPolicy(NS::ActivationPolicyRegular);
         m_Application->activateIgnoringOtherApps(true);
 
-        // Manully trigger a finish launch
-        m_Application->finishLaunching();
+        // When application does run, we immediately stop it
+        // This is a hack to get all of the benefits of the default
+        // App delegate but we have our own event loop
+        m_Application->run();
+
+        CreateWindow_Int();
     }
 
     void MacWindow::WindowDidCreateCB (NS::Window* window) {
@@ -142,7 +160,9 @@ namespace Nebula {
     }
 
     MacWindow::~MacWindow() {
-        m_Pool->release();
+        if (m_Pool) {
+            m_Pool->release();
+        }
     }
 
     void MacWindow::HandleError() {
@@ -150,23 +170,23 @@ namespace Nebula {
     }
 
     void MacWindow::OnUpdate() {
-        // Poll MacOSX Events (To be moved)
-        for (;;) {
-            NS::Event* evt = m_Application->nextEventMatchingMask( NS::EventMaskAny, nullptr, NS::String::string( "NSDefaultRunLoopMode", NS::StringEncoding::UTF8StringEncoding ), true );
-            if (evt == nullptr){
-                break;
-            }
+        NS::Event* evt = m_Application->nextEventMatchingMask( 
+            NS::EventMaskAny,
+            nullptr,
+            NS::String::string("kCFRunLoopDefaultMode", NS::StringEncoding::UTF8StringEncoding),
+            true 
+        );
 
+        if (evt){
             // Handle event in Nebula, if return is null do not pass back to Apple
-            if (HandleEvent_Int(evt) == nullptr) {
-                continue;
+            if (HandleEvent_Int(evt)) {
+                m_Application->sendEvent( evt );
+                m_Application->updateWindows();
             }
-            m_Application->sendEvent( evt );
-            m_Application->updateWindows();
         }
 
         // Fill in with your window update code
-        m_Context->SwapBuffers();
+        // m_Context->SwapBuffers();
     }
 
     float MacWindow::GetTime() {

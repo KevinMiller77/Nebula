@@ -228,7 +228,7 @@ _NS_INLINE void NS::Application::run()
 
 _NS_INLINE void NS::Application::finishLaunching()
 {
-	_OBJ_C_SEND( void, this, ns_application_run_ );
+	_OBJ_C_SEND( void, this, ns_application_finish_launching_ );
 }
 
 _NS_INLINE void NS::Application::terminate( const Object* pSender )
