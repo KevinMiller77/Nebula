@@ -40,7 +40,7 @@ namespace Nebula{
         inline static void SetMouseButtonPressed(MouseCode key) { s_Input->SetMouseButtonPressedInt(key); }    
         inline static void SetMouseButtonReleased(MouseCode key) { s_Input->SetMouseButtonReleasedInt(key); }
         
-        inline static Vec2f GetMousePos() { return s_Input->GetMousePosInt(); }
+        inline static Vec2f GetMousePos() { return { 0.0f, 0.0f}; }// s_Input->GetMousePosInt(); }
         inline static void SetMousePos(Vec2f newPos) { s_Input->SetMousePosInt(newPos); }
 
 

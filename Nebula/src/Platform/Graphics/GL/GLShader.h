@@ -16,8 +16,8 @@ namespace Nebula{
 
         GLShader() = default;
         // GLShader(const std::string filepath);
-        GLShader(const std::string& shaderSrc);
-        GLShader(const Builtin::BuiltInShader& shaderSrc);
+        GLShader(const std::string& shaderSrc, Ref<VertexArray> vertexArray);
+        GLShader(const Builtin::BuiltInShader& shaderSrc, Ref<VertexArray> vertexArray);
         // GLShader(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
         virtual ~GLShader() override;
 

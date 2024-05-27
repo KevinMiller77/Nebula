@@ -1,28 +1,34 @@
 #include "Shader.h"
 #include <Graphics/RendererConfig.h>
 
+#include <Graphics/VertexArray.h>
 #include <Platform/Graphics/GL/GLShader.h>
+#include <Platform/Graphics/Metal/MetalShader.h>
 
 namespace Nebula{
 
-    Ref<Shader> Shader::Create(const std::string& shaderSrc)
+    Ref<Shader> Shader::Create(const std::string& shaderSrc, Ref<VertexArray> vertexArray)
     {
         switch (RendererAPI::GetAPI())
 		{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
-			case RendererAPI::API::OpenGL:  return CreateRef<GLShader>(shaderSrc);
+			case RendererAPI::API::OpenGL:  return CreateRef<GLShader>(shaderSrc, vertexArray);
+			case RendererAPI::API::Metal:   return CreateRef<MetalShader>(shaderSrc, vertexArray);
+            default:                        return nullptr;
 		}
 
 		LOG_ERR("Unknown RendererAPI!\n");
 		return nullptr;
     }   
 
-    Ref<Shader> Shader::Create(const Builtin::BuiltInShader& shaderSrc)
+    Ref<Shader> Shader::Create(const Builtin::BuiltInShader& shaderSrc, Ref<VertexArray> vertexArray)
     {
         switch (RendererAPI::GetAPI())
 		{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
-			case RendererAPI::API::OpenGL:  return CreateRef<GLShader>(shaderSrc);
+			case RendererAPI::API::OpenGL:  return CreateRef<GLShader>(shaderSrc, vertexArray);
+			case RendererAPI::API::Metal:   return CreateRef<MetalShader>(shaderSrc, vertexArray);
+            default:                        return nullptr;
 		}
 
 		LOG_ERR("Unknown RendererAPI!\n");
@@ -33,29 +39,7 @@ namespace Nebula{
 		: m_Name(name), m_Type(type), m_Size(size), m_Offset(offset)
 	{
 	}
-
-    const std::string& ShaderUniform::UniformTypeToString(ShaderUniformType type)
-	{
-        std::string* out = new std::string("None");
-
-        switch(type) {
-            case(ShaderUniformType::Bool): {
-    			*out = "Boolean";            
-                break;
-            }
-            case(ShaderUniformType::Int): {
-    			*out = "Int";            
-                break;
-            }
-            case(ShaderUniformType::Float): {
-    			*out = "Float";            
-                break;
-            }
-        }
-
-		return *out;
-	}
-
+    
     void ShaderLibrary::Add(Ref<Shader> shader)
     {
         const std::string name = shader->GetName();
@@ -63,17 +47,18 @@ namespace Nebula{
         shaders[name] = shader;
     }
 
-    Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
+    Ref<Shader> ShaderLibrary::Load(const std::string& filepath, Ref<VertexArray> vertexArray)
     {
         // Get file name without extension
         std::string fileName = std::filesystem::u8path(filepath).stem().string();
 
-        auto shader = Shader::Create(filepath);
+        auto shader = Shader::Create(filepath, vertexArray);
         
         Add(shader);
         
         return shader;
     }
+    
     // Ref<Shader> ShaderLibrary::Load(const std::string name, const std::string& filepath)
     // {
     //     auto shader = Shader::Create(filepath);

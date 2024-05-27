@@ -48,6 +48,10 @@ namespace NS::Private::Selector {
 		"setContentView:" 
 	);
 	_APPKIT_PRIVATE_DEF_SEL( 
+		ns_window_contentView,
+		"contentView" 
+	);
+	_APPKIT_PRIVATE_DEF_SEL( 
 		ns_window_makeKeyAndOrderFront_,
 		"makeKeyAndOrderFront:" 
 	);
@@ -125,6 +129,7 @@ namespace NS
 			Window*				init( CGRect contentRect, WindowStyleMask styleMask, BackingStoreType backing, bool defer );
 
 			void				setContentView( const View* pContentView );
+			NS::View*			contentView() const;
 			void				makeKeyAndOrderFront( const Object* pSender );
 			void 				makeKey();
 			void 				orderFrontRegardless();
@@ -182,6 +187,11 @@ _NS_INLINE NS::Window* NS::Window::init( CGRect contentRect, WindowStyleMask sty
 _NS_INLINE void NS::Window::setContentView( const NS::View* pContentView )
 {
 	_OBJ_C_SEND_V( void, this, ns_window_setContentView_, pContentView );
+}
+
+_NS_INLINE NS::View* NS::Window::contentView() const
+{
+	return _OBJ_C_SEND( NS::View*, this, ns_window_contentView );
 }
 
 _NS_INLINE void NS::Window::makeKeyAndOrderFront( const Object* pSender )

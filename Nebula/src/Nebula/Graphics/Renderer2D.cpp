@@ -3,18 +3,6 @@
 namespace Nebula{
 	static Renderer2DData s_2DData;
 
-	void Renderer2D::SetShader(std::string path)
-	{
-		int32_t samplers[s_2DData.MaxTextureSlots];
-		for (uint32_t i = 0; i < s_2DData.MaxTextureSlots; i++)
-			samplers[i] = i;
-
-		//TODO: Material system that handles shaders
-		s_2DData.TextureShader = Shader::Create(VFS::AbsolutePath(path));
-		s_2DData.TextureShader->Bind();
-		s_2DData.TextureShader->SetUniform("u_Textures", samplers, s_2DData.MaxTextureSlots);
-	}
-
 	void Renderer2D::ReloadShaders()
 	{
 		// TexQuad
@@ -34,29 +22,31 @@ namespace Nebula{
 
 	void Renderer2D::Init()
 	{
-		// Init Quad Props
-		s_2DData.QuadVertexArray = VertexArray::Create();
+		/*
 
+			Quad setup
+
+		*/
+
+		// Init a vertex array defining the buffer layour and index buffer
+		s_2DData.QuadVertexArray = VertexArray::Create();
 		s_2DData.QuadVertexBuffer = VertexBuffer::Create(s_2DData.MaxQuadVertices * sizeof(QuadVertex));
 		s_2DData.QuadVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Translation" },
-            { ShaderDataType::Float3, "a_Rotation" },
-            { ShaderDataType::Float3, "a_Scale" },
-            { ShaderDataType::Float4, "a_QuadIndexPos" },
+			{ ShaderDataType::Float3, "Translation" },
+            { ShaderDataType::Float3, "Rotation" },
+            { ShaderDataType::Float3, "Scale" },
+            { ShaderDataType::Float4, "QuadIndexPos" },
 
-			{ ShaderDataType::Float4, "a_Color" },
-			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float, "a_TexIndex" },
-			{ ShaderDataType::Float, "a_TilingFactor" },
-            { ShaderDataType::Int, "a_EntityID" },
-            // { ShaderDataType::Mat4,   "a_ModelMat"}
-			});
+			{ ShaderDataType::Float4, "Color" },
+			{ ShaderDataType::Float2, "TexCoord" },
+			{ ShaderDataType::Float, "TexIndex" },
+			{ ShaderDataType::Float, "TilingFactor" },
+            { ShaderDataType::Int, "EntityID" }
+		});
 		s_2DData.QuadVertexArray->AddVertexBuffer(s_2DData.QuadVertexBuffer);
-
 		s_2DData.QuadVertexBufferBase = new QuadVertex[s_2DData.MaxQuadVertices];
 
 		uint32_t* quadIndices = new uint32_t[s_2DData.MaxQuadIndices];
-
 		uint32_t offset = 0;
 		for (uint32_t i = 0; i < s_2DData.MaxQuadIndices; i += 6)
 		{
@@ -75,37 +65,51 @@ namespace Nebula{
 		s_2DData.QuadVertexArray->SetIndexBuffer(s_2DData.QuadIndexBuffer);
 		delete[] quadIndices;
 
+		// Create or get the TexQuad shader for rendering Quads
+		if (s_2DData.TextureShader == nullptr) {
+			s_2DData.TextureShader = Shader::Create("assets/shaders/TexQuad.metal", s_2DData.QuadVertexArray);
+		} else {
+			s_2DData.TextureShader = Renderer::GetShaderLibrary()->Get("TexQuad");
+		}
+		assert((s_2DData.TextureShader));
+
+		// Setup a blank white texture to be used with flat color quads
 		s_2DData.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_2DData.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
+		// Setup sampler space for all textures
 		int32_t samplers[s_2DData.MaxTextureSlots];
 		for (uint32_t i = 0; i < s_2DData.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		s_2DData.TextureShader = Renderer::GetShaderLibrary()->Get("TexQuad");
-		assert((s_2DData.TextureShader));
 
-		s_2DData.TextureShader->Bind();
-		s_2DData.TextureShader->SetUniform("u_Textures", samplers, s_2DData.MaxTextureSlots);
+		// Bind the texture shader and set the default uniform for it
+//		s_2DData.TextureShader->Bind();
+//		s_2DData.TextureShader->SetUniform("u_Textures", samplers, s_2DData.MaxTextureSlots);
 
 		// Set first texture slot to 0
 		s_2DData.TextureSlots[0] = s_2DData.WhiteTexture;
 
+		// Setup a reusable quad vertex positions map
 		s_2DData.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_2DData.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
 		s_2DData.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
 		s_2DData.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
-		// Init Line Props
+		/*
 
-		s_2DData.LineShader = Renderer::GetShaderLibrary()->Get("Line");
+			Setup line
+
+		 */
+
+		// Create a vertex array for the line renderer
 		s_2DData.LineVertexArray = VertexArray::Create();
 			
 		s_2DData.LineVertexBuffer = VertexBuffer::Create(s_2DData.MaxLineVertices * sizeof(LineVertex));
 		s_2DData.LineVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float4, "a_Color" },
+			{ ShaderDataType::Float3, "Position" },
+			{ ShaderDataType::Float4, "Color" },
 		});
 		s_2DData.LineVertexArray->AddVertexBuffer(s_2DData.LineVertexBuffer);
 
@@ -119,6 +123,12 @@ namespace Nebula{
 		s_2DData.LineIndexBuffer = IndexBuffer::Create(lineIndicies, s_2DData.MaxLineIndices);
 		s_2DData.LineVertexArray->SetIndexBuffer(s_2DData.LineIndexBuffer);
 		delete[] lineIndicies;
+
+		if (s_2DData.LineShader == nullptr) {
+			s_2DData.LineShader = Shader::Create("assets/shaders/Line.metal", s_2DData.LineVertexArray);
+		} else {
+			s_2DData.LineShader = Renderer::GetShaderLibrary()->Get("Line");
+		}
 	}
 
 	void Renderer2D::Shutdown()
@@ -213,7 +223,7 @@ namespace Nebula{
 				s_2DData.TextureSlots[i]->Bind(i);
 			
 			s_2DData.QuadVertexArray->Bind();
-			s_2DData.QuadIndexBuffer->Bind();
+			// s_2DData.QuadIndexBuffer->Bind();
             
 			RendererConfig::DrawIndexed(s_2DData.QuadIndexCount, PrimativeType::TRIANGLES, s_2DData.DepthTest);
 			s_2DData.Stats.DrawCalls++;
@@ -228,7 +238,7 @@ namespace Nebula{
 			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 
 			s_2DData.LineVertexArray->Bind();
-			s_2DData.LineIndexBuffer->Bind();
+			// s_2DData.LineIndexBuffer->Bind();
 			
 			RendererConfig::DrawIndexed(s_2DData.LineIndexCount, PrimativeType::LINES, s_2DData.DepthTest);
 			s_2DData.Stats.DrawCalls++;

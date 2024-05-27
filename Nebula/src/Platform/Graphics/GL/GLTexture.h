@@ -25,7 +25,7 @@ namespace Nebula {
 
 		virtual std::string GetPath() override { return m_FilePath; }
 
-		virtual uint32_t GetRendererID() const override { return m_RendererID; }
+		virtual void* GetRendererID() const override { return (void*)&m_RendererID; }
 
 		virtual bool operator==(const Texture& other) const override
 		{

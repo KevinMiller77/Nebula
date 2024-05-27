@@ -1,11 +1,11 @@
 #include "GLTexture2D.h"
 
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 #include <Nebula_pch.h>
 #include <glad/glad.h>
 #include <Utils/Logging.h>
+
 namespace Nebula{
     GLTexture2D::GLTexture2D(uint32_t width, uint32_t height, bool child)
 		: Width(width), Height(height), ChildTexture(child)
@@ -89,7 +89,7 @@ namespace Nebula{
 
 		// Most information is just copied from the parent, we dont have to
 		// load the texture twice
-		Path = parent->GetPath(); ID = parent->GetRendererID();
+		Path = parent->GetPath(); ID = *(uint32_t*)(parent->GetRendererID());
 		IntFormat = (GLenum)parent->GetIntFormat(); DataFormat = (GLenum)parent->GetDataFormat();
 
 		Width = width; 

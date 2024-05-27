@@ -30,6 +30,7 @@
 #include "MTLRenderCommandEncoder.hpp"
 #include "MTLRenderPipeline.hpp"
 #include "MTLTypes.hpp"
+#include "MTLBindings.hpp"
 
 namespace MTL
 {

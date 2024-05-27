@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Graphics/VertexArray.h>
 #include <string>
 #include <unordered_map>
 #include <Math/Math.h>
@@ -109,8 +110,6 @@ namespace Nebula{
 		ShaderUniformType GetType() const { return m_Type; }
 		uint32_t GetSize() const { return m_Size; }
 		uint32_t GetOffset() const { return m_Offset; }
-
-		static const std::string& UniformTypeToString(ShaderUniformType type);
 	private:
 		std::string m_Name;
 		ShaderUniformType m_Type = ShaderUniformType::None;
@@ -161,8 +160,8 @@ namespace Nebula{
         virtual const std::string& GetName() const = 0;
 
         // static Ref<Shader> Create(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
-        static Ref<Shader> Create(const std::string& shaderSrc);
-        static Ref<Shader> Create(const Builtin::BuiltInShader& shaderSrc);
+        static Ref<Shader> Create(const std::string& shaderSrc, Ref<VertexArray> vertexArray);
+        static Ref<Shader> Create(const Builtin::BuiltInShader& shaderSrc, Ref<VertexArray> vertexArray);
         
 		virtual const std::unordered_map<std::string, ShaderBuffer>& GetShaderBuffers() const = 0;
 		virtual const std::unordered_map<std::string, ShaderResourceDeclaration>& GetResources() const = 0;
@@ -173,8 +172,7 @@ namespace Nebula{
     public:
 
         void Add(Ref<Shader> shader);
-        Ref<Shader> Load(const std::string& filepath);
-        // Ref<Shader> Load(const std::string name, const std::string& filepath);
+        Ref<Shader> Load(const std::string& filepath, Ref<VertexArray> vertexArray);
 
         Ref<Shader> Get(const std::string& name);
 		std::unordered_map<std::string, Ref<Shader>> GetAll() { return shaders; }

@@ -159,8 +159,8 @@ project "spirv-tools"
             "{RMDIR} " .. p .. "/SPIRV-Tools/external/SPIRV-Headers",
             "ln -s -f " .. p .. "/SPIRV-Headers " .. p .. "/SPIRV-Tools/external/SPIRV-Headers",
             "{MKDIR} " .. p .. "/SPIRV-Tools/build",
-            "cmake -D SKIP_SPIRV_TOOLS_INSTALL=ON -S " .. p .. "/SPIRV-Tools -B " .. p .. "/SPIRV-Tools/build",
-            "cmake --build " .. p .. "/SPIRV-Tools/build --target SPIRV-Tools-static -j6"
+            "/opt/homebrew/bin/cmake -D SKIP_SPIRV_TOOLS_INSTALL=ON -S " .. p .. "/SPIRV-Tools -B " .. p .. "/SPIRV-Tools/build",
+            "/opt/homebrew/bin/cmake --build " .. p .. "/SPIRV-Tools/build --target SPIRV-Tools-static -j6"
         }
         
 	filter "system:linux"

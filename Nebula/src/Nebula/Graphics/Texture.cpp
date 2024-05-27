@@ -3,6 +3,10 @@
 #include <Graphics/RendererAPI.h>
 #include <Platform/Graphics/GL/GLTexture2D.h>
 #include <Platform/Graphics/GL/GLTexture.h>
+#include <Platform/Graphics/Metal/MetalTexture2D.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 namespace Nebula{
 
@@ -31,6 +35,7 @@ namespace Nebula{
 		{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLTexture2D>(width, height);
+			case RendererAPI::API::Metal:   return CreateRef<MetalTexture2D>(width, height);
 		}
 
 		LOG_ERR("Unknown RendererAPI!\n");
@@ -43,6 +48,7 @@ namespace Nebula{
 		{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLTexture2D>(path);
+			case RendererAPI::API::Metal:   return CreateRef<MetalTexture2D>(path);
 		}
 
 		LOG_ERR("Unknown RendererAPI!\n");

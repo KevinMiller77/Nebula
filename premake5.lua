@@ -126,6 +126,14 @@ project "NebulaEngine"
             "GLU",
             "dl"
         }
+    
+    filter "system:macosx"
+        files {
+            "Nebula/ext/imgui/backends/imgui_impl_osx.mm",
+            "Nebula/ext/imgui/backends/imgui_impl_metal.mm",
+            "Nebula/src/**.m",
+            "Nebula/src/**.mm",
+        }
 
     filter "configurations:Debug"
         defines "NEB_DEBUG"
@@ -225,6 +233,7 @@ project "NebulaStudio"
             "QuartzCore.framework",
             "Foundation.framework",
             "CoreGraphics.framework",
+            "GameController.framework",
             "pthread",
             "imgui",
             "imguizmo",

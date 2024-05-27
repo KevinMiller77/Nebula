@@ -97,7 +97,6 @@ namespace Nebula{
 		static void Flush();
 
 		//TEMP:
-		static void SetShader(std::string path);
 		static void ReloadShaders();
 
 		// Primitives

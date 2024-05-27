@@ -11,6 +11,7 @@
 #include <MetalKit/MetalKit.hpp>
 #include <AppKit/AppKit.hpp>
 #include <AppKit/NSEvent.hpp>
+#include <AppKit/NSWindow.hpp>
 #include <Foundation/NSString.hpp>
 #include <Foundation/NSNotification.hpp>
 #include <Foundation/NSNotificationCenter.hpp>
@@ -23,7 +24,11 @@ namespace Nebula {
     /* Mac Metal Context Internal below */
     void MetalContext::SetVSync_Int(bool vsync) {}
     bool MetalContext::SwapBuffers_Int() { return false; }
-    bool MetalContext::InitContext_Int(void* window) { return false; }
+    bool MetalContext::InitContext_Int(void* window) { 
+        m_View = (MTK::View*)(((NS::Window*)window)->contentView());
+        return (m_View != nullptr);
+    }
+
    /* End Mac Metal Context Internal */
 
     /* Begin App Delegate Internal */
@@ -54,7 +59,7 @@ namespace Nebula {
         }
 
         // TODO (Kevin): Support more notification types
-        LOG_INF("[MacOS] Notification: %s\n", pNotification->name()->utf8String());
+        // LOG_INF("[MacOS] Notification: %s\n", pNotification->name()->utf8String());
     }
 
     /* End App Delegate Internal */
@@ -98,19 +103,21 @@ namespace Nebula {
         }
 
         m_Context = CreateRef<MetalContext>(m_Window);
-        // m_Context->Init();
-
+        
         MTL::Device* _pDevice = MTL::CreateSystemDefaultDevice();
-
+        
         // Create a view from the device to draw to
         m_ContentView = MTK::View::alloc()->init( frame, _pDevice );
 
-        // Create and set custome view delegate which holds our renderer
-        m_ViewDelegate = new NebulaViewDelegate();
-        m_ContentView->setDelegate( m_ViewDelegate );
-
         // Set the view as the main window content
         m_Window->setContentView( m_ContentView );
+
+        // Create and set custome view delegate which holds our renderer
+        // m_ViewDelegate = new NebulaViewDelegate();
+        // m_ContentView->setDelegate( m_ViewDelegate );
+
+        m_Context->Init();
+
 
         // Do all window metadata setup here - there is probably more than title
         m_Window->setTitle( NS::String::string( m_Data.title.c_str(), NS::StringEncoding::UTF8StringEncoding ) );
@@ -186,7 +193,7 @@ namespace Nebula {
         }
 
         // Fill in with your window update code
-        // m_Context->SwapBuffers();
+        m_Context->SwapBuffers();
     }
 
     float MacWindow::GetTime() {
@@ -205,6 +212,8 @@ namespace Nebula {
     void MacWindow::SetWindowSize(uint32 width, uint32 height) {
         m_Data.width = width;
         m_Data.height = height;
+        // m_Window->setContentSize( (CGSize){ (double)width, (double)height } );
+
         // Also update the actual window size
     }
 

@@ -20,7 +20,7 @@ namespace Nebula{
 		virtual uint32_t GetWidth() const override { return Width;  }
 		virtual uint32_t GetHeight() const override { return Height; }
 		virtual std::string GetPath() override { return Path; };
-		virtual uint32_t GetRendererID() const override { return ID; }
+		virtual void* GetRendererID() const override { return (void*)&ID; }
 		virtual Mat42f GetTexCoords() const override { return TextureCoords; };
 		virtual uint32_t GetIntFormat() { return IntFormat; } 
 		virtual uint32_t GetDataFormat()  { return DataFormat; }

@@ -1,5 +1,8 @@
 #include "MetalRendererAPI.h"
 
+#include <AppKit/NSView.hpp>
+#include <AppKit/NSWindow.hpp>
+#include <Platform/OS/MacOS/MacWindow.h>
 #include <Utils/Logging.h>
 #include <Metal/Metal.hpp>
 
@@ -24,6 +27,8 @@ namespace Nebula {
 
         s_Context->m_Viewport = {0.0f, 0.0f, 640.0f, 480.0f, 0.0f, 1.0f};
         s_Context->m_ClearColor = MTL::ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+        EndFrame();
     }
 
     void MetalRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -44,33 +49,27 @@ namespace Nebula {
         s_Context->m_ClearColor.green = color.Y;
         s_Context->m_ClearColor.blue = color.Z;
         s_Context->m_ClearColor.alpha = color.W;
+
+
+        s_Context->m_View->setClearColor(
+            MTL::ClearColor(
+                color.X,
+                color.Y,
+                color.Z,
+                color.W
+            )
+        );
     }
 
     void MetalRendererAPI::Clear()
     {
-        MTL::CommandBuffer* commandBuffer = s_Context->m_CommandQueue->commandBuffer();
-        // Create a new render pass descriptor from MTL cpp MTL::
-        MTL::RenderPassDescriptor* renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
+        s_Context->m_RenderCommandEncoder->endEncoding();
 
-        MTL::RenderPassColorAttachmentDescriptor* colorAttachment = renderPassDescriptor->colorAttachments()->object(0);
-        colorAttachment->setTexture(nullptr);
-        colorAttachment->setLoadAction(MTL::LoadActionClear);
-        colorAttachment->setClearColor(s_Context->m_ClearColor);
-        colorAttachment->setStoreAction(MTL::StoreActionStore);
+        MTK::View* view = (MTK::View*)((NS::Window*)s_Context->m_Window)->contentView();
+        s_Context->m_FrameCommandBuffer->presentDrawable(view->currentDrawable());
+        s_Context->m_FrameCommandBuffer->commit();
 
-        MTL::RenderCommandEncoder* renderEncoder = commandBuffer->renderCommandEncoder(renderPassDescriptor);
-        renderEncoder->setViewport(s_Context->m_Viewport);
-        renderEncoder->setRenderPipelineState(s_Context->m_RenderPipelineState);
-        renderEncoder->setDepthStencilState(s_Context->m_DepthStencilState);
-        renderEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
-        renderEncoder->setCullMode(MTL::CullModeBack);
-        renderEncoder->setVertexBuffer(nullptr, 0, 0);
-        renderEncoder->setFragmentTexture(nullptr, 0);
-        renderEncoder->drawPrimitives(MTL::PrimitiveTypeTriangle, 0, 3, 0, 1);
-        renderEncoder->endEncoding();
-
-        commandBuffer->presentDrawable(nullptr);
-        commandBuffer->commit();
+        EndFrame();
     }
 
     void MetalRendererAPI::Clear(Vec4f color)
@@ -81,7 +80,7 @@ namespace Nebula {
 
     void MetalRendererAPI::SetAlphaBlend(bool enabled)
     {
-        // s_Context->m_AlphaBlendEnabled = enabled;
+        s_Context->m_AlphaBlendEnabled = enabled;
     }
 
     void MetalRendererAPI::SetDepthTest(bool enabled)
@@ -94,67 +93,71 @@ namespace Nebula {
         s_Context->m_MSAAEnabled = enabled;
     }
 
+    void MetalRendererAPI::EndFrame()
+    {
+        s_Context->m_FrameCommandBuffer = s_Context->m_CommandQueue->commandBuffer();
+        s_Context->m_RenderPassDescriptor = s_Context->m_View->currentRenderPassDescriptor();
+        s_Context->m_RenderCommandEncoder = s_Context->m_FrameCommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor);
+
+        s_Context->m_FrameRenderColorAttatchment = s_Context->m_RenderPassDescriptor->colorAttachments()->object(0);
+        // s_Context->m_FrameRenderColorAttatchment->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+        s_Context->m_FrameRenderColorAttatchment->setLoadAction(MTL::LoadActionClear);
+        s_Context->m_FrameRenderColorAttatchment->setClearColor(s_Context->m_ClearColor);
+        s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
+        s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
+
+        // s_Context->m_FrameCommandBuffer = s_Context->m_CommandQueue->commandBuffer();
+        // s_Context->m_RenderPassDescriptor = s_Context->m_View->currentRenderPassDescriptor();
+
+        
+        // s_Context->m_FrameRenderCommandEncoder = s_Context->m_FrameCommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor );
+
+        // s_Context->m_FrameRenderCommandEncoder->setViewport(s_Context->m_Viewport);
+        // s_Context->m_FrameRenderCommandEncoder->setDepthStencilState(s_Context->m_DepthStencilState);
+        // s_Context->m_FrameRenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
+        // s_Context->m_FrameRenderCommandEncoder->setCullMode(MTL::CullModeBack);
+        // s_Context->m_FrameRenderCommandEncoder->setFragmentTexture(nullptr, 0);
+    }
+
     void MetalRendererAPI::DrawIndexed(const int numIndices, PrimativeType type, bool depthTest)
     {
-        MTL::CommandBuffer* commandBuffer = s_Context->m_CommandQueue->commandBuffer();
-        MTL::RenderPassDescriptor* renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
+        s_Context->m_RenderCommandEncoder->setViewport(s_Context->m_Viewport);
+        s_Context->m_RenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
+        s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeBack);
+        s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
 
-        MTL::RenderPassColorAttachmentDescriptor* colorAttachment = renderPassDescriptor->colorAttachments()->object(1);
-        colorAttachment->setTexture(nullptr);
-        colorAttachment->setLoadAction(MTL::LoadActionClear);
-        colorAttachment->setClearColor(s_Context->m_ClearColor);
-        colorAttachment->setStoreAction(MTL::StoreActionStore);
-
-        MTL::RenderCommandEncoder* renderEncoder = commandBuffer->renderCommandEncoder(renderPassDescriptor);
-        renderEncoder->setViewport(s_Context->m_Viewport);
-        renderEncoder->setRenderPipelineState(s_Context->m_RenderPipelineState);
-        renderEncoder->setDepthStencilState(s_Context->m_DepthStencilState);
-        renderEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
-        renderEncoder->setCullMode(MTL::CullModeBack);
-        renderEncoder->setVertexBuffer(nullptr, 0, 0);
-        renderEncoder->setFragmentTexture(nullptr, 0);
 
         switch (type)
         {
             case PrimativeType::TRIANGLES:
-                renderEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, numIndices, MTL::IndexTypeUInt32, nullptr, 0, 3);
+                s_Context->m_RenderCommandEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, numIndices, MTL::IndexTypeUInt32, s_Context->m_IndexBuffer, 0, 3);
                 break;
 
             case PrimativeType::LINES:
-                renderEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeLine, numIndices, MTL::IndexTypeUInt32, nullptr, 0, 2);
+                s_Context->m_RenderCommandEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeLine, numIndices, MTL::IndexTypeUInt32, s_Context->m_IndexBuffer, 0, 2);
                 break;
 
             default:
                 break;
         }
 
-        renderEncoder->endEncoding();
+        s_Context->m_RenderCommandEncoder->endEncoding();
 
-        commandBuffer->presentDrawable(nullptr);
-        commandBuffer->commit();
+        MTK::View* view = (MTK::View*)((NS::Window*)s_Context->m_Window)->contentView();
+        s_Context->m_FrameCommandBuffer->presentDrawable(view->currentDrawable());
+        s_Context->m_FrameCommandBuffer->commit();
+        s_Context->m_FrameCommandBuffer->waitUntilScheduled();
+
+        EndFrame();
     }
 
     void MetalRendererAPI::DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base)
     {
-        MTL::CommandBuffer* commandBuffer = s_Context->m_CommandQueue->commandBuffer();
-        // Create a new render pass descriptor from MTL cpp MTL::
-        MTL::RenderPassDescriptor* renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
-
-        MTL::RenderPassColorAttachmentDescriptor* colorAttachment = renderPassDescriptor->colorAttachments()->object(0);
-        colorAttachment->setTexture(nullptr);
-        colorAttachment->setLoadAction(MTL::LoadActionClear);
-        colorAttachment->setClearColor(s_Context->m_ClearColor);
-        colorAttachment->setStoreAction(MTL::StoreActionStore);
-
-        MTL::RenderCommandEncoder* renderEncoder = commandBuffer->renderCommandEncoder(renderPassDescriptor);
-        renderEncoder->setViewport(s_Context->m_Viewport);
-        renderEncoder->setRenderPipelineState(s_Context->m_RenderPipelineState);
-        renderEncoder->setDepthStencilState(s_Context->m_DepthStencilState);
-        renderEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
-        renderEncoder->setCullMode(MTL::CullModeBack);
-        renderEncoder->setVertexBuffer(nullptr, 0, 0);
-        renderEncoder->setFragmentTexture(nullptr, 0);
-
+        s_Context->m_RenderCommandEncoder->setViewport(s_Context->m_Viewport);
+        s_Context->m_RenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
+        s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeBack);
+        s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
+        
         MTL::IndexType indexType;
         switch (type)
         {
@@ -172,26 +175,28 @@ namespace Nebula {
                 indexType = MTL::IndexTypeUInt16;
                 break;
         }
-
-        MTL::Buffer* indexBuffer = s_Context->m_Device->newBuffer(indices, size, MTL::ResourceCPUCacheModeDefaultCache);
+        
         switch (mode)
         {
             case PrimativeType::TRIANGLES:
-                renderEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, size, indexType, indexBuffer, base, 3);
+                s_Context->m_RenderCommandEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, size, indexType, s_Context->m_IndexBuffer, base, 3);
                 break;
 
             case PrimativeType::LINES:
-                renderEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeLine, size, indexType, indexBuffer, base, 2);
+                s_Context->m_RenderCommandEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeLine, size, indexType, s_Context->m_IndexBuffer, base, 2);
                 break;
 
             default:
                 break;
         }
 
-        renderEncoder->endEncoding();
+        s_Context->m_RenderCommandEncoder->endEncoding();
 
-        commandBuffer->presentDrawable(nullptr);
-        commandBuffer->commit();
+
+        s_Context->m_FrameCommandBuffer->commit();
+        s_Context->m_FrameCommandBuffer->waitUntilScheduled();
+
+        EndFrame();
     }
 
 }

@@ -45,16 +45,16 @@ namespace Nebula
             LOG_INF("Autosaved project\n");
         }
 
-        FramebufferSpecification spec = m_RenderPassSpec.TargetFramebuffer->GetSpecification();
-        bool framebufferRefletsScreenSize = ViewportSize.X > 0.0f && ViewportSize.Y > 0.0f && (spec.Width != ViewportSize.X || spec.Height != ViewportSize.Y);
+        // FramebufferSpecification spec = m_RenderPassSpec.TargetFramebuffer->GetSpecification();
+        bool framebufferRefletsScreenSize = ViewportSize.X > 0.0f && ViewportSize.Y > 0.0f; // && (spec.Width != ViewportSize.X || spec.Height != ViewportSize.Y);
         if (framebufferRefletsScreenSize || Application::Get()->GetWindow()->WasMinimized() || Application::Get()->GetWindow()->IsMaximized())
         {
-            m_RenderPassSpec.TargetFramebuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
+            // m_RenderPassSpec.TargetFramebuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
-        m_RenderPassSpec.TargetFramebuffer->Bind();
+        // m_RenderPassSpec.TargetFramebuffer->Bind();
         RendererConfig::SetAlphaBlend(true);
         RendererConfig::Clear();
 
@@ -70,7 +70,7 @@ namespace Nebula
             //     }
             // }
 
-            m_RenderPassSpec.TargetFramebuffer->ClearTextureAttachment(1, -1);
+            // m_RenderPassSpec.TargetFramebuffer->ClearTextureAttachment(1, -1);
 
             m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
             ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
@@ -95,7 +95,7 @@ namespace Nebula
 
 
             if (ViewportFocused && ViewportHovered) {
-                m_HoveringEntity = m_RenderPassSpec.TargetFramebuffer->ReadPixel(1, mouseX, mouseY);
+                // m_HoveringEntity = m_RenderPassSpec.TargetFramebuffer->ReadPixel(1, mouseX, mouseY);
             }
             else {
                 m_HoveringEntity = -1;
@@ -107,7 +107,7 @@ namespace Nebula
             ActiveScene->OnUpdateRuntime(ts);
         }
 
-        m_RenderPassSpec.TargetFramebuffer->Unbind();   
+        // m_RenderPassSpec.TargetFramebuffer->Unbind();   
     }
 
     void NebulaStudioLayer::OnImGuiRender()
@@ -231,8 +231,8 @@ namespace Nebula
             m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
-        uint32_t textureID = m_RenderPassSpec.TargetFramebuffer->GetColorAttachmentsRendererID()[0];
-        ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.X, ViewportSize.Y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+        // uint32_t textureID = m_RenderPassSpec.TargetFramebuffer->GetColorAttachmentsRendererID()[0];
+        // ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.X, ViewportSize.Y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
         Vec2f windowSize = {ImGui::GetWindowSize().x, ImGui::GetWindowSize().y};
 

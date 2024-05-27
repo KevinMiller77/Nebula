@@ -28,6 +28,11 @@ project "imgui"
     filter "system:linux"
         
     filter "system:macosx"
+        files
+        {
+            "imgui/backends/imgui_impl_metal.mm",
+            "imgui/backends/imgui_impl_osx.mm"
+        }
         buildoptions
         {
             "-x objective-c++"

@@ -18,7 +18,7 @@ namespace Nebula{
 		return 0;
 	}
 
-	GLShader::GLShader(const std::string& shaderSrc)
+	GLShader::GLShader(const std::string& shaderSrc, Ref<VertexArray> vertexArray)
         : m_AssetPath(shaderSrc)
 	{
         size_t found = shaderSrc.find_last_of("/\\");
@@ -30,7 +30,7 @@ namespace Nebula{
 	}
 
     
-    GLShader::GLShader(const Builtin::BuiltInShader& shaderSrc) {
+    GLShader::GLShader(const Builtin::BuiltInShader& shaderSrc, Ref<VertexArray> vertexArray) {
         std::string hiddenSrcDir = "./.builtinshadersrc/";
         m_Name = shaderSrc.name;
 
@@ -219,7 +219,6 @@ namespace Nebula{
 
 		glUseProgram(m_RendererID);
 
-		uint32_t bufferIndex = 0;
 		for (const spirv_cross::Resource& resource : res.uniform_buffers)
 		{
 			auto& bufferType = comp.get_type(resource.base_type_id);

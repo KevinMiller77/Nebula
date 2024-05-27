@@ -24,12 +24,8 @@ namespace Nebula{
 
         s_ShaderLibrary = CreateRef<ShaderLibrary>();
 
-		// 2D Textures (!!! DO NOT RELOAD THESE FROM THE 3D RENDERER !!!)
-        s_ShaderLibrary->Load(VFS::AbsolutePath("assets/shaders/Line.glsl"));
-        s_ShaderLibrary->Load(VFS::AbsolutePath("assets/shaders/TexQuad.glsl"));
-
         // Add all shaders to the renderer lib here
-        s_ShaderLibrary->Load(VFS::AbsolutePath("assets/shaders/PBR_Static.glsl"));
+        // s_ShaderLibrary->Load(VFS::AbsolutePath("assets/shaders/PBR_Static.glsl"));
 
 		Renderer2D::Init();
     }

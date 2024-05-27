@@ -1,3 +1,7 @@
+#include <Graphics/OrthographicCamera.h>
+#include <Graphics/Renderer2D.h>
+#include <Graphics/RendererAPI.h>
+#include <Graphics/RendererConfig.h>
 #include <Nebula.h>
 #include "StudioApp.h"
 #include "Base/NebulaStudioProject.h"
@@ -5,6 +9,7 @@
 #include "Layers/NebulaStudioLayer.h"
 #include "Layers/BootLayer.h"
 
+#include <Scene/Scene.h>
 #include <filesystem>
 
 namespace Nebula
@@ -32,14 +37,14 @@ namespace Nebula
             createNewProject = CreateRef<bool>();
             *createNewProject = true;
 
-            // RendererConfig::SetAlphaBlend(true);
-            // RendererConfig::SetMSAA(MSAA);
+            RendererConfig::SetAlphaBlend(true);
+            RendererConfig::SetMSAA(MSAA);
 
-            // window->SetVSync(true);
+            window->SetVSync(true);
 
             // Set the size of the welcome screen
-            // window->SetWindowSize(550, 270);
-            // window->SetResizeable(false);
+            window->SetWindowSize(550, 270);
+            window->SetResizeable(false);
 
             LOG_INF("Application created\n");
         }
@@ -53,6 +58,49 @@ namespace Nebula
             {
 
             }
+
+            // Create a testing view projection 
+            // RendererConfig::SetClearColor({ 0.5f, 0.1f, 0.1f, 1.0f });
+            // RendererConfig::Clear();
+
+
+            // Mat4f view = Mat4f::translation(Vec3f(0.0f, 0.0f, 0.0f));
+            // OrthographicCamera camera = OrthographicCamera(-1.0f, 1.0f, 1.0f, -1.0f);
+            // Renderer2D::BeginScene(camera, view, false);
+
+            // Mat4f model = Mat4f::translation(Vec3f(0.0f, 0.0f, -3.0f));
+            // int entityID = 0;
+            // Vec3f position = Vec3f(0.0f, 0.0f, 0.0f);
+            // Vec3f scale = Vec3f(1.0f, 1.0f, 1.0f);
+            // Vec3f rotation = Vec3f(0.0f, 0.0f, 0.0f);
+            // Vec4f color = Vec4f(0.5f, 1.0f, 1.0f, 1.0f);
+            
+            // Renderer2D::DrawQuad(
+            //     model,
+            //     entityID,
+            //     position,
+            //     scale,
+            //     rotation,
+            //     color
+            // );
+
+            // Mat4f modelA = Mat4f::translation(Vec3f(0.0f, 0.0f, 3.0f));
+            // int entityIDA = 0;
+            // Vec3f positionA = Vec3f(0.0f, 0.0f, 0.0f);
+            // Vec3f scaleA = Vec3f(1.0f, 1.0f, 1.0f);
+            // Vec3f rotationA = Vec3f(0.0f, 0.0f, 0.0f);
+            // Vec4f colorA = Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
+            
+            // Renderer2D::DrawQuad(
+            //     modelA,
+            //     entityIDA,
+            //     positionA,
+            //     scaleA,
+            //     rotationA,
+            //     colorA
+            // );
+            
+            // Renderer2D::EndScene();
         }
 
         void OnAppImGui() override

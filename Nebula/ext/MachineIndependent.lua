@@ -18,7 +18,7 @@ project "MachineIndependent"
 
     prebuildcommands {
         "{MKDIR} " .. p .. "/glslang/build",
-        "cmake -D SKIP_GLSLANG_INSTALL=ON -S " .. p .. "/glslang -B " .. p .. "/glslang/build"
+        "/opt/homebrew/bin/cmake -D SKIP_GLSLANG_INSTALL=ON -S " .. p .. "/glslang -B " .. p .. "/glslang/build"
     }
 
 	files

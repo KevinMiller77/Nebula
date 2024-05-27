@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Platform/Graphics/Metal/MetalContext.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -132,5 +133,7 @@ namespace Nebula{
         MTK::ViewDelegate* m_ViewDelegate;
         
         NS::AutoreleasePool* m_Pool;
+
+        friend class MetalContext;
     };
 }

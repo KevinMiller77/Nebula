@@ -29,7 +29,7 @@ namespace Nebula{
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
 		virtual std::string GetPath() = 0;
-		virtual uint32_t GetRendererID() const = 0;
+		virtual void* GetRendererID() const = 0;
 		virtual Mat42f GetTexCoords() const = 0;
 
 

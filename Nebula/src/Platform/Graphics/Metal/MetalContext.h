@@ -4,6 +4,10 @@
 #include <Graphics/GraphicsContext.h>
 #include <Metal/Metal.hpp>
 
+namespace MTK {
+    class View;
+}
+
 namespace Nebula {
     class MetalContext : public GraphicsContext {
     public:
@@ -24,10 +28,13 @@ namespace Nebula {
         /////////////////////////////////////////////////////////////////////////////////////
         
         void* m_Window = nullptr;
+        MTK::View* m_View;
 
         MTL::Device* m_Device = nullptr;
         MTL::CommandQueue* m_CommandQueue = nullptr;
 
+
+        // Modified by binding things
         MTL::RenderPipelineState* m_RenderPipelineState = nullptr;
         MTL::DepthStencilState* m_DepthStencilState = nullptr;
         
@@ -36,16 +43,17 @@ namespace Nebula {
 
         MTL::CommandBuffer* m_CommandBuffer = nullptr;
         MTL::RenderCommandEncoder* m_RenderCommandEncoder = nullptr;
+        MTL::RenderPassDescriptor* m_RenderPassDescriptor = nullptr;
+        MTL::CommandBuffer* m_FrameCommandBuffer = nullptr;
 
         MTL::Texture* m_Texture = nullptr;
         MTL::Buffer* m_VertexBuffer = nullptr;
         MTL::Buffer* m_IndexBuffer = nullptr;
 
-        MTL::RenderPassDescriptor* m_RenderPassDescriptor = nullptr;
         MTL::Texture* m_DepthTexture = nullptr;
 
-        MTL::CommandBuffer* m_FrameCommandBuffer = nullptr;
-        MTL::RenderCommandEncoder* m_FrameRenderCommandEncoder = nullptr;
+        MTL::RenderPassColorAttachmentDescriptor* m_FrameRenderColorAttatchment = nullptr;
+        // MTL::RenderCommandEncoder* m_FrameRenderCommandEncoder = nullptr;
         
         bool m_AlphaBlendEnabled = false;
         bool m_DepthTestEnabled = false;
@@ -53,5 +61,11 @@ namespace Nebula {
 
         friend class MetalRendererAPI;
         friend class MacWindow;
+        friend class MetalTexture2D;
+        friend class MetalShader;
+        friend class MetalVertexBuffer;
+        friend class MetalIndexBuffer;
+        friend class MetalImGuiRenderer;
+        friend class MacImGuiLayer;
     };
 }

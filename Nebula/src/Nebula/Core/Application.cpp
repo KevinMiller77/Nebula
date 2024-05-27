@@ -30,10 +30,10 @@ namespace Nebula{
 
         // Audio::Init();
 
-        // Renderer::Init(window->GetContext());
+        Renderer::Init(window->GetContext());
 
-        // imGuiLayer = ImGuiLayer::Create();
-        // PushOverlay(imGuiLayer);
+        imGuiLayer = ImGuiLayer::Create();
+        PushOverlay(imGuiLayer);
         
         //Frame and update counters
         fps.Start();
@@ -209,17 +209,17 @@ namespace Nebula{
                 fpsNumber = avg;
                 upsNumber = avg;
 
-                // if (!window->IsMinimized())
-                // {
-                //     {
-                //         NEB_PROFILE_SCOPE("Update");
-                //         OnUpdate(ts);
-                //     }
-                //     {
-                //         NEB_PROFILE_SCOPE("ImGui Render");
-                //         OnImGuiRender();
-                //     }
-                // }
+                if (!window->IsMinimized())
+                {
+                    {
+                        NEB_PROFILE_SCOPE("Update");
+                        OnUpdate(ts);
+                    }
+                    {
+                        NEB_PROFILE_SCOPE("ImGui Render");
+                        OnImGuiRender();
+                    }
+                }
 
                 {
                     NEB_PROFILE_SCOPE("Window update");

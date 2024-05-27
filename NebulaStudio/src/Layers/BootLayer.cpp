@@ -99,13 +99,13 @@ namespace Nebula
         }
 
         ImGui::PushItemWidth(-1);
-        ImGui::InputTextWithHint("", "Project directory...", projLocation, 256);
+        ImGui::InputTextWithHint("##something", "Project directory...", projLocation, 256);
         ImGui::Text("");
         ImGui::PopItemWidth();
 
         if (State != GREET)
         {
-            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, false);
+            ImGui::PopItemFlag();
             ImGui::PopStyleVar();
         }
 
@@ -165,7 +165,7 @@ namespace Nebula
 
 
         Neb_PushButtonStyle();
-        if (ImGui::ImageButton((ImTextureID)Tex_Continue->GetRendererID(), ImVec2(48, 36)))
+        if (ImGui::Button("Cont..."))// ImGui::ImageButton((ImTextureID)Tex_Continue->GetRendererID(), ImVec2(48, 36)))
         {
             State = DONE;
         }
@@ -174,7 +174,7 @@ namespace Nebula
 
         if (State == GREET)
         {
-            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, false);
+            ImGui::PopItemFlag();
             ImGui::PopStyleVar();
         }
 
