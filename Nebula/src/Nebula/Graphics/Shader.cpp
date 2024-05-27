@@ -17,7 +17,7 @@ namespace Nebula{
             default:                        return nullptr;
 		}
 
-		LOG_ERR("Unknown RendererAPI!\n");
+		LOG_ERR("[Shader] Unknown RendererAPI]!\n");
 		return nullptr;
     }   
 
@@ -31,7 +31,7 @@ namespace Nebula{
             default:                        return nullptr;
 		}
 
-		LOG_ERR("Unknown RendererAPI!\n");
+		LOG_ERR("[Shader] Unknown RendererAPI!\n");
 		return nullptr;
     }   
 

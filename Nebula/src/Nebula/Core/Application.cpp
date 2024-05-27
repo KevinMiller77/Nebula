@@ -24,7 +24,7 @@ namespace Nebula{
         window = Window::Create(winf);
         window->DisableConsole();
 
-        // Input::Init();
+        Input::Init();
         
         VFS::Init();
 

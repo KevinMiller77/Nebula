@@ -4,6 +4,7 @@
 #define CA_PRIVATE_IMPLEMENTATION
 
 #include "MacWindow.h"
+#include "MacInput.h"
 #include <Utils/Logging.h>
 
 #include "../../Graphics/Metal/MetalContext.h"
@@ -323,6 +324,20 @@ namespace Nebula {
 
     uint32* MacWindow::GetHeightPtr() const {
         return &m_Data.height;
+    }
+
+    
+    bool  MacInput::IsKeyPressedAsyncInt(KeyCode key) { 
+        return true; 
+    }
+    bool  MacInput::IsMouseButtonPressedAsyncInt(MouseCode key) { 
+        return true;
+    }
+    Vec2f MacInput::GetMousePosInt() { 
+        return Vec2f(0.0f, 0.0f); 
+    }
+    void  MacInput:: SetMousePosInt(Vec2f newPos) {
+
     }
 
 } // namespace Nebula

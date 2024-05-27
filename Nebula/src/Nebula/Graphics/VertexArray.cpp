@@ -14,7 +14,7 @@ namespace Nebula{
 			case RendererAPI::API::Metal:   return CreateRef<MetalVertexArray>();
 		}
 
-		LOG_ERR("Unknown RendererAPI!\n");
+		LOG_ERR("[VertexArray] Unknown RendererAPI!\n");
 		return nullptr;
 	}
 }

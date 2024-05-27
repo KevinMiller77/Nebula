@@ -38,7 +38,7 @@ namespace Nebula{
 			case RendererAPI::API::Metal:   return CreateRef<MetalTexture2D>(width, height);
 		}
 
-		LOG_ERR("Unknown RendererAPI!\n");
+		LOG_ERR("[Texture2D] Unknown RendererAPI!\n");
 		return nullptr;
 	}
 
@@ -51,7 +51,7 @@ namespace Nebula{
 			case RendererAPI::API::Metal:   return CreateRef<MetalTexture2D>(path);
 		}
 
-		LOG_ERR("Unknown RendererAPI!\n");
+		LOG_ERR("[Texture2D] Unknown RendererAPI!\n");
 		return nullptr;
 	}
 	
@@ -82,7 +82,7 @@ namespace Nebula{
 			case RendererAPI::API::OpenGL: return CreateRef<GLTextureCube>(format, width, height);
 			//case RendererAPIType::Vulkan: return Ref<VulkanTextureCube>::Create(format, width, height);
 		}
-		LOG_ERR("Unknown RendererAPI\n");
+		LOG_ERR("[TextureCube] Unknown RendererAPI\n");
 		return nullptr;
 	}
 
@@ -94,7 +94,7 @@ namespace Nebula{
 			case RendererAPI::API::OpenGL: return CreateRef<GLTextureCube>(path);
 			//case RendererAPIType::Vulkan: return Ref<VulkanTextureCube>::Create(path);
 		}
-		LOG_ERR("Unknown RendererAPI\n");
+		LOG_ERR("[TextureCube] Unknown RendererAPI\n");
 		return nullptr;
 	}
 

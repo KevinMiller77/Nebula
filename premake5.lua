@@ -234,6 +234,8 @@ project "NebulaStudio"
             "Foundation.framework",
             "CoreGraphics.framework",
             "GameController.framework",
+            "Carbon.framework",
+            "HIToolbox.framework",
             "pthread",
             "imgui",
             "imguizmo",

@@ -17,7 +17,7 @@ namespace Nebula{
 			default: { LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr; }
 		}
 
-		LOG_ERR("Unknown RendererAPI!\n");
+		LOG_ERR("[VertexBuffer] Unknown RendererAPI!\n");
 		return nullptr;
 	}
 
@@ -31,7 +31,7 @@ namespace Nebula{
 			default: { LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr; }
 		}
 
-		LOG_ERR("Unknown RendererAPI!\n");
+		LOG_ERR("[VertexBuffer] Unknown RendererAPI!\n");
 		return nullptr;
 	}
 
@@ -45,7 +45,7 @@ namespace Nebula{
 			default: { LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr; }
 		}
 
-		LOG_ERR("Unknown RendererAPI!\n");
+		LOG_ERR("[IndexBuffer] Unknown RendererAPI!\n");
 		return nullptr;
 	}
 }
