@@ -58,6 +58,19 @@ namespace Nebula {
             m_Data.EventCallback(event);
         }
 
+        // Window changed size
+        if (std::string(pNotification->name()->utf8String()) == "NSWindowDidResizeNotification") {
+            LOG_INF("[MacOS] Window resized\n");
+
+            NS::Rect frame = m_Window->frame();
+            m_Data.width = frame.size.width;
+            m_Data.height = frame.size.height;
+
+            // Window resized, we should likely update the window size
+            WindowResizeEvent event = WindowResizeEvent( { m_Data.width, m_Data.height } );
+            m_Data.EventCallback(event);
+        }
+
         // TODO (Kevin): Support more notification types
         // LOG_INF("[MacOS] Notification: %s\n", pNotification->name()->utf8String());
     }
@@ -212,9 +225,12 @@ namespace Nebula {
     void MacWindow::SetWindowSize(uint32 width, uint32 height) {
         m_Data.width = width;
         m_Data.height = height;
-        // m_Window->setContentSize( (CGSize){ (double)width, (double)height } );
 
-        // Also update the actual window size
+        NS::Rect frame = m_Window->frame();
+        frame.size.width = width;
+        frame.size.height = height;
+        
+        m_Window->setFrame(frame, true);
     }
 
     void MacWindow::SetResizeable(bool resizeable) {

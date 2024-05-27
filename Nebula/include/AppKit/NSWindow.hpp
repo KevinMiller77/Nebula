@@ -30,9 +30,14 @@
 #include <AppKit/NSEvent.hpp>
 #include <Foundation/NSObject.hpp>
 
-#include <CoreGraphics/CGGeometry.h>
 #include <objc/runtime.h>
 #include <iostream>
+
+namespace NS {
+	typedef CGRect Rect;
+	typedef CGPoint Point;
+	typedef CGSize Size;
+}
 
 namespace NS::Private::Class {
 	_APPKIT_PRIVATE_DEF_CLS( NSWindow );
@@ -95,6 +100,16 @@ namespace NS::Private::Selector {
 		ns_window_keyUp_,
 		"keyUp:"
 	)		
+
+	_APPKIT_PRIVATE_DEF_SEL(
+		ns_window_frame, 
+		"frame"
+	)
+
+	_APPKIT_PRIVATE_DEF_SEL(
+		ns_window_setFrame_,
+		"setFrame:display:"
+	)
 }
 namespace NS
 {
@@ -134,6 +149,9 @@ namespace NS
 			void 				makeKey();
 			void 				orderFrontRegardless();
 			void				setTitle( const String* pTitle );
+
+			NS::Rect			frame();
+			void 				setFrame( NS::Rect frame, bool display = true);
 
 			void				close();
 	};
@@ -217,4 +235,14 @@ _NS_INLINE void NS::Window::setTitle( const String* pTitle )
 _NS_INLINE void NS::Window::close()
 {
 	_OBJ_C_SEND( void, this, ns_window_close_ );
+}
+
+_NS_INLINE NS::Rect NS::Window::frame()
+{
+	return _OBJ_C_SEND( NS::Rect, this, ns_window_frame );
+}
+
+_NS_INLINE void NS::Window::setFrame( NS::Rect frame, bool display)
+{
+	_OBJ_C_SEND_V( void, this, ns_window_setFrame_, frame, display ? YES : NO );
 }

@@ -165,7 +165,7 @@ namespace Nebula
 
 
         Neb_PushButtonStyle();
-        if (ImGui::Button("Cont..."))// ImGui::ImageButton((ImTextureID)Tex_Continue->GetRendererID(), ImVec2(48, 36)))
+        if (ImGui::ImageButton((ImTextureID)Tex_Continue->GetRendererID(), ImVec2(48, 36)))
         {
             State = DONE;
         }

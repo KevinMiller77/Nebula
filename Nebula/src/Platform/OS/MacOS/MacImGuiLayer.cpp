@@ -69,7 +69,7 @@ namespace Nebula{
         ImGui::NewFrame();
         ImGuizmo::BeginFrame();
 
-        ImGui::ShowDemoWindow();
+        // ImGui::ShowDemoWindow();
         ShowDockSpace();
     }
 

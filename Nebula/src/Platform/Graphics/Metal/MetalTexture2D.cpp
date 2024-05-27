@@ -1,6 +1,7 @@
 #include "MetalTexture2D.h"
 #include "MetalRendererAPI.h"
 
+#include <Metal/MTLPixelFormat.hpp>
 #include <Metal/MTLResource.hpp>
 #include <Nebula_pch.h>
 
@@ -30,7 +31,7 @@ namespace Nebula{
 		m_IntFormat = MTL::PixelFormatRGBA8Unorm;
 
         MTL::TextureDescriptor* desc = MTL::TextureDescriptor::texture2DDescriptor(
-            MTL::PixelFormatRGBA8Unorm, 
+            (MTL::PixelFormat)m_IntFormat, 
             m_Width, 
             m_Height, 
             false
@@ -91,7 +92,7 @@ namespace Nebula{
         m_IntFormat = MTL::PixelFormatRGBA8Unorm;
 
 		MTL::TextureDescriptor* desc = MTL::TextureDescriptor::texture2DDescriptor(
-            MTL::PixelFormatRGBA32Float, 
+			(MTL::PixelFormat)m_IntFormat, 
             m_Width, 
             m_Height, 
             false
@@ -102,7 +103,7 @@ namespace Nebula{
             return;
         }
 
-        desc->setStorageMode(MTL::StorageModePrivate);
+        desc->setStorageMode(MTL::StorageModeShared);
         desc->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageShaderWrite);
 
         MTL::Texture* tex = MetalRendererAPI::s_Context->m_Device->newTexture(desc);
@@ -110,6 +111,9 @@ namespace Nebula{
             LOG_ERR("[Metal][Texture2D] Failed to allocate texture!\n");
             return;
         }
+
+		m_Texture = tex;
+		SetData(data, m_Width * m_Height * 4);
 
 		stbi_image_free(data);
 	}
