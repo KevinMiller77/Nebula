@@ -1,23 +1,18 @@
 #include "MetalShader.h"
 
 #include <Core/Ref.h>
-#include <Foundation/NSError.hpp>
-#include <Foundation/NSString.hpp>
 #include <Graphics/ShaderUniform.h>
-#include <Metal/MTLArgument.hpp>
-#include <Metal/MTLBuffer.hpp>
-#include <Metal/MTLDevice.hpp>
-#include <Metal/MTLLibrary.hpp>
-#include <Metal/MTLRenderPipeline.hpp>
-#include <Metal/MTLResource.hpp>
-#include <Metal/MTLTexture.hpp>
-#include <Metal/MTLVertexDescriptor.hpp>
-#include <Platform/Graphics/Metal/MetalRendererAPI.h>
+#include <Graphics/Renderer.h>
 #include <Platform/Graphics/Metal/MetalVertexArray.h>
+#include <Platform/Graphics/Metal/MetalRendererAPI.h>
+#include <Platform/Graphics/Metal/MetalContext.h>
+
 #include <cstddef>
 #include <cstring>
 #include <fstream>
-#include <Graphics/Renderer.h>
+
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
 
 namespace Nebula{
 

@@ -1,12 +1,13 @@
 #include "MetalContext.h"
 
+#include <AppKit/NSWindow.hpp>
 #include <Nebula_pch.h>
 
 namespace Nebula {
 
     MetalContext::MetalContext(void* window)
     {
-        m_Window = window;
+        m_Window = (NS::Window*)window;
     }
 
     void MetalContext::Init()

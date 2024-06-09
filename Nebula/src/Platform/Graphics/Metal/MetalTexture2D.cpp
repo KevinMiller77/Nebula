@@ -1,16 +1,14 @@
 #include "MetalTexture2D.h"
-#include "MetalRendererAPI.h"
-
-#include <Metal/MTLPixelFormat.hpp>
-#include <Metal/MTLResource.hpp>
 #include <Nebula_pch.h>
 
-#include <Graphics/RendererAPI.h>
-#include <Utils/Logging.h>
-
+#include <Metal/Metal.hpp>
 #include <stb_image.h>
 
-#include <Metal/Metal.hpp>
+#include <Utils/Logging.h>
+#include <Graphics/RendererAPI.h>
+#include <Platform/Graphics/Metal/MetalRendererAPI.h>
+#include <Platform/Graphics/Metal/MetalContext.h>
+
 
 namespace Nebula{
     MetalTexture2D::MetalTexture2D(uint32_t width, uint32_t height, bool child)
@@ -171,7 +169,14 @@ namespace Nebula{
 		// glTextureSubImage2D(ID, 0, 0, 0, Width, Height, DataFormat, Metal_UNSIGNED_BYTE, data);
 	}
 
-	void MetalTexture2D::Bind(uint32_t slot) const { }
+	void MetalTexture2D::Bind(uint32_t slot) const { 
+		if (!m_Texture) {
+			LOG_ERR("[Metal][Texture2D] Attempted to bind a Metal texture but texture is not initialzed!\n");
+			return;
+		}
+
+		MetalRendererAPI::s_Context->m_RenderCommandEncoder->setFragmentTexture(m_Texture, slot);
+	}
 
 	//	Pixel counts in
 	Ref<Texture2D> MetalTexture2D::GetSubTexture(int xPosPixels, int yPosPixels, int xSizePixels, int ySizePixels)

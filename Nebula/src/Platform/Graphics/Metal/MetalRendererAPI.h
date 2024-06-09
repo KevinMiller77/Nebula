@@ -1,15 +1,12 @@
 #pragma once
 
-#include "MetalContext.h"
-#include "MetalShader.h"
-#include "MetalTexture2D.h"
-
 #include <Graphics/RendererAPI.h>
 #include <Core/NebulaCommon.h>
-#include <Platform/Graphics/Metal/MetalBuffers.h>
 
 
 namespace Nebula {
+    class MetalContext;
+
 
     class MetalRendererAPI : public RendererAPI {
     public:
@@ -21,6 +18,9 @@ namespace Nebula {
         virtual void Clear() override;
         virtual void Clear(Vec4f color) override;
         
+        virtual void Prepare() override;
+        virtual void Commit() override;
+        
         virtual void SetAlphaBlend(bool enabled) override;
         virtual void SetDepthTest(bool enabled) override;
         virtual void SetMSAA(bool enabled) override;
@@ -28,15 +28,16 @@ namespace Nebula {
         virtual void DrawIndexed(const int numIndices, PrimativeType type, bool depthTest) override;
         virtual void DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base) override;
     private:
-        void EndFrame();
 
         static Ref<MetalContext> s_Context;
 
-        friend class MetalTexture2D;
-        friend class MetalShader;
-        friend class MetalVertexBuffer;
         friend class MetalIndexBuffer;
+        friend class MetalVertexBuffer;
+        friend class MetalVertexArray;
+        friend class MetalShader;
+        friend class MetalTexture2D;
         friend class MetalImGuiRenderer;
         friend class MacImGuiLayer;
+        friend class MetalFramebuffer;
     };
 }

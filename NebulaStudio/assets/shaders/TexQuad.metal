@@ -6,7 +6,7 @@ struct VertexOutput
     float4 Position     [[position]];
     float4 Color        [[shared]];
     float2 TexCoord     [[shared]];
-    float  TexIndex     [[shared]];
+    float  TexIndex      [[shared]];
     float  TilingFactor [[shared]];
     int    EntityID     [[shared]];
 };
@@ -23,7 +23,6 @@ struct Vertex
     float TilingFactor  [[attribute(7)]];
     int EntityID        [[attribute(8)]];
 };
-
 
 float4x4 rotationMatrix(float3 axis, float angle)
 {
@@ -76,15 +75,15 @@ vertex VertexOutput vertexMain(Vertex input [[stage_in]], constant float4x4& Cam
 }
 
 constexpr sampler s = sampler(coord::normalized, address::clamp_to_edge, filter::linear);
-fragment float4 fragmentMain(VertexOutput input [[stage_in]]) {
+fragment float4 fragmentMain(VertexOutput input [[stage_in]], array<texture2d<float>, 32> textures [[texture(0)]]){
     float4 color = input.Color;
     float2 texCoord = input.TexCoord;
     float texIndex = input.TexIndex;
     float tilingFactor = input.TilingFactor;
     int entityID = input.EntityID;
 
-    // float4 texColor = u_Textures[(size_t)input.TexIndex].sample(s, texCoord * tilingFactor);
-    // color *= texColor;
-
-    return color;
+    constexpr sampler linearSampler(coord::normalized, min_filter::linear, mag_filter::linear, mip_filter::linear);
+    float4 texColor = textures[int(texIndex)].sample(linearSampler, texCoord * tilingFactor);
+    
+    return color * texColor;
 }

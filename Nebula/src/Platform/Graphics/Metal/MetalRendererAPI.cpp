@@ -13,7 +13,7 @@ namespace Nebula {
     void MetalRendererAPI::Init(Ref<GraphicsContext> context)
     {
         s_Context = CastRef<MetalContext>(context);
-
+        
         s_Context->m_Device = MTL::CreateSystemDefaultDevice();
         s_Context->m_CommandQueue = s_Context->m_Device->newCommandQueue();
 
@@ -28,7 +28,10 @@ namespace Nebula {
         s_Context->m_Viewport = {0.0f, 0.0f, 640.0f, 480.0f, 0.0f, 1.0f};
         s_Context->m_ClearColor = MTL::ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        EndFrame();
+
+        auto s_Context = MetalRendererAPI::s_Context;
+
+        Prepare();
     }
 
     void MetalRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -50,8 +53,7 @@ namespace Nebula {
         s_Context->m_ClearColor.blue = color.Z;
         s_Context->m_ClearColor.alpha = color.W;
 
-
-        s_Context->m_View->setClearColor(
+        s_Context->m_BoundView->setClearColor(
             MTL::ClearColor(
                 color.X,
                 color.Y,
@@ -63,19 +65,66 @@ namespace Nebula {
 
     void MetalRendererAPI::Clear()
     {
-        s_Context->m_RenderCommandEncoder->endEncoding();
+        if (s_Context->m_RenderCommandEncoder == nullptr) {
+            Prepare();
+        }
 
-        MTK::View* view = (MTK::View*)((NS::Window*)s_Context->m_Window)->contentView();
-        s_Context->m_FrameCommandBuffer->presentDrawable(view->currentDrawable());
-        s_Context->m_FrameCommandBuffer->commit();
-
-        EndFrame();
+        s_Context->m_FrameRenderColorAttatchment = s_Context->m_RenderPassDescriptor->colorAttachments()->object(0);
+        // s_Context->m_FrameRenderColorAttatchment->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+        s_Context->m_FrameRenderColorAttatchment->setLoadAction(MTL::LoadActionClear);
+        s_Context->m_FrameRenderColorAttatchment->setClearColor(s_Context->m_ClearColor);
+        s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
+        s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
     }
 
     void MetalRendererAPI::Clear(Vec4f color)
     {
         SetClearColor(color);
         Clear();
+    }
+
+    void MetalRendererAPI::Prepare() {
+        if (s_Context->m_RenderCommandEncoder) {
+            // Prepare happened before a commit, likely nothing was drawn
+            // Cleanup and prepare for the next frame
+            s_Context->m_RenderCommandEncoder->endEncoding();
+            s_Context->m_RenderCommandEncoder = nullptr;
+
+            s_Context->m_CommandBuffer->release();
+        }
+
+        if (s_Context->m_BoundView == nullptr) {
+            LOG_ERR("[Metal][RendererAPI] Attempted to prepare without a bound view [MetalRendererAPI::Prepare]")
+            abort();
+        }
+        
+        if (s_Context->m_NextView) {
+            s_Context->m_BoundView = s_Context->m_NextView;
+            s_Context->m_NextView = nullptr;
+        }
+
+        MTK::View* view = (MTK::View*)(NS::Window*)s_Context->m_BoundView;
+        s_Context->m_CommandBuffer = s_Context->m_CommandQueue->commandBuffer();
+        s_Context->m_RenderPassDescriptor = view->currentRenderPassDescriptor();
+        s_Context->m_RenderCommandEncoder = s_Context->m_CommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor);
+    }
+    
+    void MetalRendererAPI::Commit() {
+        if (s_Context->m_RenderCommandEncoder == nullptr) {
+            LOG_ERR("[Metal][RendererAPI] Attempted to commit without a render command encoder [MetalRendererAPI::Commit")
+            return;
+        }
+
+        s_Context->m_RenderCommandEncoder->endEncoding();
+        s_Context->m_RenderCommandEncoder = nullptr;
+
+        MTK::View* view = (MTK::View*)(NS::Window*)s_Context->m_BoundView;
+        if (!view->framebufferOnly()) {
+            s_Context->m_CommandBuffer->presentDrawable(view->currentDrawable());
+        }
+        
+        s_Context->m_CommandBuffer->commit();
+        s_Context->m_CommandBuffer->waitUntilScheduled();
     }
 
     void MetalRendererAPI::SetAlphaBlend(bool enabled)
@@ -93,11 +142,11 @@ namespace Nebula {
         s_Context->m_MSAAEnabled = enabled;
     }
 
-    void MetalRendererAPI::EndFrame()
+    void MetalRendererAPI::DrawIndexed(const int numIndices, PrimativeType type, bool depthTest)
     {
-        s_Context->m_FrameCommandBuffer = s_Context->m_CommandQueue->commandBuffer();
-        s_Context->m_RenderPassDescriptor = s_Context->m_View->currentRenderPassDescriptor();
-        s_Context->m_RenderCommandEncoder = s_Context->m_FrameCommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor);
+        if (s_Context->m_RenderCommandEncoder == nullptr) {
+            Prepare();
+        }
 
         s_Context->m_FrameRenderColorAttatchment = s_Context->m_RenderPassDescriptor->colorAttachments()->object(0);
         // s_Context->m_FrameRenderColorAttatchment->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
@@ -106,26 +155,10 @@ namespace Nebula {
         s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
         s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
 
-        // s_Context->m_FrameCommandBuffer = s_Context->m_CommandQueue->commandBuffer();
-        // s_Context->m_RenderPassDescriptor = s_Context->m_View->currentRenderPassDescriptor();
-
-        
-        // s_Context->m_FrameRenderCommandEncoder = s_Context->m_FrameCommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor );
-
-        // s_Context->m_FrameRenderCommandEncoder->setViewport(s_Context->m_Viewport);
-        // s_Context->m_FrameRenderCommandEncoder->setDepthStencilState(s_Context->m_DepthStencilState);
-        // s_Context->m_FrameRenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
-        // s_Context->m_FrameRenderCommandEncoder->setCullMode(MTL::CullModeBack);
-        // s_Context->m_FrameRenderCommandEncoder->setFragmentTexture(nullptr, 0);
-    }
-
-    void MetalRendererAPI::DrawIndexed(const int numIndices, PrimativeType type, bool depthTest)
-    {
         s_Context->m_RenderCommandEncoder->setViewport(s_Context->m_Viewport);
         s_Context->m_RenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
         s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeBack);
         s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
-
 
         switch (type)
         {
@@ -141,18 +174,26 @@ namespace Nebula {
                 break;
         }
 
-        s_Context->m_RenderCommandEncoder->endEncoding();
-
-        MTK::View* view = (MTK::View*)((NS::Window*)s_Context->m_Window)->contentView();
-        s_Context->m_FrameCommandBuffer->presentDrawable(view->currentDrawable());
-        s_Context->m_FrameCommandBuffer->commit();
-        s_Context->m_FrameCommandBuffer->waitUntilScheduled();
-
-        EndFrame();
+        // Commit();
     }
 
     void MetalRendererAPI::DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base)
     {
+        // if (s_Context->m_RenderCommandEncoder != nullptr) {
+        //     Commit();
+        // }
+
+        if (s_Context->m_RenderCommandEncoder == nullptr) {
+            Prepare();
+        }
+
+        s_Context->m_FrameRenderColorAttatchment = s_Context->m_RenderPassDescriptor->colorAttachments()->object(0);
+        // s_Context->m_FrameRenderColorAttatchment->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+        s_Context->m_FrameRenderColorAttatchment->setLoadAction(MTL::LoadActionClear);
+        s_Context->m_FrameRenderColorAttatchment->setClearColor(s_Context->m_ClearColor);
+        s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
+        s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
+
         s_Context->m_RenderCommandEncoder->setViewport(s_Context->m_Viewport);
         s_Context->m_RenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
         s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeBack);
@@ -190,13 +231,7 @@ namespace Nebula {
                 break;
         }
 
-        s_Context->m_RenderCommandEncoder->endEncoding();
-
-
-        s_Context->m_FrameCommandBuffer->commit();
-        s_Context->m_FrameCommandBuffer->waitUntilScheduled();
-
-        EndFrame();
+        // Commit();
     }
 
 }

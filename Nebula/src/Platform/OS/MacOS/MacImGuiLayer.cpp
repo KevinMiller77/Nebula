@@ -4,8 +4,11 @@
 #include <Core/PlatformInfo.h>
 #include <Graphics/RendererAPI.h>
 #include <Graphics/RendererConfig.h>
+
 #include <Platform/Graphics/Metal/ImGui/MetalImGuiRenderer.h>
 #include <Platform/Graphics/Metal/MetalRendererAPI.h>
+#include <Platform/Graphics/Metal/MetalContext.h>
+
 #include <imgui.h>
 
 #include <imgui.h>
@@ -49,8 +52,8 @@ namespace Nebula{
         Application*app = Application::Get();
 
         // Setup Platform/Renderer bindings
-        ImGui_ImplOSX_Init_CPP((void*)MetalRendererAPI::s_Context->m_View);
         m_Renderer->Init();
+        ImGui_ImplOSX_Init_CPP((void*)MetalRendererAPI::s_Context->m_BoundView);
     }
 
     void MacImGuiLayer::OnDetach()
@@ -64,8 +67,9 @@ namespace Nebula{
     void MacImGuiLayer::Begin()
     {
 		NEB_PROFILE_FUNCTION();
+
         m_Renderer->NewFrame();
-        ImGui_ImplOSX_NewFrame_CPP((void*)MetalRendererAPI::s_Context->m_View);
+        ImGui_ImplOSX_NewFrame_CPP((void*)MetalRendererAPI::s_Context->m_BoundView);
         ImGui::NewFrame();
         ImGuizmo::BeginFrame();
 
@@ -92,8 +96,6 @@ namespace Nebula{
             // ImGui::RenderPlatformWindowsDefault();
             //wglMakeCurrent(backup_current_context, (HGLRC)app->GetWindow()->GetContext()->GetNativeHandle());
         }
-
-        RendererConfig::Clear();
     }
 
 
