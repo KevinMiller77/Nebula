@@ -102,7 +102,7 @@ namespace Nebula{
 		NEB_PROFILE_FUNCTION();
         glDeleteFramebuffers(1, &ID);
         glDeleteTextures(1, &m_DepthAttachment);
-        glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+        glDeleteTextures(m_ColorAttachments.size(), (uint32_t*)m_ColorAttachments.data());
 	}
 
     void GLFramebuffer::Bind()
@@ -147,11 +147,13 @@ namespace Nebula{
 
     void GLFramebuffer::ClearTextureAttachment(uint32 attachmentID, const int value) {
         FramebufferTextureFormat format = m_ColorAttachmentSpecs[attachmentID].TextureFormat;
-        glClearTexImage(m_ColorAttachments[attachmentID], 0, Utils::FBTextureFormatToGL(format), GL_INT, &value);
+        uint32_t att = *((uint32_t*)m_ColorAttachments[attachmentID]);
+        glClearTexImage(att, 0, Utils::FBTextureFormatToGL(format), GL_INT, &value);
     }
     void GLFramebuffer::ClearTextureAttachment(uint32 attachmentID, const float value) {
         FramebufferTextureFormat format = m_ColorAttachmentSpecs[attachmentID].TextureFormat;
-        glClearTexImage(m_ColorAttachments[attachmentID], 0, Utils::FBTextureFormatToGL(format), GL_FLOAT, &value);
+        uint32_t att = *((uint32_t*)m_ColorAttachments[attachmentID]);
+        glClearTexImage(att, 0, Utils::FBTextureFormatToGL(format), GL_FLOAT, &value);
     }
 
     void GLFramebuffer::Invalidate() 
@@ -160,7 +162,7 @@ namespace Nebula{
 		{
 			glDeleteFramebuffers(1, &ID);
 			glDeleteTextures(1, &m_DepthAttachment);
-            glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+            glDeleteTextures(m_ColorAttachments.size(), (uint32_t*)m_ColorAttachments.data());
 
             m_ColorAttachments.clear();
             m_DepthAttachment = 0;
@@ -173,17 +175,17 @@ namespace Nebula{
         if (m_ColorAttachmentSpecs.size()) {
 
             m_ColorAttachments.resize(m_ColorAttachmentSpecs.size());
-            Utils::CreateTextures(multisample, m_ColorAttachments.data(), m_ColorAttachments.size());
+            Utils::CreateTextures(multisample, (uint32_t*)m_ColorAttachments.data(), m_ColorAttachments.size());
 
             for (size_t i = 0; i < m_ColorAttachments.size(); i++) {
-                Utils::BindTexture(multisample, m_ColorAttachments[i]);
+                Utils::BindTexture(multisample, *(uint32_t*)m_ColorAttachments[i]);
                 switch(m_ColorAttachmentSpecs[i].TextureFormat) {
                     case(FramebufferTextureFormat::RGBA8): {
-                        Utils::AttachColorTexture(m_ColorAttachments[i], Spec.Samples, GL_RGBA8, GL_RGBA, Spec.Width, Spec.Height, i);
+                        Utils::AttachColorTexture(*(uint32_t*)m_ColorAttachments[i], Spec.Samples, GL_RGBA8, GL_RGBA, Spec.Width, Spec.Height, i);
                         break;
                     }
                     case(FramebufferTextureFormat::RED_INT): {
-                        Utils::AttachColorTexture(m_ColorAttachments[i], Spec.Samples, GL_R32I, GL_RED_INTEGER, Spec.Width, Spec.Height, i);
+                        Utils::AttachColorTexture(*(uint32_t*)m_ColorAttachments[i], Spec.Samples, GL_R32I, GL_RED_INTEGER, Spec.Width, Spec.Height, i);
                         break;
                     }
                     default:

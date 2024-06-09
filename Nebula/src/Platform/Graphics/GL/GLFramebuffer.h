@@ -22,9 +22,9 @@ namespace Nebula{
 
         // virtual void BindTexture(uint32_t slot = 0) const override;
 
-		virtual uint32_t GetRendererID() const override { return ID; };
-		virtual uint32_t GetDepthAttachmentRendererID() const override { return m_DepthAttachment; };
-		virtual std::vector<uint32> GetColorAttachmentsRendererID() const override { return m_ColorAttachments; }
+		virtual void* GetRendererID() const override { return (void*)&ID; };
+		virtual void* GetDepthAttachmentRendererID() const override { return (void*)&m_DepthAttachment; };
+		virtual std::vector<void*> GetColorAttachmentsRendererID() const override { return m_ColorAttachments; }
 
 		virtual const FramebufferSpecification& GetSpecification() const override { return Spec; }
     private:
@@ -35,7 +35,7 @@ namespace Nebula{
         std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecs;
         FramebufferTextureSpecification m_DepthAttachmentSpec = FramebufferTextureFormat::Depth; 
 
-        std::vector<uint32_t> m_ColorAttachments;
+        std::vector<void*> m_ColorAttachments;
         uint32_t m_DepthAttachment;
     };
 }

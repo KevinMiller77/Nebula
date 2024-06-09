@@ -62,9 +62,9 @@ namespace Nebula{
         virtual void ClearTextureAttachment(uint32 attachmentID, const int value) = 0;
         virtual void ClearTextureAttachment(uint32 attachmentID, const float value) = 0;
 
-		virtual uint32_t GetRendererID() const = 0;
-		virtual uint32_t GetDepthAttachmentRendererID() const = 0;
-		virtual std::vector<uint32_t> GetColorAttachmentsRendererID() const = 0;
+		virtual void* GetRendererID() const = 0;
+		virtual void* GetDepthAttachmentRendererID() const = 0;
+		virtual std::vector<void*> GetColorAttachmentsRendererID() const = 0;
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
 
