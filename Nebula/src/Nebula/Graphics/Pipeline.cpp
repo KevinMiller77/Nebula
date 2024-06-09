@@ -9,6 +9,7 @@ namespace Nebula{
 		{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLPipeline>(spec);
+			default: LOG_ERR("[Pipeline] Unknown RendererAPI!\n"); return nullptr;
 		}
 
 		LOG_ERR("[Pipeline] Unknown RendererAPI!\n");

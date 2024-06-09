@@ -1,7 +1,7 @@
 #include "MetalBuffers.h"
 
 #include <Nebula_pch.h>
-#include <Platform/Graphics/Metal/MetalRendererAPI.h>
+#include "MetalContext.h"
 
 namespace Nebula {
 

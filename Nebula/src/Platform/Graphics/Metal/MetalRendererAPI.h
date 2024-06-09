@@ -6,8 +6,6 @@
 
 namespace Nebula {
     class MetalContext;
-
-
     class MetalRendererAPI : public RendererAPI {
     public:
         virtual void Init(Ref<GraphicsContext>) override;
