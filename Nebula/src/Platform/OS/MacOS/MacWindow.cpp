@@ -17,6 +17,8 @@
 #include <Foundation/NSNotification.hpp>
 #include <Foundation/NSNotificationCenter.hpp>
 
+#include <Platform/Graphics/Metal/MetalContext.h>
+
 namespace Nebula {
 
     // Instantiate static data
@@ -25,9 +27,11 @@ namespace Nebula {
     /* Mac Metal Context Internal below */
     void MetalContext::SetVSync_Int(bool vsync) {}
     bool MetalContext::SwapBuffers_Int() { return false; }
-    bool MetalContext::InitContext_Int(void* window) { 
-        m_View = (MTK::View*)(((NS::Window*)window)->contentView());
-        return (m_View != nullptr);
+    bool MetalContext::InitContext_Int(void* window) {
+        m_BoundView = (MTK::View*)(((NS::Window*)window)->contentView());
+        m_DefaultContentView = m_BoundView;
+        m_DefaultContentView->setFramebufferOnly(false);
+        return (m_BoundView != nullptr);
     }
 
    /* End Mac Metal Context Internal */
@@ -121,18 +125,13 @@ namespace Nebula {
         MTL::Device* _pDevice = MTL::CreateSystemDefaultDevice();
         
         // Create a view from the device to draw to
-        m_ContentView = MTK::View::alloc()->init( frame, _pDevice );
+        MTK::View* view = MTK::View::alloc()->init( frame, _pDevice );
 
         // Set the view as the main window content
-        m_Window->setContentView( m_ContentView );
-
-        // Create and set custome view delegate which holds our renderer
-        // m_ViewDelegate = new NebulaViewDelegate();
-        // m_ContentView->setDelegate( m_ViewDelegate );
+        m_Window->setContentView( view );
 
         m_Context->Init();
-
-
+        
         // Do all window metadata setup here - there is probably more than title
         m_Window->setTitle( NS::String::string( m_Data.title.c_str(), NS::StringEncoding::UTF8StringEncoding ) );
 
@@ -143,7 +142,7 @@ namespace Nebula {
 
     MacWindow::MacWindow(WindowInfo info) {
         m_Data = {
-            200, 200,
+            1600, 900,
             100, 100,
             info.Width, info.Height,
             100, 100

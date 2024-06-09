@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Platform/Graphics/Metal/MetalContext.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,6 +14,7 @@
 #include <MetalKit/MetalKit.hpp>
 #include <AppKit/AppKit.hpp>
 #include <Foundation/NSNotificationCenter.hpp>
+#include <Platform/Graphics/Metal/MetalContext.h>
 
 namespace Nebula{
 
@@ -42,13 +42,6 @@ namespace Nebula{
 
         using EventCallbackFn = std::function<void(Event&)>;
         EventCallbackFn EventCallback;
-    };
-
-    class NebulaViewDelegate: public MTK::ViewDelegate {
-    public:
-        NebulaViewDelegate() {};
-        virtual ~NebulaViewDelegate() override {};
-        virtual void drawInMTKView( MTK::View* pView ) override {};
     };
 
     class MacWindow : public Window, public NS::NotificationObserver
@@ -128,9 +121,6 @@ namespace Nebula{
 
         NS::Application* m_Application;
         NS::Window* m_Window;
-
-        MTK::View* m_ContentView;
-        MTK::ViewDelegate* m_ViewDelegate;
         
         NS::AutoreleasePool* m_Pool;
 
