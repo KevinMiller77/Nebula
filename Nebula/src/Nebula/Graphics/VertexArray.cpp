@@ -12,6 +12,7 @@ namespace Nebula{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLVertexArray>();
 			case RendererAPI::API::Metal:   return CreateRef<MetalVertexArray>();
+			default : { LOG_ERR("[VertexArray] Platform is currently not supported!\n"); return nullptr; }
 		}
 
 		LOG_ERR("[VertexArray] Unknown RendererAPI!\n");

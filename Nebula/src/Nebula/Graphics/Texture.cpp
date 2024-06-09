@@ -16,6 +16,7 @@ namespace Nebula{
 		{
 			case TextureFormat::RGB:    return 3;
 			case TextureFormat::RGBA:   return 4;
+			default: { LOG_ERR("[Texture][GetBPP] Unknown TextureFormat!\n"); abort(); }
 		}
 		return 0;
 	}
@@ -36,6 +37,7 @@ namespace Nebula{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLTexture2D>(width, height);
 			case RendererAPI::API::Metal:   return CreateRef<MetalTexture2D>(width, height);
+			default: { LOG_ERR("[Texture2D][Create] Platform is currently not supported!\n"); return nullptr; }
 		}
 
 		LOG_ERR("[Texture2D] Unknown RendererAPI!\n");
@@ -49,6 +51,7 @@ namespace Nebula{
 			case RendererAPI::API::None:    LOG_ERR("RendererAPI::None is currently not supported!\n"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<GLTexture2D>(path);
 			case RendererAPI::API::Metal:   return CreateRef<MetalTexture2D>(path);
+			default: { LOG_ERR("[Texture2D][Create] Platform is currently not supported!\n"); return nullptr; }
 		}
 
 		LOG_ERR("[Texture2D] Unknown RendererAPI!\n");
@@ -81,6 +84,7 @@ namespace Nebula{
 			case RendererAPI::API::None: return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<GLTextureCube>(format, width, height);
 			//case RendererAPIType::Vulkan: return Ref<VulkanTextureCube>::Create(format, width, height);
+			default: { LOG_ERR("[TextureCube][Create] Platform is not supported!"); abort(); }
 		}
 		LOG_ERR("[TextureCube] Unknown RendererAPI\n");
 		return nullptr;
@@ -93,6 +97,7 @@ namespace Nebula{
 			case RendererAPI::API::None: return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<GLTextureCube>(path);
 			//case RendererAPIType::Vulkan: return Ref<VulkanTextureCube>::Create(path);
+			default: { LOG_ERR("[TextureCube][Create] Platform is not supported!"); abort(); }
 		}
 		LOG_ERR("[TextureCube] Unknown RendererAPI\n");
 		return nullptr;
