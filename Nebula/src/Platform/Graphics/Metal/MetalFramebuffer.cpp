@@ -34,8 +34,8 @@ namespace Nebula {
             MetalRendererAPI::s_Context->m_Device 
         );
 
-        m_ContentView->setAutoresizeDrawable(false);
-        m_ContentView->setPresentsWithTransaction(false);
+        // m_ContentView->setAutoresizeDrawable(false);
+        // m_ContentView->setPresentsWithTransaction(false);
     }
 
     void MetalFramebuffer::Invalidate() {
@@ -47,6 +47,7 @@ namespace Nebula {
         MetalRendererAPI::s_Context->m_NextView = m_ContentView;
         
         RendererConfig::Prepare();
+        RendererConfig::Clear(m_Specification.ClearColor);
 	};
 
     void MetalFramebuffer::Unbind() {
@@ -85,7 +86,7 @@ namespace Nebula {
         //     0
         // );
 
-        return 0;
+        return -1;
 	};
     void MetalFramebuffer::ClearTextureAttachment(uint32 attachmentID, const int value) {
             

@@ -2,6 +2,7 @@
 
 #include <AppKit/NSView.hpp>
 #include <AppKit/NSWindow.hpp>
+#include <Metal/MTLRenderCommandEncoder.hpp>
 #include <Platform/OS/MacOS/MacWindow.h>
 #include <Utils/Logging.h>
 #include <Metal/Metal.hpp>
@@ -107,6 +108,7 @@ namespace Nebula {
         s_Context->m_CommandBuffer = s_Context->m_CommandQueue->commandBuffer();
         s_Context->m_RenderPassDescriptor = view->currentRenderPassDescriptor();
         s_Context->m_RenderCommandEncoder = s_Context->m_CommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor);
+        s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullMode::CullModeNone);
     }
     
     void MetalRendererAPI::Commit() {
@@ -153,11 +155,11 @@ namespace Nebula {
         s_Context->m_FrameRenderColorAttatchment->setLoadAction(MTL::LoadActionClear);
         s_Context->m_FrameRenderColorAttatchment->setClearColor(s_Context->m_ClearColor);
         s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
-        s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
+        // s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
 
         s_Context->m_RenderCommandEncoder->setViewport(s_Context->m_Viewport);
         s_Context->m_RenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
-        s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeBack);
+        s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeNone);
         s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
 
         switch (type)
@@ -192,7 +194,7 @@ namespace Nebula {
         s_Context->m_FrameRenderColorAttatchment->setLoadAction(MTL::LoadActionClear);
         s_Context->m_FrameRenderColorAttatchment->setClearColor(s_Context->m_ClearColor);
         s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
-        s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
+        // s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
 
         s_Context->m_RenderCommandEncoder->setViewport(s_Context->m_Viewport);
         s_Context->m_RenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);

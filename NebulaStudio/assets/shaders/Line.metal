@@ -11,9 +11,9 @@ struct VertexOutput {
     float4 Color [[shared]];
 };
 
-vertex VertexOutput vertexMain(const VertexInput in [[stage_in]], constant float4x4& u_ViewProjection [[buffer(0)]]) {
+vertex VertexOutput vertexMain(const VertexInput in [[stage_in]], constant float4x4& Camera [[buffer(1)]]) {
     VertexOutput out {0};
-    out.Position = float4(in.Position, 1.0) * u_ViewProjection;
+    out.Position = float4(in.Position, 1.0) * Camera;
     out.Color = in.Color;
  
     return out;
