@@ -201,7 +201,7 @@ namespace Nebula {
 
 		bool deleteEntity = false;
 
-		bool opened = ImGui::TreeNodeEx((void*)entity.GetComponent<TagComponent>().UUID, flags, tag.c_str());
+		bool opened = ImGui::TreeNodeEx((void*)entity.GetComponent<TagComponent>().UUID, flags, "%s", tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
 			SelectionContext = entity;

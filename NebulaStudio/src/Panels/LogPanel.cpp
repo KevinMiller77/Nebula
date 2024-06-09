@@ -97,7 +97,7 @@ namespace Nebula
             int new_size = Buf.size();
             filePlace += new_size - oldSize + 1;
             
-            for (new_size; oldSize < new_size - 1; oldSize++)
+            for (; oldSize < new_size - 1; oldSize++)
             {
                 if (Buf[oldSize] == '\n')
                 {

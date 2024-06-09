@@ -84,7 +84,7 @@ namespace Nebula {
 		void Set(const std::string& name, const T& value)
 		{
 			auto decl = FindUniformDeclaration(name);
-			assert((decl != nullptr, "Could not find uniform with name 'x'"));
+			assert((decl != nullptr && "Could not find uniform with name 'x'"));
 			auto& buffer = m_UniformStorageBuffer;
 			buffer.Write((uint8_t*)&value, decl->GetSize(), decl->GetOffset());
 			
@@ -115,7 +115,7 @@ namespace Nebula {
 		T& Get(const std::string& name)
 		{
 			auto decl = FindUniformDeclaration(name);
-			assert((decl != nullptr, "Could not find uniform with name 'x'"));
+			assert((decl != nullptr && "Could not find uniform with name 'x'"));
 			auto& buffer = m_UniformStorageBuffer;
 			return buffer.Read<T>(decl->GetOffset());
 		}
@@ -125,7 +125,7 @@ namespace Nebula {
 		{
 			auto decl = FindResourceDeclaration(name);
 			uint32_t slot = decl->GetRegister();
-			if (!slot < m_Textures.size()) {
+			if (!(slot < m_Textures.size())) {
 				assert(("Texture slot is invalid!"));
 			}
 			return m_Textures[slot];

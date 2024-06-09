@@ -99,54 +99,59 @@ namespace Nebula {
 				switch (uniform.GetType())
 				{
 					//	None = 0, Bool, Int, Float, Vec2, Vec3, Vec4, Mat3, Mat4
-				case ShaderUniformType::Bool:
-				{
-					bool value = m_UniformStorageBuffer.Read<bool>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Int:
-				{
-					int value = m_UniformStorageBuffer.Read<int>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Float:
-				{
-					float value = m_UniformStorageBuffer.Read<float>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Vec2:
-				{
-					const Vec2f& value = m_UniformStorageBuffer.Read<Vec2f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Vec3:
-				{
-					const Vec3f& value = m_UniformStorageBuffer.Read<Vec3f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Vec4:
-				{
-					const Vec4f& value = m_UniformStorageBuffer.Read<Vec4f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Mat3:
-				{
-					const Mat3f& value = m_UniformStorageBuffer.Read<Mat3f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Mat4:
-				{
-					const Mat4f& value = m_UniformStorageBuffer.Read<Mat4f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
+					case ShaderUniformType::Bool:
+					{
+						bool value = m_UniformStorageBuffer.Read<bool>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Int:
+					{
+						int value = m_UniformStorageBuffer.Read<int>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Float:
+					{
+						float value = m_UniformStorageBuffer.Read<float>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Vec2:
+					{
+						const Vec2f& value = m_UniformStorageBuffer.Read<Vec2f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Vec3:
+					{
+						const Vec3f& value = m_UniformStorageBuffer.Read<Vec3f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Vec4:
+					{
+						const Vec4f& value = m_UniformStorageBuffer.Read<Vec4f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Mat3:
+					{
+						const Mat3f& value = m_UniformStorageBuffer.Read<Mat3f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Mat4:
+					{
+						const Mat4f& value = m_UniformStorageBuffer.Read<Mat4f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					default:
+					{
+						LOG_ERR("[Material][Bind] Unknown ShaderUniformType!");
+						break;
+					}
 				}
 			}
 		}
@@ -249,54 +254,59 @@ namespace Nebula {
 				switch (uniform.GetType())
 				{
 					//	None = 0, Bool, Int, Float, Vec2, Vec3, Vec4, Mat3, Mat4
-				case ShaderUniformType::Bool:
-				{
-					bool value = m_UniformStorageBuffer.Read<bool>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Int:
-				{
-					int value = m_UniformStorageBuffer.Read<int>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Float:
-				{
-					float value = m_UniformStorageBuffer.Read<float>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Vec2:
-				{
-					const Vec2f& value = m_UniformStorageBuffer.Read<Vec2f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Vec3:
-				{
-					const Vec3f& value = m_UniformStorageBuffer.Read<Vec3f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Vec4:
-				{
-					const Vec4f& value = m_UniformStorageBuffer.Read<Vec4f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Mat3:
-				{
-					const Mat3f& value = m_UniformStorageBuffer.Read<Mat3f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
-				case ShaderUniformType::Mat4:
-				{
-					const Mat4f& value = m_UniformStorageBuffer.Read<Mat4f>(uniform.GetOffset());
-					shader->SetUniform(name, value);
-					break;
-				}
+					case ShaderUniformType::Bool:
+					{
+						bool value = m_UniformStorageBuffer.Read<bool>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Int:
+					{
+						int value = m_UniformStorageBuffer.Read<int>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Float:
+					{
+						float value = m_UniformStorageBuffer.Read<float>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Vec2:
+					{
+						const Vec2f& value = m_UniformStorageBuffer.Read<Vec2f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Vec3:
+					{
+						const Vec3f& value = m_UniformStorageBuffer.Read<Vec3f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Vec4:
+					{
+						const Vec4f& value = m_UniformStorageBuffer.Read<Vec4f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Mat3:
+					{
+						const Mat3f& value = m_UniformStorageBuffer.Read<Mat3f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					case ShaderUniformType::Mat4:
+					{
+						const Mat4f& value = m_UniformStorageBuffer.Read<Mat4f>(uniform.GetOffset());
+						shader->SetUniform(name, value);
+						break;
+					}
+					default: 
+					{
+						LOG_ERR("[Material Instance][Bind] Unknown ShaderUniformType!");
+						break;
+					}
 				}
 			}
 		}
@@ -316,7 +326,7 @@ namespace Nebula {
 		void MaterialInstance::Set(const std::string& name, const T& value)
 		{
 			auto decl = m_Material->FindUniformDeclaration(name);
-			assert((decl, "Could not find uniform!"));
+			assert((decl && "Could not find uniform!"));
 			if (!decl)
 				return;
 
@@ -329,7 +339,7 @@ namespace Nebula {
 		void MaterialInstance::Set(const std::string& name, const Ref<Texture>& texture)
 		{
 			auto decl = m_Material->FindResourceDeclaration(name);
-			assert((decl, "Could not find uniform!"));
+			assert((decl && "Could not find uniform!"));
 
 			uint32_t slot = decl->GetRegister();
 			if (m_Textures.size() <= slot)
@@ -351,7 +361,7 @@ namespace Nebula {
 		T& MaterialInstance::Get(const std::string& name)
 		{
 			auto decl = m_Material->FindUniformDeclaration(name);
-			assert((decl, "Could not find uniform with name 'x'"));
+			assert((decl && "Could not find uniform with name 'x'"));
 			auto& buffer = m_UniformStorageBuffer;
 			return buffer.Read<T>(decl->GetOffset());
 		}
@@ -360,9 +370,9 @@ namespace Nebula {
 		Ref<T> MaterialInstance::GetResource(const std::string& name)
 		{
 			auto decl = m_Material->FindResourceDeclaration(name);
-			assert((decl, "Could not find uniform with name 'x'"));
+			assert((decl && "Could not find uniform with name 'x'"));
 			uint32_t slot = decl->GetRegister();
-			assert((slot < m_Textures.size(), "Texture slot is invalid!"));
+			assert((slot < m_Textures.size() && "Texture slot is invalid!"));
 			return Ref<T>(m_Textures[slot]);
 		}
 

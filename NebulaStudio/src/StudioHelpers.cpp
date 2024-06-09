@@ -166,24 +166,24 @@ namespace Nebula
         std::string text = "Welcome to Nebula Studio!";
         float xPos = (ImGui::GetWindowSize().x / 2.0f) - (ImGui::CalcTextSize(text.c_str()).x / 2.0f);
         ImGui::Dummy( { NMax<float>(xPos, 0.0f), 0.0f }); ImGui::SameLine();
-        ImGui::Text(text.c_str());
+        ImGui::Text("%s", text.c_str());
 
         ImGui::Dummy({ 0, 50 });
 
         text = "To begin, you must first choose";
         xPos = (ImGui::GetWindowSize().x / 2.0f) - (ImGui::CalcTextSize(text.c_str()).x / 2.0f);
         ImGui::Dummy( { NMax<float>(xPos, 0.0f), 0.0f }); ImGui::SameLine();
-        ImGui::Text(text.c_str());
+        ImGui::Text("%s", text.c_str());
 
         text = "a directory where your configs";
         xPos = (ImGui::GetWindowSize().x / 2.0f) - (ImGui::CalcTextSize(text.c_str()).x / 2.0f);
         ImGui::Dummy( { NMax<float>(xPos, 0.0f), 0.0f }); ImGui::SameLine();
-        ImGui::Text(text.c_str());
+        ImGui::Text("%s", text.c_str());
 
         text = "and projects will be saved!";
         xPos = (ImGui::GetWindowSize().x / 2.0f) - (ImGui::CalcTextSize(text.c_str()).x / 2.0f);
         ImGui::Dummy( { NMax<float>(xPos, 0.0f), 0.0f }); ImGui::SameLine();
-        ImGui::Text(text.c_str());
+        ImGui::Text("%s", text.c_str());
 
         ImGui::Dummy( {0, 35} );
 

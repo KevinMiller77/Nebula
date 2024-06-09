@@ -176,7 +176,8 @@ namespace Nebula{
 
     void Renderer::EndRenderPass()
 	{
-		assert((s_Data.m_ActiveRenderPass, "No active render pass! Have you called Renderer::EndRenderPass twice?"));
+		assert(s_Data.m_ActiveRenderPass != nullptr && "No active render pass! Have you called Renderer::EndRenderPass twice?");
+
 		s_Data.m_ActiveRenderPass->GetSpecification().TargetFramebuffer->Unbind();
 		s_Data.m_ActiveRenderPass = nullptr;
 	}

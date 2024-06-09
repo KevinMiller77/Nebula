@@ -2,12 +2,8 @@
 
 #include <Math/Math.h>
 
-#include "imgui/imgui.h"
-
 #include <Graphics/Renderer.h>
 #include <Graphics/Buffer.h>
-
-#include <filesystem>
 
 #include <Graphics/Shader.h>
 #include <Graphics/Pipeline.h>
@@ -217,7 +213,7 @@ namespace Nebula {
 
 				float roughness = 1.0f - sqrt(shininess / 100.0f);
 				LOG_INF("    COLOR = %f, %f, %f\n", color.X, color.Y, color.Z);
-				LOG_INF("    ROUGHNESS = %f\n", &roughness);
+				LOG_INF("    ROUGHNESS = %f\n", roughness);
                 std::string texturePath;
 				bool hasAlbedoMap = material->GetTexture(iMeshTextureType::DIFFUSE, 0, &texturePath);
 				if (hasAlbedoMap)
@@ -423,12 +419,12 @@ namespace Nebula {
 
 		uint32_t PositionIndex = FindPosition(animationTime, nodeAnim);
 		uint32_t NextPositionIndex = (PositionIndex + 1);
-		if(NextPositionIndex >= nodeAnim.mPositionKeys.size());
+		// if(NextPositionIndex >= nodeAnim.mPositionKeys.size());
 		
         float DeltaTime = (float)(nodeAnim.mPositionKeys[NextPositionIndex].mKeyTime - nodeAnim.mPositionKeys[PositionIndex].mKeyTime);
 		
         float Factor = (animationTime - (float)nodeAnim.mPositionKeys[PositionIndex].mKeyTime) / DeltaTime;
-		assert((Factor <= 1.0f, "Factor must be below 1.0f"));
+		assert((Factor <= 1.0f && "Factor must be below 1.0f"));
 		Factor = clamp(Factor, 0.0f, 1.0f);
 		
         const Vec3f& Start = nodeAnim.mPositionKeys[PositionIndex].mPosition;
@@ -455,7 +451,7 @@ namespace Nebula {
         float DeltaTime = (float)(nodeAnim.mPositionKeys[NextRotationIndex].mKeyTime - nodeAnim.mRotationKeys[RotationIndex].mKeyTime);
 		
         float Factor = (animationTime - (float)nodeAnim.mRotationKeys[RotationIndex].mKeyTime) / DeltaTime;
-		assert((Factor <= 1.0f, "Factor must be below 1.0f"));
+		assert((Factor <= 1.0f && "Factor must be below 1.0f"));
 		Factor = clamp(Factor, 0.0f, 1.0f);
 		
         const Vec3f& Start = nodeAnim.mRotationKeys[RotationIndex].mRotation;
@@ -481,7 +477,7 @@ namespace Nebula {
 		float deltaTime = (float)(nodeAnim.mScaleKeys[nextIndex].mKeyTime - nodeAnim.mScaleKeys[index].mKeyTime);
 		float factor = (animationTime - (float)nodeAnim.mScaleKeys[index].mKeyTime) / deltaTime;
 		
-        assert((factor <= 1.0f, "Factor must be below 1.0f"));
+        assert((factor <= 1.0f && "Factor must be below 1.0f"));
 		
         factor = clamp(factor, 0.0f, 1.0f);
 		const auto& start = nodeAnim.mScaleKeys[index].mScale;
@@ -569,7 +565,7 @@ namespace Nebula {
 			for (size_t i = 0; i < m_AnimatedVertices.size(); i++)
 			{
 				auto& vertex = m_AnimatedVertices[i];
-				LOG_INF("Vertex: %f", i);
+				LOG_INF("Vertex: %zu", i);
 				LOG_INF("Position: %f, %f, %f\n", vertex.Position.X, vertex.Position.Y, vertex.Position.Z);
 				LOG_INF("Normal: %f, %f, %f\n", vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z);
 				LOG_INF("Binormal: %f, %f, %f\n", vertex.Binormal.X, vertex.Binormal.Y, vertex.Binormal.Z);
@@ -583,7 +579,7 @@ namespace Nebula {
 			for (size_t i = 0; i < m_StaticVertices.size(); i++)
 			{
 				auto& vertex = m_StaticVertices[i];
-				LOG_INF("Vertex: %d\n", i);
+				LOG_INF("Vertex: %zu\n", i);
 				LOG_INF("Position: %f, %f, %f\n", vertex.Position.X, vertex.Position.Y, vertex.Position.Z);
 				LOG_INF("Normal: %f, %f, %f\n", vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z);
 				LOG_INF("Binormal: %f, %f, %f\n", vertex.Binormal.X, vertex.Binormal.Y, vertex.Binormal.Z);

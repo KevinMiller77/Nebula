@@ -13,6 +13,7 @@ namespace Nebula{
             case(RendererAPI::API::None): LOG_ERR("No rendering API selected!\n"); return nullptr;
             case(RendererAPI::API::OpenGL): return CreateRef<GLRendererAPI>();
             case(RendererAPI::API::Metal): return CreateRef<MetalRendererAPI>();
+            default: { LOG_ERR("No rendering API selected!\n"); return nullptr; }
         }
         return nullptr;
     }
