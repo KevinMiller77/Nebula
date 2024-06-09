@@ -29,16 +29,10 @@
 #include "NSView.hpp"
 #include <AppKit/NSEvent.hpp>
 #include <Foundation/NSObject.hpp>
+#include <Foundation/NSTypes.hpp>
 
 #include <objc/runtime.h>
 #include <iostream>
-
-namespace NS {
-	typedef CGFloat Float;
-	typedef CGRect Rect;
-	typedef CGPoint Point;
-	typedef CGSize Size;
-}
 
 namespace NS::Private::Class {
 	_APPKIT_PRIVATE_DEF_CLS( NSWindow );

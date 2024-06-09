@@ -46,6 +46,12 @@ struct OperatingSystemVersion
     Integer minorVersion;
     Integer patchVersion;
 } _NS_PACKED;
+
+typedef CGFloat Float;
+typedef CGRect Rect;
+typedef CGPoint Point;
+typedef CGSize Size;
+
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -14,11 +14,10 @@
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+#include <Core/NebulaCommon.h>
 #include <Foundation/Foundation.hpp>
+#include <Foundation/NSTypes.hpp>
 #include "AppKitPrivate.hpp"
-
-#include "NSWindow.hpp"
-
 
 namespace NS::Private::Class {
     _APPKIT_PRIVATE_DEF_CLS( NSEvent );
@@ -27,10 +26,13 @@ namespace NS::Private::Class {
 namespace NS::Private::Selector {
     _APPKIT_PRIVATE_DEF_SEL( ns_event_type_, "type" );
     _APPKIT_PRIVATE_DEF_SEL( ns_event_subtype_, "subtype" );
-    // _APPKIT_PRIVATE_DEF_SEL( modifierFlags_, "modifierFlags" );
-    // _APPKIT_PRIVATE_DEF_SEL( timestamp_, "timestamp" );
-    // _APPKIT_PRIVATE_DEF_SEL( window_, "window" );
-    // _APPKIT_PRIVATE_DEF_SEL( windowNumber_, "windowNumber" );
+    _APPKIT_PRIVATE_DEF_SEL( ns_event_keycode_, "keyCode" );
+    _APPKIT_PRIVATE_DEF_SEL( ns_event_arepeat_, "ARepeat" );
+    _APPKIT_PRIVATE_DEF_SEL( ns_event_mouse_location_, "locationInWindow" );
+    _APPKIT_PRIVATE_DEF_SEL( ns_event_button_number_, "buttonNumber" );
+    _APPKIT_PRIVATE_DEF_SEL( ns_event_delta_x_, "deltaX" );
+    _APPKIT_PRIVATE_DEF_SEL( ns_event_delta_y_, "deltaY" );
+    _APPKIT_PRIVATE_DEF_SEL( ns_event_delta_z_, "deltaZ" );
 }
 
 namespace NS {
@@ -214,11 +216,19 @@ namespace NS {
     public:
         NS::EventType type();
         EventSubtype subtype();
-        // NS::EventModifierFlags modifierFlags();
-        // NS::TimeInterval timestamp();
-        // NS::Window* window();
-        // NS::Integer windowNumber();
 
+        // Keyboard
+        uint16_t kb_Keycode();
+        bool kb_ARepeat();
+
+        // Mouse
+        NS::Point m_MouseLocation();
+        NS::Integer m_ButtonNumber();
+
+        // Scroll wheel
+        NS::Float m_DeltaX();
+        NS::Float m_DeltaY();
+        NS::Float m_DeltaZ();
     };
 }
 
@@ -228,4 +238,32 @@ _NS_INLINE NS::EventType NS::Event::type() {
 
 _NS_INLINE NS::EventSubtype NS::Event::subtype() {
     return _OBJ_C_SEND( NS::EventSubtype, this, ns_event_subtype_ );
+}
+
+_NS_INLINE uint16_t NS::Event::kb_Keycode() {
+    return _OBJ_C_SEND( uint16_t, this, ns_event_keycode_ );
+}
+
+_NS_INLINE bool NS::Event::kb_ARepeat() {
+    return _OBJ_C_SEND( bool, this, ns_event_arepeat_ );
+}
+
+_NS_INLINE NS::Point NS::Event::m_MouseLocation() {
+    return _OBJ_C_SEND( NS::Point, this, ns_event_mouse_location_ );
+}
+
+_NS_INLINE NS::Integer NS::Event::m_ButtonNumber() {
+    return _OBJ_C_SEND( NS::Integer, this, ns_event_button_number_ );
+}
+
+_NS_INLINE NS::Float NS::Event::m_DeltaX() {
+    return _OBJ_C_SEND( NS::Float, this, ns_event_delta_x_ );
+}
+
+_NS_INLINE NS::Float NS::Event::m_DeltaY() {
+    return _OBJ_C_SEND( NS::Float, this, ns_event_delta_y_ );
+}
+
+_NS_INLINE NS::Float NS::Event::m_DeltaZ() {
+    return _OBJ_C_SEND( NS::Float, this, ns_event_delta_z_ );
 }
