@@ -1,6 +1,7 @@
 #include <Events/InputCodes.h>
 #include <Events/KeyEvent.h>
 #include <Foundation/NSTypes.hpp>
+#include <vector>
 #define NS_PRIVATE_IMPLEMENTATION
 #define MTL_PRIVATE_IMPLEMENTATION
 #define MTK_PRIVATE_IMPLEMENTATION
@@ -24,7 +25,7 @@
 
 namespace Nebula {
 
-    Vec2 s_CurrentMouseLocation = Vec2(0.0f, 0.0f);
+    Vec2f s_CurrentMouseLocation = Vec2(0.0f, 0.0f);
 
     // Instantiate static data
     MacData MacWindow::m_Data;
@@ -102,51 +103,62 @@ namespace Nebula {
                 NS::EventSubtype subtype = event->subtype();
                 break;
             }
-            case (NS::EventTypeLeftMouseDown): {
-                MouseButtonPressedEvent event(MouseCode::ButtonLeft);
-                m_Data.EventCallback(event);
-                Input::SetMouseButtonPressed(MouseCode::ButtonLeft);
-                break;
-            }
-            case (NS::EventTypeLeftMouseUp): {
-                MouseButtonReleasedEvent event(MouseCode::ButtonLeft);
-                m_Data.EventCallback(event);
-                Input::SetMouseButtonReleased(MouseCode::ButtonLeft);
-                break;
-            }
-            case (NS::EventTypeRightMouseDown): {
-                MouseButtonPressedEvent event(MouseCode::ButtonRight);
-                m_Data.EventCallback(event);
-                Input::SetMouseButtonPressed(MouseCode::ButtonRight);
-                break;
-            }
-            case (NS::EventTypeRightMouseUp): {
-                MouseButtonReleasedEvent event(MouseCode::ButtonRight);
-                m_Data.EventCallback(event);
-                Input::SetMouseButtonReleased(MouseCode::ButtonRight);
-                break;
-            }
+
+            /*
+                Mouse events
+            */
+            case (NS::EventTypeRightMouseDown): 
+            case (NS::EventTypeLeftMouseDown): 
             case (NS::EventTypeOtherMouseDown): {
-                NS::Integer buttonNumber = event->m_ButtonNumber();
-                MouseCode key = buttonNumber == 2 ? MouseCode::ButtonMiddle 
-                    : buttonNumber == 3 ? MouseCode::ButtonLast : MouseCode::ButtonNext;
+                MouseCode key;
+                if (type == NS::EventTypeRightMouseDown) {
+                    key = MouseCode::ButtonRight;
+                } else if (type == NS::EventTypeLeftMouseDown) {
+                    key = MouseCode::ButtonLeft;
+                } else {
+                    NS::Integer buttonNumber = event->m_ButtonNumber();
+                    key = buttonNumber == 2 ? MouseCode::ButtonMiddle 
+                        : buttonNumber == 3 ? MouseCode::ButtonLast : MouseCode::ButtonNext;
+                }
 
                 MouseButtonPressedEvent event(key);
                 m_Data.EventCallback(event);
                 Input::SetMouseButtonPressed(key);
                 break;
             }
+            case (NS::EventTypeLeftMouseUp):
+            case (NS::EventTypeRightMouseUp):
             case(NS::EventTypeOtherMouseUp): {
-                NS::Integer buttonNumber = event->m_ButtonNumber();
-                MouseCode key = buttonNumber == 2 ? MouseCode::ButtonMiddle 
-                    : buttonNumber == 3 ? MouseCode::ButtonLast : MouseCode::ButtonNext;
+                MouseCode key;
+                if (type == NS::EventTypeRightMouseDown) {
+                    key = MouseCode::ButtonRight;
+                } else if (type == NS::EventTypeLeftMouseDown) {
+                    key = MouseCode::ButtonLeft;
+                } else {
+                    NS::Integer buttonNumber = event->m_ButtonNumber();
+                    key = buttonNumber == 2 ? MouseCode::ButtonMiddle 
+                        : buttonNumber == 3 ? MouseCode::ButtonLast : MouseCode::ButtonNext;
+                }
 
                 MouseButtonReleasedEvent event(key);
                 m_Data.EventCallback(event);
                 Input::SetMouseButtonReleased(key);
                 break;
             }
+            case (NS::EventTypeLeftMouseDragged):
+            case (NS::EventTypeRightMouseDragged):
+            case (NS::EventTypeOtherMouseDragged): {
+                NS::Point location = event->m_MouseLocation();
+                Vec2f pos = Vec2f(location.x, m_Data.height - location.y);
+                MouseMovedEvent event(pos);
+                m_Data.EventCallback(event);
+
+                s_CurrentMouseLocation = pos;
+                break;
+            }
+
             case (NS::EventTypeScrollWheel): {
+                NS::Point location = event->m_MouseLocation();
                 NS::Float deltaX = event->m_DeltaX();
                 NS::Float deltaY = event->m_DeltaY();
                 MouseScrolledEvent event(deltaX, deltaY);
@@ -155,19 +167,24 @@ namespace Nebula {
             }
             case (NS::EventTypeMouseMoved): {
                 NS::Point location = event->m_MouseLocation();
-                Vec2f pos = Vec2f(location.x, location.y);
+                Vec2f pos = Vec2f(location.x, m_Data.height - location.y);
                 MouseMovedEvent event(pos);
                 m_Data.EventCallback(event);
 
                 s_CurrentMouseLocation = pos;
                 break;
             }
+
+            /*
+                Keyboard events
+            */
+
             case(NS::EventTypeKeyDown): {
                 auto appleKeycode = event->kb_Keycode();
 
-                if (MacInput::KeyCodeMapMacToNeb.find(event->kb_Keycode()) != MacInput::KeyCodeMapMacToNeb.end()) {
+                if (MacInput::KeyCodeMapMacToNeb.find(appleKeycode) != MacInput::KeyCodeMapMacToNeb.end()) {
                     auto nebulaKeycode = MacInput::KeyCodeMapMacToNeb[appleKeycode];
-                    LOG_INF("Key Down: %d\n", (int)nebulaKeycode);
+                    // LOG_INF("Key Down: %d\n", (int)nebulaKeycode);
 
 
                     Input::SetKeyPressed(nebulaKeycode);
@@ -179,15 +196,67 @@ namespace Nebula {
             case(NS::EventTypeKeyUp): {
                 auto appleKeycode = event->kb_Keycode();
 
-                if (MacInput::KeyCodeMapMacToNeb.find(event->kb_Keycode()) != MacInput::KeyCodeMapMacToNeb.end()) {
+                if (MacInput::KeyCodeMapMacToNeb.find(appleKeycode) != MacInput::KeyCodeMapMacToNeb.end()) {
                     auto nebulaKeycode = MacInput::KeyCodeMapMacToNeb[appleKeycode];
-                    LOG_INF("Key Up: %d\n", (int)nebulaKeycode);
+                    // LOG_INF("Key Up: %d\n", (int)nebulaKeycode);
                     
-                    Input::SetKeyPressed(nebulaKeycode);
+                    Input::SetKeyReleased(nebulaKeycode);
                     KeyReleasedEvent event((int)nebulaKeycode);
                     m_Data.EventCallback(event);
                 }
                 break;
+            }
+            case(NS::EventTypeFlagsChanged): {
+                NS::Integer flag = event->kb_ModifierFlags();
+                
+                std::vector<KeyCode> keysOn = {};
+                std::vector<KeyCode> keysOff = {};
+                flag & NS::EventModifierFlagCapsLock ?
+                    keysOn.push_back(KeyCode::CapsLock) :
+                    keysOff.push_back(KeyCode::CapsLock);
+                
+                flag & NS::EventModifierFlagShift ?
+                    keysOn.push_back(KeyCode::LeftShift) :
+                    keysOff.push_back(KeyCode::LeftShift);
+
+                flag & NS::EventModifierFlagControl ?
+                    keysOn.push_back(KeyCode::LeftControl) :
+                    keysOff.push_back(KeyCode::LeftControl);
+
+                flag & NS::EventModifierFlagOption ?
+                    keysOn.push_back(KeyCode::Alt) :
+                    keysOff.push_back(KeyCode::Alt);
+
+                flag & NS::EventModifierFlagCommand ?
+                    keysOn.push_back(KeyCode::LeftSuper) :
+                    keysOff.push_back(KeyCode::LeftSuper);
+
+                flag & NS::EventModifierFlagNumericPad ?
+                    keysOn.push_back(KeyCode::NumLock) :
+                    keysOff.push_back(KeyCode::NumLock);
+
+                // flag & NS::EventModifierFlagHelp ?
+                //     keysOn.push_back(KeyCode::Help) :
+                //     keysOff.push_back(KeyCode::Help);
+
+                // flag & NS::EventModifierFlagFunction ?
+                //     keysOn.push_back(KeyCode::Function) :
+                //     keysOff.push_back(KeyCode::Function);
+
+                for (KeyCode key: keysOn) {
+                    KeyPressedEvent event((int)key, 0);
+                    m_Data.EventCallback(event);
+                    Input::SetKeyPressed(key);
+                }
+
+                for (KeyCode key: keysOff) {
+                    KeyReleasedEvent event((int)key);
+                    m_Data.EventCallback(event);
+                    Input::SetKeyReleased(key);
+                }
+
+                // LOG_INF("Flags changed\n");
+                // LOG_INF("Flags: %d\n", (int)event->kb_ModifierFlags());
             }
             default: {
                 break;
@@ -425,6 +494,7 @@ namespace Nebula {
         return Input::IsMouseButtonPressedInt(key);
     }
     Vec2f MacInput::GetMousePosInt() { 
+        // LOG_INF("Got mouse pos %f, %f\n", s_CurrentMouseLocation.X, s_CurrentMouseLocation.Y);
         return s_CurrentMouseLocation;
     }
     void  MacInput::SetMousePosInt(Vec2f newPos) {

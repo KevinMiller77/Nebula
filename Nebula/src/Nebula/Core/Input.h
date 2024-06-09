@@ -18,7 +18,7 @@ namespace Nebula{
     public:
         Input()
         {
-            for (int i = 0; i < 0xFF; i++)
+            for (int i = 0; i < 0xFFFF; i++)
             {
                 keys[(KeyCode)i] = false;
                 mouseButtons[(MouseCode)i] = false;
@@ -40,7 +40,7 @@ namespace Nebula{
         inline static void SetMouseButtonPressed(MouseCode key) { s_Input->SetMouseButtonPressedInt(key); }    
         inline static void SetMouseButtonReleased(MouseCode key) { s_Input->SetMouseButtonReleasedInt(key); }
         
-        inline static Vec2f GetMousePos() { return { 0.0f, 0.0f}; }// s_Input->GetMousePosInt(); }
+        inline static Vec2f GetMousePos() { return s_Input->GetMousePosInt(); }
         inline static void SetMousePos(Vec2f newPos) { s_Input->SetMousePosInt(newPos); }
 
 
@@ -59,8 +59,6 @@ namespace Nebula{
         virtual void SetMousePosInt(Vec2f newPos) = 0;
 
     private:
-
-
         static Ref<Input> s_Input;
 
     };

@@ -28,6 +28,7 @@ namespace NS::Private::Selector {
     _APPKIT_PRIVATE_DEF_SEL( ns_event_subtype_, "subtype" );
     _APPKIT_PRIVATE_DEF_SEL( ns_event_keycode_, "keyCode" );
     _APPKIT_PRIVATE_DEF_SEL( ns_event_arepeat_, "ARepeat" );
+    _APPKIT_PRIVATE_DEF_SEL( ns_event_modifier_flags_, "modifierFlags" );
     _APPKIT_PRIVATE_DEF_SEL( ns_event_mouse_location_, "locationInWindow" );
     _APPKIT_PRIVATE_DEF_SEL( ns_event_button_number_, "buttonNumber" );
     _APPKIT_PRIVATE_DEF_SEL( ns_event_delta_x_, "deltaX" );
@@ -220,6 +221,7 @@ namespace NS {
         // Keyboard
         uint16_t kb_Keycode();
         bool kb_ARepeat();
+        NS::Integer kb_ModifierFlags();
 
         // Mouse
         NS::Point m_MouseLocation();
@@ -246,6 +248,10 @@ _NS_INLINE uint16_t NS::Event::kb_Keycode() {
 
 _NS_INLINE bool NS::Event::kb_ARepeat() {
     return _OBJ_C_SEND( bool, this, ns_event_arepeat_ );
+}
+
+_NS_INLINE NS::Integer NS::Event::kb_ModifierFlags() {
+    return _OBJ_C_SEND( NS::Integer, this, ns_event_modifier_flags_ );
 }
 
 _NS_INLINE NS::Point NS::Event::m_MouseLocation() {

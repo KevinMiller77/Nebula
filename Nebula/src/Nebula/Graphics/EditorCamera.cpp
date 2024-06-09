@@ -87,7 +87,7 @@ namespace Nebula {
 	}
 
     float EditorCamera::MovementSpeed() const {
-        return 0.15f;
+        return 0.02f;
     }
 
 	float EditorCamera::ZoomSpeed() const
@@ -114,11 +114,9 @@ namespace Nebula {
 
 			if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle)) {
 				MousePan(delta);
-            }
-			else if (Input::IsMouseButtonPressed(MouseCode::ButtonRight)) {
+            } else if (Input::IsMouseButtonPressed(MouseCode::ButtonRight)) {
 				MouseZoom(delta.Y);
-            }
-            else {
+            } else {
                 modified = false;
             }
 
@@ -134,15 +132,15 @@ namespace Nebula {
                 modified = true;
             }
             if (Input::IsKeyPressed(KeyCode::D)) {
-                m_FocalPoint += GetRightDirection() * MovementSpeed();
+                m_FocalPoint += GetRightDirection() * MovementSpeed() / 2;
                 modified = true;
             }
             if (Input::IsKeyPressed(KeyCode::A)) {
-                m_FocalPoint -= GetRightDirection() * MovementSpeed();
+                m_FocalPoint -= GetRightDirection() * MovementSpeed() / 2;
                 modified = true;
             }
             if (Input::IsKeyPressed(KeyCode::Space)) {
-                m_FocalPoint += GetUpDirection() * (MovementSpeed() / m_AspectRatio);
+				m_FocalPoint += GetUpDirection() * (MovementSpeed() / m_AspectRatio);
                 modified = true;
             }
             if (Input::IsKeyPressed(KeyCode::LeftShift)) {

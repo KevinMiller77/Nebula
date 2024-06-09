@@ -1,0 +1,19 @@
+Scene: Untitled
+Entities:
+  - Entity: 11086827425312369075
+    TagComponent:
+      Tag: Blank Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Line v0: [0, 0, 0]
+      Line v1: [0, 0, 0]
+      Inherit: false
+    SpriteRendererComponent:
+      Hidden: false
+      Color: [1, 1, 1, 1]
+      Type: Quad
+      Has Tex: false
+    RootEntityComponent:
+      Visible: true
