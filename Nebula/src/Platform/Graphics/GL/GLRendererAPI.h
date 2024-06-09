@@ -14,6 +14,8 @@ namespace Nebula{
 		virtual void SetClearColor(const Vec4f& color) override;
 		virtual void Clear() override;
         virtual void Clear(Vec4f color) override;
+        virtual void Commit() override {};
+		virtual void Prepare() override {};
 
 		virtual void SetAlphaBlend(bool enabled) override;
         virtual void SetDepthTest(bool enabled) override;

@@ -35,15 +35,27 @@ namespace Nebula{
             m_API->Clear(color);
         }
 
+        static void Prepare() 
+        {
+            m_API->Prepare();
+        }
+        
+        static void Commit()
+        {
+            m_API->Commit();
+        }
+
         static void DrawIndexed(const int numVertices, PrimativeType type, bool depthTest)
         {
             m_API->DrawIndexed(numVertices, type, depthTest);
         }
 
+
         static void DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base)
         {
             m_API->DrawElementsBaseVertex(mode, size, type, indices, base);
         }
+
         static void SetAlphaBlend(bool enabled)
         {
             m_API->SetAlphaBlend(enabled);

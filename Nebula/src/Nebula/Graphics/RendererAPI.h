@@ -33,6 +33,9 @@ namespace Nebula{
         virtual void Clear() = 0;
         virtual void Clear(Vec4f color) = 0; 
 
+        virtual void Prepare() = 0;
+        virtual void Commit() = 0;
+
         virtual void SetAlphaBlend(bool enabled) = 0;
         virtual void SetDepthTest(bool enabled) = 0;
         virtual void SetMSAA(bool enabled) = 0;
