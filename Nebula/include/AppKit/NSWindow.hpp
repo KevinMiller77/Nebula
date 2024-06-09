@@ -34,6 +34,7 @@
 #include <iostream>
 
 namespace NS {
+	typedef CGFloat Float;
 	typedef CGRect Rect;
 	typedef CGPoint Point;
 	typedef CGSize Size;
