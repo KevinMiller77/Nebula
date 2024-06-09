@@ -9,14 +9,15 @@ namespace Nebula
         memset(projLocation, 0, 256);
         std::string lastUsed = GetMostRecentProject();
 
-        if (lastUsed.empty())
-        {
+        if (lastUsed.empty()) 
             return;
-        }
 
         hasRecents = true;
         State = PROJ_READY_OPEN;
         memcpy(projLocation, lastUsed.data(), lastUsed.size());
+
+        // TODO: Allow running application with a flag to skip selection and always open most recent
+        State = DONE;
     }
 
     void BootLayer::OnUpdate(float ts) 

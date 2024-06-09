@@ -1,4 +1,5 @@
 #include "NebulaStudioLayer.h"
+#include <imgui.h>
 
 namespace Nebula
 {
@@ -12,9 +13,9 @@ namespace Nebula
     {
 
         FramebufferSpecification fbSpec;
-        fbSpec.Attachments = {FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::Depth};
-        fbSpec.Width = 1600;
-        fbSpec.Height = 900;
+        fbSpec.Attachments = {FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::Depth };
+        fbSpec.Width = 16 * 100;
+        fbSpec.Height = 9 * 100;
         fbSpec.Samples = 1;
         fbSpec.ClearColor = {0.1f, 0.1f, 0.1f, 1.0f};
         RendererConfig::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
@@ -45,19 +46,16 @@ namespace Nebula
             LOG_INF("Autosaved project\n");
         }
 
-        // FramebufferSpecification spec = m_RenderPassSpec.TargetFramebuffer->GetSpecification();
-        bool framebufferRefletsScreenSize = ViewportSize.X > 0.0f && ViewportSize.Y > 0.0f; // && (spec.Width != ViewportSize.X || spec.Height != ViewportSize.Y);
-        if (framebufferRefletsScreenSize || Application::Get()->GetWindow()->WasMinimized() || Application::Get()->GetWindow()->IsMaximized())
+        FramebufferSpecification spec = m_RenderPassSpec.TargetFramebuffer->GetSpecification();
+        bool framebufferRefletsViewportSize = (spec.Width == ViewportSize.X && spec.Height == ViewportSize.Y);
+        if (!framebufferRefletsViewportSize || Application::Get()->GetWindow()->WasMinimized() || Application::Get()->GetWindow()->IsMaximized())
         {
-            // m_RenderPassSpec.TargetFramebuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
+            m_RenderPassSpec.TargetFramebuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
             m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
-        // m_RenderPassSpec.TargetFramebuffer->Bind();
-        RendererConfig::SetAlphaBlend(true);
-        RendererConfig::Clear();
-
+        // RendererConfig::SetAlphaBlend(true);
         if(PlayStatus == SceneStatus::NOT_STARTED)
         {
             // auto v = ActiveScene->GetView<AudioSourceComponent>();
@@ -70,19 +68,19 @@ namespace Nebula
             //     }
             // }
 
-            // m_RenderPassSpec.TargetFramebuffer->ClearTextureAttachment(1, -1);
-
             m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
-            ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+            Ref<RenderPass> pass = RenderPass::Create(m_RenderPassSpec);
+            
+            Renderer::BeginRenderPass(pass, false);
 
             if (s_Mesh1) {
-                Ref<RenderPass> pass = RenderPass::Create(m_RenderPassSpec);
-                Renderer::BeginRenderPass(pass, false);
                 if(s_Mesh1->IsLoaded()) {
                     Renderer::SubmitMesh(s_Mesh1, Mat4f(1.0f));
                 }
-                Renderer::EndRenderPass();
             }
+
+            ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+            Renderer::EndRenderPass();
 
             Vec2f pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
             pos.X -= m_ViewportBounds[0].X; 
@@ -106,8 +104,6 @@ namespace Nebula
         {
             ActiveScene->OnUpdateRuntime(ts);
         }
-
-        // m_RenderPassSpec.TargetFramebuffer->Unbind();   
     }
 
     void NebulaStudioLayer::OnImGuiRender()
@@ -216,23 +212,25 @@ namespace Nebula
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Viewport");
+
+        ImVec2 viewportPanelSize = ImGui::GetWindowSize();
+        ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+        
         Vec2f viewportOffset = {ImGui::GetCursorPos().x, ImGui::GetCursorPos().y};
 
         ViewportFocused = ImGui::IsWindowFocused();
         ViewportHovered = ImGui::IsWindowHovered();
         Application::Get()->GetImGuiLayer()->BlockEvents(!ViewportFocused || !ViewportHovered);
 
-
-        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
         if (m_EditorCamera.GetViewportSize() != ViewportSize)
         {
             m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
-        // uint32_t textureID = m_RenderPassSpec.TargetFramebuffer->GetColorAttachmentsRendererID()[0];
-        // ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ ViewportSize.X, ViewportSize.Y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+        void* textureID = m_RenderPassSpec.TargetFramebuffer->GetColorAttachmentsRendererID()[0];
+        float width = m_RenderPassSpec.TargetFramebuffer->GetSpecification().Width;
+        float height = m_RenderPassSpec.TargetFramebuffer->GetSpecification().Height;
+        ImGui::Image(textureID, ImVec2{ width, height }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 
         Vec2f windowSize = {ImGui::GetWindowSize().x, ImGui::GetWindowSize().y};
 
@@ -883,7 +881,7 @@ namespace Nebula
         if (ClipboardStatus == CUT)
         {
             ActiveScene->RemoveEntity(Clipboard);
-            ClipboardStatus == EMPTY;
+            ClipboardStatus = EMPTY;
         }
 
         LOG_INF("Entity pasted to active scene\n");
