@@ -227,9 +227,9 @@ namespace Nebula
             m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
         }
 
-        void* textureID = m_RenderPassSpec.TargetFramebuffer->GetColorAttachmentsRendererID()[0];
+        void* textureID = m_RenderPassSpec.TargetFramebuffer->GetColorAttachmentsRendererID()[0];      
         float width = m_RenderPassSpec.TargetFramebuffer->GetSpecification().Width;
-        float height = m_RenderPassSpec.TargetFramebuffer->GetSpecification().Height;
+        float height = m_RenderPassSpec.TargetFramebuffer->GetSpecification().Height;  
         ImGui::Image(textureID, ImVec2{ width, height }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 
         Vec2f windowSize = {ImGui::GetWindowSize().x, ImGui::GetWindowSize().y};

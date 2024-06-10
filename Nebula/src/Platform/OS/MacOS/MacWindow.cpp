@@ -350,6 +350,8 @@ namespace Nebula {
         // Fill in with your error handling code
     }
 
+    std::chrono::steady_clock::time_point currentFrameTime;
+    std::chrono::steady_clock::time_point lastFrameTime;
     void MacWindow::OnUpdate() {
         NS::Event* evt = m_Application->nextEventMatchingMask( 
             NS::EventMaskAny,
@@ -368,11 +370,20 @@ namespace Nebula {
 
         // Fill in with your window update code
         m_Context->SwapBuffers();
+
+        currentFrameTime = std::chrono::high_resolution_clock::now();
+        float diff = 0.001f * (float)std::chrono::duration_cast<std::chrono::milliseconds>(currentFrameTime - lastFrameTime).count();
+        lastFrameTime = currentFrameTime;
+        
+        if (diff == 0.0f) {
+            diff = 0.0001f;
+        }
+
+        m_FrameTime = diff;
     }
 
     float MacWindow::GetTime() {
-        // Fill in with your time getting code
-        return 0.0f;
+        return m_FrameTime;
     }
 
     uint32 MacWindow::GetWidth() const {
