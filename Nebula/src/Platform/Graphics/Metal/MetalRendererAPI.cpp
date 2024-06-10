@@ -2,6 +2,7 @@
 
 #include <AppKit/NSView.hpp>
 #include <AppKit/NSWindow.hpp>
+#include <Foundation/NSTypes.hpp>
 #include <Metal/MTLRenderCommandEncoder.hpp>
 #include <Platform/OS/MacOS/MacWindow.h>
 #include <Utils/Logging.h>
@@ -71,11 +72,10 @@ namespace Nebula {
         }
 
         s_Context->m_FrameRenderColorAttatchment = s_Context->m_RenderPassDescriptor->colorAttachments()->object(0);
-        // s_Context->m_FrameRenderColorAttatchment->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+        s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
         s_Context->m_FrameRenderColorAttatchment->setLoadAction(MTL::LoadActionClear);
         s_Context->m_FrameRenderColorAttatchment->setClearColor(s_Context->m_ClearColor);
         s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
-        s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
     }
 
     void MetalRendererAPI::Clear(Vec4f color)
@@ -86,22 +86,26 @@ namespace Nebula {
 
     void MetalRendererAPI::Prepare() {
         if (s_Context->m_RenderCommandEncoder) {
-            // Prepare happened before a commit, likely nothing was drawn
+            // Prepare happened before a commit, nothing was intended to be drawn
             // Cleanup and prepare for the next frame
             s_Context->m_RenderCommandEncoder->endEncoding();
             s_Context->m_RenderCommandEncoder = nullptr;
 
-            s_Context->m_CommandBuffer->release();
+            for (int i = s_Context->m_CommandBuffer->retainCount(); i > 0; i--) {
+                s_Context->m_CommandBuffer->release();
+            }
+            s_Context->m_CommandBuffer = nullptr;
+        }
+
+        
+        if (s_Context->m_NextView) {
+            s_Context->m_BoundView = s_Context->m_NextView;
+            s_Context->m_NextView = nullptr;
         }
 
         if (s_Context->m_BoundView == nullptr) {
             LOG_ERR("[Metal][RendererAPI] Attempted to prepare without a bound view [MetalRendererAPI::Prepare]")
             abort();
-        }
-        
-        if (s_Context->m_NextView) {
-            s_Context->m_BoundView = s_Context->m_NextView;
-            s_Context->m_NextView = nullptr;
         }
 
         MTK::View* view = (MTK::View*)(NS::Window*)s_Context->m_BoundView;
@@ -109,6 +113,19 @@ namespace Nebula {
         s_Context->m_RenderPassDescriptor = view->currentRenderPassDescriptor();
         s_Context->m_RenderCommandEncoder = s_Context->m_CommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor);
         s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullMode::CullModeNone);
+
+        s_Context->m_FrameRenderColorAttatchment = s_Context->m_RenderPassDescriptor->colorAttachments()->object(0);
+        s_Context->m_FrameRenderColorAttatchment->setLoadAction(MTL::LoadActionClear);
+        s_Context->m_FrameRenderColorAttatchment->setClearColor(s_Context->m_ClearColor);
+        s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
+
+        s_Context->m_RenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
+        s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeNone);
+
+        NS::Size drawableSize = s_Context->m_BoundView->drawableSize();
+        SetViewport(0, 0, drawableSize.width, drawableSize.height);
+
+        s_Context->m_RenderCommandEncoder->setViewport(s_Context->m_Viewport);
     }
     
     void MetalRendererAPI::Commit() {
@@ -150,16 +167,6 @@ namespace Nebula {
             Prepare();
         }
 
-        s_Context->m_FrameRenderColorAttatchment = s_Context->m_RenderPassDescriptor->colorAttachments()->object(0);
-        // s_Context->m_FrameRenderColorAttatchment->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
-        s_Context->m_FrameRenderColorAttatchment->setLoadAction(MTL::LoadActionClear);
-        s_Context->m_FrameRenderColorAttatchment->setClearColor(s_Context->m_ClearColor);
-        s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
-        // s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
-
-        s_Context->m_RenderCommandEncoder->setViewport(s_Context->m_Viewport);
-        s_Context->m_RenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
-        s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeNone);
         s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
 
         switch (type)
@@ -175,30 +182,14 @@ namespace Nebula {
             default:
                 break;
         }
-
-        // Commit();
     }
 
     void MetalRendererAPI::DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base)
     {
-        // if (s_Context->m_RenderCommandEncoder != nullptr) {
-        //     Commit();
-        // }
-
         if (s_Context->m_RenderCommandEncoder == nullptr) {
             Prepare();
         }
 
-        s_Context->m_FrameRenderColorAttatchment = s_Context->m_RenderPassDescriptor->colorAttachments()->object(0);
-        // s_Context->m_FrameRenderColorAttatchment->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
-        s_Context->m_FrameRenderColorAttatchment->setLoadAction(MTL::LoadActionClear);
-        s_Context->m_FrameRenderColorAttatchment->setClearColor(s_Context->m_ClearColor);
-        s_Context->m_FrameRenderColorAttatchment->setStoreAction(MTL::StoreActionStore);
-        // s_Context->m_FrameRenderColorAttatchment->setTexture(nullptr);
-
-        s_Context->m_RenderCommandEncoder->setViewport(s_Context->m_Viewport);
-        s_Context->m_RenderCommandEncoder->setFrontFacingWinding(MTL::WindingCounterClockwise);
-        s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeBack);
         s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
         
         MTL::IndexType indexType;
@@ -232,8 +223,6 @@ namespace Nebula {
             default:
                 break;
         }
-
-        // Commit();
     }
 
 }

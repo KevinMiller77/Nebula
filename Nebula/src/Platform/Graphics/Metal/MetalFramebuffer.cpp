@@ -16,11 +16,8 @@ namespace Nebula {
     MetalFramebuffer::MetalFramebuffer(const FramebufferSpecification& spec)
         : m_Specification(spec)
     {
-
-        Resize(spec.Width, spec.Height);
-
         NS::Rect frame = {
-        {   .x = 0, 
+            {   .x = 0, 
                 .y =  0 
             }, 
             {   
@@ -33,9 +30,8 @@ namespace Nebula {
             frame, 
             MetalRendererAPI::s_Context->m_Device 
         );
-
-        // m_ContentView->setAutoresizeDrawable(false);
-        // m_ContentView->setPresentsWithTransaction(false);
+        m_ContentView->setFramebufferOnly(true);
+        m_ContentView->setAutoresizeDrawable(false);
     }
 
     void MetalFramebuffer::Invalidate() {
@@ -59,21 +55,32 @@ namespace Nebula {
 	};
 
     void MetalFramebuffer::Resize(uint32 width, uint32 height) {
-		m_Specification.Width = width;
-		m_Specification.Height = height;
-
-        NS::Rect frame = {
-            .origin = {   .x = 0, 
+		NS::Rect frame = {
+            .origin = {   
+                .x = 0, 
                 .y =  0 
             }, 
             .size = {   
-                .width = (NS::Float)m_Specification.Width, 
-                .height = (NS::Float)m_Specification.Height
-            } 
+                .width = (NS::Float)width, 
+                .height = (NS::Float)height
+            }
         };
 
-        m_ContentView->setDrawableSize(frame.size);
-        // Invalidate();
+        if (m_ContentView) {
+           for (size_t i = m_ContentView->retainCount(); i > 0; i--) {
+                m_ContentView->release();
+            }
+            m_ContentView = nullptr;
+
+            m_ContentView = MTK::View::alloc()->init( 
+                frame, 
+            MetalRendererAPI::s_Context->m_Device 
+            );
+            m_ContentView->setFramebufferOnly(true);
+        }
+
+        m_Specification.Width = width;
+        m_Specification.Height = height;
 	};
 
     int MetalFramebuffer::ReadPixel(uint32 colorAttachmentID, int x, int y) {
