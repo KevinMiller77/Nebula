@@ -14,7 +14,6 @@ namespace Nebula{
 		for (uint32_t i = 0; i < s_2DData.MaxTextureSlots; i++) {
 			samplers[i] = i;
 		}
-		s_2DData.TextureShader->SetUniform("u_Textures", samplers, s_2DData.MaxTextureSlots);
 		
 		// Line
 		s_2DData.LineShader->Reload(true);
