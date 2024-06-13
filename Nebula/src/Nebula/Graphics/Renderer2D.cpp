@@ -220,9 +220,11 @@ namespace Nebula{
 			// Bind textures
 			for (uint32_t i = 0; i < s_2DData.TextureSlotIndex; i++)
 				s_2DData.TextureSlots[i]->Bind(i);
-			
+
+			for (uint32_t i = s_2DData.TextureSlotIndex; i < s_2DData.MaxTextureSlots; i++)
+				s_2DData.WhiteTexture->Bind(i);
+		
 			s_2DData.QuadVertexArray->Bind();
-			// s_2DData.QuadIndexBuffer->Bind();
             
 			RendererConfig::DrawIndexed(s_2DData.QuadIndexCount, PrimativeType::TRIANGLES, s_2DData.DepthTest);
 			s_2DData.Stats.DrawCalls++;
@@ -237,7 +239,6 @@ namespace Nebula{
 			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 
 			s_2DData.LineVertexArray->Bind();
-			// s_2DData.LineIndexBuffer->Bind();
 			
 			RendererConfig::DrawIndexed(s_2DData.LineIndexCount, PrimativeType::LINES, s_2DData.DepthTest);
 			s_2DData.Stats.DrawCalls++;
