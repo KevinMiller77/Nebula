@@ -34,6 +34,7 @@ namespace Nebula {
     void MetalContext::SetVSync_Int(bool vsync) {}
     bool MetalContext::SwapBuffers_Int() { return false; }
     bool MetalContext::InitContext_Int(void* window) {
+        m_MainView = (MTK::View*)(((NS::Window*)window)->contentView());
         m_BoundView = (MTK::View*)(((NS::Window*)window)->contentView());
         m_DefaultContentView = m_BoundView;
         m_DefaultContentView->setFramebufferOnly(false);
@@ -41,10 +42,6 @@ namespace Nebula {
     }
 
    /* End Mac Metal Context Internal */
-
-    /* Begin App Delegate Internal */
-    NS::Menu* MacWindow::CreateMenuBar() { return nullptr; };
-
     void MacWindow::handleNotification(NS::Notification* pNotification) {
         if (pNotification == nullptr) {
             return;
@@ -56,13 +53,14 @@ namespace Nebula {
         }
 
         // Application launched, lets try to create a window
-        if (std::string(pNotification->name()->utf8String()) == "NSApplicationDidFinishLaunchingNotification") {
+        std::string name = pNotification->name()->utf8String();
+        if (name == "NSApplicationDidFinishLaunchingNotification") {
             LOG_INF("[MacOS] App launched. Stopping the app to take control of main event loop.\n");
-            m_Application->stop(nullptr);
+            
         }
 
         // Window closed, we should likely terminate.
-        if (std::string(pNotification->name()->utf8String()) == "NSWindowDidCloseNotification") {
+        if (name == "NSWindowDidCloseNotification") {
             LOG_INF("[MacOS] App terminating\n");
             // Window closed, we should likely close the app
             WindowCloseEvent event = WindowCloseEvent();
@@ -70,7 +68,7 @@ namespace Nebula {
         }
 
         // Window changed size
-        if (std::string(pNotification->name()->utf8String()) == "NSWindowDidResizeNotification") {
+        if (name == "NSWindowDidResizeNotification") {
             LOG_INF("[MacOS] Window resized\n");
 
             NS::Rect frame = m_Window->frame();
@@ -331,7 +329,7 @@ namespace Nebula {
         // When application does run, we immediately stop it
         // This is a hack to get all of the benefits of the default
         // App delegate but we have our own event loop
-        m_Application->run();
+        m_Application->finishLaunching();
 
         CreateWindow_Int();
     }
