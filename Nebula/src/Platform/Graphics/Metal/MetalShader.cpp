@@ -1,6 +1,7 @@
 #include "MetalShader.h"
 
 #include <Core/Ref.h>
+#include <Foundation/NSEnumerator.hpp>
 #include <Graphics/ShaderUniform.h>
 #include <Graphics/Renderer.h>
 #include <Platform/Graphics/Metal/MetalVertexArray.h>
@@ -76,7 +77,7 @@ namespace Nebula{
 			LOG_ERR("[Metal][Shader] Attempted to bind a shader with no configured pipeline state!\n");
 			abort();
 		}
-		MetalRendererAPI::s_Context->m_RenderCommandEncoder->setRenderPipelineState(m_RenderPipelineState);
+		MetalRendererAPI::BindShader(m_RenderPipelineState);
 	}
 
     void MetalShader::Unbind()
@@ -86,16 +87,6 @@ namespace Nebula{
 
     void MetalShader::Load(const std::string& source)
 	{
-		if (MetalRendererAPI::s_Context == nullptr) {
-			LOG_ERR("[Metal][Shader] MetalRendererAPI is not initialized!\n");
-			abort();
-		}
-
-		if (MetalRendererAPI::s_Context->m_Device == nullptr) {
-			LOG_ERR("[Metal][Shader] MetalRendererAPI is not initialized!\n");
-			abort();
-		}
-
 		if (m_Library) {
 			LOG_INF("[Metal][Shader] Reloading shader: %s\n", m_Name.c_str());
 			m_Library = nullptr;
@@ -108,7 +99,7 @@ namespace Nebula{
 		NS::Error** errorCb = (NS::Error**)malloc(sizeof(NS::Error**));
 		*errorCb = (NS::Error*)malloc(sizeof(NS::Error*));
 
-		m_Library = MetalRendererAPI::s_Context->m_Device->newLibrary(
+		m_Library = MetalRendererAPI::GetDevice()->newLibrary(
 			src, 
 			options,
 			errorCb
@@ -205,8 +196,10 @@ namespace Nebula{
 		if (fragmentFunction) {
 			pipelineDesc->setFragmentFunction(fragmentFunction);
 		}
+		// Reflect on the fragment outputs and set colorAttatchments accordingly
 		pipelineDesc->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
-        
+		pipelineDesc->colorAttachments()->object(1)->setPixelFormat(MTL::PixelFormatR32Sint);
+
 		pipelineDesc->setVertexDescriptor(CastRef<MetalVertexArray>(m_VertexArray)->m_VertexDescriptor);
 
 		NS::Error** errorCb = (NS::Error**)malloc(sizeof(NS::Error**));
@@ -215,7 +208,7 @@ namespace Nebula{
 		MTL::AutoreleasedRenderPipelineReflection* reflectCb = (MTL::AutoreleasedRenderPipelineReflection*)malloc(sizeof(MTL::AutoreleasedRenderPipelineReflection*));
 		*reflectCb = (MTL::AutoreleasedRenderPipelineReflection)malloc(sizeof(MTL::AutoreleasedRenderPipelineReflection));
 
-		MTL::RenderPipelineState* pipelineState = MetalRendererAPI::s_Context->m_Device->newRenderPipelineState(
+		MTL::RenderPipelineState* pipelineState = MetalRendererAPI::GetDevice()->newRenderPipelineState(
 			pipelineDesc, 
 			MTL::PipelineOptionBufferTypeInfo, 
 			reflectCb, 
@@ -317,12 +310,13 @@ namespace Nebula{
 			
 			// If uniform buffer does not exist, create it
 			if (uniform.Buffer == nullptr) {
-				uniform.Buffer = MetalRendererAPI::s_Context->m_Device->newBuffer(data, size, MTL::ResourceOptionCPUCacheModeDefault);
+				uniform.Buffer = MetalRendererAPI::GetDevice()->newBuffer(data, size, MTL::ResourceOptionCPUCacheModeDefault);
+				uniform.Buffer->retain();
 			} else {
 				memcpy(uniform.Buffer->contents(), data, size);
 			}
 
-			MetalRendererAPI::s_Context->m_RenderCommandEncoder->setVertexBuffer(uniform.Buffer, 0, uniform.Index);
+			MetalRendererAPI::BindShaderVertexBuffer(uniform.Buffer, 0, uniform.Index);
 			return;
 		} 
 		
@@ -337,12 +331,13 @@ namespace Nebula{
 			
 			// If uniform buffer does not exist, create it
 			if (uniform.Buffer == nullptr) {
-				uniform.Buffer = MetalRendererAPI::s_Context->m_Device->newBuffer(data, size, MTL::ResourceOptionCPUCacheModeDefault);
+				uniform.Buffer = MetalRendererAPI::GetDevice()->newBuffer(data, size, MTL::ResourceOptionCPUCacheModeDefault);
+				uniform.Buffer->retain();
 			} else {
 				memcpy(uniform.Buffer->contents(), data, size);
 			}
 
-			MetalRendererAPI::s_Context->m_RenderCommandEncoder->setFragmentBuffer(uniform.Buffer, 0, uniform.Index);
+			MetalRendererAPI::BindShaderFragmentBuffer(uniform.Buffer, 0, uniform.Index);
 			return;
 		}
 

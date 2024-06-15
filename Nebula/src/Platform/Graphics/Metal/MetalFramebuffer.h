@@ -1,16 +1,19 @@
 #pragma once
 
 #include <Graphics/Framebuffer.h>
+#include <Metal/MTLRenderCommandEncoder.hpp>
 
 namespace MTK {
     class View;
 }
 
 namespace MTL {
+    class RenderPipelineColorAttachmentDescriptor;
     class RenderPassColorAttachmentDescriptor;
     class RenderPassDepthAttachmentDescriptor;
     class RenderPassStencilAttachmentDescriptor;
     class RenderPassDescriptor;
+    class Texture;
 }
 
 namespace Nebula {
@@ -39,11 +42,10 @@ namespace Nebula {
         void Invalidate();
 
         FramebufferSpecification m_Specification;
-        MTK::View* m_ContentView;
 
-        std::vector<MTL::RenderPassColorAttachmentDescriptor*> m_ColorAttachments;
-        MTL::RenderPassDepthAttachmentDescriptor* m_DepthAttachment;
-        MTL::RenderPassStencilAttachmentDescriptor* m_StencilAttachment;
+        std::vector<MTL::Texture*> m_ColorAttachments;
+        MTL::Texture* m_DepthAttachment;
+        MTL::Viewport m_Viewport;
 
         MTL::RenderPassDescriptor* m_RenderPassDescriptor;
     };

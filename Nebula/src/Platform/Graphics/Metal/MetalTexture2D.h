@@ -47,6 +47,6 @@ namespace Nebula{
 		Mat42f m_TextureCoords = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 		bool m_ChildTexture = false;
 
-		// friend class MetalTileMap;
+        friend class MetalRendererAPI;
 	};
 }

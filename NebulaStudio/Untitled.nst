@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 11086827425312369075
+  - Entity: 2
     TagComponent:
       Tag: Blank Entity
     TransformComponent:

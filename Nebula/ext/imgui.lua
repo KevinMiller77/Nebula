@@ -35,7 +35,8 @@ project "imgui"
         }
         buildoptions
         {
-            "-x objective-c++"
+            "-x objective-c++",
+            "-Wno-everything"
         }
 
     filter "configurations:Debug"

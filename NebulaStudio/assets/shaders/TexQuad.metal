@@ -1,17 +1,7 @@
 #include <metal_stdlib>
 using namespace metal;
 
-struct VertexOutput
-{
-    float4 Position     [[position]];
-    float4 Color        [[shared]];
-    float2 TexCoord     [[shared]];
-    float  TexIndex      [[shared]];
-    float  TilingFactor [[shared]];
-    int    EntityID     [[shared]];
-};
-
-struct Vertex
+struct VertexInput
 {
     float3 Translation  [[attribute(0)]];
     float3 Rotation     [[attribute(1)]];
@@ -22,6 +12,21 @@ struct Vertex
     float TexIndex      [[attribute(6)]];
     float TilingFactor  [[attribute(7)]];
     int EntityID        [[attribute(8)]];
+};
+
+struct VertexOutput
+{
+    float4 Position     [[position]];
+    float4 Color        [[shared]];
+    float2 TexCoord     [[shared]];
+    float  TexIndex      [[shared]];
+    float  TilingFactor [[shared]];
+    int    EntityID     [[shared]];
+};
+
+struct FragmentOutput {
+    float4 Color [[color(0)]];
+    int    EntityID [[color(1)]];
 };
 
 float4x4 rotationMatrix(float3 axis, float angle)
@@ -51,7 +56,7 @@ float4x4 toTranslationMatrix(float3 translation) {
                     0,              0,              0,              1);
 }
 
-vertex VertexOutput vertexMain(Vertex input [[stage_in]], constant float4x4& Camera [[buffer(1)]]) {
+vertex VertexOutput vertexMain(VertexInput input [[stage_in]], constant float4x4& Camera [[buffer(1)]]) {
     VertexOutput Output = {0};
 
     Output.Color = input.Color;
@@ -75,7 +80,7 @@ vertex VertexOutput vertexMain(Vertex input [[stage_in]], constant float4x4& Cam
 }
 
 constexpr sampler s = sampler(coord::normalized, address::clamp_to_edge, filter::linear);
-fragment float4 fragmentMain(VertexOutput input [[stage_in]], array<texture2d<float>, 32> textures [[texture(0)]]){
+fragment FragmentOutput fragmentMain(VertexOutput input [[stage_in]], array<texture2d<float>, 32> textures [[texture(0)]]){
     float4 color = input.Color;
     float2 texCoord = input.TexCoord;
     float texIndex = input.TexIndex;
@@ -84,6 +89,15 @@ fragment float4 fragmentMain(VertexOutput input [[stage_in]], array<texture2d<fl
 
     constexpr sampler linearSampler(coord::normalized, min_filter::linear, mag_filter::linear, mip_filter::linear);
     float4 texColor = textures[int(texIndex)].sample(linearSampler, texCoord * tilingFactor);
-    
-    return color * texColor;
+
+    FragmentOutput Output = {0};
+    Output.Color = color * texColor;
+
+    if (texColor.w < 0.001) {
+        Output.EntityID = -1;
+    } else {
+        Output.EntityID = entityID;
+    }
+
+    return Output;
 }

@@ -5,6 +5,7 @@
 #include <Platform/Graphics/Metal/MetalRendererAPI.h>
 
 #include <Metal/Metal.hpp>
+#include <Platform/OS/MacOS/MacImGuiLayer.h>
 
 namespace MTK {
     class View;
@@ -47,33 +48,25 @@ namespace Nebula {
         void SetVSync_Int(bool vsync);
         /////////////////////////////////////////////////////////////////////////////////////
         
-        NS::Window* m_Window = nullptr;
-        
-        MTK::View* m_DefaultContentView = nullptr;
-        MTK::View* m_BoundView = nullptr;
-        MTK::View* m_NextView = nullptr;
-
         bool m_AlphaBlendEnabled = false;
         bool m_DepthTestEnabled = false;
         bool m_MSAAEnabled = false;
 
-        // State only modified by the renderer
+        NS::Window* m_Window = nullptr;
+        MTK::View* m_MainView = nullptr;
+        MTL::RenderPassDescriptor* m_MainRenderPassDescriptor = nullptr;
+
+        // Created once
         MTL::Device* m_Device = nullptr;
         MTL::CommandQueue* m_CommandQueue = nullptr;
         MTL::CommandBuffer* m_CommandBuffer = nullptr;
-        MTL::RenderCommandEncoder* m_RenderCommandEncoder = nullptr;
 
-        /**
-         * @brief The below variables are renderer state currently modified by 
-            binding various components of the renderer.
-         * 
-         */
-
-        // Shader
+        // Bound every frame
         MTL::RenderPipelineState* m_RenderPipelineState = nullptr;
-
-        // Framebuffer & RenderPass
         MTL::RenderPassDescriptor* m_RenderPassDescriptor = nullptr;
+
+        // Created every frame
+        MTL::RenderCommandEncoder* m_RenderCommandEncoder = nullptr;
         
         // Window holds this data
         MTL::ClearColor m_ClearColor;
@@ -82,22 +75,9 @@ namespace Nebula {
         // Vertex Array binding
         MTL::Buffer* m_VertexBuffer = nullptr;
         MTL::Buffer* m_IndexBuffer = nullptr;
-
-        MTL::Texture* m_DepthTexture = nullptr;
-
-        MTL::RenderPassColorAttachmentDescriptor* m_FrameRenderColorAttatchment = nullptr;
-        // MTL::RenderCommandEncoder* m_FrameRenderCommandEncoder = nullptr;
         
-
         friend class MetalRendererAPI;
-        friend class MacWindow;
-        friend class MetalTexture2D;
-        friend class MetalShader;
-        friend class MetalVertexBuffer;
-        friend class MetalIndexBuffer;
         friend class MetalImGuiRenderer;
         friend class MacImGuiLayer;
-        friend class MetalVertexArray;
-        friend class MetalFramebuffer;
     };
 }

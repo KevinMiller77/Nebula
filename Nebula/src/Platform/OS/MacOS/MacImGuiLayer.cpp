@@ -53,7 +53,7 @@ namespace Nebula{
 
         // Setup Platform/Renderer bindings
         m_Renderer->Init();
-        ImGui_ImplOSX_Init_CPP((void*)MetalRendererAPI::s_Context->m_BoundView);
+        ImGui_ImplOSX_Init_CPP((void*)MetalRendererAPI::s_Context->m_MainView);
     }
 
     void MacImGuiLayer::OnDetach()
@@ -69,7 +69,7 @@ namespace Nebula{
 		NEB_PROFILE_FUNCTION();
 
         m_Renderer->NewFrame();
-        ImGui_ImplOSX_NewFrame_CPP((void*)MetalRendererAPI::s_Context->m_BoundView);
+        ImGui_ImplOSX_NewFrame_CPP((void*)MetalRendererAPI::s_Context->m_MainView);
         ImGui::NewFrame();
         ImGuizmo::BeginFrame();
 

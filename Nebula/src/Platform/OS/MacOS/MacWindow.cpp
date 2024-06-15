@@ -1,6 +1,5 @@
 #include <Events/InputCodes.h>
 #include <Events/KeyEvent.h>
-#include <Foundation/NSTypes.hpp>
 #include <vector>
 #define NS_PRIVATE_IMPLEMENTATION
 #define MTL_PRIVATE_IMPLEMENTATION
@@ -17,6 +16,7 @@
 #include <AppKit/AppKit.hpp>
 #include <AppKit/NSEvent.hpp>
 #include <AppKit/NSWindow.hpp>
+#include <Foundation/NSTypes.hpp>
 #include <Foundation/NSString.hpp>
 #include <Foundation/NSNotification.hpp>
 #include <Foundation/NSNotificationCenter.hpp>
@@ -35,10 +35,10 @@ namespace Nebula {
     bool MetalContext::SwapBuffers_Int() { return false; }
     bool MetalContext::InitContext_Int(void* window) {
         m_MainView = (MTK::View*)(((NS::Window*)window)->contentView());
-        m_BoundView = (MTK::View*)(((NS::Window*)window)->contentView());
-        m_DefaultContentView = m_BoundView;
-        m_DefaultContentView->setFramebufferOnly(false);
-        return (m_BoundView != nullptr);
+        m_MainRenderPassDescriptor = m_MainView->currentRenderPassDescriptor();
+        m_MainRenderPassDescriptor->retain();
+        
+        return (m_MainView != nullptr && m_MainRenderPassDescriptor != nullptr);
     }
 
    /* End Mac Metal Context Internal */

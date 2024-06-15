@@ -69,18 +69,19 @@ namespace Nebula
             // }
 
             m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
+
             Ref<RenderPass> pass = RenderPass::Create(m_RenderPassSpec);
-            
             Renderer::BeginRenderPass(pass, false);
-
-            if (s_Mesh1) {
-                if(s_Mesh1->IsLoaded()) {
-                    Renderer::SubmitMesh(s_Mesh1, Mat4f(1.0f));
-                }
-            }
-
             ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
             Renderer::EndRenderPass();
+
+            // Add back to render pass when applicable
+            // if (s_Mesh1) {
+            //     if(s_Mesh1->IsLoaded()) {
+            //         Renderer::SubmitMesh(s_Mesh1, Mat4f(1.0f));
+            //     }
+            // }
+
 
             Vec2f pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
             pos.X -= m_ViewportBounds[0].X; 
@@ -93,7 +94,7 @@ namespace Nebula
 
 
             if (ViewportFocused && ViewportHovered) {
-                // m_HoveringEntity = m_RenderPassSpec.TargetFramebuffer->ReadPixel(1, mouseX, mouseY);
+                m_HoveringEntity = m_RenderPassSpec.TargetFramebuffer->ReadPixel(1, mouseX, mouseY);
             }
             else {
                 m_HoveringEntity = -1;

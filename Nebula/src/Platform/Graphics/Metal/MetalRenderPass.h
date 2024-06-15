@@ -15,6 +15,8 @@ namespace Nebula {
 
     private:   
         RenderPassSpecification m_Specification;
+
+        friend class MetalRendererAPI;
 	};
 
 }

@@ -19,11 +19,6 @@ namespace Nebula{
 			return;
 		}
 
-		if (MetalRendererAPI::s_Context->m_Device == nullptr) {
-			LOG_ERR("[Metal][Texture2D] MetalRendererAPI device not initialized!\n");
-			return;
-		}
-
 		NEB_PROFILE_FUNCTION();
 		m_Path = std::string();
 		m_IntFormat = MTL::PixelFormatRGBA8Unorm;
@@ -43,7 +38,7 @@ namespace Nebula{
         desc->setStorageMode(MTL::StorageModeShared);
         desc->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageShaderWrite);
 
-        MTL::Texture* tex = MetalRendererAPI::s_Context->m_Device->newTexture(desc);
+        MTL::Texture* tex = MetalRendererAPI::GetDevice()->newTexture(desc);
         if (!tex) {
             LOG_ERR("[Metal][Texture2D] Failed to allocate texture!\n");
             return;
@@ -60,7 +55,7 @@ namespace Nebula{
 			return;
 		}
 
-		if (MetalRendererAPI::s_Context->m_Device == nullptr) {
+		if (MetalRendererAPI::GetDevice() == nullptr) {
 			LOG_ERR("[Metal][Texture2D] MetalRendererAPI device not initialized!\n");
 			return;
 		}
@@ -104,7 +99,7 @@ namespace Nebula{
         desc->setStorageMode(MTL::StorageModeShared);
         desc->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageShaderWrite);
 
-        MTL::Texture* tex = MetalRendererAPI::s_Context->m_Device->newTexture(desc);
+        MTL::Texture* tex = MetalRendererAPI::GetDevice()->newTexture(desc);
         if (!tex) {
             LOG_ERR("[Metal][Texture2D] Failed to allocate texture!\n");
             return;
@@ -175,7 +170,7 @@ namespace Nebula{
 			return;
 		}
 
-		MetalRendererAPI::s_Context->m_RenderCommandEncoder->setFragmentTexture(m_Texture, slot);
+		MetalRendererAPI::BindShaderFragmentTexture(m_Texture, slot);
 	}
 
 	//	Pixel counts in

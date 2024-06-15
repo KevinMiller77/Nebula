@@ -4,6 +4,7 @@
 #include <Graphics/VertexArray.h>
 #include <Metal/MTLVertexDescriptor.hpp>
 #include <Metal/Metal.hpp>
+#include <Platform/Graphics/Metal/MetalRendererAPI.h>
 
 namespace Nebula {
 

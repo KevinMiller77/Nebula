@@ -2,6 +2,7 @@
 
 #include <Graphics/Buffer.h>
 #include <Metal/Metal.hpp>
+#include <Platform/Graphics/Metal/MetalRendererAPI.h>
 
 namespace Nebula {
     class MetalVertexBuffer : public VertexBuffer {

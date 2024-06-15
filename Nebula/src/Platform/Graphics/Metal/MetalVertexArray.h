@@ -30,6 +30,7 @@ namespace Nebula{
         std::vector<Ref<VertexBuffer>> m_VertexBuffers;
         Ref<IndexBuffer> m_IndexBuffer;
 
+        friend class MetalRendererAPI;
         friend class MetalShader;
     };
 }

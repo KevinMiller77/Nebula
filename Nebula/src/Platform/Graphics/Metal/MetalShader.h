@@ -91,5 +91,7 @@ namespace Nebula{
 
 		std::unordered_map<std::string, MetalUniformData> m_VertexUniforms;
         std::unordered_map<std::string, MetalUniformData> m_FragmentUniforms;
+
+        friend class MetalRendererAPI;
     };
 }

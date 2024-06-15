@@ -23,7 +23,7 @@ namespace Nebula {
 
     void MetalVertexBuffer::Bind() const
     {
-        MetalRendererAPI::s_Context->m_VertexBuffer = buffer;
+        MetalRendererAPI::BindVertexBuffer(buffer);
     }
 
     void MetalVertexBuffer::Unbind() const
@@ -50,7 +50,7 @@ namespace Nebula {
 
     void MetalIndexBuffer::Bind() const
     {
-        MetalRendererAPI::s_Context->m_IndexBuffer = buffer;
+        MetalRendererAPI::BindIndexBuffer(buffer);
     }
 
     void MetalIndexBuffer::Unbind() const
