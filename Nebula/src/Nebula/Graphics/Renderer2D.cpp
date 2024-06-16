@@ -190,6 +190,9 @@ namespace Nebula{
         s_2DData.DepthTest = depthTest;
         
 		s_2DData.viewProj = viewProj;
+        
+        s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
+        s_2DData.LineShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 
 		s_2DData.QuadIndexCount = 0;
 		s_2DData.QuadVertexBufferPtr = s_2DData.QuadVertexBufferBase;
@@ -209,7 +212,6 @@ namespace Nebula{
 			s_2DData.QuadVertexBuffer->SetData(s_2DData.QuadVertexBufferBase, data);
 			
 			s_2DData.TextureShader->Bind();
-			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 
 			// Bind textures
 			for (uint32_t i = 0; i < s_2DData.TextureSlotIndex; i++)
@@ -230,7 +232,6 @@ namespace Nebula{
 			s_2DData.LineVertexBuffer->SetData(s_2DData.LineVertexBufferBase, data);
 
 			s_2DData.LineShader->Bind();
-			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
 
 			s_2DData.LineVertexArray->Bind();
 			
