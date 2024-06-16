@@ -22,6 +22,7 @@ premake5
 Nebula-Runtime.json
 Nebula-Shutdown.json
 Nebula-Startup.json
+NebulaStudio.zip
 
 console.txt
 *.xcodeproj/
