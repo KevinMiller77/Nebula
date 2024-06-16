@@ -7,6 +7,9 @@ namespace Nebula {
             std::string currentToken;
             for (char i : line) {
                 switch (i) {
+                    case '\r': {
+                        continue;
+                    }
                     case ('\n'):
                     case(' '): {
                         if (currentToken.size() != 0) {
