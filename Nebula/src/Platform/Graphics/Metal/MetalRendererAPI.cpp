@@ -164,6 +164,9 @@ namespace Nebula {
             NEB_PROFILE_SCOPE("MetalRendererAPI::Prepare::CreateRenderCommandEncoder");
             s_Context->m_RenderCommandEncoder = s_Context->m_CommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor);
             s_Context->m_RenderCommandEncoder->retain();
+
+            // Set cull mode
+            s_Context->m_RenderCommandEncoder->setCullMode(MTL::CullModeFront);
         }
     }
     
@@ -259,6 +262,7 @@ namespace Nebula {
         }
         
         MTL::IndexType indexType;
+        NS::UInteger instanceCount = 1;
         switch (type)
         {
             case PrimativeDataType::UNSIGNED_BYTE:
@@ -279,11 +283,11 @@ namespace Nebula {
         switch (mode)
         {
             case PrimativeType::TRIANGLES:
-                s_Context->m_RenderCommandEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, size, indexType, s_Context->m_IndexBuffer, base, 3);
+                s_Context->m_RenderCommandEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, size, indexType, s_Context->m_IndexBuffer, base * 4, 3);
                 break;
 
             case PrimativeType::LINES:
-                s_Context->m_RenderCommandEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeLine, size, indexType, s_Context->m_IndexBuffer, base, 2);
+                s_Context->m_RenderCommandEncoder->drawIndexedPrimitives(MTL::PrimitiveTypeLine, size, indexType, s_Context->m_IndexBuffer, base * 4, 2);
                 break;
 
             default:
