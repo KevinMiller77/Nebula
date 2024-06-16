@@ -163,6 +163,7 @@ namespace Nebula{
 	}
 
     void Renderer::BeginRenderPass(Ref<RenderPass> renderPass, bool clear) {
+		NEB_PROFILE_FUNCTION();
         s_Data.m_ActiveRenderPass = renderPass;
 
         renderPass->GetSpecification().TargetFramebuffer->Bind();
@@ -176,6 +177,7 @@ namespace Nebula{
 
     void Renderer::EndRenderPass()
 	{
+		NEB_PROFILE_FUNCTION();
 		assert(s_Data.m_ActiveRenderPass != nullptr && "No active render pass! Have you called Renderer::EndRenderPass twice?");
 
 		s_Data.m_ActiveRenderPass->GetSpecification().TargetFramebuffer->Unbind();

@@ -33,6 +33,7 @@ namespace Nebula
     float tsls = 0.0f;
     void NebulaStudioLayer::OnUpdate(float ts)
     {
+        NEB_PROFILE_FUNCTION();
         if (IsClipboardFull() && !Clipboard.IsValid())
         {
             ClipboardStatus = EMPTY;
@@ -46,13 +47,16 @@ namespace Nebula
             LOG_INF("Autosaved project\n");
         }
 
-        FramebufferSpecification spec = m_RenderPassSpec.TargetFramebuffer->GetSpecification();
-        bool framebufferRefletsViewportSize = (spec.Width == ViewportSize.X && spec.Height == ViewportSize.Y);
-        if (!framebufferRefletsViewportSize || Application::Get()->GetWindow()->WasMinimized() || Application::Get()->GetWindow()->IsMaximized())
         {
-            m_RenderPassSpec.TargetFramebuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
-            ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
-            m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
+            NEB_PROFILE_SCOPE("On ViewportChange");
+            FramebufferSpecification spec = m_RenderPassSpec.TargetFramebuffer->GetSpecification();
+            bool framebufferRefletsViewportSize = (spec.Width == ViewportSize.X && spec.Height == ViewportSize.Y);
+            if (!framebufferRefletsViewportSize || Application::Get()->GetWindow()->WasMinimized() || Application::Get()->GetWindow()->IsMaximized())
+            {
+                m_RenderPassSpec.TargetFramebuffer->Resize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
+                ActiveScene->OnViewportResize((uint32_t)ViewportSize.X, (uint32_t)ViewportSize.Y);
+                m_EditorCamera.SetViewportSize(ViewportSize.X, ViewportSize.Y);
+            }
         }
 
         // RendererConfig::SetAlphaBlend(true);
@@ -68,12 +72,18 @@ namespace Nebula
             //     }
             // }
 
-            m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
+            {
+                NEB_PROFILE_SCOPE("Camera Update");
+                m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
+            }
 
-            Ref<RenderPass> pass = RenderPass::Create(m_RenderPassSpec);
-            Renderer::BeginRenderPass(pass, false);
-            ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-            Renderer::EndRenderPass();
+            {
+                NEB_PROFILE_SCOPE("RenderPass");
+                Ref<RenderPass> pass = RenderPass::Create(m_RenderPassSpec);
+                Renderer::BeginRenderPass(pass, false);
+                ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+                Renderer::EndRenderPass();
+            }
 
             // Add back to render pass when applicable
             // if (s_Mesh1) {
@@ -82,24 +92,28 @@ namespace Nebula
             //     }
             // }
 
+            {
+                NEB_PROFILE_SCOPE("Get Hovering Entity");
 
-            Vec2f pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
-            pos.X -= m_ViewportBounds[0].X; 
-            pos.Y -= m_ViewportBounds[0].Y;
-            Vec2f viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-            pos.Y = viewportSize.Y - pos.Y;
-            int mouseX = (int)pos.X;
-            int mouseY = (int)pos.Y;
+                Vec2f pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
+                pos.X -= m_ViewportBounds[0].X; 
+                pos.Y -= m_ViewportBounds[0].Y;
+                Vec2f viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+                pos.Y = viewportSize.Y - pos.Y;
+                int mouseX = (int)pos.X;
+                int mouseY = (int)pos.Y;
 
 
 
-            if (ViewportFocused && ViewportHovered) {
-                m_HoveringEntity = m_RenderPassSpec.TargetFramebuffer->ReadPixel(1, mouseX, mouseY);
+                if (ViewportFocused && ViewportHovered) {
+                    // m_HoveringEntity = m_RenderPassSpec.TargetFramebuffer->ReadPixel(1, mouseX, mouseY);
+                    
+                }
+                else {
+                    m_HoveringEntity = -1;
+                }
+
             }
-            else {
-                m_HoveringEntity = -1;
-            }
-
         }
         else
         {
@@ -109,8 +123,7 @@ namespace Nebula
 
     void NebulaStudioLayer::OnImGuiRender()
     {
-
-
+        NEB_PROFILE_FUNCTION();
         ImGui::Begin("Controls");
         
         ImGui::PushStyleColor(ImGuiCol_Button, {0, 0, 0, 0});
