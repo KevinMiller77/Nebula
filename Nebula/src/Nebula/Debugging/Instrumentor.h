@@ -2,6 +2,8 @@
 
 #include <Nebula_pch.h>
 #include <Utils/Logging.h>
+#include <chrono>
+#include <ratio>
 
 
 namespace Nebula {
@@ -66,7 +68,7 @@ namespace Nebula {
 			json << "\"name\":\"" << result.Name << "\",";
 			json << "\"ph\":\"X\",";
 			json << "\"pid\":0,";
-			json << "\"tid\":" << result.ThreadID << ",";
+			json << "\"tid\":\"" << result.ThreadID << "\",";
 			json << "\"ts\":" << result.Start.count();
 			json << "}";
 
@@ -96,8 +98,27 @@ namespace Nebula {
 
 		void WriteHeader()
 		{
-			m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
+			m_OutputStream << "{\"traceEvents\":[";
 			m_OutputStream.flush();
+
+			std::stringstream json;
+			json << std::setprecision(3) << std::fixed;
+			json << "{";
+			json << "\"cat\":\"function\",";
+			json << "\"dur\":" << std::chrono::microseconds(0).count() << ',';
+			json << "\"name\":\"" << "Session Start" << "\",";
+			json << "\"ph\":\"X\",";
+			json << "\"pid\":0,";
+			json << "\"tid\":\"" << std::this_thread::get_id() << "\",";
+			json << "\"ts\":" << std::chrono::microseconds(0).count();
+			json << "}";
+
+			// std::lock_guard lock(m_Mutex);
+			if (m_CurrentSession)
+			{
+				m_OutputStream << json.str();
+				m_OutputStream.flush();
+			}
 		}
 
 		void WriteFooter()
@@ -184,7 +205,10 @@ namespace Nebula {
 		}
 	}
 }
+#ifndef NEB_PROFILE
 #define NEB_PROFILE 0
+#endif
+
 #if NEB_PROFILE
 	// Resolve which function signature macro will be used. Note that this only
 	// is resolved when the (pre)compiler starts, so the syntax highlighting
