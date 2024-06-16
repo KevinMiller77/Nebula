@@ -33,10 +33,13 @@ namespace Nebula {
 
     MetalVertexArray::MetalVertexArray() {
         m_VertexDescriptor = MTL::VertexDescriptor::vertexDescriptor();
+        m_VertexDescriptor->retain();
     }
 
     MetalVertexArray::~MetalVertexArray() {
-        if (m_VertexDescriptor) m_VertexDescriptor->reset();
+        if (m_VertexDescriptor) {
+            m_VertexDescriptor->release();
+        }
     }
 
     void MetalVertexArray::Bind() const {

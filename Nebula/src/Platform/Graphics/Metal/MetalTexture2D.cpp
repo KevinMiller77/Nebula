@@ -74,6 +74,23 @@ namespace Nebula{
 			LOG_ERR("[Metal][Texture2D] Failed to load image for texture!\n----> Path was: %s\n", path.c_str());
 		}
 		
+		// Add the 4th channel
+		if (channels == 3) {
+			LOG_WRN("[Metal][Texture2D] Image loaded with 3 channels, adding alpha channel! Path: %s\n", path.c_str());
+			stbi_uc* dataWithAlpha = (stbi_uc*)malloc(width * height * 4);
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					for (int c = 0; c < 3; c++) {
+						dataWithAlpha[(y * width + x) * 4 + c] = data[(y * width + x) * 3 + c];
+					}
+					dataWithAlpha[(y * width + x) * 4 + 3] = 255;
+				}
+			}
+			stbi_image_free(data);
+			data = dataWithAlpha;
+			channels = 4;
+		}
+
         if (channels != 4)
 		{
             LOG_ERR("[Metal][Texture2D] Only four channel texture images are supported on Metal!\n");
