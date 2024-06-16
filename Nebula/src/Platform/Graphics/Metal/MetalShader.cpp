@@ -2,12 +2,15 @@
 
 #include <Core/Ref.h>
 #include <Foundation/NSEnumerator.hpp>
+#include <Graphics/Shader.h>
 #include <Graphics/ShaderUniform.h>
 #include <Graphics/Renderer.h>
+#include <Metal/MTLArgument.hpp>
 #include <Platform/Graphics/Metal/MetalVertexArray.h>
 #include <Platform/Graphics/Metal/MetalRendererAPI.h>
 #include <Platform/Graphics/Metal/MetalContext.h>
 
+#include <Utils/Logging.h>
 #include <cstddef>
 #include <cstring>
 #include <fstream>
@@ -16,6 +19,74 @@
 #include <Metal/Metal.hpp>
 
 namespace Nebula{
+
+	ShaderUniformType MetalToNebula(MTL::DataType type) {
+		switch (type) {
+			case MTL::DataTypeFloat: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat2: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat3: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat4: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat2x2: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat2x3: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat2x4: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat3x2: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat3x3: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat3x4: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat4x2: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat4x3: return ShaderUniformType::Float;
+			case MTL::DataTypeFloat4x4: return ShaderUniformType::Float;
+
+			// case MTL::DataTypeHalf: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf2: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf3: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf4: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf2x2: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf2x3: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf2x4: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf3x2: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf3x3: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf3x4: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf4x2: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf4x3: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeHalf4x4: 	return ShaderUniformType::Int ;
+
+			case MTL::DataTypeInt: 		return ShaderUniformType::Int;
+			case MTL::DataTypeInt2: 	return ShaderUniformType::Int;
+			case MTL::DataTypeInt3: 	return ShaderUniformType::Int;
+			case MTL::DataTypeInt4: 	return ShaderUniformType::Int;
+			// case MTL::DataTypeUInt: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUInt2: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUInt3: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUInt4: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeShort: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeShort2: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeShort3: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeShort4: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUShort: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUShort2: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUShort3: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUShort4: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeChar: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeChar2: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeChar3: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeChar4: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUChar: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUChar2: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUChar3: 	return ShaderUniformType::Int ;
+			// case MTL::DataTypeUChar4: 	return ShaderUniformType::Int ;
+			case MTL::DataTypeBool: 	return ShaderUniformType::Bool ;
+			case MTL::DataTypeBool2: 	return ShaderUniformType::Bool ;
+			case MTL::DataTypeBool3: 	return ShaderUniformType::Bool ;
+			case MTL::DataTypeBool4: 	return ShaderUniformType::Bool ;
+
+			// case MTL::DataTypeMat3: return ShaderUniformType::Mat3;
+			// case MTL::DataTypeMat4: return ShaderUniformType::Mat4;
+			default: break;
+		}
+
+		LOG_ERR("[Metal][Shader] Unknown data type\n"); 
+		abort();
+	}
 
 	MetalShader::MetalShader(const std::string& shaderSrc, Ref<VertexArray> vertexArray)
 	{
@@ -259,6 +330,21 @@ namespace Nebula{
 						MetalUniformLocationEnum::VERTEX,
 						nullptr
 					);
+
+					ShaderUniform uniform = ShaderUniform{
+						std::string(arg->name()->utf8String()),
+						MetalToNebula(arg->bufferDataType()),
+						(uint32_t)arg->bufferDataSize(),
+						0
+					};
+
+					m_Buffers[std::string(arg->name()->utf8String())] = ShaderBuffer{
+						std::string(arg->name()->utf8String()),
+						(uint32_t)arg->bufferDataSize(),
+						{ 
+							{ std::string(arg->name()->utf8String()), uniform } 
+						}
+					};
 				}
 			}
 		
@@ -273,10 +359,10 @@ namespace Nebula{
 				}
 
 				LOG_INF("[Metal][Shader] Fragment Argument: %s\n", arg->name()->utf8String());
-				if (arg->type() == MTL::ArgumentTypeBuffer) {
-					LOG_INF("\t\t Buffer Type: %lu\n", arg->bufferDataType());
-					LOG_INF("\t\t Buffer Data Size: %lu\n", arg->bufferDataSize());
-					LOG_INF("\t\t Buffer alignment: %lu\n", arg->bufferAlignment());
+				if (arg->type() == MTL::ArgumentTypeTexture) {
+					LOG_INF("\t\t Texture Data: %lu\n", arg->textureDataType());
+					LOG_INF("\t\t Texture Type: %lu\n", arg->textureType());
+					LOG_INF("\t\t Texture Index: %lu\n", arg->index());
 
 					// Add this to the resources
 					// m_Resources[std::string(arg->name()->utf8String())] = ShaderResourceDeclaration{
@@ -290,6 +376,12 @@ namespace Nebula{
 						MetalUniformLocationEnum::FRAGMENT,
 						nullptr
 					);
+
+					m_Resources[std::string(arg->name()->utf8String())] = ShaderResourceDeclaration{
+						std::string(arg->name()->utf8String()),
+						(uint32_t)arg->index(),
+						1
+					};
 				}
 			}
 		}

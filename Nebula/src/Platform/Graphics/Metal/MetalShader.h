@@ -85,8 +85,8 @@ namespace Nebula{
         std::vector<ShaderReloadedCallback> m_ShaderReloadedCallbacks;
         
         inline static std::unordered_map<uint32_t, ShaderUniformBuffer> s_UniformBuffers;
-		std::unordered_map<std::string, ShaderBuffer> m_Buffers;
 
+		std::unordered_map<std::string, ShaderBuffer> m_Buffers;
 		std::unordered_map<std::string, ShaderResourceDeclaration> m_Resources;
 
 		std::unordered_map<std::string, MetalUniformData> m_VertexUniforms;
