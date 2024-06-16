@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "RendererAPI.h"
+#include <Graphics/VertexArray.h>
 
 namespace Nebula{
     Renderer::SceneData_t* Renderer::SceneData = new Renderer::SceneData_t;
@@ -25,7 +26,21 @@ namespace Nebula{
         s_ShaderLibrary = CreateRef<ShaderLibrary>();
 
         // Add all shaders to the renderer lib here
-        // s_ShaderLibrary->Load(VFS::AbsolutePath("assets/shaders/PBR_Static.glsl"));
+		Ref<VertexArray> referenceArray = VertexArray::Create();
+        float x = 0.0f;
+		Ref<VertexBuffer> referenceVertexBuffer = VertexBuffer::Create(&x, 1);
+		referenceVertexBuffer->SetLayout(
+			{
+				{ ShaderDataType::Float3, "Position" },
+				{ ShaderDataType::Float3, "Normal" },
+				{ ShaderDataType::Float3, "Tangent" },
+				{ ShaderDataType::Float3, "Binormal" },
+				{ ShaderDataType::Float2, "TexCoord" },
+			}
+		);
+		referenceArray->AddVertexBuffer(referenceVertexBuffer);
+		
+        s_ShaderLibrary->Load(VFS::AbsolutePath("assets/shaders/PBR_Static.metal"), referenceArray);
 
 		Renderer2D::Init();
     }
@@ -76,7 +91,7 @@ namespace Nebula{
 		int entityID = mesh->GetEntityID();
 
 		mesh->m_VertexBuffer->Bind();
-		mesh->m_Pipeline->Bind();
+		// mesh->m_Pipeline->Bind();
 		mesh->m_IndexBuffer->Bind();
 
 		auto materials = mesh->GetMaterials();
