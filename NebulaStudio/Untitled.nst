@@ -1,12 +1,12 @@
 Scene: Untitled
 Entities:
-  - Entity: 2
+  - Entity: 11086827425312369075
     TagComponent:
       Tag: Blank Entity
     TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [-27.453989, 51.2608337, 8.30996323]
+      Rotation: [-2.68031883, -0.0602695681, 9.7873442e-07]
+      Scale: [5.82456207, 4.82328081, 9.66461277]
       Line v0: [0, 0, 0]
       Line v1: [0, 0, 0]
       Inherit: false

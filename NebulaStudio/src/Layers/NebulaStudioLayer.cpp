@@ -7,8 +7,6 @@ namespace Nebula
     bool drawMesh = false;
     Ref<Mesh> s_Mesh1;
 
-    // Happens every time you open a project
-
     void NebulaStudioLayer::OnAttach()
     {
 
@@ -49,6 +47,7 @@ namespace Nebula
 
         {
             NEB_PROFILE_SCOPE("On ViewportChange");
+
             FramebufferSpecification spec = m_RenderPassSpec.TargetFramebuffer->GetSpecification();
             bool framebufferRefletsViewportSize = (spec.Width == ViewportSize.X && spec.Height == ViewportSize.Y);
             if (!framebufferRefletsViewportSize || Application::Get()->GetWindow()->WasMinimized() || Application::Get()->GetWindow()->IsMaximized())
@@ -76,22 +75,20 @@ namespace Nebula
                 NEB_PROFILE_SCOPE("Camera Update");
                 m_EditorCamera.OnUpdate(ts, ViewportFocused || ViewportHovered);
             }
-
             {
                 NEB_PROFILE_SCOPE("RenderPass");
                 Ref<RenderPass> pass = RenderPass::Create(m_RenderPassSpec);
+                pass->GetSpecification().TargetFramebuffer->ClearTextureAttachment(1, -1);
+
                 Renderer::BeginRenderPass(pass, false);
+                if (s_Mesh1) {
+                    if(s_Mesh1->IsLoaded()) {
+                        Renderer::SubmitMesh(s_Mesh1, Mat4f(1.0f));
+                    }
+                }
                 ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
                 Renderer::EndRenderPass();
             }
-
-            // Add back to render pass when applicable
-            // if (s_Mesh1) {
-            //     if(s_Mesh1->IsLoaded()) {
-            //         Renderer::SubmitMesh(s_Mesh1, Mat4f(1.0f));
-            //     }
-            // }
-
             {
                 NEB_PROFILE_SCOPE("Get Hovering Entity");
 
@@ -103,11 +100,8 @@ namespace Nebula
                 int mouseX = (int)pos.X;
                 int mouseY = (int)pos.Y;
 
-
-
                 if (ViewportFocused && ViewportHovered) {
-                    // m_HoveringEntity = m_RenderPassSpec.TargetFramebuffer->ReadPixel(1, mouseX, mouseY);
-                    
+                    m_HoveringEntity = m_RenderPassSpec.TargetFramebuffer->ReadPixel(1, mouseX, mouseY);
                 }
                 else {
                     m_HoveringEntity = -1;

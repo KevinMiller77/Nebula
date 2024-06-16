@@ -6,6 +6,7 @@
 #include <AppKit/AppKit.hpp>
 #include <Graphics/RendererConfig.h>
 #include <Metal/MTLPixelFormat.hpp>
+#include <Metal/MTLRenderPass.hpp>
 #include <Metal/Metal.hpp>
 #include <MetalKit/MetalKit.hpp>
 
@@ -103,14 +104,7 @@ namespace Nebula {
                     colorAttachmentDescriptor->setTexture(colorAttachment);
                     colorAttachmentDescriptor->setLoadAction(MTL::LoadActionClear);
                     colorAttachmentDescriptor->setStoreAction(MTL::StoreActionStore);
-                    colorAttachmentDescriptor->setClearColor(
-                        {
-                            m_Specification.ClearColor.X,
-                            m_Specification.ClearColor.Y,
-                            m_Specification.ClearColor.Z,
-                            m_Specification.ClearColor.W 
-                        }
-                    );
+                    colorAttachmentDescriptor->setClearColor(MTL::ClearColor::Make(-1, 0.0f, 0.0f, 0.0f) );
 
                     m_RenderPassDescriptor->colorAttachments()->setObject(colorAttachmentDescriptor, m_ColorAttachments.size());
 
@@ -181,12 +175,13 @@ namespace Nebula {
             return -1;
         }
 
-        MTL::Region region = MTL::Region::Make2D(x, y, 1, 1);
+        MTL::Region region = MTL::Region::Make2D(x, colorAttachment->height() - y, 1, 1);
 
         int pixel = -1;
         colorAttachment->getBytes(&pixel, colorAttachment->bufferBytesPerRow(), region, 0);
         return pixel;
 	};
+
     void MetalFramebuffer::ClearTextureAttachment(uint32 attachmentID, const int value) {
         if (m_ColorAttachments.size() < attachmentID) {
             LOG_ERR("[Metal][Framebuffer] Color attachment ID is out of bounds");
@@ -199,11 +194,21 @@ namespace Nebula {
             return;
         }
 
-        MTL::Region region = MTL::Region::Make2D(0, 0, colorAttachment->width(), colorAttachment->width());
-        colorAttachment->replaceRegion(region, 0, &value, sizeof(int));
+        m_RenderPassDescriptor->colorAttachments()->object(attachmentID)->setClearColor(MTL::ClearColor::Make(value, 0.0f, 0.0f, 0.0f));
 	};
     void MetalFramebuffer::ClearTextureAttachment(uint32 attachmentID, const float value) {
+        if (m_ColorAttachments.size() < attachmentID) {
+            LOG_ERR("[Metal][Framebuffer] Color attachment ID is out of bounds");
+            return;
+        }
 
+        MTL::Texture* colorAttachment = m_ColorAttachments[attachmentID];
+        if (!colorAttachment) {
+            LOG_ERR("[Metal][Framebuffer] Color attachment is null");
+            return;
+        }
+
+        m_RenderPassDescriptor->colorAttachments()->object(attachmentID)->setClearColor(MTL::ClearColor::Make(value, 0.0f, 0.0f, 0.0f));
 	};
 
     void* MetalFramebuffer::GetRendererID() const {
