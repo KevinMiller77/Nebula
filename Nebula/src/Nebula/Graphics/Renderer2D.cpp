@@ -191,12 +191,6 @@ namespace Nebula{
         
 		s_2DData.viewProj = viewProj;
 
-		if (s_2DData.TextureShader)
-		{
-			s_2DData.TextureShader->Bind();
-			s_2DData.TextureShader->SetUniformBuffer("Camera", s_2DData.viewProj.elements, sizeof(Vec4f) * 4);
-		}
-
 		s_2DData.QuadIndexCount = 0;
 		s_2DData.QuadVertexBufferPtr = s_2DData.QuadVertexBufferBase;
 
