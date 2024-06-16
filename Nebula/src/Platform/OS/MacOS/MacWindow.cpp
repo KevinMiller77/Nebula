@@ -1,14 +1,16 @@
-#include <Events/InputCodes.h>
-#include <Events/KeyEvent.h>
-#include <vector>
 #define NS_PRIVATE_IMPLEMENTATION
 #define MTL_PRIVATE_IMPLEMENTATION
 #define MTK_PRIVATE_IMPLEMENTATION
 #define CA_PRIVATE_IMPLEMENTATION
 
+#include <Events/InputCodes.h>
+#include <Events/KeyEvent.h>
 #include "MacWindow.h"
 #include "MacInput.h"
 #include <Utils/Logging.h>
+
+#include <filesystem>
+#include <vector>
 
 #include "../../Graphics/Metal/MetalContext.h"
 #include <Metal/Metal.hpp>
@@ -21,6 +23,7 @@
 #include <Foundation/NSNotification.hpp>
 #include <Foundation/NSNotificationCenter.hpp>
 
+#include <Platform/Graphics/Metal/MetalRendererAPI.h>
 #include <Platform/Graphics/Metal/MetalContext.h>
 
 namespace Nebula {
@@ -181,9 +184,14 @@ namespace Nebula {
                 auto appleKeycode = event->kb_Keycode();
 
                 if (MacInput::KeyCodeMapMacToNeb.find(appleKeycode) != MacInput::KeyCodeMapMacToNeb.end()) {
-                    auto nebulaKeycode = MacInput::KeyCodeMapMacToNeb[appleKeycode];
+                    KeyCode nebulaKeycode = MacInput::KeyCodeMapMacToNeb[appleKeycode];
                     // LOG_INF("Key Down: %d\n", (int)nebulaKeycode);
 
+                    #if NEB_PROFILE
+                    if(!Input::IsKeyPressed(nebulaKeycode) && nebulaKeycode == KeyCode::M) {
+                        m_CaptureManager->isCapturing() ? EndCapture() : StartCapture();
+                    }
+                    #endif
 
                     Input::SetKeyPressed(nebulaKeycode);
                     KeyPressedEvent event((int)nebulaKeycode, 0); // TODO: Add repeatCount
@@ -350,6 +358,7 @@ namespace Nebula {
 
     std::chrono::steady_clock::time_point currentFrameTime;
     std::chrono::steady_clock::time_point lastFrameTime;
+    size_t capturesLeft = 5;
     void MacWindow::OnUpdate() {
         NS::Event* evt = m_Application->nextEventMatchingMask( 
             NS::EventMaskAny,
@@ -378,6 +387,17 @@ namespace Nebula {
         }
 
         m_FrameTime = diff;
+
+        #if NEB_PROFILE
+        if (m_CaptureManager && m_CaptureManager->isCapturing()) {
+            capturesLeft--;
+            if (capturesLeft == 0) {
+                EndCapture();
+                capturesLeft = 100;
+                abort();
+            }
+        }
+        #endif
     }
 
     float MacWindow::GetTime() {
@@ -494,6 +514,54 @@ namespace Nebula {
     uint32* MacWindow::GetHeightPtr() const {
         return &m_Data.height;
     }
+
+
+    void MacWindow::StartCapture() {
+        #if NEB_PROFILE
+        if (m_CaptureManager == nullptr) {
+            LOG_INF("[MacWindow][StartMetalCapture] Creating capture manager\n");
+            m_CaptureManager = MTL::CaptureManager::sharedCaptureManager();
+        }
+        if (!m_CaptureManager->supportsDestination(MTL::CaptureDestinationGPUTraceDocument)) {
+            LOG_WRN("[MacWindow][StartMetalCapture] GPU Tracing is unavailable!\n");
+            return;
+        }
+
+        NS::URL* destination = NS::URL::fileURLWithPath(NS::String::string(std::filesystem::path("penis.gputrace").string().c_str(), NS::StringEncoding::UTF8StringEncoding));
+        MTL::CaptureDescriptor* descriptor = MTL::CaptureDescriptor::alloc()->init();
+        descriptor->setCaptureObject(MetalRendererAPI::GetDevice());
+        descriptor->setDestination(MTL::CaptureDestinationGPUTraceDocument);
+        descriptor->setOutputURL(destination);
+
+        NS::Error** errorCb = (NS::Error**)malloc(sizeof(NS::Error**));
+		*errorCb = (NS::Error*)malloc(sizeof(NS::Error*));
+
+        LOG_INF("[MacWindow][StartMetalCapture] Starting capture to %s..\n", descriptor->outputURL()->fileSystemRepresentation());
+        m_CaptureManager->startCapture(descriptor, errorCb);
+
+        if (errorCb != nullptr && *errorCb != nullptr && (*errorCb)->isa != nullptr) {
+			LOG_ERR("[MacWindow][StartMetalCapture] Failed to start metal capture: %s\n", (*errorCb)->localizedDescription()->utf8String());
+			abort();
+		}
+
+        LOG_INF("[MacWindow][StartMetalCapture] Capture started\n");
+        #else
+        {
+            LOG_DBG("[MacWindow][StartMetalCapture] Profiling is disabled\n");
+        }
+        #endif
+    }
+    void MacWindow::EndCapture() {
+        #if NEB_PROFILE
+        LOG_INF("[MacWindow][EndMetalCapture] Ending capture..\n");
+
+        m_CaptureManager->stopCapture();
+        #endif
+    }
+
+    /**
+     *      MAC INPUT BEGINS
+     */
 
     
     bool MacInput::IsKeyPressedAsyncInt(KeyCode key) { 

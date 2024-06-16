@@ -115,6 +115,9 @@ namespace Nebula{
 
         NS::Menu* CreateMenuBar();
 
+        void StartCapture();
+        void EndCapture();
+
         Ref<GraphicsContext> m_Context;
 
         float m_FrameTime;
@@ -123,6 +126,8 @@ namespace Nebula{
         NS::Window* m_Window;
         
         NS::AutoreleasePool* m_Pool;
+
+        MTL::CaptureManager* m_CaptureManager;
 
         friend class MetalContext;
     };
