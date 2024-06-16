@@ -79,7 +79,6 @@ vertex VertexOutput vertexMain(VertexInput input [[stage_in]], constant float4x4
     return Output;
 }
 
-constexpr sampler s = sampler(coord::normalized, address::clamp_to_edge, filter::linear);
 fragment FragmentOutput fragmentMain(VertexOutput input [[stage_in]], array<texture2d<float>, 32> textures [[texture(0)]]){
     float4 color = input.Color;
     float2 texCoord = input.TexCoord;
