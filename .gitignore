@@ -18,6 +18,10 @@
 *.vert
 compile_commands.json
 premake5
+*.gputrace
+Nebula-Runtime.json
+Nebula-Shutdown.json
+Nebula-Startup.json
 
 console.txt
 *.xcodeproj/

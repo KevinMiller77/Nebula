@@ -40,7 +40,7 @@
             "MIMode": "lldb",
         },
         {
-            "name": "(Mac) Launch",
+            "name": "(Mac) Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/Debug/macosxARM64/NebulaStudio/NebulaStudio",
@@ -55,6 +55,10 @@
                 // {
                 //     "name": "MTL_DEBUG_LAYER_WARNING_MODE",
                 //     "value": "nslog"
+                // }
+                // {
+                //     "name": "MTL_CAPTURE_ENABLED",
+                //     "value": "1"
                 // }
             ],
             "externalConsole": false,
