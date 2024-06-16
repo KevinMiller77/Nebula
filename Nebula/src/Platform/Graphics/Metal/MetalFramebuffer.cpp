@@ -188,7 +188,19 @@ namespace Nebula {
         return pixel;
 	};
     void MetalFramebuffer::ClearTextureAttachment(uint32 attachmentID, const int value) {
-            
+        if (m_ColorAttachments.size() < attachmentID) {
+            LOG_ERR("[Metal][Framebuffer] Color attachment ID is out of bounds");
+            return;
+        }
+
+        MTL::Texture* colorAttachment = m_ColorAttachments[attachmentID];
+        if (!colorAttachment) {
+            LOG_ERR("[Metal][Framebuffer] Color attachment is null");
+            return;
+        }
+
+        MTL::Region region = MTL::Region::Make2D(0, 0, colorAttachment->width(), colorAttachment->width());
+        colorAttachment->replaceRegion(region, 0, &value, sizeof(int));
 	};
     void MetalFramebuffer::ClearTextureAttachment(uint32 attachmentID, const float value) {
 
