@@ -1,5 +1,6 @@
 #include "MetalRendererAPI.h"
 
+#include <Debugging/Instrumentor.h>
 #include <AppKit/NSView.hpp>
 #include <AppKit/NSWindow.hpp>
 #include <Foundation/NSTypes.hpp>
@@ -51,6 +52,7 @@ namespace Nebula {
 
     void MetalRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
     {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_Viewport = {
             (double)x,
             (double)y,
@@ -63,6 +65,7 @@ namespace Nebula {
 
     void MetalRendererAPI::SetClearColor(const Vec4f& color)
     {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_ClearColor.red = color.X;
         s_Context->m_ClearColor.green = color.Y;
         s_Context->m_ClearColor.blue = color.Z;
@@ -80,6 +83,7 @@ namespace Nebula {
 
     void MetalRendererAPI::Clear()
     {
+        NEB_PROFILE_FUNCTION();
         if (s_Context->m_RenderCommandEncoder == nullptr) {
             Prepare();
         }
@@ -93,11 +97,14 @@ namespace Nebula {
 
     void MetalRendererAPI::Clear(Vec4f color)
     {
+        NEB_PROFILE_FUNCTION();
         SetClearColor(color);
         Clear();
     }
 
     void MetalRendererAPI::Prepare() {
+        NEB_PROFILE_FUNCTION();
+
         switch (s_Context->m_CommandBuffer->status()) {
             case(MTL::CommandBufferStatusNotEnqueued): {
                 // Command buffer has never been used. Nothing to do
@@ -112,8 +119,8 @@ namespace Nebula {
             case(MTL::CommandBufferStatusScheduled): {
                 // Buffer is scheduled to be executed, wait until it is completed
                 // then call this method again to catch any errors
-                s_Context->m_CommandBuffer->waitUntilCompleted();
-                return Prepare();
+                // s_Context->m_CommandBuffer->waitUntilCompleted();
+                // return Prepare();
             }
             case(MTL::CommandBufferStatusCompleted): { 
                 s_Context->m_CommandBuffer->release();
@@ -137,6 +144,7 @@ namespace Nebula {
         }
 
         if (s_Context->m_RenderPassDescriptor == nullptr || s_Context->m_RenderPassDescriptor == s_Context->m_MainRenderPassDescriptor) {
+            NEB_PROFILE_SCOPE("MetalRendererAPI::Prepare::UpdateMainRenderPass");
             // LOG_ERR("[Metal][RendererAPI] Attempted to prepare without a render pass descriptor [MetalRendererAPI::Prepare]")
             // abort();
 
@@ -152,53 +160,76 @@ namespace Nebula {
             // frameRenderColorAttachment->setStoreAction(MTL::StoreActionStore);
         }
 
-        s_Context->m_RenderCommandEncoder = s_Context->m_CommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor);
-        s_Context->m_RenderCommandEncoder->retain();
+        {
+            NEB_PROFILE_SCOPE("MetalRendererAPI::Prepare::CreateRenderCommandEncoder");
+            s_Context->m_RenderCommandEncoder = s_Context->m_CommandBuffer->renderCommandEncoder(s_Context->m_RenderPassDescriptor);
+            s_Context->m_RenderCommandEncoder->retain();
+        }
     }
     
     void MetalRendererAPI::Commit() {
+        NEB_PROFILE_FUNCTION();
+
         if (s_Context->m_RenderCommandEncoder == nullptr) {
             LOG_ERR("[Metal][RendererAPI] Attempted to commit without a render command encoder [MetalRendererAPI::Commit")
             return;
         }
 
-        s_Context->m_RenderCommandEncoder->endEncoding();
-        if (s_Context->m_RenderCommandEncoder) {
-            s_Context->m_RenderCommandEncoder->release();
+        {
+            NEB_PROFILE_SCOPE("MetalRendererAPI::Commit::EndEncoding");
+            s_Context->m_RenderCommandEncoder->endEncoding();
+            if (s_Context->m_RenderCommandEncoder) {
+                s_Context->m_RenderCommandEncoder->release();
+            }
+            s_Context->m_RenderCommandEncoder = nullptr;
         }
-        s_Context->m_RenderCommandEncoder = nullptr;
 
-
-        CA::MetalDrawable* drawable = s_Context->m_MainView->currentDrawable();
-        if (drawable) {
-            s_Context->m_CommandBuffer->presentDrawable(drawable);
+        {
+            NEB_PROFILE_SCOPE("MetalRendererAPI::Commit::PresentDrawable");
+            if (s_Context->m_RenderPassDescriptor == s_Context->m_MainRenderPassDescriptor) {
+                CA::MetalDrawable* drawable = s_Context->m_MainView->currentDrawable();
+                if (drawable) {
+                    s_Context->m_CommandBuffer->presentDrawable(drawable);
+                }
+            }
         }
-        s_Context->m_CommandBuffer->commit();
-        s_Context->m_CommandBuffer->waitUntilScheduled();
+
+        {
+            NEB_PROFILE_SCOPE("MetalRendererAPI::Commit::Commit&WaitUntilScheduled");
+            s_Context->m_CommandBuffer->commit();
+            s_Context->m_CommandBuffer->waitUntilScheduled();
+        }
     }
 
     void MetalRendererAPI::SetAlphaBlend(bool enabled)
     {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_AlphaBlendEnabled = enabled;
     }
 
     void MetalRendererAPI::SetDepthTest(bool enabled)
     {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_DepthTestEnabled = enabled;
     }
 
     void MetalRendererAPI::SetMSAA(bool enabled)
     {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_MSAAEnabled = enabled;
     }
 
     void MetalRendererAPI::DrawIndexed(const int numIndices, PrimativeType type, bool depthTest)
     {
+        NEB_PROFILE_FUNCTION();
         if (s_Context->m_RenderCommandEncoder == nullptr) {
             Prepare();
         }
 
-        s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
+        {
+            NEB_PROFILE_SCOPE("MetalRendererAPI::DrawIndexed::SetVertexBuffer");
+            s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
+        }
 
         switch (type)
         {
@@ -217,11 +248,15 @@ namespace Nebula {
 
     void MetalRendererAPI::DrawElementsBaseVertex(PrimativeType mode, uint32_t size, PrimativeDataType type, void* indices, uint32_t base)
     {
+        NEB_PROFILE_FUNCTION();
         if (s_Context->m_RenderCommandEncoder == nullptr) {
             Prepare();
         }
 
-        s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
+        {
+            NEB_PROFILE_SCOPE("MetalRendererAPI::DrawIndexed::SetVertexBuffer");
+            s_Context->m_RenderCommandEncoder->setVertexBuffer(s_Context->m_VertexBuffer, 0, 0);
+        }
         
         MTL::IndexType indexType;
         switch (type)
@@ -258,6 +293,7 @@ namespace Nebula {
 
 
     void MetalRendererAPI::BindRenderPass(MTL::RenderPassDescriptor* renderPass, MTL::Viewport viewport) {
+        NEB_PROFILE_FUNCTION();
         if (s_Context->m_RenderCommandEncoder) {
             LOG_ERR("[MetalRendererAPI][BindRenderPass] Attempted to bind a render pass before committing the previous!\n");
             abort();
@@ -268,6 +304,7 @@ namespace Nebula {
     }
 
     void MetalRendererAPI::UnbindRenderPass() {
+        NEB_PROFILE_FUNCTION();
         if (s_Context->m_RenderCommandEncoder) {
             RendererConfig::Commit();
         }
@@ -277,30 +314,37 @@ namespace Nebula {
     }
 
     void MetalRendererAPI::BindVertexBuffer(MTL::Buffer* vertexBuffer) {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_VertexBuffer = vertexBuffer;
     }
 
     void MetalRendererAPI::BindIndexBuffer(MTL::Buffer* indexBuffer) {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_IndexBuffer = indexBuffer;
     }
 
     void MetalRendererAPI::BindShader(MTL::RenderPipelineState* shader) {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_RenderCommandEncoder->setRenderPipelineState(shader);
     }
 
     void MetalRendererAPI::BindShaderVertexBuffer(MTL::Buffer* buffer, uint32_t offset, uint32_t index) {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_RenderCommandEncoder->setVertexBuffer(buffer, offset, index);
     }
 
     void MetalRendererAPI::BindShaderFragmentBuffer(MTL::Buffer* buffer, uint32_t offset, uint32_t index) {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_RenderCommandEncoder->setFragmentBuffer(buffer, offset, index);
     }
 
     void MetalRendererAPI::BindTexture2D(MTL::Texture* texture, uint32_t slot) {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_RenderCommandEncoder->setFragmentTexture(texture, slot);
     }
 
     void MetalRendererAPI::BindShaderFragmentTexture(MTL::Texture* texture, uint32_t slot) {
+        NEB_PROFILE_FUNCTION();
         s_Context->m_RenderCommandEncoder->setFragmentTexture(texture, slot);
     }
 
