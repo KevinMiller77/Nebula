@@ -3,28 +3,23 @@
 #define MTK_PRIVATE_IMPLEMENTATION
 #define CA_PRIVATE_IMPLEMENTATION
 
-#include <Events/InputCodes.h>
-#include <Events/KeyEvent.h>
 #include "MacWindow.h"
 #include "MacInput.h"
-#include <Utils/Logging.h>
-
-#include <filesystem>
-#include <vector>
-
 #include "../../Graphics/Metal/MetalContext.h"
+
 #include <Metal/Metal.hpp>
 #include <MetalKit/MetalKit.hpp>
 #include <AppKit/AppKit.hpp>
-#include <AppKit/NSEvent.hpp>
-#include <AppKit/NSWindow.hpp>
-#include <Foundation/NSTypes.hpp>
-#include <Foundation/NSString.hpp>
-#include <Foundation/NSNotification.hpp>
-#include <Foundation/NSNotificationCenter.hpp>
+#include <Foundation/Foundation.hpp>
 
+#include <Events/InputCodes.h>
+#include <Events/KeyEvent.h>
+#include <Utils/Logging.h>
 #include <Platform/Graphics/Metal/MetalRendererAPI.h>
 #include <Platform/Graphics/Metal/MetalContext.h>
+#include <Debugging/Instrumentor.h>
+
+#include <vector>
 
 namespace Nebula {
 
