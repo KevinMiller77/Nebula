@@ -39,5 +39,14 @@
                 "isDefault": false
             }
         },
+        {
+            "label": "run mtl dbg",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/NebulaStudio && MTL_CAPTURE_ENABLED=1 ../bin/Debug/macosxARM64/NebulaStudio/NebulaStudio",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
     ]
 }
